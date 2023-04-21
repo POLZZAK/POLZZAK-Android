@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.polzzak_android'
+    namespace 'com.polzzak_android'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.polzzak_android"
+        applicationId "com.polzzak_android"
         minSdk 26
         targetSdk 33
         versionCode 1

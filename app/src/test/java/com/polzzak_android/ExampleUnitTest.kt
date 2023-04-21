@@ -1,4 +1,4 @@
-package com.example.polzzak_android
+package com.polzzak_android
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.example.polzzak_android.common.base
+package com.polzzak_android.common.base
 
 import android.os.Bundle
 import androidx.annotation.LayoutRes

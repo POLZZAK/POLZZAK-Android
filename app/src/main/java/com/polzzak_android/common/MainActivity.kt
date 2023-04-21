@@ -1,10 +1,10 @@
-package com.example.polzzak_android.common
+package com.polzzak_android.common
 
 import android.os.Bundle
 import android.os.PersistableBundle
-import com.example.polzzak_android.R
-import com.example.polzzak_android.common.base.BaseActivity
-import com.example.polzzak_android.databinding.ActivityMainBinding
+import com.polzzak_android.R
+import com.polzzak_android.common.base.BaseActivity
+import com.polzzak_android.databinding.ActivityMainBinding
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     override val layoutResId: Int = R.layout.activity_main
