@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseActivity
 import com.polzzak_android.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
     override val layoutResId: Int = R.layout.activity_main
 
