@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation
+package com.polzzak_android.presentation.splash
 
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult

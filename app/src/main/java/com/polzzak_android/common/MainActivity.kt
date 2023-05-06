@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentManager
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseActivity
 import com.polzzak_android.databinding.ActivityMainBinding
-import com.polzzak_android.presentation.SplashFragment
+import com.polzzak_android.presentation.splash.SplashFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
