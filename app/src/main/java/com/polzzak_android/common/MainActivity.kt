@@ -6,7 +6,9 @@ import androidx.fragment.app.FragmentManager
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseActivity
 import com.polzzak_android.databinding.ActivityMainBinding
+import com.polzzak_android.presentation.login.LoginFragment
 import com.polzzak_android.presentation.splash.SplashFragment
+import com.polzzak_android.presentation.splash.SplashFragment.Companion.RESULT_TERMINATE_KEY
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -16,11 +18,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initFragmentResultListener()
-        val splashFragment = SplashFragment.newInstance(
-            requestKey = SPLASH_FRAGMENT_REQUEST_KEY,
-            resultTerminateKey = SPLASH_FRAGMENT_RESULT_TERMINATE_KEY
-        )
-        openFragment(splashFragment)
+        openSplashFragment()
     }
 
     override fun openFragment(fragment: Fragment) {
@@ -46,18 +44,35 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner {
             SPLASH_FRAGMENT_REQUEST_KEY,
             this
         ) { _, bundle ->
-
+            closeFragment()
+            val terminateValue = bundle.getBoolean(RESULT_TERMINATE_KEY, false)
+            if (terminateValue) {
+                openLoginFragment()
+            }
         }
     }
 
-    companion object {
-        //SplashFragment
-        private const val SPLASH_FRAGMENT_REQUEST_KEY = "splash_fragment_request_key"
-        private const val SPLASH_FRAGMENT_RESULT_TERMINATE_KEY =
-            "splash_fragment_result_terminate_key"
+    private fun initLoginFragmentResultListener(){
+        supportFragmentManager.setFragmentResultListener(
+            LOGIN_FRAGMENT_REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            closeFragment()
 
-        //LoginFragment
+        }
+    }
+    private fun openSplashFragment() {
+        val splashFragment = SplashFragment.newInstance(requestKey = SPLASH_FRAGMENT_REQUEST_KEY)
+        openFragment(splashFragment)
+    }
+
+    private fun openLoginFragment() {
+        val loginFragment = LoginFragment.newInstance(requestKey = LOGIN_FRAGMENT_REQUEST_KEY)
+        openFragment(loginFragment)
+    }
+
+    companion object {
+        private const val SPLASH_FRAGMENT_REQUEST_KEY = "splash_fragment_request_key"
         private const val LOGIN_FRAGMENT_REQUEST_KEY = "login_fragment_request_key"
-        private const val LOGIN_FRAGMENT_RESULT_NEED_SIGN_UP = "login_fragment_result_need_sign_up"
     }
 }
