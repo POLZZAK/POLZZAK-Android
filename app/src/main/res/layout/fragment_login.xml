@@ -7,109 +7,126 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- TODO string resource로 변경 -->
-        <TextView
-            android:id="@+id/tvHello"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="21.7dp"
-            android:layout_marginTop="127dp"
-            android:background="@drawable/bg_login_hello"
-            android:gravity="center"
-            android:text="반가\n워요"
-            android:textSize="42sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/ivLogoFirst"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="108dp"
-            android:layout_marginEnd="38.63dp"
-            android:background="@drawable/logo_first"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tvHello"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/ivLogoSecond"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/logo_second"
-            app:layout_constraintEnd_toEndOf="@id/ivLogoFirst"
-            app:layout_constraintStart_toStartOf="@id/ivLogoFirst"
-            app:layout_constraintTop_toBottomOf="@id/ivLogoFirst" />
-
-        <ImageView
-            android:id="@+id/ivLogoThird"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="91.55dp"
-            android:background="@drawable/logo_third"
-            app:layout_constraintEnd_toEndOf="@id/ivLogoSecond"
-            app:layout_constraintStart_toStartOf="@id/ivLogoSecond"
-            app:layout_constraintTop_toBottomOf="@id/ivLogoSecond" />
-
-        <ImageView
-            android:id="@+id/ivLogoShadow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_logo_shadow"
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivLogoThird" />
+            app:layout_constraintTop_toTopOf="parent">
 
-        <!-- TODO string resource로 변경 -->
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="29dp"
-            android:text="참 잘 했어요 도장 쾅!"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivLogoShadow" />
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="88dp">
 
-        <!-- TODO string resource로 변경 -->
-        <TextView
-            android:id="@+id/tvDescription"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="손가락 거는 걸로는 부족한 우리에게 필요했던"
-            app:layout_constraintEnd_toEndOf="@id/tvTitle"
-            app:layout_constraintStart_toStartOf="@id/tvTitle"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+                <!-- TODO string resource로 변경 -->
+                <TextView
+                    android:id="@+id/tvHello"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="21.7dp"
+                    android:layout_marginTop="127dp"
+                    android:background="@drawable/bg_login_hello"
+                    android:gravity="center"
+                    android:text="반가\n워요"
+                    android:textSize="42sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- TODO string resource로 변경 -->
-        <TextView
-            android:id="@+id/tvBtnStartKakao"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="52dp"
-            android:background="#FFC736"
-            android:gravity="center"
-            android:paddingVertical="12dp"
-            android:text="카카오톡으로 시작하기"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvDescription" />
+                <ImageView
+                    android:id="@+id/ivLogoFirst"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="108dp"
+                    android:layout_marginEnd="38.63dp"
+                    android:background="@drawable/logo_first"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/tvHello"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- TODO string resource로 변경 -->
-        <TextView
-            android:id="@+id/tvBtnStartGoogle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="15dp"
-            android:background="#DADAE7"
-            android:gravity="center"
-            android:paddingVertical="12dp"
-            android:text="구글로 시작하기"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvBtnStartKakao" />
+                <ImageView
+                    android:id="@+id/ivLogoSecond"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/logo_second"
+                    app:layout_constraintEnd_toEndOf="@id/ivLogoFirst"
+                    app:layout_constraintStart_toStartOf="@id/ivLogoFirst"
+                    app:layout_constraintTop_toBottomOf="@id/ivLogoFirst" />
+
+                <ImageView
+                    android:id="@+id/ivLogoThird"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="91.55dp"
+                    android:background="@drawable/logo_third"
+                    app:layout_constraintEnd_toEndOf="@id/ivLogoSecond"
+                    app:layout_constraintStart_toStartOf="@id/ivLogoSecond"
+                    app:layout_constraintTop_toBottomOf="@id/ivLogoSecond" />
+
+                <ImageView
+                    android:id="@+id/ivLogoShadow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_logo_shadow"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ivLogoThird" />
+
+                <!-- TODO string resource로 변경 -->
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="29dp"
+                    android:text="참 잘 했어요 도장 쾅!"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ivLogoShadow" />
+
+                <!-- TODO string resource로 변경 -->
+                <TextView
+                    android:id="@+id/tvDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="손가락 거는 걸로는 부족한 우리에게 필요했던"
+                    app:layout_constraintEnd_toEndOf="@id/tvTitle"
+                    app:layout_constraintStart_toStartOf="@id/tvTitle"
+                    app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+                <!-- TODO string resource로 변경 -->
+                <TextView
+                    android:id="@+id/tvBtnStartKakao"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="52dp"
+                    android:background="#FFC736"
+                    android:gravity="center"
+                    android:paddingVertical="12dp"
+                    android:text="카카오톡으로 시작하기"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvDescription" />
+
+                <!-- TODO string resource로 변경 -->
+                <TextView
+                    android:id="@+id/tvBtnStartGoogle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="15dp"
+                    android:background="#DADAE7"
+                    android:gravity="center"
+                    android:paddingVertical="12dp"
+                    android:text="구글로 시작하기"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvBtnStartKakao" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
