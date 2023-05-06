@@ -8,3 +8,9 @@ fun Fragment.finish() {
         closeFragment()
     }
 }
+
+fun Fragment.openFragment(fragment: Fragment) {
+    (activity as? FragmentOwner)?.run {
+        openFragment(fragment)
+    }
+}

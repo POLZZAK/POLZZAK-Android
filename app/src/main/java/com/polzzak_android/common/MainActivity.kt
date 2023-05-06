@@ -51,9 +51,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner {
     }
 
     companion object {
-        //SplashFragment ResultListener
+        //SplashFragment
         private const val SPLASH_FRAGMENT_REQUEST_KEY = "splash_fragment_request_key"
         private const val SPLASH_FRAGMENT_RESULT_TERMINATE_KEY =
             "splash_fragment_result_terminate_key"
+
+        //LoginFragment
+        private const val LOGIN_FRAGMENT_REQUEST_KEY = "login_fragment_request_key"
+        private const val LOGIN_FRAGMENT_RESULT_NEED_SIGN_UP = "login_fragment_result_need_sign_up"
     }
 }
