@@ -111,7 +111,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
 
     override fun requestLoginGoogle() {
         val signInIntent = mGoogleSignInClient?.signInIntent
-        resultLauncher?.launch(signInIntent)
+        val lastAccount = GoogleSignIn.getLastSignedInAccount(this)
+        lastAccount?.let {
+            val id = it.id ?: return@let null
+            mainViewModel.requestLogin(id = id, loginType = SocialLoginType.GOOGLE)
+        } ?: run {
+            resultLauncher?.launch(signInIntent)
+        }
     }
 
     override fun requestLoginKakao() {
