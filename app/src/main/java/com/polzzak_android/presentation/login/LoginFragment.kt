@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.login
 
 import android.util.Log
 import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import com.polzzak_android.R
 import com.polzzak_android.common.MainViewModel
@@ -35,9 +36,22 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             Log.d("LoginTest", "${it.javaClass.simpleName} ${it.data}")
             when (it) {
                 is ApiResult.Loading -> {}
-                is ApiResult.Success -> {}
+                is ApiResult.Success -> {
+                    /*
+                    TODO 회원가입 여부 전달
+                    setFragmentResult(isNeedSignUp = ?? )
+                     */
+                }
+
                 is ApiResult.Error -> {}
             }
+        }
+    }
+
+    private fun setFragmentResult(isNeedSignUp: Boolean) {
+        val resultKey = arguments?.getString(ARGUMENT_REQUEST_KEY)
+        resultKey?.let {
+            setFragmentResult(it, bundleOf(RESULT_IS_NEED_SIGN_UP_KEY to isNeedSignUp))
         }
     }
 

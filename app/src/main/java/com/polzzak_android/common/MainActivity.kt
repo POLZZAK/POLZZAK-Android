@@ -76,9 +76,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
             this
         ) { _, bundle ->
             closeFragment()
-
+            val isNeedSignUp = bundle.getBoolean(LoginFragment.RESULT_IS_NEED_SIGN_UP_KEY, false)
+            if (isNeedSignUp) {
+                //TODO 회원가입으로 이동
+            } else {
+                //TODO 메인페이지로 이동
+            }
         }
     }
+
     private fun openLoginFragment() {
         val loginFragment = LoginFragment.newInstance(requestKey = LOGIN_FRAGMENT_REQUEST_KEY)
         openFragment(loginFragment)
