@@ -14,6 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseActivity
+import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.login.LoginFragment
 import com.polzzak_android.presentation.splash.SplashFragment
@@ -27,6 +28,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
     private var resultLauncher: ActivityResultLauncher<Intent>? = null
 
     private val mainViewModel by viewModels<MainViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initFragmentResultListener()
@@ -55,7 +57,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
                     val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                     val account = task.getResult(ApiException::class.java)
                     val id = account?.id
-                    id?.let { mainViewModel.setGoogleLoginResult(id = it) }
+                    id?.let {
+                        mainViewModel.requestLogin(
+                            id = it,
+                            loginType = SocialLoginType.GOOGLE
+                        )
+                    }
                 }
             }
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
@@ -110,7 +117,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
     override fun requestLoginKakao() {
         //TODO 카카오 로그인 구현
     }
-
 
     companion object {
         private const val SPLASH_FRAGMENT_REQUEST_KEY = "splash_fragment_request_key"

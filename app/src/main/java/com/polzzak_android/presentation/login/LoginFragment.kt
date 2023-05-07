@@ -1,12 +1,13 @@
 package com.polzzak_android.presentation.login
 
+import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.polzzak_android.R
 import com.polzzak_android.common.MainViewModel
 import com.polzzak_android.common.base.BaseFragment
 import com.polzzak_android.common.ext.getSocialLoginManager
-import com.polzzak_android.common.liveData.SingleEventObserver
+import com.polzzak_android.common.model.ApiResult
 import com.polzzak_android.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -16,7 +17,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     override val layoutResId = R.layout.fragment_login
 
     private val mainViewModel by viewModels<MainViewModel>(ownerProducer = { requireActivity() })
-    private val loginViewModel by viewModels<LoginViewModel>()
 
     override fun initView() {
         super.initView()
@@ -30,8 +30,15 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     override fun initObserver() {
         super.initObserver()
-        mainViewModel.socialLoginResult.observe(viewLifecycleOwner, SingleEventObserver {
-        })
+        mainViewModel.userInfoLiveData.observe(viewLifecycleOwner) {
+            //TODO api 반환값 처리
+            Log.d("LoginTest", "${it.javaClass.simpleName} ${it.data}")
+            when (it) {
+                is ApiResult.Loading -> {}
+                is ApiResult.Success -> {}
+                is ApiResult.Error -> {}
+            }
+        }
     }
 
     companion object {
