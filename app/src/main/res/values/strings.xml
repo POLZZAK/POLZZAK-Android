@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">POLZZAK_android</string>
+
+    <!-- 바텀 네비게이션 메인 메뉴 -->
+    <string name="menu_main">메인</string>
+    <string name="menu_coupon">쿠폰</string>
+    <string name="menu_alarm">알림</string>
+    <string name="menu_mypage">마이페이지</string>
 </resources>

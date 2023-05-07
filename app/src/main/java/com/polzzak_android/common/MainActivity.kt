@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseActivity
 import com.polzzak_android.databinding.ActivityMainBinding
@@ -21,6 +22,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         // set navigation
         val navHostFragment = supportFragmentManager.findFragmentById(binding.fcvContainer.id) as NavHostFragment
         navController = navHostFragment.navController
+
+        // set bottom nav
+        val btmNav = binding.btmNav
+        btmNav.setupWithNavController(navController)
     }
 
     override fun onSupportNavigateUp(): Boolean {
