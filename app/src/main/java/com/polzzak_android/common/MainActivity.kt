@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -17,8 +18,6 @@ import com.polzzak_android.common.base.BaseActivity
 import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.login.LoginFragment
-import com.polzzak_android.presentation.splash.SplashFragment
-import com.polzzak_android.presentation.splash.SplashFragment.Companion.RESULT_TERMINATE_KEY
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,10 +29,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
     private val mainViewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
-        initFragmentResultListener()
+        initLoginFragmentResultListener()
         initGoogleLogin()
-        openSplashFragment()
+        openLoginFragment()
     }
 
     override fun openFragment(fragment: Fragment) {
@@ -70,24 +70,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
     }
 
-    private fun initFragmentResultListener() {
-        initSplashFragmentResultListener()
-        initLoginFragmentResultListener()
-    }
-
-    private fun initSplashFragmentResultListener() {
-        supportFragmentManager.setFragmentResultListener(
-            SPLASH_FRAGMENT_REQUEST_KEY,
-            this
-        ) { _, bundle ->
-            closeFragment()
-            val terminateValue = bundle.getBoolean(RESULT_TERMINATE_KEY, false)
-            if (terminateValue) {
-                openLoginFragment()
-            }
-        }
-    }
-
     private fun initLoginFragmentResultListener() {
         supportFragmentManager.setFragmentResultListener(
             LOGIN_FRAGMENT_REQUEST_KEY,
@@ -97,12 +79,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
 
         }
     }
-
-    private fun openSplashFragment() {
-        val splashFragment = SplashFragment.newInstance(requestKey = SPLASH_FRAGMENT_REQUEST_KEY)
-        openFragment(splashFragment)
-    }
-
     private fun openLoginFragment() {
         val loginFragment = LoginFragment.newInstance(requestKey = LOGIN_FRAGMENT_REQUEST_KEY)
         openFragment(loginFragment)
@@ -125,7 +101,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
     }
 
     companion object {
-        private const val SPLASH_FRAGMENT_REQUEST_KEY = "splash_fragment_request_key"
         private const val LOGIN_FRAGMENT_REQUEST_KEY = "login_fragment_request_key"
     }
 
