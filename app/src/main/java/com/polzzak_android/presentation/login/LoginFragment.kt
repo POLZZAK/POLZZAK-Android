@@ -58,7 +58,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     companion object {
         private const val ARGUMENT_REQUEST_KEY = "argument_request_key"
 
-        const val RESULT_IS_NEED_SIGN_UP_KEY = "result_terminate_key"
+        const val RESULT_IS_NEED_SIGN_UP_KEY = "result_is_need_sign_up_key"
         fun newInstance(requestKey: String) = LoginFragment().apply {
             arguments = bundleOf(ARGUMENT_REQUEST_KEY to requestKey)
         }
