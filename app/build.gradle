@@ -53,6 +53,9 @@ dependencies {
 
     //ext
     implementation 'androidx.fragment:fragment-ktx:1.5.7'
+
+    //google login
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
 }
 
 kapt {

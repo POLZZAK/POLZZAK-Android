@@ -3,37 +3,35 @@ package com.polzzak_android.presentation.login
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import com.polzzak_android.R
+import com.polzzak_android.common.MainViewModel
 import com.polzzak_android.common.base.BaseFragment
+import com.polzzak_android.common.ext.getSocialLoginManager
+import com.polzzak_android.common.liveData.SingleEventObserver
 import com.polzzak_android.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
 
+//TODO google login release keystore 추가(현재 debug keystore만 사용 중)
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     override val layoutResId = R.layout.fragment_login
 
+    private val mainViewModel by viewModels<MainViewModel>(ownerProducer = { requireActivity() })
     private val loginViewModel by viewModels<LoginViewModel>()
 
     override fun initView() {
         super.initView()
         binding.tvBtnStartGoogle.setOnClickListener {
-            loginGoogle()
+            getSocialLoginManager()?.requestLoginGoogle()
         }
         binding.tvBtnStartKakao.setOnClickListener {
-            loginKakao()
+            getSocialLoginManager()?.requestLoginKakao()
         }
-    }
-
-    private fun loginGoogle() {
-
-    }
-
-    private fun loginKakao() {
-
     }
 
     override fun initObserver() {
         super.initObserver()
-
+        mainViewModel.socialLoginResult.observe(viewLifecycleOwner, SingleEventObserver {
+        })
     }
 
     companion object {
