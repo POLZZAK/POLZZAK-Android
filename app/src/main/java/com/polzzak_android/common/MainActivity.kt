@@ -13,6 +13,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseActivity
 import com.polzzak_android.common.model.SocialLoginType
@@ -28,12 +31,27 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
 
     private val mainViewModel by viewModels<MainViewModel>()
 
+    private lateinit var navController: NavController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+
+        // set navigation
+        val navHostFragment = supportFragmentManager.findFragmentById(binding.fcvContainer.id) as NavHostFragment
+        navController = navHostFragment.navController
+
+        // set bottom nav
+        val btmNav = binding.btmNav
+        btmNav.setupWithNavController(navController)
+
         initLoginFragmentResultListener()
         initGoogleLogin()
         openLoginFragment()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
     override fun openFragment(fragment: Fragment) {
