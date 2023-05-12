@@ -63,6 +63,9 @@ dependencies {
     // navigation
     implementation "androidx.navigation:navigation-fragment-ktx:2.5.3"
     implementation "androidx.navigation:navigation-ui-ktx:2.5.3"
+
+    //kakao login
+    implementation "com.kakao.sdk:v2-user:2.13.0"
 }
 
 kapt {
