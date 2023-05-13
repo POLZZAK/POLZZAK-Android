@@ -3,19 +3,27 @@ package com.polzzak_android.common
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.navigation.NavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
+import com.kakao.sdk.user.model.User
+import com.polzzak_android.BuildConfig
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseActivity
 import com.polzzak_android.common.model.SocialLoginType
@@ -38,7 +46,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
         super.onCreate(savedInstanceState)
 
         // set navigation
-        val navHostFragment = supportFragmentManager.findFragmentById(binding.fcvContainer.id) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(binding.fcvContainer.id) as NavHostFragment
         navController = navHostFragment.navController
 
         // set bottom nav
@@ -47,6 +56,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
 
         initLoginFragmentResultListener()
         initGoogleLogin()
+        initKakaoLogin()
         openLoginFragment()
     }
 
@@ -88,6 +98,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
     }
 
+    private fun initKakaoLogin() {
+        KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY)
+    }
+
     private fun initLoginFragmentResultListener() {
         supportFragmentManager.setFragmentResultListener(
             LOGIN_FRAGMENT_REQUEST_KEY,
@@ -121,7 +135,55 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
     }
 
     override fun requestLoginKakao() {
-        //TODO 카카오 로그인 구현
+        //TODO 로그인 기능 정리하여 파일 이동
+        with(UserApiClient.instance) {
+//            logout{
+//                me(callback = kakaoLoginSuccessCallback)
+//                Log.d("MainActivity","logout : $it")
+//            }
+
+//            unlink{
+//                me(callback = kakaoLoginSuccessCallback)
+//                Log.d("MainActivity","unlink : $it")
+//            }
+
+            val kakaoLoginSuccessCallback: (User?, Throwable?) -> Unit = { user, error ->
+                Log.d("MainActivity", "유저 id : ${user?.id}")
+                //TODO 로그인 성공 콜백 구현
+            }
+            val kakaoLoginCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+                if (error != null) {
+                    Log.e("MainActivity", "카카오로 로그인 실패", error)
+                } else if (token != null) {
+                    Log.i("MainActivity", "카카오로 로그인 성공 ${token.accessToken}")
+                    me(callback = kakaoLoginSuccessCallback)
+                }
+            }
+            val kakaoTalkLoginCallback: (OAuthToken?, Throwable?) -> Unit =
+                kakaoTalkLoginCallback@{ token, error ->
+                    if (error != null) {
+                        Log.e("MainActivity", "카카오톡 계정으로 로그인 실패", error)
+                        // 사용자가 카카오톡 설치 후 디바이스 권한 요청 화면에서 로그인을 취소한 경우,
+                        // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
+                        if (error is ClientError && error.reason == ClientErrorCause.Cancelled) return@kakaoTalkLoginCallback
+                        loginWithKakaoAccount(this@MainActivity, callback = kakaoLoginCallback)
+                    } else if (token != null) {
+                        Log.i(
+                            "MainActivity",
+                            "카카오톡 계정으로 로그인 성공 ${token.accessToken}"
+                        )
+                        me(callback = kakaoLoginSuccessCallback)
+                    }
+                }
+
+            if (isKakaoTalkLoginAvailable(this@MainActivity)) {
+                //카카오톡으로 로그인
+                loginWithKakaoTalk(this@MainActivity, callback = kakaoTalkLoginCallback)
+            } else {
+                //카카오계정으로 로그인
+                loginWithKakaoAccount(this@MainActivity, callback = kakaoLoginCallback)
+            }
+        }
     }
 
     companion object {
