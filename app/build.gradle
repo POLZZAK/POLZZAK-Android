@@ -24,6 +24,8 @@ android {
         manifestPlaceholders = [KAKAO_NATIVE_APP_KEY: kakao_native_app_key]
 
         buildConfigField "String", "KAKAO_NATIVE_APP_KEY", "\"" + kakao_native_app_key + "\""
+        buildConfigField "String", "GOOGLE_WEB_APPLICATION_CLIENT_ID", "\"" + properties.getProperty('GOOGLE_WEB_APPLICATION_CLIENT_ID') + "\""
+        buildConfigField "String", "GOOGLE_WEB_APPLICATION_CLIENT_PWD", "\"" + properties.getProperty('GOOGLE_WEB_APPLICATION_CLIENT_PWD') + "\""
     }
 
     buildFeatures {
