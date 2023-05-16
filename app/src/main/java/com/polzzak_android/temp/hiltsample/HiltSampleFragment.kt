@@ -14,11 +14,10 @@ class HiltSampleFragment : BaseFragment<FragmentHiltSampleBinding>() {
 
     override fun initView() {
         super.initView()
-        initObserver()
         viewModel.fetchSampleData()
     }
 
-    private fun initObserver() {
+    override fun initObserver() {
         viewModel.sampleLiveData.observe(viewLifecycleOwner) {
             binding.tvTest.text = "$it"
         }
