@@ -8,8 +8,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="blue_500">#59B9FF</color>
-
     <color name="primary_700">#0D7AD3</color>
     <color name="primary_600">#259BEF</color>   <!-- Highlight-->
     <color name="primary">#59B9FF</color>       <!-- primary_500, Default -->
@@ -30,4 +28,6 @@
     <color name="error_500">#FF6F50</color>
     <color name="error_200">#FFDAD1</color>
     <color name="error_100">#FFEEEA</color>
+
+    <color name="blue_500">#59B9FF</color>
 </resources>
