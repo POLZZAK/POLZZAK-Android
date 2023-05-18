@@ -14,7 +14,7 @@ import com.polzzak_android.BuildConfig
 import timber.log.Timber
 
 //TODO 로그아웃 콜백 추가
-class GoogleLoginHelper(private val activity: AppCompatActivity) {
+class GoogleLoginHelper(activity: AppCompatActivity) {
     private var loginSuccessCallback: ((GoogleSignInAccount) -> Unit)? = null
 
     private val mGoogleSignInClient: GoogleSignInClient
@@ -44,12 +44,7 @@ class GoogleLoginHelper(private val activity: AppCompatActivity) {
 
     fun requestLogin() {
         val signInIntent = mGoogleSignInClient.signInIntent
-        val lastAccount = GoogleSignIn.getLastSignedInAccount(activity)
-        lastAccount?.let {
-            loginSuccessCallback?.invoke(it)
-        } ?: run {
-            resultLauncher.launch(signInIntent)
-        }
+        resultLauncher.launch(signInIntent)
     }
 
     fun requestLogout() {

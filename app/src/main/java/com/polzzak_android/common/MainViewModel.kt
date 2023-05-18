@@ -29,13 +29,16 @@ class MainViewModel @Inject constructor(
     fun requestGoogleLogin(id: String, authCode: String) {
         if (loginJob?.isCompleted == false) return
         loginJob = viewModelScope.launch {
-            //TODO 로컬에 저장한 뒤 없을 경우 요청하도록 변경
             val googleOAuthTokensDeferred =
                 async { loginRepository.requestGoogleAccessToken(authCode = authCode) }
             val googleOAuthResponse = googleOAuthTokensDeferred.await()
-            Timber.d("response = ${googleOAuthResponse.body()}")
-
-            requestLogin(id = id, accessToken = "", loginType = SocialLoginType.GOOGLE)
+            val accessToken = googleOAuthResponse.body()?.accessToken
+            accessToken?.let {
+                requestLogin(id = id, accessToken = it, loginType = SocialLoginType.GOOGLE)
+            } ?: run {
+                Timber.d("google access token 발급 실패")
+                //TODO access token 발급 실패 callback
+            }
         }
     }
 
@@ -47,6 +50,7 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun requestLogin(id: String, accessToken: String, loginType: SocialLoginType) {
+        Timber.d("requestLogin : $id $accessToken $loginType")
         _userInfoLiveData.value = ApiResult.Loading()
         delay(3000)
         //TODO 폴짝 서버에 로그인 요청

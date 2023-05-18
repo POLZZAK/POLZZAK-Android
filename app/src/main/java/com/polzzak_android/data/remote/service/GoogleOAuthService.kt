@@ -7,7 +7,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface GoogleOAuthService {
-    @POST("oauth2/v4/token")
+    @POST("/oauth2/v4/token")
     suspend fun requestAccessToken(
         @Body request: GoogleOAuthRequest
     ): Response<GoogleOAuthResponse>
