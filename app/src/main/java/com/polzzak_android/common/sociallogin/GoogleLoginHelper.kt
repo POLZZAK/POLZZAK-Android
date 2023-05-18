@@ -10,18 +10,20 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.polzzak_android.BuildConfig
 import timber.log.Timber
 
 //TODO 로그아웃 콜백 추가
-class GoogleLoginHelper(private val activity: AppCompatActivity) {
+class GoogleLoginHelper(activity: AppCompatActivity) {
+    private var loginSuccessCallback: ((GoogleSignInAccount) -> Unit)? = null
+
     private val mGoogleSignInClient: GoogleSignInClient
-    private var loginSuccessCallback: (GoogleSignInAccount) -> Unit = {}
     private val resultLauncher: ActivityResultLauncher<Intent> =
         activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 val account = task.getResult(ApiException::class.java)
-                loginSuccessCallback.invoke(account)
+                loginSuccessCallback?.invoke(account)
             } else {
                 //TODO 구글 로그인 요청 실패 에러 핸들링
                 Timber.e("구글 로그인 실패 ${result.resultCode}")
@@ -29,8 +31,10 @@ class GoogleLoginHelper(private val activity: AppCompatActivity) {
         }
 
     init {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail()
-            .requestEmail().requestId().build()
+        val gso =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestServerAuthCode(BuildConfig.GOOGLE_WEB_APPLICATION_CLIENT_ID).requestId()
+                .build()
         mGoogleSignInClient = GoogleSignIn.getClient(activity, gso)
     }
 
@@ -40,13 +44,7 @@ class GoogleLoginHelper(private val activity: AppCompatActivity) {
 
     fun requestLogin() {
         val signInIntent = mGoogleSignInClient.signInIntent
-        val lastAccount = GoogleSignIn.getLastSignedInAccount(activity)
-        lastAccount?.let {
-            it.id ?: return@let null
-            loginSuccessCallback.invoke(it)
-        } ?: run {
-            resultLauncher.launch(signInIntent)
-        }
+        resultLauncher.launch(signInIntent)
     }
 
     fun requestLogout() {

@@ -24,6 +24,8 @@ android {
         manifestPlaceholders = [KAKAO_NATIVE_APP_KEY: kakao_native_app_key]
 
         buildConfigField "String", "KAKAO_NATIVE_APP_KEY", "\"" + kakao_native_app_key + "\""
+        buildConfigField "String", "GOOGLE_WEB_APPLICATION_CLIENT_ID", "\"" + properties.getProperty('GOOGLE_WEB_APPLICATION_CLIENT_ID') + "\""
+        buildConfigField "String", "GOOGLE_WEB_APPLICATION_CLIENT_PWD", "\"" + properties.getProperty('GOOGLE_WEB_APPLICATION_CLIENT_PWD') + "\""
     }
 
     buildFeatures {
@@ -77,6 +79,12 @@ dependencies {
 
     //Timber
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    //retrofit2
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
+    //Gson
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 }
 
 kapt {

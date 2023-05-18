@@ -10,9 +10,9 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseActivity
-import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.common.sociallogin.GoogleLoginHelper
 import com.polzzak_android.common.sociallogin.KakaoLoginHelper
+import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,21 +65,22 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
     private fun initLoginHelper() {
         googleLoginHelper = GoogleLoginHelper(activity = this).apply {
             setLoginSuccessCallback {
-                it.id?.let { id ->
-                    mainViewModel.requestLogin(
-                        id = id,
-                        loginType = SocialLoginType.GOOGLE
-                    )
+                safeLet(it.id, it.serverAuthCode) { id, authCode ->
+                    mainViewModel.requestGoogleLogin(id = id, authCode = authCode)
+                } ?: run {
+                    //TODO id값, authcode가 안내려온 경우
                 }
             }
         }
         kakaoLoginHelper = KakaoLoginHelper(context = this).apply {
-            setLoginSuccessCallback {
-                it.id?.let { id ->
-                    mainViewModel.requestLogin(
-                        id.toString(),
-                        loginType = SocialLoginType.KAKAO
+            setLoginSuccessCallback { user, token ->
+                user.id?.let { id ->
+                    mainViewModel.requestKakaoLogin(
+                        id = id.toString(),
+                        accessToken = token.accessToken
                     )
+                } ?: run {
+                    //TODO id값이 안내려온 경우
                 }
             }
         }

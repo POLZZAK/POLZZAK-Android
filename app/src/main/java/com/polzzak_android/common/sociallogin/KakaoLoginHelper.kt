@@ -10,26 +10,33 @@ import timber.log.Timber
 
 //TODO 로그아웃 콜백 추가
 class KakaoLoginHelper(private val context: Context) {
-    private var loginSuccessCallback: (User) -> Unit = {}
+    private var loginSuccessCallback: ((user: User, token: OAuthToken) -> Unit)? = null
 
-    fun setLoginSuccessCallback(callback: (User) -> Unit) {
+    fun setLoginSuccessCallback(callback: (user: User, token: OAuthToken) -> Unit) {
         loginSuccessCallback = callback
     }
 
     fun requestLogin() {
         with(UserApiClient.instance) {
-            val kakaoLoginSuccessCallback: (User?, Throwable?) -> Unit = { user, error ->
-                if (error == null) user?.let { loginSuccessCallback(it) }
-                else {
-                    //TODO 유저정보 요청 에러 핸들링
-                    Timber.e("카카오 유저 정보 요청 실패 $error")
+            val kakaoLoginSuccessCallback: (User?, Throwable?, OAuthToken) -> Unit =
+                { user, error, token ->
+                    if (error == null) user?.let { loginSuccessCallback?.invoke(it, token) }
+                    else {
+                        //TODO 유저정보 요청 에러 핸들링
+                        Timber.e("카카오 유저 정보 요청 실패 $error")
+                    }
                 }
-            }
             val kakaoLoginCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
                 if (error != null) {
                     //TODO 카카오 로그인 실패 에러 핸들링
                     Timber.e("카카오로 로그인 실패 $error")
-                } else if (token != null) me(callback = kakaoLoginSuccessCallback)
+                } else if (token != null) me(callback = { user, userError ->
+                    kakaoLoginSuccessCallback(
+                        user,
+                        userError,
+                        token
+                    )
+                })
 
             }
             val kakaoTalkLoginCallback: (OAuthToken?, Throwable?) -> Unit =
@@ -46,7 +53,13 @@ class KakaoLoginHelper(private val context: Context) {
                         loginWithKakaoAccount(context, callback = kakaoLoginCallback)
                     } else if (token != null) {
                         Timber.i("카카오톡 계정으로 로그인 성공")
-                        me(callback = kakaoLoginSuccessCallback)
+                        me(callback = { user, userError ->
+                            kakaoLoginSuccessCallback(
+                                user,
+                                userError,
+                                token
+                            )
+                        })
                     }
                 }
 
