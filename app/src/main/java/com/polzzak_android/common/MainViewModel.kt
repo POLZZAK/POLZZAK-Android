@@ -7,11 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.model.ApiResult
 import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.common.model.UserInfo
+import com.polzzak_android.common.util.toApiResult
+import com.polzzak_android.presentation.login.model.LoginConvertor.toLoginInfoUiModel
+import com.polzzak_android.presentation.login.model.LoginInfoUiModel
 import com.polzzak_android.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -19,8 +21,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
-) :
-    ViewModel() {
+) : ViewModel() {
+    private val _loginInfoLiveData = MutableLiveData<ApiResult<LoginInfoUiModel>>()
+    val loginInfoLiveData: LiveData<ApiResult<LoginInfoUiModel>> = _loginInfoLiveData
+
     private val _userInfoLiveData = MutableLiveData<ApiResult<UserInfo>>()
     val userInfoLiveData: LiveData<ApiResult<UserInfo>> = _userInfoLiveData
 
@@ -50,11 +54,11 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun requestLogin(accessToken: String, loginType: SocialLoginType) {
-        _userInfoLiveData.value = ApiResult.Loading()
-        delay(3000)
-        //TODO 폴짝 서버에 로그인 요청
-        loginRepository.requestLogin(accessToken = accessToken, loginType = loginType).let{response->
-            Timber.d("${response.errorBody()?.string()}")
-        }
+        _loginInfoLiveData.value = ApiResult.Loading()
+
+        val response =
+            loginRepository.requestLogin(accessToken = accessToken, loginType = loginType)
+        _loginInfoLiveData.value =
+            response.toApiResult { loginResponse -> loginResponse?.data?.toLoginInfoUiModel() }
     }
 }
