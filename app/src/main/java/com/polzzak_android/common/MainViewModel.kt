@@ -26,7 +26,7 @@ class MainViewModel @Inject constructor(
 
     private var loginJob: Job? = null
 
-    fun requestGoogleLogin(id: String, authCode: String) {
+    fun requestGoogleLogin(authCode: String) {
         if (loginJob?.isCompleted == false) return
         loginJob = viewModelScope.launch {
             val googleOAuthTokensDeferred =
@@ -34,7 +34,7 @@ class MainViewModel @Inject constructor(
             val googleOAuthResponse = googleOAuthTokensDeferred.await()
             val accessToken = googleOAuthResponse.body()?.accessToken
             accessToken?.let {
-                requestLogin(id = id, accessToken = it, loginType = SocialLoginType.GOOGLE)
+                requestLogin(accessToken = it, loginType = SocialLoginType.GOOGLE)
             } ?: run {
                 Timber.d("google access token 발급 실패")
                 //TODO access token 발급 실패 callback
@@ -42,17 +42,19 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun requestKakaoLogin(id: String, accessToken: String) {
+    fun requestKakaoLogin(accessToken: String) {
         if (loginJob?.isCompleted == false) return
         loginJob = viewModelScope.launch {
-            requestLogin(id = id, accessToken = accessToken, loginType = SocialLoginType.KAKAO)
+            requestLogin(accessToken = accessToken, loginType = SocialLoginType.KAKAO)
         }
     }
 
-    private suspend fun requestLogin(id: String, accessToken: String, loginType: SocialLoginType) {
-        Timber.d("requestLogin : $id $accessToken $loginType")
+    private suspend fun requestLogin(accessToken: String, loginType: SocialLoginType) {
         _userInfoLiveData.value = ApiResult.Loading()
         delay(3000)
         //TODO 폴짝 서버에 로그인 요청
+        loginRepository.requestLogin(accessToken = accessToken, loginType = loginType).let{response->
+            Timber.d("${response.errorBody()?.string()}")
+        }
     }
 }

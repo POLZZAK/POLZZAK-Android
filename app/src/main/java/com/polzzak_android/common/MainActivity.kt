@@ -12,7 +12,6 @@ import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseActivity
 import com.polzzak_android.common.sociallogin.GoogleLoginHelper
 import com.polzzak_android.common.sociallogin.KakaoLoginHelper
-import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,23 +64,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
     private fun initLoginHelper() {
         googleLoginHelper = GoogleLoginHelper(activity = this).apply {
             setLoginSuccessCallback {
-                safeLet(it.id, it.serverAuthCode) { id, authCode ->
-                    mainViewModel.requestGoogleLogin(id = id, authCode = authCode)
+                it.serverAuthCode?.let { authCode ->
+                    mainViewModel.requestGoogleLogin(authCode = authCode)
                 } ?: run {
                     //TODO id값, authcode가 안내려온 경우
                 }
             }
         }
         kakaoLoginHelper = KakaoLoginHelper(context = this).apply {
-            setLoginSuccessCallback { user, token ->
-                user.id?.let { id ->
-                    mainViewModel.requestKakaoLogin(
-                        id = id.toString(),
-                        accessToken = token.accessToken
-                    )
-                } ?: run {
-                    //TODO id값이 안내려온 경우
-                }
+            setLoginSuccessCallback { token ->
+                mainViewModel.requestKakaoLogin(accessToken = token.accessToken)
             }
         }
     }
