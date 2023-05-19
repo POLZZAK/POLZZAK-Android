@@ -47,11 +47,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
+    @Deprecated("네비게이션 컴포넌트 적용")
     override fun openFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(binding.fcvContainer.id, fragment)
             .addToBackStack(null).commit()
     }
 
+    @Deprecated("네비게이션 컴포넌트 적용")
     override fun closeFragment() {
         supportFragmentManager.popBackStack()
     }
