@@ -2,7 +2,6 @@ package com.polzzak_android.repository
 
 import com.polzzak_android.BuildConfig
 import com.polzzak_android.common.model.SocialLoginType
-import com.polzzak_android.common.model.UserInfo
 import com.polzzak_android.data.remote.model.request.GoogleOAuthRequest
 import com.polzzak_android.data.remote.model.request.LoginRequest
 import com.polzzak_android.data.remote.model.response.GoogleOAuthResponse
@@ -42,5 +41,3 @@ class LoginRepository @Inject constructor(
         SocialLoginType.GOOGLE -> "google"
     }
 }
-
-private val mockData = UserInfo(nickName = "test1", userType = "google", profileUrl = null)
