@@ -6,4 +6,7 @@
     <string name="menu_coupon">쿠폰</string>
     <string name="menu_alarm">알림</string>
     <string name="menu_mypage">마이페이지</string>
+
+    <!-- 뷰페이저 indicator -->
+    <string name="viewpager_indicator"> / %1$d</string>
 </resources>
