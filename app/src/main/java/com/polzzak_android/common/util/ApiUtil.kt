@@ -11,10 +11,10 @@ fun <T, R> ApiResult<T>.map(trans: (T?) -> R) = when (this) {
     is ApiResult.Error -> ApiResult.Error(data = trans(data), statusCode = statusCode, code = code)
 }
 
-inline fun <D, reified T : BaseResponse<D>, R> Response<T>.toApiResult(mapper: (T?) -> R? = { null }): ApiResult<R> {
+inline fun <D, reified T : BaseResponse<D>, R> Response<T>.toApiResult(mapper: (D?) -> R? = { null }): ApiResult<R> {
     val data =
         if (this.isSuccessful) body() else Gson().fromJson(errorBody()?.string(), T::class.java)
-    val rData = mapper(data)
+    val rData = mapper(data?.data)
     return if (code() in (200..399)) ApiResult.Success(
         data = rData,
     )

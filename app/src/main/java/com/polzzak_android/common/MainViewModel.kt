@@ -59,6 +59,6 @@ class MainViewModel @Inject constructor(
         val response =
             loginRepository.requestLogin(accessToken = accessToken, loginType = loginType)
         _loginInfoLiveData.value =
-            response.toApiResult { loginResponse -> loginResponse?.data?.toLoginInfoUiModel() }
+            response.toApiResult { loginResponse -> loginResponse?.toLoginInfoUiModel() }
     }
 }
