@@ -6,7 +6,7 @@
 
         <variable
             name="stampViewModel"
-            type="com.polzzak_android.presentation.main.StampViewModel" />
+            type="com.polzzak_android.presentation.main.protector.StampViewModel" />
     </data>
 
     <androidx.core.widget.NestedScrollView

@@ -1,12 +1,13 @@
-package com.polzzak_android.presentation.main.progress
+package com.polzzak_android.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampProgressBinding
-import com.polzzak_android.presentation.main.model.StampBoardSummary
+import com.polzzak_android.presentation.main.protector.model.StampBoardSummary
+import com.polzzak_android.presentation.main.protector.progress.ProgressInteraction
 
-class PagerAdapter(
+class MainStampPagerAdapter(
     private val dummy: List<StampBoardSummary>,
     private val interaction: ProgressInteraction
 ) :

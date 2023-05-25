@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.coupon
+package com.polzzak_android.presentation.coupon.protector
 
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseFragment

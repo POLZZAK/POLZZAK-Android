@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.model.ApiResult
 import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.common.model.UserInfo
-import com.polzzak_android.repository.LoginRepository
+import com.polzzak_android.data.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.main.progress
+package com.polzzak_android.presentation.main.protector.progress
 
 import android.graphics.Rect
 import android.view.View
@@ -11,18 +11,20 @@ import androidx.viewpager2.widget.ViewPager2
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseFragment
 import com.polzzak_android.databinding.FragmentProgressBinding
-import com.polzzak_android.presentation.main.StampViewModel
-import com.polzzak_android.presentation.main.model.Partner
-import com.polzzak_android.presentation.main.model.StampBoard
-import com.polzzak_android.presentation.main.model.StampBoardSummary
-import com.polzzak_android.presentation.widget.SelectUserFilterFragment
-import com.polzzak_android.presentation.widget.SemiCircleProgressView
+import com.polzzak_android.presentation.adapter.MainStampAdapter
+import com.polzzak_android.presentation.adapter.MainStampPagerAdapter
+import com.polzzak_android.presentation.main.protector.StampViewModel
+import com.polzzak_android.presentation.main.protector.model.Partner
+import com.polzzak_android.presentation.main.protector.model.StampBoard
+import com.polzzak_android.presentation.main.protector.model.StampBoardSummary
+import com.polzzak_android.presentation.component.SelectUserFilterFragment
+import com.polzzak_android.presentation.component.SemiCircleProgressView
 
 class ProgressFragment : BaseFragment<FragmentProgressBinding>(), ProgressInteraction {
     override val layoutResId: Int = R.layout.fragment_progress
 
-    private lateinit var rvAdapter: StampAdapter
-    private lateinit var vpAdapter: PagerAdapter
+    private lateinit var rvAdapter: MainStampAdapter
+    private lateinit var vpAdapter: MainStampPagerAdapter
     private val stampViewModel: StampViewModel by activityViewModels()
 
     override fun initView() {
@@ -107,14 +109,14 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding>(), ProgressIntera
             )
         )
 
-        rvAdapter = StampAdapter(dummy, this)
+        rvAdapter = MainStampAdapter(dummy, this)
         binding.stampListRc.adapter = rvAdapter
         binding.stampListRc.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
     override fun setViewPager(view: ViewPager2, curInd: TextView, totalInd: TextView, stampList: List<StampBoardSummary>) {
         // adapter
-        vpAdapter = PagerAdapter(stampList, this)
+        vpAdapter = MainStampPagerAdapter(stampList, this)
         view.adapter = vpAdapter
 
         // indicator

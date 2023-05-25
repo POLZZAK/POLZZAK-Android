@@ -3,7 +3,7 @@ package com.polzzak_android.data.remote
 import com.polzzak_android.BuildConfig
 import com.polzzak_android.data.remote.service.GoogleOAuthService
 import com.polzzak_android.data.remote.service.LoginService
-import com.polzzak_android.repository.LoginRepository
+import com.polzzak_android.data.repository.LoginRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

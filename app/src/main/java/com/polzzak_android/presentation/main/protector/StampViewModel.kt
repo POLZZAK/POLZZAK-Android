@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.main
+package com.polzzak_android.presentation.main.protector
 
 import androidx.lifecycle.ViewModel
 

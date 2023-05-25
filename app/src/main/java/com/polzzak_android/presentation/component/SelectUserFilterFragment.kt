@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.widget
+package com.polzzak_android.presentation.component
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,9 +8,8 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.polzzak_android.databinding.FragmentSelectUserFilterBinding
-import com.polzzak_android.presentation.main.progress.SelectUserAdapter
-import com.polzzak_android.presentation.main.progress.SelectUserInteraction
-import com.polzzak_android.presentation.main.progress.StampAdapter
+import com.polzzak_android.presentation.adapter.MainSelectUserAdapter
+import com.polzzak_android.presentation.main.protector.progress.SelectUserInteraction
 
 class SelectUserFilterFragment : BottomSheetDialogFragment(), SelectUserInteraction {
 
@@ -18,7 +17,7 @@ class SelectUserFilterFragment : BottomSheetDialogFragment(), SelectUserInteract
     private var _binding: FragmentSelectUserFilterBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var rvAdapter: SelectUserAdapter
+    private lateinit var rvAdapter: MainSelectUserAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,7 +39,7 @@ class SelectUserFilterFragment : BottomSheetDialogFragment(), SelectUserInteract
             "test1"
         )
 
-        rvAdapter = SelectUserAdapter(dummy, this)
+        rvAdapter = MainSelectUserAdapter(dummy, this)
         binding.userSelectModalRc.adapter = rvAdapter
         binding.userSelectModalRc.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)

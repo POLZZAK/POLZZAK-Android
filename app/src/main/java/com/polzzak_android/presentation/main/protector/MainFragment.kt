@@ -1,12 +1,12 @@
-package com.polzzak_android.presentation.main
+package com.polzzak_android.presentation.main.protector
 
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseFragment
 import com.polzzak_android.databinding.FragmentMainBinding
-import com.polzzak_android.presentation.main.completed.CompletedFragment
-import com.polzzak_android.presentation.main.progress.ProgressFragment
+import com.polzzak_android.presentation.main.protector.completed.CompletedFragment
+import com.polzzak_android.presentation.main.protector.progress.ProgressFragment
 
 class MainFragment : BaseFragment<FragmentMainBinding>() {
     override val layoutResId: Int = R.layout.fragment_main

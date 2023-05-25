@@ -1,11 +1,12 @@
-package com.polzzak_android.presentation.main.progress
+package com.polzzak_android.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemSelectUserFilterBinding
+import com.polzzak_android.presentation.main.protector.progress.SelectUserInteraction
 
-class SelectUserAdapter(
+class MainSelectUserAdapter(
     private val dummy: List<String>,
     private val interaction: SelectUserInteraction
 ) :

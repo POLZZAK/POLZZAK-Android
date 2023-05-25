@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.alarm
+package com.polzzak_android.presentation.notification.protector
 
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseFragment

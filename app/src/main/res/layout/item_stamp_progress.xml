@@ -32,7 +32,7 @@
                 app:layout_constraintTop_toTopOf="@id/stampNickName" />
 
             <!-- 도장판 진척도 -->
-            <com.polzzak_android.presentation.widget.SemiCircleProgressView
+            <com.polzzak_android.presentation.component.SemiCircleProgressView
                 android:id="@+id/stampProgress"
                 android:layout_width="240dp"
                 android:layout_height="240dp"

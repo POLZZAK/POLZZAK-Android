@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.main.progress
+package com.polzzak_android.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -7,9 +7,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampNonBinding
 import com.polzzak_android.databinding.ItemStampYesBinding
-import com.polzzak_android.presentation.main.model.StampBoard
+import com.polzzak_android.presentation.main.protector.model.StampBoard
+import com.polzzak_android.presentation.main.protector.progress.ProgressInteraction
 
-class StampAdapter(private val dummy: List<StampBoard>, private val interaction: ProgressInteraction) :
+class MainStampAdapter(private val dummy: List<StampBoard>, private val interaction: ProgressInteraction) :
     ListAdapter<StampBoard, RecyclerView.ViewHolder>(DiffCallback) {
 
     private var stampList = dummy

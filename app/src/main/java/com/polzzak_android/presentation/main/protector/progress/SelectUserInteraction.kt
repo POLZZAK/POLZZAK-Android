@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.main.progress
+package com.polzzak_android.presentation.main.protector.progress
 
 
 interface SelectUserInteraction {

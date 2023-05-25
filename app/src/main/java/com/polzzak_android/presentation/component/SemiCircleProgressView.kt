@@ -1,9 +1,8 @@
-package com.polzzak_android.presentation.widget
+package com.polzzak_android.presentation.component
 
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
