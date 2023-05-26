@@ -147,25 +147,6 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), Progr
                 curInd.invalidate()
             }
         })
-
-        // transform
-        val currentVisibleItemPx = 50
-
-        view.addItemDecoration(object: RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                outRect.right = currentVisibleItemPx
-                outRect.left = currentVisibleItemPx
-            }
-        })
-
-        val nextVisibleItemPx = 20
-        val pageTranslationX = nextVisibleItemPx + currentVisibleItemPx
-
-        view.offscreenPageLimit = 1
-
-        view.setPageTransformer { page, position ->
-            page.translationX = -pageTranslationX * (position)
-        }
     }
 
     override fun onStampPagerClicked(stampBoardItem: StampBoardSummary) {
