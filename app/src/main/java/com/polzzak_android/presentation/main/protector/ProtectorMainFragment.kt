@@ -8,7 +8,7 @@ import com.polzzak_android.databinding.FragmentMainBinding
 import com.polzzak_android.presentation.main.protector.completed.CompletedFragment
 import com.polzzak_android.presentation.main.protector.progress.ProgressFragment
 
-class MainFragment : BaseFragment<FragmentMainBinding>() {
+class ProtectorMainFragment : BaseFragment<FragmentMainBinding>() {
     override val layoutResId: Int = R.layout.fragment_main
 
     private val progressFragment = ProgressFragment()

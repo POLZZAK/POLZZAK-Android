@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/protector_nav_graph"
+    app:startDestination="@id/protectorMainFragment">
+
+    <fragment
+        android:id="@+id/protectorMainFragment"
+        android:name="com.polzzak_android.presentation.main.protector.ProtectorMainFragment"
+        android:label="ProtectorMainFragment"
+        tools:layout="@layout/fragment_main"/>
+    <fragment
+        android:id="@+id/protectorCouponFragment"
+        android:name="com.polzzak_android.presentation.coupon.protector.ProtectorCouponFragment"
+        android:label="ProtectorCouponFragment"
+        tools:layout="@layout/fragment_coupon"/>
+    <fragment
+        android:id="@+id/protectorNotificationFragment"
+        android:name="com.polzzak_android.presentation.notification.protector.ProtectorNotificationFragment"
+        android:label="ProtectorNotificationFragment"
+        tools:layout="@layout/fragment_alarm"/>
+    <fragment
+        android:id="@+id/protectorMyPageFragment"
+        android:name="com.polzzak_android.presentation.myPage.protector.ProtectorMyPageFragment"
+        android:label="ProtectorMyPageFragment"
+        tools:layout="@layout/fragment_my_page"/>
+</navigation>

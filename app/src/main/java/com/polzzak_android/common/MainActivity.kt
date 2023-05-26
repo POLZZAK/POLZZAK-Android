@@ -18,7 +18,8 @@ import com.polzzak_android.presentation.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialLoginManager {
+class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner,
+    SocialLoginManager {
     override val layoutResId: Int = R.layout.activity_main
     private val mainViewModel by viewModels<MainViewModel>()
 
@@ -34,14 +35,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
         val navHostFragment =
             supportFragmentManager.findFragmentById(binding.fcvContainer.id) as NavHostFragment
         navController = navHostFragment.navController
-
-        // set bottom nav
-        val btmNav = binding.btmNav
-        btmNav.setupWithNavController(navController)
-
         initLoginFragmentResultListener()
         initLoginHelper()
-        openLoginFragment()
+        //openLoginFragment()
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -117,5 +113,4 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
     companion object {
         private const val LOGIN_FRAGMENT_REQUEST_KEY = "login_fragment_request_key"
     }
-
 }
