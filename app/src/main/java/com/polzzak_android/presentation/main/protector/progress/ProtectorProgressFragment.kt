@@ -20,12 +20,29 @@ import com.polzzak_android.presentation.main.protector.model.StampBoardSummary
 import com.polzzak_android.presentation.component.SelectUserFilterFragment
 import com.polzzak_android.presentation.component.SemiCircleProgressView
 
-class ProgressFragment : BaseFragment<FragmentProgressBinding>(), ProgressInteraction {
+class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), ProgressInteraction {
+
     override val layoutResId: Int = R.layout.fragment_progress
 
     private lateinit var rvAdapter: MainStampAdapter
     private lateinit var vpAdapter: MainStampPagerAdapter
     private val stampViewModel: StampViewModel by activityViewModels()
+
+    companion object {
+        private var instance: ProtectorProgressFragment? = null
+
+        @JvmStatic
+        fun getInstance(): ProtectorProgressFragment {
+            if (instance == null) {
+                synchronized(ProtectorProgressFragment::class.java) {
+                    if (instance == null) {
+                        instance = ProtectorProgressFragment()
+                    }
+                }
+            }
+            return instance!!
+        }
+    }
 
     override fun initView() {
         super.initView()

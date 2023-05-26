@@ -5,19 +5,19 @@ import com.google.android.material.tabs.TabLayout
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseFragment
 import com.polzzak_android.databinding.FragmentMainBinding
-import com.polzzak_android.presentation.main.protector.completed.CompletedFragment
-import com.polzzak_android.presentation.main.protector.progress.ProgressFragment
+import com.polzzak_android.presentation.main.protector.completed.ProtectorCompletedFragment
+import com.polzzak_android.presentation.main.protector.progress.ProtectorProgressFragment
 
 class ProtectorMainFragment : BaseFragment<FragmentMainBinding>() {
     override val layoutResId: Int = R.layout.fragment_main
 
-    private val progressFragment = ProgressFragment()
-    private val completedFragment = CompletedFragment()
+    private val protectorProgressFragment = ProtectorProgressFragment.getInstance()
+    private val protectorCompletedFragment = ProtectorCompletedFragment.getInstance()
 
     override fun initView() {
         super.initView()
 
-        childFragmentManager.beginTransaction().replace(binding.fragmentContainer.id, progressFragment).commit()
+        childFragmentManager.beginTransaction().replace(binding.fragmentContainer.id, protectorProgressFragment).commit()
         tabListener()
     }
 
@@ -29,10 +29,10 @@ class ProtectorMainFragment : BaseFragment<FragmentMainBinding>() {
 
                 when (position) {
                     0 -> {
-                        selectedFragment = progressFragment
+                        selectedFragment = protectorProgressFragment
                     }
                     1 -> {
-                        selectedFragment = completedFragment
+                        selectedFragment = protectorCompletedFragment
                     }
                 }
 
