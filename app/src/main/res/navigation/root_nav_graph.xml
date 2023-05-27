@@ -22,7 +22,7 @@
 
         <action
             android:id="@+id/action_loginFragment_to_SignUpFragment"
-            app:destination="@+id/signUpFragment" />
+            app:destination="@id/signUpFragment" />
     </fragment>
 
     <fragment
@@ -30,6 +30,7 @@
         android:name="com.polzzak_android.presentation.signup.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="layout/fragment_signUp" />
+
     <fragment
         android:id="@+id/protectorHostFragment"
         android:name="com.polzzak_android.presentation.common.host.ProtectorHostFragment"

@@ -6,9 +6,11 @@ import android.os.Build
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseFragment
@@ -46,6 +48,23 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         initSelectTypeView(binding = binding)
         initSelectParentTypeView(binding = binding)
         initSetNickNameView(binding = binding)
+        addOnBackPressedDispatcher()
+    }
+
+    private fun addOnBackPressedDispatcher() {
+        val backPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val backToPrevPageList = listOf(
+                    SignUpPage.SELECT_PARENT_TYPE,
+                    SignUpPage.SET_NICKNAME,
+                    SignUpPage.SET_PROFILE_IMAGE
+                )
+                val page = signUpViewModel.pageLiveData.value
+                if (backToPrevPageList.contains(page)) signUpViewModel.movePrevPage()
+                else findNavController().popBackStack()
+            }
+        }
+        activity?.onBackPressedDispatcher?.addCallback(this, backPressedCallback)
     }
 
     private fun initSelectTypeView(binding: FragmentSignupBinding) {

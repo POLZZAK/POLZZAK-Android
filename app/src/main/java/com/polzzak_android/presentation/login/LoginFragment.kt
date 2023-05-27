@@ -8,10 +8,10 @@ import com.polzzak_android.common.MainViewModel
 import com.polzzak_android.common.base.BaseFragment
 import com.polzzak_android.common.ext.getSocialLoginManager
 import com.polzzak_android.common.model.ApiResult
+import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentLoginBinding
 import com.polzzak_android.presentation.signup.SignUpFragment
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 //TODO google login release keystore 추가(현재 debug keystore만 사용 중)
 @AndroidEntryPoint
@@ -37,7 +37,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     override fun initObserver() {
         super.initObserver()
-        mainViewModel.loginInfoLiveData.observe(viewLifecycleOwner) {
+        mainViewModel.loginInfoLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
             //TODO api 반환값 처리
             when (it) {
                 is ApiResult.Loading -> {
@@ -49,11 +49,13 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 }
 
                 is ApiResult.Error -> {
-                    Timber.d("${it.data} ${it.code} ${it.statusCode}")
                     if (it.code == 412) {
                         val signUpBundle = Bundle().apply {
                             putString(SignUpFragment.ARGUMENT_USER_ID_KEY, it.data?.userName)
-                            putSerializable(SignUpFragment.ARGUMENT_SOCIAL_LOGIN_TYPE_KEY, it.data?.userType)
+                            putSerializable(
+                                SignUpFragment.ARGUMENT_SOCIAL_LOGIN_TYPE_KEY,
+                                it.data?.userType
+                            )
                         }
                         findNavController().navigate(
                             R.id.action_loginFragment_to_SignUpFragment,
@@ -64,6 +66,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                     }
                 }
             }
-        }
+        })
     }
 }
