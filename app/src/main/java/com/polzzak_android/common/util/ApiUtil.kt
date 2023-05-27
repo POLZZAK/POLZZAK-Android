@@ -15,7 +15,7 @@ inline fun <D, reified T : BaseResponse<D>, R> Response<T>.toApiResult(mapper: (
     val data =
         if (this.isSuccessful) body() else Gson().fromJson(errorBody()?.string(), T::class.java)
     val rData = mapper(data?.data)
-    return if (code() in (200..399)) ApiResult.Success(
+    return if (this.isSuccessful) ApiResult.Success(
         data = rData,
     )
     else ApiResult.Error(data = rData, statusCode = code(), code = data?.code)
