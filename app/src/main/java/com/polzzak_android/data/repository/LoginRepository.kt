@@ -1,4 +1,4 @@
-package com.polzzak_android.repository
+package com.polzzak_android.data.repository
 
 import com.polzzak_android.BuildConfig
 import com.polzzak_android.common.model.SocialLoginType

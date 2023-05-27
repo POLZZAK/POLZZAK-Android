@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 폰트 -->
     <!-- etc -->
     <style name="regular" parent="Widget.AppCompat.TextView">
         <item name="fontFamily">@font/pretendard_regular</item>
@@ -45,8 +46,6 @@
         <item name="fontFamily">@font/pretendard_regular</item>
     </style>
 
-
-
     <!-- body -->
     <style name="body.15.500" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">15sp</item>
@@ -77,5 +76,16 @@
     <style name="caption.12.700" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">12sp</item>
         <item name="fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <!--바텀시트 -->
+    <style name="AppBottomSheetDialogTheme"
+        parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle"
+        parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottom_sheet_modal</item>
     </style>
 </resources>

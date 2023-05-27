@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/mainFragment"
+        android:id="@+id/protectorMainFragment"
         android:title="@string/menu_main" />
     <item
-        android:id="@+id/couponFragment"
+        android:id="@+id/protectorCouponFragment"
         android:title="@string/menu_coupon"/>
 
     <item
-        android:id="@+id/alarmFragment"
+        android:id="@+id/protectorNotificationFragment"
         android:title="@string/menu_alarm"/>
 
     <item
-        android:id="@+id/myPageFragment"
+        android:id="@+id/protectorMyPageFragment"
         android:title="@string/menu_mypage"/>
 </menu>

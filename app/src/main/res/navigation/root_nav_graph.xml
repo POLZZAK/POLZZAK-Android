@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <include app:graph="@navigation/protector_nav_graph" />
+    <include app:graph="@navigation/kid_nav_graph" />
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.polzzak_android.presentation.login.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_protectorHostFragment"
+            app:destination="@id/protectorHostFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_kidHostFragment"
+            app:destination="@id/kidHostFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/protectorHostFragment"
+        android:name="com.polzzak_android.presentation.common.host.ProtectorHostFragment"
+        android:label="fragment_protectort_host"
+        tools:layout="@layout/fragment_protectort_host">
+    </fragment>
+    <fragment
+        android:id="@+id/kidHostFragment"
+        android:name="com.polzzak_android.presentation.common.host.KidHostFragment"
+        android:label="KidHostFragment"
+        tools:layout="@layout/fragment_kid_host" />
+</navigation>

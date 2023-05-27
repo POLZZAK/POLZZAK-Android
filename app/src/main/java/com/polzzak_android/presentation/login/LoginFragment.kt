@@ -3,6 +3,7 @@ package com.polzzak_android.presentation.login
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.common.MainViewModel
 import com.polzzak_android.common.base.BaseFragment
@@ -27,6 +28,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         }
         binding.tvBtnStartKakao.setOnClickListener {
             getSocialLoginManager()?.requestLoginKakao()
+        }
+
+        // todo: 보호자 프래그먼트 이동 임시 나중에 삭제
+        binding.tvHello.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_protectorHostFragment)
         }
     }
 
