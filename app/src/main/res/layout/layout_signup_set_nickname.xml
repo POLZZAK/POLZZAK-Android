@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- TODO 디자인 가이드 적용 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="130dp"
+            android:gravity="start"
+            android:text="닉네임을 설정해주세요"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="14dp"
+            android:text="나중에 수정할 수 있어요!"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+
+        <EditText
+            android:id="@+id/etInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:inputType="text"
+            android:paddingEnd="20dp"
+            app:layout_constraintEnd_toStartOf="@id/tvBtnCheckDuplicated"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvDescription" />
+
+        <ImageView
+            android:id="@+id/ivBtnClearText"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@color/black"
+            app:layout_constraintBottom_toBottomOf="@id/etInput"
+            app:layout_constraintEnd_toEndOf="@id/etInput"
+            app:layout_constraintTop_toTopOf="@id/etInput" />
+
+        <TextView
+            android:id="@+id/tvBtnCheckDuplicated"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginEnd="14dp"
+            android:background="@drawable/bg_signup_set_nickname_btn_check_duplicated"
+            android:gravity="center"
+            android:text="중복 확인"
+            app:layout_constraintBottom_toBottomOf="@id/etInput"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/etInput"
+            app:layout_constraintTop_toTopOf="@id/etInput" />
+
+        <TextView
+            android:id="@+id/tvCheckDuplicatedResult"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvInputLength"
+            app:layout_constraintStart_toStartOf="@id/etInput"
+            app:layout_constraintTop_toBottomOf="@id/etInput"
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="사용 가능한 닉네임이에요" />
+
+        <TextView
+            android:id="@+id/tvInputLength"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="@id/etInput"
+            app:layout_constraintStart_toEndOf="@id/tvCheckDuplicatedResult"
+            app:layout_constraintTop_toTopOf="@id/tvCheckDuplicatedResult"
+            tools:text="1/10" />
+
+        <TextView
+            android:id="@+id/tvBtnAccept"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:text="다음"
+            android:layout_marginBottom="38dp"
+            android:background="@drawable/bg_signup_set_nickname_btn_check_duplicated"
+            android:gravity="center"
+            android:paddingVertical="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCheckDuplicatedResult"
+            app:layout_constraintVertical_bias="1.0"
+            tools:text="다음" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

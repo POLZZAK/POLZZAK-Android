@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- TODO 디자인 가이드 적용, string res로 변경 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- TODO 백버튼, progress 디자인 적용 -->
+        <ImageView
+            android:id="@+id/ivBtnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivProgress1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/ivProgress2"
+            app:layout_constraintEnd_toStartOf="@id/ivProgress2"
+            app:layout_constraintTop_toTopOf="@id/ivProgress2" />
+
+        <ImageView
+            android:id="@+id/ivProgress2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/ivProgress3"
+            app:layout_constraintEnd_toStartOf="@id/ivProgress3"
+            app:layout_constraintTop_toTopOf="@id/ivProgress3" />
+
+        <ImageView
+            android:id="@+id/ivProgress3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/inSelectType"
+            layout="@layout/layout_signup_select_type"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivBtnBack"
+            tools:visibility="gone" />
+
+        <include
+            android:id="@+id/inSelectParentType"
+            layout="@layout/layout_signup_select_parent_type"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivBtnBack"
+            tools:visibility="gone" />
+
+        <include
+            android:id="@+id/inSetNickName"
+            layout="@layout/layout_signup_set_nickname"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivBtnBack"
+            tools:visibility="gone" />
+
+        <include
+            android:id="@+id/inSelectProfileImage"
+            layout="@layout/layout_signup_select_profile_image"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivBtnBack" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

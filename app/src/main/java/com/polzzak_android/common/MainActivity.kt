@@ -40,7 +40,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
 
         initLoginFragmentResultListener()
         initLoginHelper()
-        openLoginFragment()
     }
 
     override fun onSupportNavigateUp(): Boolean {
