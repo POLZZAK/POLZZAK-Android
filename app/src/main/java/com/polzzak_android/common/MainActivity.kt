@@ -7,19 +7,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseActivity
 import com.polzzak_android.common.sociallogin.GoogleLoginHelper
 import com.polzzak_android.common.sociallogin.KakaoLoginHelper
-import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner,
-    SocialLoginManager {
+class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialLoginManager {
     override val layoutResId: Int = R.layout.activity_main
     private val mainViewModel by viewModels<MainViewModel>()
 
@@ -37,18 +34,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner,
         navController = navHostFragment.navController
         initLoginFragmentResultListener()
         initLoginHelper()
-        //openLoginFragment()
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
+    @Deprecated("네비게이션 컴포넌트 적용")
     override fun openFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(binding.fcvContainer.id, fragment)
             .addToBackStack(null).commit()
     }
 
+    @Deprecated("네비게이션 컴포넌트 적용")
     override fun closeFragment() {
         supportFragmentManager.popBackStack()
     }
@@ -61,23 +59,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner,
     private fun initLoginHelper() {
         googleLoginHelper = GoogleLoginHelper(activity = this).apply {
             setLoginSuccessCallback {
-                safeLet(it.id, it.serverAuthCode) { id, authCode ->
-                    mainViewModel.requestGoogleLogin(id = id, authCode = authCode)
+                it.serverAuthCode?.let { authCode ->
+                    mainViewModel.requestGoogleLogin(authCode = authCode)
                 } ?: run {
                     //TODO id값, authcode가 안내려온 경우
                 }
             }
         }
         kakaoLoginHelper = KakaoLoginHelper(context = this).apply {
-            setLoginSuccessCallback { user, token ->
-                user.id?.let { id ->
-                    mainViewModel.requestKakaoLogin(
-                        id = id.toString(),
-                        accessToken = token.accessToken
-                    )
-                } ?: run {
-                    //TODO id값이 안내려온 경우
-                }
+            setLoginSuccessCallback { token ->
+                mainViewModel.requestKakaoLogin(accessToken = token.accessToken)
             }
         }
     }
@@ -113,4 +104,5 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner,
     companion object {
         private const val LOGIN_FRAGMENT_REQUEST_KEY = "login_fragment_request_key"
     }
+
 }

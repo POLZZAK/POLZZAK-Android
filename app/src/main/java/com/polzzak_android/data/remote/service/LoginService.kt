@@ -1,6 +1,17 @@
 package com.polzzak_android.data.remote.service
 
+import com.polzzak_android.data.remote.model.request.LoginRequest
+import com.polzzak_android.data.remote.model.response.LoginResponse
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.POST
+import retrofit2.http.Path
+
 interface LoginService {
-    //TODO 로그인 api 호출
-    suspend fun requestLogin()
+
+    @POST("/api/v1/auth/login/{loginType}")
+    suspend fun requestLogin(
+        @Path("loginType") loginType: String,
+        @Body loginRequest: LoginRequest
+    ): Response<LoginResponse>
 }

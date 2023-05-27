@@ -1,6 +1,5 @@
 package com.polzzak_android.presentation.login
 
-import android.util.Log
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
@@ -8,10 +7,12 @@ import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.common.MainViewModel
 import com.polzzak_android.common.base.BaseFragment
+import com.polzzak_android.common.ext.finish
 import com.polzzak_android.common.ext.getSocialLoginManager
 import com.polzzak_android.common.model.ApiResult
 import com.polzzak_android.databinding.FragmentLoginBinding
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 //TODO google login release keystore 추가(현재 debug keystore만 사용 중)
 @AndroidEntryPoint
@@ -37,19 +38,27 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     override fun initObserver() {
         super.initObserver()
-        mainViewModel.userInfoLiveData.observe(viewLifecycleOwner) {
+        mainViewModel.loginInfoLiveData.observe(viewLifecycleOwner) {
             //TODO api 반환값 처리
-            Log.d("LoginTest", "${it.javaClass.simpleName} ${it.data}")
             when (it) {
-                is ApiResult.Loading -> {}
-                is ApiResult.Success -> {
-                    /*
-                    TODO 회원가입 여부 전달
-                    setFragmentResult(isNeedSignUp = ?? )
-                     */
+                is ApiResult.Loading -> {
+                    //TODO 로그인 인디케이터?
                 }
 
-                is ApiResult.Error -> {}
+                is ApiResult.Success -> {
+                    setFragmentResult(isNeedSignUp = false)
+                    finish()
+                }
+
+                is ApiResult.Error -> {
+                    Timber.d("${it.data} ${it.code} ${it.statusCode}")
+                    if (it.code == 412) {
+                        setFragmentResult(isNeedSignUp = true)
+                        finish()
+                    } else {
+                        //TODO 기타 에러처리
+                    }
+                }
             }
         }
     }

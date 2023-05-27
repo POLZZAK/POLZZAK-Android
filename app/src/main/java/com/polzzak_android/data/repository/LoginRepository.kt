@@ -2,9 +2,10 @@ package com.polzzak_android.data.repository
 
 import com.polzzak_android.BuildConfig
 import com.polzzak_android.common.model.SocialLoginType
-import com.polzzak_android.common.model.UserInfo
 import com.polzzak_android.data.remote.model.request.GoogleOAuthRequest
+import com.polzzak_android.data.remote.model.request.LoginRequest
 import com.polzzak_android.data.remote.model.response.GoogleOAuthResponse
+import com.polzzak_android.data.remote.model.response.LoginResponse
 import com.polzzak_android.data.remote.service.GoogleOAuthService
 import com.polzzak_android.data.remote.service.LoginService
 import retrofit2.Response
@@ -15,11 +16,13 @@ class LoginRepository @Inject constructor(
     private val googleTokenService: GoogleOAuthService
 ) {
     suspend fun requestLogin(
-        id: String,
-        accessToken: String,
-        loginType: SocialLoginType
-    ): Response<UserInfo> {
-        return Response.success(mockData)
+        loginType: SocialLoginType,
+        accessToken: String
+    ): Response<LoginResponse> {
+        return loginService.requestLogin(
+            loginType = loginType.toRequestStr(),
+            loginRequest = LoginRequest(oAuthAccessToken = accessToken)
+        )
     }
 
     suspend fun requestGoogleAccessToken(authCode: String): Response<GoogleOAuthResponse> {
@@ -38,5 +41,3 @@ class LoginRepository @Inject constructor(
         SocialLoginType.GOOGLE -> "google"
     }
 }
-
-private val mockData = UserInfo(nickName = "test1", userType = "google", profileUrl = null)
