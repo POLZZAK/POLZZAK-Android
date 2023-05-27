@@ -7,19 +7,19 @@ import com.polzzak_android.data.remote.model.request.LoginRequest
 import com.polzzak_android.data.remote.model.response.GoogleOAuthResponse
 import com.polzzak_android.data.remote.model.response.LoginResponse
 import com.polzzak_android.data.remote.service.GoogleOAuthService
-import com.polzzak_android.data.remote.service.LoginService
+import com.polzzak_android.data.remote.service.AuthService
 import retrofit2.Response
 import javax.inject.Inject
 
 class LoginRepository @Inject constructor(
-    private val loginService: LoginService,
+    private val authService: AuthService,
     private val googleTokenService: GoogleOAuthService
 ) {
     suspend fun requestLogin(
         loginType: SocialLoginType,
         accessToken: String
     ): Response<LoginResponse> {
-        return loginService.requestLogin(
+        return authService.requestLogin(
             loginType = loginType.toRequestStr(),
             loginRequest = LoginRequest(oAuthAccessToken = accessToken)
         )

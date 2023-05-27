@@ -20,3 +20,7 @@ inline fun <D, reified T : BaseResponse<D>, R> Response<T>.toApiResult(mapper: (
     )
     else ApiResult.Error(data = rData, statusCode = code(), code = data?.code)
 }
+
+fun ApiResult<*>.isLoading() = this is ApiResult.Loading
+fun ApiResult<*>.isSuccess() = this is ApiResult.Success
+fun ApiResult<*>.isError() = this is ApiResult.Error

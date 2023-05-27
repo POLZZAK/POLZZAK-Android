@@ -19,13 +19,20 @@ import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.databinding.FragmentSignupBinding
 import com.polzzak_android.presentation.signup.adapter.SignUpSelectParentTypeAdapter
 import com.polzzak_android.presentation.signup.model.NickNameUiModel
+import com.polzzak_android.presentation.signup.model.NickNameValidationState
 import com.polzzak_android.presentation.signup.model.SignUpPage
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.inject.Inject
 import kotlin.math.abs
 
+@AndroidEntryPoint
 class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     override val layoutResId = R.layout.fragment_signup
     private val validNickNameRegex = Regex("""[0-9a-zA-z]{2,10}""")
+
+    @Inject
+    lateinit var signUpViewModelAssistedFactory: SignUpViewModel.SignUpAssistedFactory
     private val signUpViewModel by viewModels<SignUpViewModel> {
         val userName = arguments?.getString(ARGUMENT_USER_ID_KEY, "")
         val socialType = arguments?.run {
@@ -36,7 +43,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 getSerializable(ARGUMENT_SOCIAL_LOGIN_TYPE_KEY) as? SocialLoginType
             }
         }
-        SignUpViewModel.Companion.Factory(userName = userName, userType = socialType)
+        SignUpViewModel.provideFactory(signUpViewModelAssistedFactory, userName, socialType)
     }
 
     override fun initView() {
@@ -114,7 +121,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     @SuppressLint("ClickableViewAccessibility")
     private fun initSetNickNameView(binding: FragmentSignupBinding) {
         with(binding.inSetNickName) {
-            tvBtnCheckDuplicated.isEnabled = false
+            tvBtnCheckValidation.isEnabled = false
             ivBtnClearText.setOnClickListener {
                 etInput.text.clear()
             }
@@ -123,7 +130,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun afterTextChanged(p0: Editable?) {
                     signUpViewModel.run {
-                        cancelCheckNickNameJob()
+                        cancelCheckNickNameValidationJob()
                         setNickNameValue(p0?.toString() ?: "")
                     }
                 }
@@ -137,8 +144,8 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             tvBtnAccept.setOnClickListener {
                 signUpViewModel.moveNextPage()
             }
-            tvBtnCheckDuplicated.setOnClickListener {
-                signUpViewModel.checkIsDuplicatedNickName()
+            tvBtnCheckValidation.setOnClickListener {
+                signUpViewModel.requestCheckNickNameValidation()
             }
             binding.root.setOnTouchListener { _, _ ->
                 hideKeyboard()
@@ -204,12 +211,13 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
         signUpViewModel.nickNameLiveData.observe(viewLifecycleOwner) {
             with(binding.inSetNickName) {
-                tvBtnCheckDuplicated.isEnabled = validNickNameRegex.matches(it.nickName ?: "")
+                tvBtnCheckValidation.isEnabled = validNickNameRegex.matches(it.nickName ?: "")
                 //TODO string resource로 변경
-                tvBtnCheckDuplicated.text = if (it.isDuplicated == false) "확인 완료" else "중복 확인"
+                tvBtnCheckValidation.text =
+                    if (it.nickNameState == NickNameValidationState.VALID) "확인 완료" else "중복 확인"
                 setNickNameResultTextView(isFocused = etInput.isFocused, uiModel = it)
                 ivBtnClearText.isVisible = !it.nickName.isNullOrEmpty() && etInput.isFocused
-                tvBtnAccept.isEnabled = (it.isDuplicated == false)
+                tvBtnAccept.isEnabled = (it.nickNameState == NickNameValidationState.VALID)
             }
         }
     }
@@ -222,7 +230,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             )
             val textColor = ContextCompat.getColor(
                 binding.root.context,
-                if (uiModel.isDuplicated == false) R.color.primary else R.color.error_500
+                if (uiModel.nickNameState == NickNameValidationState.VALID) R.color.primary else R.color.error_500
             )
             tvCheckDuplicatedResult.setTextColor(textColor)
             val lengthText = if (isFocused) "${(uiModel.nickName ?: "").length}/10" else ""
@@ -236,8 +244,8 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         uiModel: NickNameUiModel
     ): String {
         return when {
-            uiModel.isDuplicated == true -> "이미 사용되고 있는 닉네임이에요"
-            uiModel.isDuplicated == false -> "사용 가능한 닉네임이에요"
+            uiModel.nickNameState == NickNameValidationState.INVALID -> "이미 사용되고 있는 닉네임이에요"
+            uiModel.nickNameState == NickNameValidationState.VALID -> "사용 가능한 닉네임이에요"
             uiModel.nickName == null -> ""
             uiModel.nickName.isEmpty() -> if (isFocused) "" else "최소 2글자로 설정해주세요"
             uiModel.nickName.length < 2 -> "최소 2글자로 설정해주세요"
