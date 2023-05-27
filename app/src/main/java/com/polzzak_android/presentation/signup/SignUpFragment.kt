@@ -7,7 +7,6 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
@@ -26,7 +25,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     override val layoutResId = R.layout.fragment_signup
     private val validNickNameRegex = Regex("""[0-9a-zA-z]{2,10}""")
     private val signUpViewModel by viewModels<SignUpViewModel> {
-        val userName = arguments?.getString(ARGUMENT_USER_ID_KEY, "") ?: ""
+        val userName = arguments?.getString(ARGUMENT_USER_ID_KEY, "")
         val socialType = arguments?.run {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 getSerializable(ARGUMENT_SOCIAL_LOGIN_TYPE_KEY, SocialLoginType::class.java)
@@ -229,17 +228,8 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
     }
 
-
     companion object {
-        private const val ARGUMENT_USER_ID_KEY = "argument_user_id_key"
-        private const val ARGUMENT_SOCIAL_LOGIN_TYPE_KEY = "argument_social_login_type_key"
-        fun newInstance(userId: String, socialLoginType: SocialLoginType) =
-            SignUpFragment().apply {
-                arguments = bundleOf().apply {
-                    putString(ARGUMENT_USER_ID_KEY, userId)
-                    putSerializable(ARGUMENT_SOCIAL_LOGIN_TYPE_KEY, socialLoginType)
-                }
-
-            }
+        const val ARGUMENT_USER_ID_KEY = "argument_user_id_key"
+        const val ARGUMENT_SOCIAL_LOGIN_TYPE_KEY = "argument_social_login_type_key"
     }
 }

@@ -12,7 +12,6 @@ import com.polzzak_android.common.base.BaseActivity
 import com.polzzak_android.common.sociallogin.GoogleLoginHelper
 import com.polzzak_android.common.sociallogin.KakaoLoginHelper
 import com.polzzak_android.databinding.ActivityMainBinding
-import com.polzzak_android.presentation.login.LoginFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,13 +26,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        initLoginHelper()
 
         // set navigation
         val navHostFragment =
             supportFragmentManager.findFragmentById(binding.fcvContainer.id) as NavHostFragment
         navController = navHostFragment.navController
-        initLoginFragmentResultListener()
-        initLoginHelper()
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -73,26 +72,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
         }
     }
 
-    private fun initLoginFragmentResultListener() {
-        supportFragmentManager.setFragmentResultListener(
-            LOGIN_FRAGMENT_REQUEST_KEY,
-            this
-        ) { _, bundle ->
-            closeFragment()
-            val isNeedSignUp = bundle.getBoolean(LoginFragment.RESULT_IS_NEED_SIGN_UP_KEY, false)
-            if (isNeedSignUp) {
-                //TODO 회원가입으로 이동
-            } else {
-                //TODO 메인페이지로 이동
-            }
-        }
-    }
-
-    private fun openLoginFragment() {
-        val loginFragment = LoginFragment.newInstance(requestKey = LOGIN_FRAGMENT_REQUEST_KEY)
-        openFragment(loginFragment)
-    }
-
     override fun requestLoginGoogle() {
         googleLoginHelper?.requestLogin()
     }
@@ -100,9 +79,4 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), FragmentOwner, SocialL
     override fun requestLoginKakao() {
         kakaoLoginHelper?.requestLogin()
     }
-
-    companion object {
-        private const val LOGIN_FRAGMENT_REQUEST_KEY = "login_fragment_request_key"
-    }
-
 }

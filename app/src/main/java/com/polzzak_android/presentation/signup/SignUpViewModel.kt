@@ -11,9 +11,8 @@ import com.polzzak_android.presentation.signup.model.MemberTypeUiModel
 import com.polzzak_android.presentation.signup.model.NickNameUiModel
 import com.polzzak_android.presentation.signup.model.SignUpPage
 import kotlinx.coroutines.Job
-import timber.log.Timber
 
-class SignUpViewModel(private val userName: String, private val userType: SocialLoginType?) :
+class SignUpViewModel(private val userName: String?, private val userType: SocialLoginType?) :
     ViewModel() {
     private val _pageLiveData = MutableLiveData<SignUpPage>()
     val pageLiveData: LiveData<SignUpPage> = _pageLiveData
@@ -113,7 +112,7 @@ class SignUpViewModel(private val userName: String, private val userType: Social
     }
 
     companion object {
-        class Factory(private val userName: String, private val userType: SocialLoginType?) :
+        class Factory(private val userName: String?, private val userType: SocialLoginType?) :
             ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
