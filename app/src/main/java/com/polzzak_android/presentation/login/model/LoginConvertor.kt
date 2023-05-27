@@ -12,8 +12,8 @@ object LoginConvertor {
         )
 
     fun String?.toSocialLoginType() = when (this) {
-        "kakao" -> SocialLoginType.KAKAO
-        "google" -> SocialLoginType.GOOGLE
+        "KAKAO" -> SocialLoginType.KAKAO
+        "GOOGLE" -> SocialLoginType.GOOGLE
         else -> null
     }
 }
