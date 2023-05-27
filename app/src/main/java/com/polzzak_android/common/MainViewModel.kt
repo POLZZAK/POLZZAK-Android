@@ -8,9 +8,9 @@ import com.polzzak_android.common.model.ApiResult
 import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.common.model.UserInfo
 import com.polzzak_android.common.util.toApiResult
+import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.presentation.login.model.LoginConvertor.toLoginInfoUiModel
 import com.polzzak_android.presentation.login.model.LoginInfoUiModel
-import com.polzzak_android.repository.LoginRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
