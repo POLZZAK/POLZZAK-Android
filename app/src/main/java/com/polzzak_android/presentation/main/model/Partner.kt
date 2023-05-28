@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.main.protector.model
+package com.polzzak_android.presentation.main.model
 
 data class Partner(
     val kid: Boolean,

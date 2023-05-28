@@ -1,6 +1,8 @@
 package com.polzzak_android.presentation.adapter
 
+import android.graphics.Rect
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -78,6 +80,27 @@ class MainStampAdapter(private val dummy: List<StampBoard>, private val interact
         private val stampPager = binding.stampPager
         private val curInd = binding.curPage
         private val totalInd = binding.totalPage
+
+        init {
+            // transform
+            val currentVisibleItemPx = 50
+
+            stampPager.addItemDecoration(object: RecyclerView.ItemDecoration() {
+                override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                    outRect.right = currentVisibleItemPx
+                    outRect.left = currentVisibleItemPx
+                }
+            })
+
+            val nextVisibleItemPx = 20
+            val pageTranslationX = nextVisibleItemPx + currentVisibleItemPx
+
+            stampPager.offscreenPageLimit = 1
+
+            stampPager.setPageTransformer { page, position ->
+                page.translationX = -pageTranslationX * (position)
+            }
+        }
 
         fun bind(item: StampBoard) {
             userHeaderTxt.text = item.partner.nickname
