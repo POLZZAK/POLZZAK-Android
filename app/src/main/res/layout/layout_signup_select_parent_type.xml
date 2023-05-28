@@ -34,9 +34,9 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vpTypeCards"
             android:layout_width="0dp"
-            android:layout_height="150dp"
+            android:layout_height="@dimen/sign_up_select_parent_type_view_pager_height"
             android:layout_marginHorizontal="33dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="68dp"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

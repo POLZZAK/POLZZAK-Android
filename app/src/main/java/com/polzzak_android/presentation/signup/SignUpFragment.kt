@@ -17,19 +17,20 @@ import com.polzzak_android.common.base.BaseFragment
 import com.polzzak_android.common.model.MemberType
 import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.databinding.FragmentSignupBinding
-import com.polzzak_android.presentation.signup.adapter.SignUpSelectParentTypeAdapter
+import com.polzzak_android.presentation.signup.adapter.ParentTypeRollableAdapter
 import com.polzzak_android.presentation.signup.model.NickNameUiModel
 import com.polzzak_android.presentation.signup.model.NickNameValidationState
 import com.polzzak_android.presentation.signup.model.SignUpPage
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.abs
+import kotlin.math.sqrt
 
 @AndroidEntryPoint
 class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     override val layoutResId = R.layout.fragment_signup
     private val validNickNameRegex = Regex("""[0-9a-zA-z]{2,10}""")
+    private val parentTypeRollableAdapter = ParentTypeRollableAdapter()
 
     @Inject
     lateinit var signUpViewModelAssistedFactory: SignUpViewModel.SignUpAssistedFactory
@@ -91,23 +92,48 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
     private fun initSelectParentTypeView(binding: FragmentSignupBinding) {
         with(binding.inSelectParentType) {
-            vpTypeCards.offscreenPageLimit = 3
-            vpTypeCards.adapter = SignUpSelectParentTypeAdapter()
+            vpTypeCards.offscreenPageLimit = 2
+            vpTypeCards.adapter = ParentTypeRollableAdapter()
             vpTypeCards.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     signUpViewModel.selectParentType(
-                        SignUpSelectParentTypeAdapter.getSelectedType(
+                        parentTypeRollableAdapter.getSelectedType(
                             position
                         )
                     )
                 }
             })
-            //TODO select parent type 구현
+            val cardHeightPx =
+                resources.getDimension(R.dimen.sign_up_select_parent_type_card_height)
+            val vpHeightPx =
+                resources.getDimension(R.dimen.sign_up_select_parent_type_view_pager_height)
+
+            val secondItemRatio = 0.925f
+            val thirdItemRatio = 0.8125f
             vpTypeCards.setPageTransformer { page, position ->
-                Timber.d("${page} $position")
-                page.translationY = -position * 300f
-                page.translationZ = 1 - abs(position)
+                val absPosition = abs(position)
+                page.isVisible = absPosition < 3f
+                var transY = 0f
+                var scale = 1f
+                var radius = cardHeightPx / 2
+                page.translationZ = -absPosition
+                val calYPosInCircle = { r: Float, xPos: Float ->
+                    sqrt(r * r - (xPos * r).let { it * it })
+                }
+                val calScale = { ratio: Float, xPos: Float ->
+                    1 - (1 - ratio) * xPos
+                }
+                transY += calYPosInCircle(radius, maxOf(0f, 1 - absPosition))
+                scale *= calScale(secondItemRatio, minOf(1f, absPosition))
+                if (absPosition > 1f) {
+                    radius *= secondItemRatio
+                    transY += calYPosInCircle(radius, 2 - absPosition)
+                    scale *= calScale(thirdItemRatio, absPosition - 1)
+                }
+                page.translationY = (if (position < 0) -transY else transY) - position * vpHeightPx
+                page.scaleX = scale
+                page.scaleY = scale
             }
 
             tvBtnAccept.isEnabled = false
@@ -183,9 +209,9 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
                     SignUpPage.SELECT_PARENT_TYPE -> {
                         val currentType = signUpViewModel.memberTypeLiveData.value?.type
-                        val currentPosition =
-                            SignUpSelectParentTypeAdapter.getTypePosition(currentType as? MemberType.Parent)
-                        inSelectParentType.vpTypeCards.setCurrentItem(currentPosition, false)
+                        val adapterStartPosition =
+                            parentTypeRollableAdapter.getTypeStartPosition(currentType as? MemberType.Parent)
+                        inSelectParentType.vpTypeCards.setCurrentItem(adapterStartPosition, false)
                         inSelectParentType.root.isVisible = true
                     }
 
