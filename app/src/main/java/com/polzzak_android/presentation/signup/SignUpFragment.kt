@@ -56,6 +56,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         initSelectTypeView(binding = binding)
         initSelectParentTypeView(binding = binding)
         initSetNickNameView(binding = binding)
+        initSelectProfileImageView(binding = binding)
         addOnBackPressedDispatcher()
     }
 
@@ -156,7 +157,6 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun afterTextChanged(p0: Editable?) {
                     signUpViewModel.run {
-                        cancelCheckNickNameValidationJob()
                         setNickNameValue(p0?.toString() ?: "")
                     }
                 }
@@ -189,6 +189,17 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                     currentFocus.windowToken,
                     InputMethodManager.HIDE_NOT_ALWAYS
                 )
+            }
+        }
+    }
+
+    private fun initSelectProfileImageView(binding: FragmentSignupBinding) {
+        with(binding.inSelectProfileImage) {
+            ivBtnSelectPicture.setOnClickListener {
+
+            }
+            tvBtnAccept.setOnClickListener {
+                //TODO 회원가입 요청
             }
         }
     }

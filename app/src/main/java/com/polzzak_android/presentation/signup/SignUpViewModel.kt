@@ -98,6 +98,7 @@ class SignUpViewModel @AssistedInject constructor(
     }
 
     fun setNickNameValue(nickName: String) {
+        checkNickNameValidationJob?.cancel()
         _nickNameLiveData.value = NickNameUiModel(nickName = nickName)
     }
 
@@ -130,10 +131,6 @@ class SignUpViewModel @AssistedInject constructor(
                     nickNameUiModel.copy(nickNameState = NickNameValidationState.INVALID)
             }
         }
-    }
-
-    fun cancelCheckNickNameValidationJob() {
-        checkNickNameValidationJob?.cancel()
     }
 
     @AssistedFactory
