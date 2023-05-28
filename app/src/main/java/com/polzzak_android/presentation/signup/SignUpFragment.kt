@@ -29,7 +29,7 @@ import kotlin.math.sqrt
 @AndroidEntryPoint
 class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     override val layoutResId = R.layout.fragment_signup
-    private val validNickNameRegex = Regex("""[0-9a-zA-z]{2,10}""")
+    private val validNickNameRegex = Regex("""[0-9a-zA-z가-힣]{2,10}""")
     private val parentTypeRollableAdapter = ParentTypeRollableAdapter()
 
     @Inject
