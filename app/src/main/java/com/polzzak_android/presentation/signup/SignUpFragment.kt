@@ -12,7 +12,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.bumptech.glide.Glide
 import com.polzzak_android.R
+import com.polzzak_android.common.PhotoPicker
 import com.polzzak_android.common.base.BaseFragment
 import com.polzzak_android.common.model.MemberType
 import com.polzzak_android.common.model.SocialLoginType
@@ -47,8 +49,10 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         SignUpViewModel.provideFactory(signUpViewModelAssistedFactory, userName, socialType)
     }
 
+    private var photoPicker: PhotoPicker? = null
     override fun initView() {
         super.initView()
+        photoPicker = PhotoPicker(this)
         binding.ivBtnBack.setOnClickListener {
             hideKeyboard()
             signUpViewModel.movePrevPage()
@@ -196,7 +200,10 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     private fun initSelectProfileImageView(binding: FragmentSignupBinding) {
         with(binding.inSelectProfileImage) {
             ivBtnSelectPicture.setOnClickListener {
-
+                photoPicker?.invoke { uri ->
+                    Glide.with(binding.root.context).load(uri)
+                        .into(binding.inSelectProfileImage.ivBtnSelectPicture)
+                }
             }
             tvBtnAccept.setOnClickListener {
                 //TODO 회원가입 요청
