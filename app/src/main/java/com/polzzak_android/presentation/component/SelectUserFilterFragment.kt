@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.polzzak_android.databinding.FragmentSelectUserFilterBinding
 import com.polzzak_android.presentation.adapter.MainSelectUserAdapter
-import com.polzzak_android.presentation.main.protector.progress.SelectUserInteraction
+import com.polzzak_android.presentation.main.intercation.MainSelectUserInteraction
 
-class SelectUserFilterFragment : BottomSheetDialogFragment(), SelectUserInteraction {
+class SelectUserFilterFragment : BottomSheetDialogFragment(), MainSelectUserInteraction {
 
     // Todo: base 필요?
     private var _binding: FragmentSelectUserFilterBinding? = null

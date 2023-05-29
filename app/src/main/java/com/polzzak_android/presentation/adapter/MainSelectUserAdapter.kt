@@ -4,11 +4,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemSelectUserFilterBinding
-import com.polzzak_android.presentation.main.protector.progress.SelectUserInteraction
+import com.polzzak_android.presentation.main.intercation.MainSelectUserInteraction
 
 class MainSelectUserAdapter(
     private val dummy: List<String>,
-    private val interaction: SelectUserInteraction
+    private val interaction: MainSelectUserInteraction
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -35,7 +35,7 @@ class MainSelectUserAdapter(
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(binding: ItemSelectUserFilterBinding, interaction: SelectUserInteraction) :
+    inner class ViewHolder(binding: ItemSelectUserFilterBinding, interaction: MainSelectUserInteraction) :
         RecyclerView.ViewHolder(binding.root) {
         private val container = binding.userFilterContainer
         private val userName = binding.userFilterName

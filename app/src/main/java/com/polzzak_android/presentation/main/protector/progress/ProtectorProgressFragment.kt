@@ -10,17 +10,19 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseFragment
+import com.polzzak_android.common.util.stampProgressCalculator
 import com.polzzak_android.databinding.FragmentProgressBinding
 import com.polzzak_android.presentation.adapter.MainStampAdapter
 import com.polzzak_android.presentation.adapter.MainStampPagerAdapter
 import com.polzzak_android.presentation.main.protector.StampViewModel
-import com.polzzak_android.presentation.main.protector.model.Partner
-import com.polzzak_android.presentation.main.protector.model.StampBoard
-import com.polzzak_android.presentation.main.protector.model.StampBoardSummary
 import com.polzzak_android.presentation.component.SelectUserFilterFragment
 import com.polzzak_android.presentation.component.SemiCircleProgressView
+import com.polzzak_android.presentation.main.intercation.MainProgressInteraction
+import com.polzzak_android.presentation.main.model.Partner
+import com.polzzak_android.presentation.main.model.StampBoard
+import com.polzzak_android.presentation.main.model.StampBoardSummary
 
-class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), ProgressInteraction {
+class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainProgressInteraction {
 
     override val layoutResId: Int = R.layout.fragment_progress
 
@@ -154,8 +156,8 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), Progr
         Toast.makeText(context, "${stampBoardItem.name} 클릭", Toast.LENGTH_SHORT).show()
     }
 
-    override fun setProgressAnim(view: SemiCircleProgressView) {
-        // Todo: 계산 로직 추가
-        view.setAnimation(260f)
+    override fun setProgressAnim(curCnt: Int, totalCnt: Int, view: SemiCircleProgressView) {
+        val degree = stampProgressCalculator(curCnt, totalCnt)
+        view.setAnimation(degree)
     }
 }
