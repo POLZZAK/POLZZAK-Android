@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampProgressBinding
-import com.polzzak_android.presentation.main.protector.model.StampBoardSummary
-import com.polzzak_android.presentation.main.protector.progress.ProgressInteraction
+import com.polzzak_android.presentation.main.intercation.MainProgressInteraction
+import com.polzzak_android.presentation.main.model.StampBoardSummary
 
 class MainStampPagerAdapter(
     private val dummy: List<StampBoardSummary>,
-    private val interaction: ProgressInteraction
+    private val interaction: MainProgressInteraction
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -37,7 +37,7 @@ class MainStampPagerAdapter(
         notifyDataSetChanged()
     }
 
-    inner class ViewHolder(binding: ItemStampProgressBinding, interaction: ProgressInteraction) :
+    inner class ViewHolder(binding: ItemStampProgressBinding, interaction: MainProgressInteraction) :
         RecyclerView.ViewHolder(binding.root) {
         private val container = binding.stampContainer
 
@@ -53,7 +53,11 @@ class MainStampPagerAdapter(
             totalCnt.text = item.goalStampCount.toString()
             reward.text = item.reward
 
-            interaction.setProgressAnim(progressView)
+            interaction.setProgressAnim(
+                curCnt = item.currentStampCount,
+                totalCnt = item.goalStampCount,
+                view = progressView
+            )
 
             container.setOnClickListener {
                 interaction.onStampPagerClicked(item)

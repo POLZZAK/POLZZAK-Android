@@ -54,7 +54,7 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun requestLogin(accessToken: String, loginType: SocialLoginType) {
-        _loginInfoLiveData.value = ApiResult.Loading()
+        _loginInfoLiveData.value = ApiResult.loading()
 
         val response =
             loginRepository.requestLogin(accessToken = accessToken, loginType = loginType)

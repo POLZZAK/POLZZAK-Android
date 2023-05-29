@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampNonBinding
 import com.polzzak_android.databinding.ItemStampYesBinding
-import com.polzzak_android.presentation.main.protector.model.StampBoard
-import com.polzzak_android.presentation.main.protector.progress.ProgressInteraction
+import com.polzzak_android.presentation.main.intercation.MainProgressInteraction
+import com.polzzak_android.presentation.main.model.StampBoard
 
-class MainStampAdapter(private val dummy: List<StampBoard>, private val interaction: ProgressInteraction) :
+class MainStampAdapter(private val dummy: List<StampBoard>, private val interaction: MainProgressInteraction) :
     ListAdapter<StampBoard, RecyclerView.ViewHolder>(DiffCallback) {
 
     private var stampList = dummy
@@ -74,7 +74,7 @@ class MainStampAdapter(private val dummy: List<StampBoard>, private val interact
         }
     }
 
-    inner class YesViewHolder(binding: ItemStampYesBinding, interaction: ProgressInteraction) :
+    inner class YesViewHolder(binding: ItemStampYesBinding, interaction: MainProgressInteraction) :
         RecyclerView.ViewHolder(binding.root) {
         private val userHeaderTxt = binding.userNickName
         private val stampPager = binding.stampPager
