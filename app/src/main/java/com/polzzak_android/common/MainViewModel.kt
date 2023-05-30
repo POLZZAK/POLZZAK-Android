@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.model.ApiResult
 import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.common.model.UserInfo
+import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.toApiResult
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.presentation.login.model.LoginConvertor.toLoginInfoUiModel
@@ -22,8 +23,8 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
 ) : ViewModel() {
-    private val _loginInfoLiveData = MutableLiveData<ApiResult<LoginInfoUiModel>>()
-    val loginInfoLiveData: LiveData<ApiResult<LoginInfoUiModel>> = _loginInfoLiveData
+    private val _loginInfoLiveData = MutableLiveData<EventWrapper<ApiResult<LoginInfoUiModel>>>()
+    val loginInfoLiveData: LiveData<EventWrapper<ApiResult<LoginInfoUiModel>>> = _loginInfoLiveData
 
     private val _userInfoLiveData = MutableLiveData<ApiResult<UserInfo>>()
     val userInfoLiveData: LiveData<ApiResult<UserInfo>> = _userInfoLiveData
@@ -54,11 +55,11 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun requestLogin(accessToken: String, loginType: SocialLoginType) {
-        _loginInfoLiveData.value = ApiResult.loading()
+        _loginInfoLiveData.value = EventWrapper(ApiResult.loading())
 
         val response =
             loginRepository.requestLogin(accessToken = accessToken, loginType = loginType)
         _loginInfoLiveData.value =
-            response.toApiResult { loginResponse -> loginResponse?.toLoginInfoUiModel() }
+            EventWrapper(response.toApiResult { loginResponse -> loginResponse?.toLoginInfoUiModel() })
     }
 }

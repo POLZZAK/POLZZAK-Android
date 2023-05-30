@@ -2,31 +2,48 @@ package com.polzzak_android.presentation.signup
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
+import com.bumptech.glide.Glide
 import com.polzzak_android.R
+import com.polzzak_android.common.PhotoPicker
 import com.polzzak_android.common.base.BaseFragment
+import com.polzzak_android.common.model.ApiResult
 import com.polzzak_android.common.model.MemberType
 import com.polzzak_android.common.model.SocialLoginType
+import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentSignupBinding
-import com.polzzak_android.presentation.signup.adapter.SignUpSelectParentTypeAdapter
+import com.polzzak_android.presentation.signup.adapter.ParentTypeRollableAdapter
 import com.polzzak_android.presentation.signup.model.NickNameUiModel
+import com.polzzak_android.presentation.signup.model.NickNameValidationState
 import com.polzzak_android.presentation.signup.model.SignUpPage
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import javax.inject.Inject
 import kotlin.math.abs
+import kotlin.math.sqrt
 
+
+@AndroidEntryPoint
 class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     override val layoutResId = R.layout.fragment_signup
-    private val validNickNameRegex = Regex("""[0-9a-zA-z]{2,10}""")
+    private val validNickNameRegex = Regex("""[0-9a-zA-z가-힣]{2,10}""")
+    private val parentTypeRollableAdapter = ParentTypeRollableAdapter()
+
+    @Inject
+    lateinit var signUpViewModelAssistedFactory: SignUpViewModel.SignUpAssistedFactory
     private val signUpViewModel by viewModels<SignUpViewModel> {
-        val userName = arguments?.getString(ARGUMENT_USER_ID_KEY, "") ?: ""
+        val userName = arguments?.getString(ARGUMENT_USER_ID_KEY, "")
         val socialType = arguments?.run {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 getSerializable(ARGUMENT_SOCIAL_LOGIN_TYPE_KEY, SocialLoginType::class.java)
@@ -35,11 +52,13 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 getSerializable(ARGUMENT_SOCIAL_LOGIN_TYPE_KEY) as? SocialLoginType
             }
         }
-        SignUpViewModel.Companion.Factory(userName = userName, userType = socialType)
+        SignUpViewModel.provideFactory(signUpViewModelAssistedFactory, userName, socialType)
     }
 
+    private var photoPicker: PhotoPicker? = null
     override fun initView() {
         super.initView()
+        photoPicker = PhotoPicker(this)
         binding.ivBtnBack.setOnClickListener {
             hideKeyboard()
             signUpViewModel.movePrevPage()
@@ -47,6 +66,24 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         initSelectTypeView(binding = binding)
         initSelectParentTypeView(binding = binding)
         initSetNickNameView(binding = binding)
+        initSelectProfileImageView(binding = binding)
+        addOnBackPressedDispatcher()
+    }
+
+    private fun addOnBackPressedDispatcher() {
+        val backPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val backToPrevPageList = listOf(
+                    SignUpPage.SELECT_PARENT_TYPE,
+                    SignUpPage.SET_NICKNAME,
+                    SignUpPage.SET_PROFILE_IMAGE
+                )
+                val page = signUpViewModel.pageLiveData.value
+                if (backToPrevPageList.contains(page)) signUpViewModel.movePrevPage()
+                else findNavController().popBackStack()
+            }
+        }
+        activity?.onBackPressedDispatcher?.addCallback(this, backPressedCallback)
     }
 
     private fun initSelectTypeView(binding: FragmentSignupBinding) {
@@ -66,23 +103,48 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
     private fun initSelectParentTypeView(binding: FragmentSignupBinding) {
         with(binding.inSelectParentType) {
-            vpTypeCards.offscreenPageLimit = 3
-            vpTypeCards.adapter = SignUpSelectParentTypeAdapter()
+            vpTypeCards.offscreenPageLimit = 2
+            vpTypeCards.adapter = ParentTypeRollableAdapter()
             vpTypeCards.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     signUpViewModel.selectParentType(
-                        SignUpSelectParentTypeAdapter.getSelectedType(
+                        parentTypeRollableAdapter.getSelectedType(
                             position
                         )
                     )
                 }
             })
-            //TODO select parent type 구현
+            val cardHeightPx =
+                resources.getDimension(R.dimen.sign_up_select_parent_type_card_height)
+            val vpHeightPx =
+                resources.getDimension(R.dimen.sign_up_select_parent_type_view_pager_height)
+
+            val secondItemRatio = 0.925f
+            val thirdItemRatio = 0.8125f
             vpTypeCards.setPageTransformer { page, position ->
-                Timber.d("${page} $position")
-                page.translationY = -position * 300f
-                page.translationZ = 1 - abs(position)
+                val absPosition = abs(position)
+                page.isVisible = absPosition < 3f
+                var transY = 0f
+                var scale = 1f
+                var radius = cardHeightPx / 2
+                page.translationZ = -absPosition
+                val calYPosInCircle = { r: Float, xPos: Float ->
+                    sqrt(r * r - (xPos * r).let { it * it })
+                }
+                val calScale = { ratio: Float, xPos: Float ->
+                    1 - (1 - ratio) * xPos
+                }
+                transY += calYPosInCircle(radius, maxOf(0f, 1 - absPosition))
+                scale *= calScale(secondItemRatio, minOf(1f, absPosition))
+                if (absPosition > 1f) {
+                    radius *= secondItemRatio
+                    transY += calYPosInCircle(radius, 2 - absPosition)
+                    scale *= calScale(thirdItemRatio, absPosition - 1)
+                }
+                page.translationY = (if (position < 0) -transY else transY) - position * vpHeightPx
+                page.scaleX = scale
+                page.scaleY = scale
             }
 
             tvBtnAccept.isEnabled = false
@@ -96,7 +158,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     @SuppressLint("ClickableViewAccessibility")
     private fun initSetNickNameView(binding: FragmentSignupBinding) {
         with(binding.inSetNickName) {
-            tvBtnCheckDuplicated.isEnabled = false
+            tvBtnCheckValidation.isEnabled = false
             ivBtnClearText.setOnClickListener {
                 etInput.text.clear()
             }
@@ -105,22 +167,21 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun afterTextChanged(p0: Editable?) {
                     signUpViewModel.run {
-                        cancelCheckNickNameJob()
                         setNickNameValue(p0?.toString() ?: "")
                     }
                 }
             })
             etInput.setOnFocusChangeListener { _, isFocused ->
                 val textUiModel = signUpViewModel.nickNameLiveData.value ?: NickNameUiModel()
-                if (textUiModel.nickName == null) signUpViewModel.setNickNameValue("")
-                else setNickNameResultTextView(isFocused = isFocused, uiModel = textUiModel)
+                etInput.isSelected = true
+                setNickNameResultTextView(isFocused = isFocused, uiModel = textUiModel)
             }
             tvBtnAccept.isEnabled = false
             tvBtnAccept.setOnClickListener {
                 signUpViewModel.moveNextPage()
             }
-            tvBtnCheckDuplicated.setOnClickListener {
-                signUpViewModel.checkIsDuplicatedNickName()
+            tvBtnCheckValidation.setOnClickListener {
+                signUpViewModel.requestCheckNickNameValidation()
             }
             binding.root.setOnTouchListener { _, _ ->
                 hideKeyboard()
@@ -142,6 +203,38 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
     }
 
+    private fun initSelectProfileImageView(binding: FragmentSignupBinding) {
+        with(binding.inSelectProfileImage) {
+            ivBtnSelectPicture.setOnClickListener {
+                photoPicker?.invoke { uri ->
+                    val path = getAbsPath(uri = uri)
+                    signUpViewModel.setProfileImagePath(path = path)
+                }
+            }
+            tvBtnAccept.setOnClickListener {
+                signUpViewModel.requestSignUp()
+            }
+        }
+    }
+
+    private fun getAbsPath(uri: Uri): String? {
+        return try {
+            val cursor = activity?.contentResolver?.query(
+                uri, null, null, null, null
+            )
+            cursor?.run {
+                moveToFirst()
+                val index = getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                val ret = getString(index)
+                close()
+                ret
+            }
+        } catch (e: Exception) {
+            Timber.e("$uri - $e")
+            null
+        }
+    }
+
     override fun initObserver() {
         super.initObserver()
         signUpViewModel.pageLiveData.observe(viewLifecycleOwner) {
@@ -158,14 +251,15 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
                     SignUpPage.SELECT_PARENT_TYPE -> {
                         val currentType = signUpViewModel.memberTypeLiveData.value?.type
-                        val currentPosition =
-                            SignUpSelectParentTypeAdapter.getTypePosition(currentType as? MemberType.Parent)
-                        inSelectParentType.vpTypeCards.setCurrentItem(currentPosition, false)
+                        val adapterStartPosition =
+                            parentTypeRollableAdapter.getTypeStartPosition(currentType as? MemberType.Parent)
+                        inSelectParentType.vpTypeCards.setCurrentItem(adapterStartPosition, false)
                         inSelectParentType.root.isVisible = true
                     }
 
                     SignUpPage.SET_NICKNAME -> {
                         inSetNickName.root.isVisible = true
+                        inSetNickName.etInput.setText(signUpViewModel.nickNameLiveData.value?.nickName)
                     }
 
                     SignUpPage.SET_PROFILE_IMAGE -> {
@@ -186,25 +280,48 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
         signUpViewModel.nickNameLiveData.observe(viewLifecycleOwner) {
             with(binding.inSetNickName) {
-                tvBtnCheckDuplicated.isEnabled = validNickNameRegex.matches(it.nickName ?: "")
+                tvBtnCheckValidation.isEnabled = validNickNameRegex.matches(it.nickName ?: "")
                 //TODO string resource로 변경
-                tvBtnCheckDuplicated.text = if (it.isDuplicated == false) "확인 완료" else "중복 확인"
+                tvBtnCheckValidation.text =
+                    if (it.nickNameState == NickNameValidationState.VALID) "확인 완료" else "중복 확인"
                 setNickNameResultTextView(isFocused = etInput.isFocused, uiModel = it)
                 ivBtnClearText.isVisible = !it.nickName.isNullOrEmpty() && etInput.isFocused
-                tvBtnAccept.isEnabled = (it.isDuplicated == false)
+                tvBtnAccept.isEnabled = (it.nickNameState == NickNameValidationState.VALID)
             }
         }
+        signUpViewModel.profileImageLiveData.observe(viewLifecycleOwner) {
+            with(binding.inSelectProfileImage) {
+                Glide.with(this@SignUpFragment).load(it.path)
+                    .into(ivBtnSelectPicture)
+            }
+        }
+        signUpViewModel.signUpResultLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
+            when (it) {
+                is ApiResult.Loading -> {
+                    //do nothing
+                }
+
+                is ApiResult.Success -> {
+                    //TODO 온보딩 페이지 이동
+                }
+
+                is ApiResult.Error -> {
+                    //TODO 회원가입 실패 처리
+                }
+            }
+        })
     }
 
     private fun setNickNameResultTextView(isFocused: Boolean, uiModel: NickNameUiModel) {
         with(binding.inSetNickName) {
             tvCheckDuplicatedResult.text = createDuplicatedResultText(
                 isFocused = isFocused,
+                isSelected = etInput.isSelected,
                 uiModel = uiModel
             )
             val textColor = ContextCompat.getColor(
                 binding.root.context,
-                if (uiModel.isDuplicated == false) R.color.primary else R.color.error_500
+                if (uiModel.nickNameState == NickNameValidationState.VALID) R.color.primary else R.color.error_500
             )
             tvCheckDuplicatedResult.setTextColor(textColor)
             val lengthText = if (isFocused) "${(uiModel.nickName ?: "").length}/10" else ""
@@ -215,11 +332,13 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     //TODO string resource로 변경
     private fun createDuplicatedResultText(
         isFocused: Boolean,
+        isSelected: Boolean,
         uiModel: NickNameUiModel
     ): String {
         return when {
-            uiModel.isDuplicated == true -> "이미 사용되고 있는 닉네임이에요"
-            uiModel.isDuplicated == false -> "사용 가능한 닉네임이에요"
+            !isSelected -> ""
+            uiModel.nickNameState == NickNameValidationState.INVALID -> "이미 사용되고 있는 닉네임이에요"
+            uiModel.nickNameState == NickNameValidationState.VALID -> "사용 가능한 닉네임이에요"
             uiModel.nickName == null -> ""
             uiModel.nickName.isEmpty() -> if (isFocused) "" else "최소 2글자로 설정해주세요"
             uiModel.nickName.length < 2 -> "최소 2글자로 설정해주세요"
@@ -229,17 +348,8 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
     }
 
-
     companion object {
-        private const val ARGUMENT_USER_ID_KEY = "argument_user_id_key"
-        private const val ARGUMENT_SOCIAL_LOGIN_TYPE_KEY = "argument_social_login_type_key"
-        fun newInstance(userId: String, socialLoginType: SocialLoginType) =
-            SignUpFragment().apply {
-                arguments = bundleOf().apply {
-                    putString(ARGUMENT_USER_ID_KEY, userId)
-                    putSerializable(ARGUMENT_SOCIAL_LOGIN_TYPE_KEY, socialLoginType)
-                }
-
-            }
+        const val ARGUMENT_USER_ID_KEY = "argument_user_id_key"
+        const val ARGUMENT_SOCIAL_LOGIN_TYPE_KEY = "argument_social_login_type_key"
     }
 }

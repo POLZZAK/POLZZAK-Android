@@ -19,9 +19,12 @@ inline fun <D, reified T : BaseResponse<D>, R> Response<T>.toApiResult(mapper: (
     }
 
     val rData = mapper(data?.data)
-    return if (code() in (200..399)) {
-        ApiResult.success(data = rData)
-    } else {
-        ApiResult.error(data = rData, statusCode = code(), code = data?.code)
-    }
+    return if (this.isSuccessful) ApiResult.success(
+        data = rData,
+    )
+    else ApiResult.error(data = rData, statusCode = code(), code = data?.code)
 }
+
+fun ApiResult<*>.isLoading() = this is ApiResult.Loading
+fun ApiResult<*>.isSuccess() = this is ApiResult.Success
+fun ApiResult<*>.isError() = this is ApiResult.Error

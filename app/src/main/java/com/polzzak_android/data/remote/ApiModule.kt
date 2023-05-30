@@ -2,8 +2,9 @@ package com.polzzak_android.data.remote
 
 import com.polzzak_android.BuildConfig
 import com.polzzak_android.data.remote.service.GoogleOAuthService
-import com.polzzak_android.data.remote.service.LoginService
+import com.polzzak_android.data.remote.service.AuthService
 import com.polzzak_android.data.repository.LoginRepository
+import com.polzzak_android.data.repository.SignUpRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -49,8 +50,8 @@ object ApiModule {
 
     @Singleton
     @Provides
-    fun provideLoginService(@Named("Polzzak") retrofit: Retrofit): LoginService =
-        retrofit.create(LoginService::class.java)
+    fun provideAuthService(@Named("Polzzak") retrofit: Retrofit): AuthService =
+        retrofit.create(AuthService::class.java)
 
     @Singleton
     @Provides
@@ -60,8 +61,14 @@ object ApiModule {
     @Singleton
     @Provides
     fun provideLoginRepository(
-        loginService: LoginService,
+        authService: AuthService,
         googleTokenService: GoogleOAuthService
     ): LoginRepository =
-        LoginRepository(loginService = loginService, googleTokenService = googleTokenService)
+        LoginRepository(authService = authService, googleTokenService = googleTokenService)
+
+    @Singleton
+    @Provides
+    fun provideSignUpRepository(
+        authService: AuthService
+    ): SignUpRepository = SignUpRepository(authService = authService)
 }

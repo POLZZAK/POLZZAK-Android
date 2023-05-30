@@ -19,13 +19,23 @@
         <action
             android:id="@+id/action_loginFragment_to_kidHostFragment"
             app:destination="@id/kidHostFragment" />
+
+        <action
+            android:id="@+id/action_loginFragment_to_SignUpFragment"
+            app:destination="@id/signUpFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.polzzak_android.presentation.signup.SignUpFragment"
+        android:label="SignUpFragment"
+        tools:layout="layout/fragment_signUp" />
+
     <fragment
         android:id="@+id/protectorHostFragment"
         android:name="com.polzzak_android.presentation.common.host.ProtectorHostFragment"
         android:label="fragment_protectort_host"
-        tools:layout="@layout/fragment_protectort_host">
-    </fragment>
+        tools:layout="@layout/fragment_protectort_host"></fragment>
     <fragment
         android:id="@+id/kidHostFragment"
         android:name="com.polzzak_android.presentation.common.host.KidHostFragment"

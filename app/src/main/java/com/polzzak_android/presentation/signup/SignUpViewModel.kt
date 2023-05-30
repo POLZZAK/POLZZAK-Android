@@ -4,17 +4,32 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import com.polzzak_android.common.model.ApiResult
 import com.polzzak_android.common.model.MemberType
 import com.polzzak_android.common.model.SocialLoginType
+import com.polzzak_android.common.util.isError
+import com.polzzak_android.common.util.isSuccess
+import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
+import com.polzzak_android.common.util.toApiResult
+import com.polzzak_android.data.repository.SignUpRepository
 import com.polzzak_android.presentation.signup.model.MemberTypeUiModel
 import com.polzzak_android.presentation.signup.model.NickNameUiModel
+import com.polzzak_android.presentation.signup.model.NickNameValidationState
+import com.polzzak_android.presentation.signup.model.ProfileImageUiModel
 import com.polzzak_android.presentation.signup.model.SignUpPage
+import com.polzzak_android.presentation.signup.model.SignUpResultUiModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
-import timber.log.Timber
+import kotlinx.coroutines.launch
 
-class SignUpViewModel(private val userName: String, private val userType: SocialLoginType?) :
-    ViewModel() {
+class SignUpViewModel @AssistedInject constructor(
+    private val signUpRepository: SignUpRepository,
+    @Assisted private val userName: String?, @Assisted private val userType: SocialLoginType?
+) : ViewModel() {
     private val _pageLiveData = MutableLiveData<SignUpPage>()
     val pageLiveData: LiveData<SignUpPage> = _pageLiveData
 
@@ -24,10 +39,16 @@ class SignUpViewModel(private val userName: String, private val userType: Social
     private val _memberTypeLiveData = MutableLiveData<MemberTypeUiModel>()
     val memberTypeLiveData: LiveData<MemberTypeUiModel> = _memberTypeLiveData
 
-    //TODO 서버 전송 타입으로 변경(현재는 임시타입)
-    private var profile: ByteArray? = null
+    private val _profileImageLiveData = MutableLiveData<ProfileImageUiModel>()
+    val profileImageLiveData: LiveData<ProfileImageUiModel> = _profileImageLiveData
 
-    private var checkNickNameJob: Job? = null
+    private val _signUpResultLiveData =
+        MutableLiveData<EventWrapper<ApiResult<SignUpResultUiModel>>>()
+    val signUpResultLiveData: LiveData<EventWrapper<ApiResult<SignUpResultUiModel>>> =
+        _signUpResultLiveData
+
+    private var checkNickNameValidationJob: Job? = null
+    private var signUpJob: Job? = null
 
     init {
         _pageLiveData.value =
@@ -87,11 +108,16 @@ class SignUpViewModel(private val userName: String, private val userType: Social
     }
 
     fun setNickNameValue(nickName: String) {
+        checkNickNameValidationJob?.cancel()
         _nickNameLiveData.value = NickNameUiModel(nickName = nickName)
     }
 
+    fun setProfileImagePath(path: String?) {
+        _profileImageLiveData.value = ProfileImageUiModel(path = path)
+    }
+
     private fun clearProfileImage() {
-        profile = null
+        _profileImageLiveData.value = ProfileImageUiModel()
     }
 
     private fun clearParentType() {
@@ -100,24 +126,63 @@ class SignUpViewModel(private val userName: String, private val userType: Social
     }
 
     private fun clearNickName() {
+        checkNickNameValidationJob?.cancel()
         _nickNameLiveData.value = NickNameUiModel()
     }
 
-    fun checkIsDuplicatedNickName() {
-        if (checkNickNameJob?.isCompleted == false) return
-        //TODO 닉네임 중복체크 api
+    fun requestCheckNickNameValidation() {
+        if (checkNickNameValidationJob?.isCompleted == false) return
+        checkNickNameValidationJob = viewModelScope.launch {
+            val nickNameUiModel = nickNameLiveData.value ?: return@launch
+            val nickName = nickNameUiModel.nickName ?: return@launch
+            val result = signUpRepository.requestCheckNickNameValidation(nickName = nickName)
+                .toApiResult { null }
+            if (result.isSuccess()) {
+                _nickNameLiveData.value =
+                    nickNameUiModel.copy(nickNameState = NickNameValidationState.VALID)
+            } else if (result.isError()) {
+                _nickNameLiveData.value =
+                    nickNameUiModel.copy(nickNameState = NickNameValidationState.INVALID)
+            }
+        }
     }
 
-    fun cancelCheckNickNameJob() {
-        checkNickNameJob?.cancel()
+    fun requestSignUp() {
+        if (signUpJob?.isCompleted == false) return
+        signUpJob = viewModelScope.launch {
+            _signUpResultLiveData.value = EventWrapper(ApiResult.loading())
+            safeLet(
+                userName,
+                memberTypeLiveData.value?.type,
+                userType,
+                nickNameLiveData.value?.nickName
+            ) { userName, memberType, userType, nickName ->
+                val result = signUpRepository.requestSignUp(
+                    userName = userName,
+                    memberType = memberType,
+                    socialType = userType,
+                    nickName = nickName,
+                    profileImagePath = profileImageLiveData.value?.path
+                )
+            }
+
+        }
+    }
+
+    @AssistedFactory
+    interface SignUpAssistedFactory {
+        fun create(userName: String?, userType: SocialLoginType?): SignUpViewModel
     }
 
     companion object {
-        class Factory(private val userName: String, private val userType: SocialLoginType?) :
-            ViewModelProvider.Factory {
+        fun provideFactory(
+            signUpAssistedFactory: SignUpAssistedFactory,
+            userName: String?,
+            userType: SocialLoginType?
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return SignUpViewModel(userName = userName, userType = userType) as T
+                return signUpAssistedFactory.create(userName = userName, userType = userType) as T
             }
         }
     }
