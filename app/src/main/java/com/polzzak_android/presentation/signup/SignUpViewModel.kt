@@ -150,7 +150,7 @@ class SignUpViewModel @AssistedInject constructor(
     fun requestSignUp() {
         if (signUpJob?.isCompleted == false) return
         signUpJob = viewModelScope.launch {
-            _signUpResultLiveData.value = EventWrapper(ApiResult.Loading())
+            _signUpResultLiveData.value = EventWrapper(ApiResult.loading())
             safeLet(
                 userName,
                 memberTypeLiveData.value?.type,
