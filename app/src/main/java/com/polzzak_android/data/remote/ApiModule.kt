@@ -20,7 +20,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
     //TODO dev, prod url 구분
-    private const val BASE_URL = "http://3.38.237.188:8080"
+    private const val BASE_URL = "https://api.polzzak.co.kr"
     private const val GOOGLE_OAUTH_BASE_URL = "https://www.googleapis.com"
 
     //TODO 필요 시 timeout 등 옵션 추가
