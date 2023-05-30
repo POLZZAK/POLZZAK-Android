@@ -173,8 +173,8 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             })
             etInput.setOnFocusChangeListener { _, isFocused ->
                 val textUiModel = signUpViewModel.nickNameLiveData.value ?: NickNameUiModel()
-                if (textUiModel.nickName == null) signUpViewModel.setNickNameValue("")
-                else setNickNameResultTextView(isFocused = isFocused, uiModel = textUiModel)
+                etInput.isSelected = true
+                setNickNameResultTextView(isFocused = isFocused, uiModel = textUiModel)
             }
             tvBtnAccept.isEnabled = false
             tvBtnAccept.setOnClickListener {
@@ -316,6 +316,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         with(binding.inSetNickName) {
             tvCheckDuplicatedResult.text = createDuplicatedResultText(
                 isFocused = isFocused,
+                isSelected = etInput.isSelected,
                 uiModel = uiModel
             )
             val textColor = ContextCompat.getColor(
@@ -331,9 +332,11 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     //TODO string resource로 변경
     private fun createDuplicatedResultText(
         isFocused: Boolean,
+        isSelected: Boolean,
         uiModel: NickNameUiModel
     ): String {
         return when {
+            !isSelected -> ""
             uiModel.nickNameState == NickNameValidationState.INVALID -> "이미 사용되고 있는 닉네임이에요"
             uiModel.nickNameState == NickNameValidationState.VALID -> "사용 가능한 닉네임이에요"
             uiModel.nickName == null -> ""
