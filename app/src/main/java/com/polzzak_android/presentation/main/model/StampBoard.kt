@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.main.protector.model
+package com.polzzak_android.presentation.main.model
 
 data class StampBoard(
     val type: Int,      // 1 non 2 yes

@@ -10,22 +10,41 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.polzzak_android.R
 import com.polzzak_android.common.base.BaseFragment
+import com.polzzak_android.common.util.stampProgressCalculator
 import com.polzzak_android.databinding.FragmentProgressBinding
 import com.polzzak_android.presentation.adapter.MainStampAdapter
 import com.polzzak_android.presentation.adapter.MainStampPagerAdapter
 import com.polzzak_android.presentation.main.protector.StampViewModel
-import com.polzzak_android.presentation.main.protector.model.Partner
-import com.polzzak_android.presentation.main.protector.model.StampBoard
-import com.polzzak_android.presentation.main.protector.model.StampBoardSummary
 import com.polzzak_android.presentation.component.SelectUserFilterFragment
 import com.polzzak_android.presentation.component.SemiCircleProgressView
+import com.polzzak_android.presentation.main.intercation.MainProgressInteraction
+import com.polzzak_android.presentation.main.model.Partner
+import com.polzzak_android.presentation.main.model.StampBoard
+import com.polzzak_android.presentation.main.model.StampBoardSummary
 
-class ProgressFragment : BaseFragment<FragmentProgressBinding>(), ProgressInteraction {
+class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainProgressInteraction {
+
     override val layoutResId: Int = R.layout.fragment_progress
 
     private lateinit var rvAdapter: MainStampAdapter
     private lateinit var vpAdapter: MainStampPagerAdapter
     private val stampViewModel: StampViewModel by activityViewModels()
+
+    companion object {
+        private var instance: ProtectorProgressFragment? = null
+
+        @JvmStatic
+        fun getInstance(): ProtectorProgressFragment {
+            if (instance == null) {
+                synchronized(ProtectorProgressFragment::class.java) {
+                    if (instance == null) {
+                        instance = ProtectorProgressFragment()
+                    }
+                }
+            }
+            return instance!!
+        }
+    }
 
     override fun initView() {
         super.initView()
@@ -130,25 +149,6 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding>(), ProgressIntera
                 curInd.invalidate()
             }
         })
-
-        // transform
-        val currentVisibleItemPx = 50
-
-        view.addItemDecoration(object: RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                outRect.right = currentVisibleItemPx
-                outRect.left = currentVisibleItemPx
-            }
-        })
-
-        val nextVisibleItemPx = 20
-        val pageTranslationX = nextVisibleItemPx + currentVisibleItemPx
-
-        view.offscreenPageLimit = 1
-
-        view.setPageTransformer { page, position ->
-            page.translationX = -pageTranslationX * (position)
-        }
     }
 
     override fun onStampPagerClicked(stampBoardItem: StampBoardSummary) {
@@ -156,8 +156,8 @@ class ProgressFragment : BaseFragment<FragmentProgressBinding>(), ProgressIntera
         Toast.makeText(context, "${stampBoardItem.name} 클릭", Toast.LENGTH_SHORT).show()
     }
 
-    override fun setProgressAnim(view: SemiCircleProgressView) {
-        // Todo: 계산 로직 추가
-        view.setAnimation(260f)
+    override fun setProgressAnim(curCnt: Int, totalCnt: Int, view: SemiCircleProgressView) {
+        val degree = stampProgressCalculator(curCnt, totalCnt)
+        view.setAnimation(degree)
     }
 }

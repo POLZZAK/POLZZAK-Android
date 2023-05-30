@@ -1,16 +1,18 @@
 package com.polzzak_android.presentation.adapter
 
+import android.graphics.Rect
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampNonBinding
 import com.polzzak_android.databinding.ItemStampYesBinding
-import com.polzzak_android.presentation.main.protector.model.StampBoard
-import com.polzzak_android.presentation.main.protector.progress.ProgressInteraction
+import com.polzzak_android.presentation.main.intercation.MainProgressInteraction
+import com.polzzak_android.presentation.main.model.StampBoard
 
-class MainStampAdapter(private val dummy: List<StampBoard>, private val interaction: ProgressInteraction) :
+class MainStampAdapter(private val dummy: List<StampBoard>, private val interaction: MainProgressInteraction) :
     ListAdapter<StampBoard, RecyclerView.ViewHolder>(DiffCallback) {
 
     private var stampList = dummy
@@ -72,12 +74,33 @@ class MainStampAdapter(private val dummy: List<StampBoard>, private val interact
         }
     }
 
-    inner class YesViewHolder(binding: ItemStampYesBinding, interaction: ProgressInteraction) :
+    inner class YesViewHolder(binding: ItemStampYesBinding, interaction: MainProgressInteraction) :
         RecyclerView.ViewHolder(binding.root) {
         private val userHeaderTxt = binding.userNickName
         private val stampPager = binding.stampPager
         private val curInd = binding.curPage
         private val totalInd = binding.totalPage
+
+        init {
+            // transform
+            val currentVisibleItemPx = 50
+
+            stampPager.addItemDecoration(object: RecyclerView.ItemDecoration() {
+                override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+                    outRect.right = currentVisibleItemPx
+                    outRect.left = currentVisibleItemPx
+                }
+            })
+
+            val nextVisibleItemPx = 20
+            val pageTranslationX = nextVisibleItemPx + currentVisibleItemPx
+
+            stampPager.offscreenPageLimit = 1
+
+            stampPager.setPageTransformer { page, position ->
+                page.translationX = -pageTranslationX * (position)
+            }
+        }
 
         fun bind(item: StampBoard) {
             userHeaderTxt.text = item.partner.nickname

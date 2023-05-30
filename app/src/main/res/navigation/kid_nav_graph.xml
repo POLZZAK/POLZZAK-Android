@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/kid_nav_graph">
+    android:id="@+id/kid_nav_graph"
+    app:startDestination="@id/kid_main_nav_graph">
 
+    <!-- 메인 도장판 -->
+    <navigation android:id="@+id/kid_main_nav_graph"
+        app:startDestination="@id/kidMainFragment">
+        <fragment
+            android:id="@+id/kidMainFragment"
+            android:name="com.polzzak_android.presentation.main.kid.KidMainFragment"
+            android:label="KidMainFragment" />
+    </navigation>
+
+    <!-- 쿠폰 -->
+    <navigation android:id="@+id/kid_coupon_nav_graph"
+        app:startDestination="@id/kidCouponFragment">
+        <fragment
+            android:id="@+id/kidCouponFragment"
+            android:name="com.polzzak_android.presentation.coupon.kid.KidCouponFragment"
+            android:label="KidCouponFragment" />
+    </navigation>
+
+    <!-- 알림 -->
+    <navigation android:id="@+id/kid_notification_nav_graph"
+        app:startDestination="@id/kidNotificationFragment">
+        <fragment
+            android:id="@+id/kidNotificationFragment"
+            android:name="com.polzzak_android.presentation.notification.kid.KidNotificationFragment"
+            android:label="KidNotificationFragment" />
+    </navigation>
+
+    <!-- 마이페이지 -->
+    <navigation android:id="@+id/kid_myPage_nav_graph"
+        app:startDestination="@id/kidMyPageFragment">
+        <fragment
+            android:id="@+id/kidMyPageFragment"
+            android:name="com.polzzak_android.presentation.myPage.kid.KidMyPageFragment"
+            android:label="KidMyPageFragment" />
+    </navigation>
 </navigation>
