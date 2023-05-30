@@ -2,7 +2,9 @@ package com.polzzak_android.presentation.signup
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
@@ -16,17 +18,21 @@ import com.bumptech.glide.Glide
 import com.polzzak_android.R
 import com.polzzak_android.common.PhotoPicker
 import com.polzzak_android.common.base.BaseFragment
+import com.polzzak_android.common.model.ApiResult
 import com.polzzak_android.common.model.MemberType
 import com.polzzak_android.common.model.SocialLoginType
+import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentSignupBinding
 import com.polzzak_android.presentation.signup.adapter.ParentTypeRollableAdapter
 import com.polzzak_android.presentation.signup.model.NickNameUiModel
 import com.polzzak_android.presentation.signup.model.NickNameValidationState
 import com.polzzak_android.presentation.signup.model.SignUpPage
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import javax.inject.Inject
 import kotlin.math.abs
 import kotlin.math.sqrt
+
 
 @AndroidEntryPoint
 class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
@@ -201,13 +207,31 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         with(binding.inSelectProfileImage) {
             ivBtnSelectPicture.setOnClickListener {
                 photoPicker?.invoke { uri ->
-                    Glide.with(binding.root.context).load(uri)
-                        .into(binding.inSelectProfileImage.ivBtnSelectPicture)
+                    val path = getAbsPath(uri = uri)
+                    signUpViewModel.setProfileImagePath(path = path)
                 }
             }
             tvBtnAccept.setOnClickListener {
-                //TODO 회원가입 요청
+                signUpViewModel.requestSignUp()
             }
+        }
+    }
+
+    private fun getAbsPath(uri: Uri): String? {
+        return try {
+            val cursor = activity?.contentResolver?.query(
+                uri, null, null, null, null
+            )
+            cursor?.run {
+                moveToFirst()
+                val index = getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                val ret = getString(index)
+                close()
+                ret
+            }
+        } catch (e: Exception) {
+            Timber.e("$uri - $e")
+            null
         }
     }
 
@@ -235,6 +259,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
                     SignUpPage.SET_NICKNAME -> {
                         inSetNickName.root.isVisible = true
+                        inSetNickName.etInput.setText(signUpViewModel.nickNameLiveData.value?.nickName)
                     }
 
                     SignUpPage.SET_PROFILE_IMAGE -> {
@@ -264,6 +289,27 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 tvBtnAccept.isEnabled = (it.nickNameState == NickNameValidationState.VALID)
             }
         }
+        signUpViewModel.profileImageLiveData.observe(viewLifecycleOwner) {
+            with(binding.inSelectProfileImage) {
+                Glide.with(this@SignUpFragment).load(it.path)
+                    .into(ivBtnSelectPicture)
+            }
+        }
+        signUpViewModel.signUpResultLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
+            when (it) {
+                is ApiResult.Loading -> {
+                    //do nothing
+                }
+
+                is ApiResult.Success -> {
+                    //TODO 온보딩 페이지 이동
+                }
+
+                is ApiResult.Error -> {
+                    //TODO 회원가입 실패 처리
+                }
+            }
+        })
     }
 
     private fun setNickNameResultTextView(isFocused: Boolean, uiModel: NickNameUiModel) {

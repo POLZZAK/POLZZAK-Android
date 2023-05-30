@@ -5,17 +5,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.polzzak_android.common.model.ApiResult
 import com.polzzak_android.common.model.MemberType
 import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.common.util.isError
 import com.polzzak_android.common.util.isSuccess
+import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.common.util.toApiResult
 import com.polzzak_android.data.repository.SignUpRepository
 import com.polzzak_android.presentation.signup.model.MemberTypeUiModel
 import com.polzzak_android.presentation.signup.model.NickNameUiModel
 import com.polzzak_android.presentation.signup.model.NickNameValidationState
+import com.polzzak_android.presentation.signup.model.ProfileImageUiModel
 import com.polzzak_android.presentation.signup.model.SignUpPage
+import com.polzzak_android.presentation.signup.model.SignUpResultUiModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -35,10 +39,16 @@ class SignUpViewModel @AssistedInject constructor(
     private val _memberTypeLiveData = MutableLiveData<MemberTypeUiModel>()
     val memberTypeLiveData: LiveData<MemberTypeUiModel> = _memberTypeLiveData
 
-    //TODO 서버 전송 타입으로 변경(현재는 임시타입)
-    private var profile: ByteArray? = null
+    private val _profileImageLiveData = MutableLiveData<ProfileImageUiModel>()
+    val profileImageLiveData: LiveData<ProfileImageUiModel> = _profileImageLiveData
+
+    private val _signUpResultLiveData =
+        MutableLiveData<EventWrapper<ApiResult<SignUpResultUiModel>>>()
+    val signUpResultLiveData: LiveData<EventWrapper<ApiResult<SignUpResultUiModel>>> =
+        _signUpResultLiveData
 
     private var checkNickNameValidationJob: Job? = null
+    private var signUpJob: Job? = null
 
     init {
         _pageLiveData.value =
@@ -102,8 +112,12 @@ class SignUpViewModel @AssistedInject constructor(
         _nickNameLiveData.value = NickNameUiModel(nickName = nickName)
     }
 
+    fun setProfileImagePath(path: String?) {
+        _profileImageLiveData.value = ProfileImageUiModel(path = path)
+    }
+
     private fun clearProfileImage() {
-        profile = null
+        _profileImageLiveData.value = ProfileImageUiModel()
     }
 
     private fun clearParentType() {
@@ -130,6 +144,28 @@ class SignUpViewModel @AssistedInject constructor(
                 _nickNameLiveData.value =
                     nickNameUiModel.copy(nickNameState = NickNameValidationState.INVALID)
             }
+        }
+    }
+
+    fun requestSignUp() {
+        if (signUpJob?.isCompleted == false) return
+        signUpJob = viewModelScope.launch {
+            _signUpResultLiveData.value = EventWrapper(ApiResult.Loading())
+            safeLet(
+                userName,
+                memberTypeLiveData.value?.type,
+                userType,
+                nickNameLiveData.value?.nickName
+            ) { userName, memberType, userType, nickName ->
+                val result = signUpRepository.requestSignUp(
+                    userName = userName,
+                    memberType = memberType,
+                    socialType = userType,
+                    nickName = nickName,
+                    profileImagePath = profileImageLiveData.value?.path
+                )
+            }
+
         }
     }
 
