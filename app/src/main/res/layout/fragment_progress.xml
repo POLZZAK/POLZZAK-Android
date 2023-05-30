@@ -6,7 +6,7 @@
 
         <variable
             name="stampViewModel"
-            type="com.polzzak_android.presentation.main.protector.StampViewModel" />
+            type="com.polzzak_android.presentation.main.protector.ProtectorStampViewModel" />
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

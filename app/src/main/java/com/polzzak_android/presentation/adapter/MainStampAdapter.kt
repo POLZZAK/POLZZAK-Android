@@ -7,47 +7,40 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewbinding.ViewBinding
 import com.polzzak_android.databinding.ItemStampNonBinding
 import com.polzzak_android.databinding.ItemStampYesBinding
 import com.polzzak_android.presentation.main.intercation.MainProgressInteraction
 import com.polzzak_android.presentation.main.model.StampBoard
 
-class MainStampAdapter(private val dummy: List<StampBoard>, private val interaction: MainProgressInteraction) :
-    ListAdapter<StampBoard, RecyclerView.ViewHolder>(DiffCallback) {
+enum class ViewHolderType {
+    NON,
+    YES
+}
 
-    private var stampList = dummy
-    //private var stampList: listOf<StampInfo>() = null
+class MainStampAdapter(private val interaction: MainProgressInteraction) :
+    ListAdapter<StampBoard, MainStampAdapter.ViewHolder>(DiffCallback) {
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): RecyclerView.ViewHolder {
+    private var stampList: List<StampBoard> = listOf()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            1 -> {
-                val view =
-                    ItemStampNonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                NonViewHolder(view)
+            ViewHolderType.NON.ordinal -> {
+                val itemHomeBannerBinding = ItemStampNonBinding.inflate(inflater, parent, false)
+                ViewHolder(itemHomeBannerBinding, interaction)
             }
-            else -> {
-                val view =
-                    ItemStampYesBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                YesViewHolder(view, interaction)
+            ViewHolderType.YES.ordinal -> {
+                val fragmentOneDayPopupBinding = ItemStampYesBinding.inflate(inflater, parent, false)
+                ViewHolder(fragmentOneDayPopupBinding, interaction)
             }
+            else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
     }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val curItem = stampList[position]
-
-        when (curItem.type) {
-            1 -> {
-                (holder as NonViewHolder).bind(curItem)
-            }
-
-            else -> {
-                (holder as YesViewHolder).bind(curItem)
-            }
-        }
+        holder.bind(curItem)
     }
 
     override fun getItemCount(): Int {
@@ -55,57 +48,74 @@ class MainStampAdapter(private val dummy: List<StampBoard>, private val interact
     }
 
     override fun getItemViewType(position: Int): Int {
-        return stampList[position].type
+        val item = getItem(position)
+        return when (item.type) {
+            1 -> ViewHolderType.NON.ordinal
+            else -> ViewHolderType.YES.ordinal
+        }
     }
 
     fun setStampList(newList: List<StampBoard>) {
         stampList = newList
-        notifyDataSetChanged()
+        submitList(newList)
     }
 
-    inner class NonViewHolder(binding: ItemStampNonBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        private val userHeaderTxt = binding.userNickNameHeader
-        private val userContentTxt = binding.userNickNameContent
-
-        fun bind(item: StampBoard) {
-            userHeaderTxt.text = item.partner.nickname
-            userContentTxt.text = item.partner.nickname
-        }
-    }
-
-    inner class YesViewHolder(binding: ItemStampYesBinding, interaction: MainProgressInteraction) :
-        RecyclerView.ViewHolder(binding.root) {
-        private val userHeaderTxt = binding.userNickName
-        private val stampPager = binding.stampPager
-        private val curInd = binding.curPage
-        private val totalInd = binding.totalPage
+    inner class ViewHolder(
+        private val binding: ViewBinding,
+        private val interaction: MainProgressInteraction?
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         init {
-            // transform
-            val currentVisibleItemPx = 50
+            when (binding) {
+                is ItemStampYesBinding -> {
+                    // transform : viewPager item 간격 설정
+                    val currentVisibleItemPx = 50
 
-            stampPager.addItemDecoration(object: RecyclerView.ItemDecoration() {
-                override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-                    outRect.right = currentVisibleItemPx
-                    outRect.left = currentVisibleItemPx
+                    binding.stampPager.addItemDecoration(object : RecyclerView.ItemDecoration() {
+                        override fun getItemOffsets(
+                            outRect: Rect,
+                            view: View,
+                            parent: RecyclerView,
+                            state: RecyclerView.State
+                        ) {
+                            outRect.right = currentVisibleItemPx
+                            outRect.left = currentVisibleItemPx
+                        }
+                    })
+
+                    val nextVisibleItemPx = 20
+                    val pageTranslationX = nextVisibleItemPx + currentVisibleItemPx
+
+                    binding.stampPager.offscreenPageLimit = 1
+
+                    binding.stampPager.setPageTransformer { page, position ->
+                        page.translationX = -pageTranslationX * (position)
+                    }
                 }
-            })
-
-            val nextVisibleItemPx = 20
-            val pageTranslationX = nextVisibleItemPx + currentVisibleItemPx
-
-            stampPager.offscreenPageLimit = 1
-
-            stampPager.setPageTransformer { page, position ->
-                page.translationX = -pageTranslationX * (position)
             }
         }
 
         fun bind(item: StampBoard) {
-            userHeaderTxt.text = item.partner.nickname
+            when (binding) {
+                is ItemStampNonBinding -> {
 
-            interaction.setViewPager(stampPager, curInd, totalInd, item.stampBoardSummaries)
+                    binding.apply {
+                        userNickNameHeader.text = item.partner.nickname
+                        userNickNameContent.text = item.partner.nickname
+                    }
+                }
+
+                is ItemStampYesBinding -> {
+                    binding.userNickName.text = item.partner.nickname
+
+                    interaction?.setViewPager(
+                        binding.stampPager,
+                        binding.curPage,
+                        binding.totalPage,
+                        item.stampBoardSummaries
+                    )
+                }
+            }
         }
     }
 

@@ -4,21 +4,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampProgressBinding
-import com.polzzak_android.presentation.main.intercation.MainProgressInteraction
 import com.polzzak_android.presentation.main.model.StampBoardSummary
+import com.polzzak_android.presentation.main.intercation.MainProgressInteraction
 
 class MainStampPagerAdapter(
-    private val dummy: List<StampBoardSummary>,
+    private val stampList: List<StampBoardSummary>,
     private val interaction: MainProgressInteraction
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var stampList = dummy
-    //private var stampList: listOf<StampBoardSummary>() = null
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val view = ItemStampProgressBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val view =
+            ItemStampProgressBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(view, interaction)
     }
 
@@ -32,11 +29,6 @@ class MainStampPagerAdapter(
         (holder as ViewHolder).bind(curItem)
     }
 
-    fun setStampList(newList: List<StampBoardSummary>) {
-        stampList = newList
-        notifyDataSetChanged()
-    }
-
     inner class ViewHolder(binding: ItemStampProgressBinding, interaction: MainProgressInteraction) :
         RecyclerView.ViewHolder(binding.root) {
         private val container = binding.stampContainer
@@ -46,18 +38,16 @@ class MainStampPagerAdapter(
         private val curCnt = binding.stampCurCnt
         private val totalCnt = binding.stampTotalCnt
         private val reward = binding.rawardContent
+        private val stampReqTimes = binding.stampReqTimes
 
         fun bind(item: StampBoardSummary) {
             userHeaderTxt.text = item.name
             curCnt.text = item.currentStampCount.toString()
             totalCnt.text = item.goalStampCount.toString()
             reward.text = item.reward
+            stampReqTimes.text = item.missionCompleteCount.toString()
 
-            interaction.setProgressAnim(
-                curCnt = item.currentStampCount,
-                totalCnt = item.goalStampCount,
-                view = progressView
-            )
+            interaction.setProgressAnim(item.currentStampCount, item.goalStampCount, progressView)
 
             container.setOnClickListener {
                 interaction.onStampPagerClicked(item)
