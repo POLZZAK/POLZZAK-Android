@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.splash
+package com.polzzak_android.presentation.common.splash
 
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R

@@ -10,7 +10,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.polzzak_android.presentation.splash.SplashFragment"
+        android:name="com.polzzak_android.presentation.common.splash.SplashFragment"
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash">
         <action
@@ -47,7 +47,7 @@
         android:id="@+id/protectorHostFragment"
         android:name="com.polzzak_android.presentation.common.host.ProtectorHostFragment"
         android:label="fragment_protectort_host"
-        tools:layout="@layout/fragment_protectort_host"></fragment>
+        tools:layout="@layout/fragment_protectort_host" />
     <fragment
         android:id="@+id/kidHostFragment"
         android:name="com.polzzak_android.presentation.common.host.KidHostFragment"
