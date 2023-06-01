@@ -1,7 +1,7 @@
 package com.polzzak_android.data.repository
 
-import com.polzzak_android.common.model.MemberType
-import com.polzzak_android.common.model.SocialLoginType
+import com.polzzak_android.presentation.common.model.MemberType
+import com.polzzak_android.presentation.auth.model.SocialLoginType
 import com.polzzak_android.data.remote.model.response.CheckNickNameValidationResponse
 import com.polzzak_android.data.remote.model.response.SignUpResponse
 import com.polzzak_android.data.remote.service.AuthService

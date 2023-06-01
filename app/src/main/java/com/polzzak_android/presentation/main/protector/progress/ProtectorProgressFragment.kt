@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.polzzak_android.R
-import com.polzzak_android.common.base.BaseFragment
+import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.common.util.stampProgressCalculator
 import com.polzzak_android.databinding.FragmentProgressBinding
 import com.polzzak_android.presentation.adapter.MainStampAdapter
