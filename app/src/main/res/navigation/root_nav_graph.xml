@@ -10,7 +10,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.polzzak_android.presentation.common.splash.SplashFragment"
+        android:name="com.polzzak_android.presentation.splash.SplashFragment"
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash">
         <action
@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.polzzak_android.presentation.login.LoginFragment"
+        android:name="com.polzzak_android.presentation.auth.login.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login">
         <action
@@ -39,7 +39,7 @@
 
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.polzzak_android.presentation.signup.SignUpFragment"
+        android:name="com.polzzak_android.presentation.auth.signup.SignUpFragment"
         android:label="SignUpFragment"
         tools:layout="layout/fragment_signUp" />
 
