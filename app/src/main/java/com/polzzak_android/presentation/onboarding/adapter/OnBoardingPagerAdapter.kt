@@ -30,9 +30,9 @@ class OnBoardingPagerAdapter(private val dataList: List<OnBoardingPageModel>) :
                 val data = dataList.getOrNull(position) ?: return
                 tvTitle.text = data.title
                 tvContent.text = data.content
-                spvProgress.isVisible = (position < dataList.lastIndex)
-                spvProgress.selectedCount = position + 1
-                spvProgress.maxCount = dataList.size
+                cpvProgress.isVisible = (position < dataList.lastIndex)
+                cpvProgress.checkedCount = position + 1
+                cpvProgress.maxCount = dataList.size
                 tvBtnStart.isVisible = (position == dataList.lastIndex)
             }
         }

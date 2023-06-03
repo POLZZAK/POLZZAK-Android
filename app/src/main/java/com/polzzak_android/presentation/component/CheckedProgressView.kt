@@ -16,28 +16,28 @@ import kotlin.reflect.KProperty
 /**
  * 2개의 drawable로 진행도를 표시(ex. 회원가입, 온보딩 진행도 등)
  * @property maxCount drawable의 최대 개수
- * @property selectedCount selectedDrawable을 적용시킬 개수
- * @property selectedDrawableRes selectedCount만큼 앞에 해당 drawable로 채움
- * @property unSelectedDrawableRes maxCount - selectedCount 만큼 뒤에 해당 drawable로 채움
+ * @property checkedCount checkedDrawable을 적용시킬 개수
+ * @property checkedDrawableRes checkedCount만큼 앞에 해당 drawable로 채움
+ * @property uncheckedDrawableRes maxCount -checkedCount 만큼 뒤에 해당 drawable로 채움
  * @property drawableWidthPx 각 drawable의 너비 px
  * @property drawableHeightPx 각 drawable의 높이 px
  * @property betweenMarginsPx 각 drawable의 사이 margin px
  */
-class SelectorProgressView @JvmOverloads constructor(
+class CheckedProgressView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     @AttrRes defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
     var maxCount by ViewAttributeDelegate(initValue = 0)
-    var selectedCount by ViewAttributeDelegate(
+    var checkedCount by ViewAttributeDelegate(
         initValue = 0,
         getter = { value -> minOf(maxCount, value) })
 
     @delegate:DrawableRes
-    var selectedDrawableRes by ViewAttributeDelegate<Int?>(initValue = null)
+    var checkedDrawableRes by ViewAttributeDelegate<Int?>(initValue = null)
 
     @delegate:DrawableRes
-    var unSelectedDrawableRes by ViewAttributeDelegate<Int?>(initValue = null)
+    var uncheckedDrawableRes by ViewAttributeDelegate<Int?>(initValue = null)
 
     @delegate:Px
     var drawableWidthPx by ViewAttributeDelegate(initValue = 0)
@@ -55,25 +55,25 @@ class SelectorProgressView @JvmOverloads constructor(
         val typedArray =
             context.theme.obtainStyledAttributes(
                 attrs,
-                R.styleable.SelectorProgressView,
+                R.styleable.CheckedProgressView,
                 defStyleAttr,
                 0
             )
 
-        maxCount = typedArray.getInteger(R.styleable.SelectorProgressView_maxCount, 0)
-        selectedCount = typedArray.getInteger(R.styleable.SelectorProgressView_selectedCount, 0)
-        selectedDrawableRes =
-            typedArray.getResourceId(R.styleable.SelectorProgressView_selectedDrawable, -1)
+        maxCount = typedArray.getInteger(R.styleable.CheckedProgressView_maxCount, 0)
+        checkedCount = typedArray.getInteger(R.styleable.CheckedProgressView_checkedCount, 0)
+        checkedDrawableRes =
+            typedArray.getResourceId(R.styleable.CheckedProgressView_checkedDrawable, -1)
                 .takeIf { it != -1 }
-        unSelectedDrawableRes =
-            typedArray.getResourceId(R.styleable.SelectorProgressView_unSelectedDrawable, -1)
+        uncheckedDrawableRes =
+            typedArray.getResourceId(R.styleable.CheckedProgressView_uncheckedDrawable, -1)
                 .takeIf { it != -1 }
         drawableWidthPx =
-            typedArray.getDimensionPixelOffset(R.styleable.SelectorProgressView_drawableWidth, 0)
+            typedArray.getDimensionPixelOffset(R.styleable.CheckedProgressView_drawableWidth, 0)
         drawableHeightPx =
-            typedArray.getDimensionPixelOffset(R.styleable.SelectorProgressView_drawableHeight, 0)
+            typedArray.getDimensionPixelOffset(R.styleable.CheckedProgressView_drawableHeight, 0)
         betweenMarginsPx =
-            typedArray.getDimensionPixelOffset(R.styleable.SelectorProgressView_betweenMargins, 0)
+            typedArray.getDimensionPixelOffset(R.styleable.CheckedProgressView_betweenMargins, 0)
         typedArray.recycle()
         isInitialized = true
     }
@@ -95,13 +95,13 @@ class SelectorProgressView @JvmOverloads constructor(
     }
 
     private fun drawView(canvas: Canvas) {
-        val selectedDrawable =
-            selectedDrawableRes?.let { ContextCompat.getDrawable(context, it) }
-        val unSelectedDrawable =
-            unSelectedDrawableRes?.let { ContextCompat.getDrawable(context, it) }
+        val checkedDrawable =
+            checkedDrawableRes?.let { ContextCompat.getDrawable(context, it) }
+        val uncheckedDrawable =
+            checkedDrawableRes?.let { ContextCompat.getDrawable(context, it) }
         var left = 0
         repeat(maxCount) {
-            val target = if (it >= selectedCount) unSelectedDrawable else selectedDrawable
+            val target = if (it >= checkedCount) uncheckedDrawable else checkedDrawable
             target?.setBounds(left, 0, left + drawableWidthPx, drawableHeightPx)
             target?.draw(canvas)
             left += betweenMarginsPx + drawableWidthPx
