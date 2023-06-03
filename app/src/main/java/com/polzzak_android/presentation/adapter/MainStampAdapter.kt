@@ -63,29 +63,26 @@ class MainStampAdapter(private val dummy: List<StampBoard>, private val interact
         notifyDataSetChanged()
     }
 
-    inner class NonViewHolder(binding: ItemStampNonBinding) :
+    inner class NonViewHolder(private val binding: ItemStampNonBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private val userHeaderTxt = binding.userNickNameHeader
-        private val userContentTxt = binding.userNickNameContent
 
         fun bind(item: StampBoard) {
-            userHeaderTxt.text = item.partner.nickname
-            userContentTxt.text = item.partner.nickname
+            with(binding) {
+                // TODO: 멤버 타입 라벨 표시
+                userNickNameHeader.text = item.partner.nickname
+                userNickNameContent.text = item.partner.nickname
+            }
         }
     }
 
-    inner class YesViewHolder(binding: ItemStampYesBinding, interaction: MainProgressInteraction) :
+    inner class YesViewHolder(private val binding: ItemStampYesBinding, interaction: MainProgressInteraction) :
         RecyclerView.ViewHolder(binding.root) {
-        private val userHeaderTxt = binding.userNickName
-        private val stampPager = binding.stampPager
-        private val curInd = binding.curPage
-        private val totalInd = binding.totalPage
 
         init {
             // transform
             val currentVisibleItemPx = 50
 
-            stampPager.addItemDecoration(object: RecyclerView.ItemDecoration() {
+            binding.stampPager.addItemDecoration(object: RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
                     outRect.right = currentVisibleItemPx
                     outRect.left = currentVisibleItemPx
@@ -95,17 +92,19 @@ class MainStampAdapter(private val dummy: List<StampBoard>, private val interact
             val nextVisibleItemPx = 20
             val pageTranslationX = nextVisibleItemPx + currentVisibleItemPx
 
-            stampPager.offscreenPageLimit = 1
+            binding.stampPager.offscreenPageLimit = 1
 
-            stampPager.setPageTransformer { page, position ->
+            binding.stampPager.setPageTransformer { page, position ->
                 page.translationX = -pageTranslationX * (position)
             }
         }
 
         fun bind(item: StampBoard) {
-            userHeaderTxt.text = item.partner.nickname
-
-            interaction.setViewPager(stampPager, curInd, totalInd, item.stampBoardSummaries)
+            with(binding) {
+                // TODO: 멤버타입 라벨 표시
+                userNickName.text = item.partner.nickname
+                interaction.setViewPager(stampPager, curPage, totalPage, item.stampBoardSummaries)
+            }
         }
     }
 
