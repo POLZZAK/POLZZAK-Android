@@ -13,19 +13,33 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/header_container"
             android:layout_width="match_parent"
-            android:layout_height="28dp"
+            android:layout_height="wrap_content"
             android:paddingHorizontal="15dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/memberType"
+                style="@style/MemberType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/userNickName"
+                app:layout_constraintBottom_toBottomOf="@id/userNickName"
+                android:visibility="gone"
+                tools:text="엄마"/>
 
             <TextView
                 android:id="@+id/userNickName"
                 style="@style/subtitle.20.600"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                app:layout_goneMarginStart="0dp"
                 android:textColor="@color/gray_800"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@id/memberType"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="쿼카" />
 
             <TextView
@@ -34,16 +48,16 @@
                 android:layout_height="wrap_content"
                 android:text="님과 함께해요"
                 android:textColor="@color/gray_600"
-                app:layout_constraintBottom_toBottomOf="@id/userNickName"
-                app:layout_constraintStart_toEndOf="@id/userNickName" />
+                app:layout_constraintStart_toEndOf="@id/userNickName"
+                app:layout_constraintBaseline_toBaselineOf="@id/userNickName"/>
 
             <!-- viewpager indicator -->
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="@id/userNickName"
+                app:layout_constraintTop_toTopOf="@id/userNickName"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/userNickName">
+                app:layout_constraintBottom_toBottomOf="@id/userNickName">
 
                 <TextView
                     android:id="@+id/curPage"
