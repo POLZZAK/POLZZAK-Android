@@ -29,15 +29,15 @@ class SelectorProgressView @JvmOverloads constructor(
     @AttrRes defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
     var maxCount by ViewAttributeDelegate(initValue = 0)
-    var selectedCount by ViewAttributeDelegate(initValue = 0) {
-        minOf(maxCount, it)
-    }
+    var selectedCount by ViewAttributeDelegate(
+        initValue = 0,
+        getter = { value -> minOf(maxCount, value) })
 
     @delegate:DrawableRes
-    var selectedDrawableRes by ViewAttributeDelegate<Int?>(null)
+    var selectedDrawableRes by ViewAttributeDelegate<Int?>(initValue = null)
 
     @delegate:DrawableRes
-    var unSelectedDrawableRes by ViewAttributeDelegate<Int?>(null)
+    var unSelectedDrawableRes by ViewAttributeDelegate<Int?>(initValue = null)
 
     @delegate:Px
     var drawableWidthPx by ViewAttributeDelegate(initValue = 0)
