@@ -15,7 +15,8 @@ import timber.log.Timber
 
 //TODO 로그아웃 콜백 추가
 class GoogleLoginHelper(activity: AppCompatActivity) {
-    private var loginSuccessCallback: ((GoogleSignInAccount) -> Unit)? = null
+    private var loginSuccessCallbacks: MutableList<(GoogleSignInAccount) -> Unit> =
+        mutableListOf()
 
     private val mGoogleSignInClient: GoogleSignInClient
     private val resultLauncher: ActivityResultLauncher<Intent> =
@@ -23,7 +24,9 @@ class GoogleLoginHelper(activity: AppCompatActivity) {
             if (result.resultCode == Activity.RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 val account = task.getResult(ApiException::class.java)
-                loginSuccessCallback?.invoke(account)
+                loginSuccessCallbacks.forEach {
+                    it.invoke(account)
+                }
             } else {
                 //TODO 구글 로그인 요청 실패 에러 핸들링
                 Timber.e("구글 로그인 실패 ${result.resultCode}")
@@ -38,8 +41,12 @@ class GoogleLoginHelper(activity: AppCompatActivity) {
         mGoogleSignInClient = GoogleSignIn.getClient(activity, gso)
     }
 
-    fun setLoginSuccessCallback(callback: (GoogleSignInAccount) -> Unit) {
-        loginSuccessCallback = callback
+    fun registerLoginSuccessCallback(callback: (GoogleSignInAccount) -> Unit) {
+        loginSuccessCallbacks.add(callback)
+    }
+
+    fun unregisterLoginSuccessCallback(callback: (GoogleSignInAccount) -> Unit): Boolean {
+        return loginSuccessCallbacks.removeIf { it == callback }
     }
 
     fun requestLogin() {

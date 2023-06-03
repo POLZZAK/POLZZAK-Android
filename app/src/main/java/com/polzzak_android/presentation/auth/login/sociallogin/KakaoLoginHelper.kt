@@ -9,16 +9,20 @@ import timber.log.Timber
 
 //TODO 로그아웃 콜백 추가
 class KakaoLoginHelper(private val context: Context) {
-    private var loginSuccessCallback: ((token: OAuthToken) -> Unit)? = null
+    private var loginSuccessCallbacks: MutableList<(OAuthToken) -> Unit> = mutableListOf()
 
-    fun setLoginSuccessCallback(callback: (token: OAuthToken) -> Unit) {
-        loginSuccessCallback = callback
+    fun registerLoginSuccessCallback(callback: (token: OAuthToken) -> Unit) {
+        loginSuccessCallbacks.add(callback)
+    }
+
+    fun unregisterLoginSuccessCallback(callback: (OAuthToken) -> Unit): Boolean {
+        return loginSuccessCallbacks.removeIf { it == callback }
     }
 
     fun requestLogin() {
         with(UserApiClient.instance) {
             val kakaoLoginSuccessCallback: (OAuthToken) -> Unit =
-                { token -> loginSuccessCallback?.invoke(token) }
+                { token -> loginSuccessCallbacks.forEach { it.invoke(token) } }
             val kakaoLoginCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
                 if (error != null) {
                     //TODO 카카오 로그인 실패 에러 핸들링
