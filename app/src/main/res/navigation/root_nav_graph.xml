@@ -7,6 +7,7 @@
 
     <include app:graph="@navigation/protector_nav_graph" />
     <include app:graph="@navigation/kid_nav_graph" />
+    <include app:graph="@navigation/sign_up_nav_graph" />
 
     <fragment
         android:id="@+id/splashFragment"
@@ -31,17 +32,10 @@
         <action
             android:id="@+id/action_loginFragment_to_kidHostFragment"
             app:destination="@id/kidHostFragment" />
-
         <action
             android:id="@+id/action_loginFragment_to_SignUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/sign_up_nav_graph" />
     </fragment>
-
-    <fragment
-        android:id="@+id/signUpFragment"
-        android:name="com.polzzak_android.presentation.auth.signup.SignUpFragment"
-        android:label="SignUpFragment"
-        tools:layout="layout/fragment_signUp" />
 
     <fragment
         android:id="@+id/protectorHostFragment"
