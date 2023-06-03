@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CheckedProgressView">
+        <attr name="maxCount" format="integer" />
+        <attr name="checkedCount" format="integer" />
+        <attr name="checkedDrawable" format="reference" />
+        <attr name="uncheckedDrawable" format="reference" />
+        <attr name="drawableWidth" format="dimension" />
+        <attr name="drawableHeight" format="dimension" />
+        <attr name="betweenMargins" format="dimension" />
+    </declare-styleable>
+</resources>
