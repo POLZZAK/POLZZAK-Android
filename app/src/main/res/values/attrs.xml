@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SelectorProgressView">
+        <attr name="maxCount" format="integer" />
+        <attr name="selectedCount" format="integer" />
+        <attr name="selectedDrawable" format="reference" />
+        <attr name="unSelectedDrawable" format="reference" />
+        <attr name="drawableWidth" format="dimension" />
+        <attr name="drawableHeight" format="dimension" />
+        <attr name="betweenMargins" format="dimension" />
+    </declare-styleable>
+</resources>
