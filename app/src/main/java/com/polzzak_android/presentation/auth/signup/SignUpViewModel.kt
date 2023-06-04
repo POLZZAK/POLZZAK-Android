@@ -14,6 +14,7 @@ import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.presentation.common.util.toApiResult
 import com.polzzak_android.data.repository.SignUpRepository
+import com.polzzak_android.data.repository.UserRepository
 import com.polzzak_android.presentation.auth.signup.model.MemberTypeUiModel
 import com.polzzak_android.presentation.auth.signup.model.NickNameUiModel
 import com.polzzak_android.presentation.auth.signup.model.NickNameValidationState
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 
 class SignUpViewModel @AssistedInject constructor(
     private val signUpRepository: SignUpRepository,
+    private val userRepository: UserRepository,
     @Assisted private val userName: String?, @Assisted private val userType: SocialLoginType?
 ) : ViewModel() {
     private val _pageLiveData = MutableLiveData<SignUpPage>()

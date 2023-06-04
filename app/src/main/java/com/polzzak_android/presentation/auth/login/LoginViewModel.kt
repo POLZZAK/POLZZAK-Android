@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.data.repository.LoginRepository
+import com.polzzak_android.data.repository.UserRepository
 import com.polzzak_android.presentation.auth.login.model.LoginConvertor.toLoginInfoUiModel
 import com.polzzak_android.presentation.auth.login.model.LoginInfoUiModel
 import com.polzzak_android.presentation.auth.model.SocialLoginType
@@ -20,11 +21,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val loginRepository: LoginRepository
+    private val loginRepository: LoginRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
     private val _loginInfoLiveData = MutableLiveData<EventWrapper<ApiResult<LoginInfoUiModel>>>()
     val loginInfoLiveData: LiveData<EventWrapper<ApiResult<LoginInfoUiModel>>> = _loginInfoLiveData
-
 
     private var loginJob: Job? = null
 
