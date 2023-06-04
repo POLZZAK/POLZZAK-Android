@@ -3,7 +3,6 @@ package com.polzzak_android.presentation.auth.signup
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
-import android.os.Build
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,16 +15,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.bumptech.glide.Glide
 import com.polzzak_android.R
-import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.presentation.common.model.ApiResult
-import com.polzzak_android.presentation.common.model.MemberType
-import com.polzzak_android.presentation.auth.model.SocialLoginType
+import com.polzzak_android.common.util.getParcelableArrayListOrNull
+import com.polzzak_android.common.util.getParcelableOrNull
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentSignupBinding
+import com.polzzak_android.presentation.auth.model.SocialLoginType
 import com.polzzak_android.presentation.auth.signup.adapter.ParentTypeRollableAdapter
 import com.polzzak_android.presentation.auth.signup.model.NickNameUiModel
 import com.polzzak_android.presentation.auth.signup.model.NickNameValidationState
 import com.polzzak_android.presentation.auth.signup.model.SignUpPage
+import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.model.ApiResult
+import com.polzzak_android.presentation.common.model.MemberType
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -36,23 +37,21 @@ import kotlin.math.sqrt
 @AndroidEntryPoint
 class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     override val layoutResId = R.layout.fragment_signup
-    private val validNickNameRegex = Regex("""[0-9a-zA-z가-힣]{2,10}""")
-    private val parentTypeRollableAdapter = ParentTypeRollableAdapter()
+
 
     @Inject
     lateinit var signUpViewModelAssistedFactory: SignUpViewModel.SignUpAssistedFactory
     private val signUpViewModel by viewModels<SignUpViewModel> {
         val userName = arguments?.getString(ARGUMENT_USER_ID_KEY, "")
-        val socialType = arguments?.run {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getSerializable(ARGUMENT_SOCIAL_LOGIN_TYPE_KEY, SocialLoginType::class.java)
-            } else {
-                @Suppress("Deprecation")
-                getSerializable(ARGUMENT_SOCIAL_LOGIN_TYPE_KEY) as? SocialLoginType
-            }
-        }
+        val socialType = arguments?.getParcelableOrNull(
+            ARGUMENT_SOCIAL_LOGIN_TYPE_KEY,
+            SocialLoginType::class.java
+        )
         SignUpViewModel.provideFactory(signUpViewModelAssistedFactory, userName, socialType)
     }
+
+    private val validNickNameRegex = Regex("""[0-9a-zA-z가-힣]{2,10}""")
+    private var parentTypeRollableAdapter: ParentTypeRollableAdapter? = null
 
     private var photoPicker: PhotoPicker? = null
     override fun initView() {
@@ -101,17 +100,20 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     }
 
     private fun initSelectParentTypeView(binding: FragmentSignupBinding) {
+        val parentTypes = arguments?.getParcelableArrayListOrNull(
+            ARGUMENT_PARENT_TYPES_KEY,
+            MemberType.Parent::class.java
+        )?.toList() ?: emptyList()
         with(binding.inSelectParentType) {
             vpTypeCards.offscreenPageLimit = 2
-            vpTypeCards.adapter = ParentTypeRollableAdapter()
+            parentTypeRollableAdapter =
+                ParentTypeRollableAdapter(parentTypes = listOf(null) + parentTypes)
+            vpTypeCards.adapter = parentTypeRollableAdapter
             vpTypeCards.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
-                    signUpViewModel.selectParentType(
-                        parentTypeRollableAdapter.getSelectedType(
-                            position
-                        )
-                    )
+                    val selectedType = parentTypeRollableAdapter?.getSelectedType(position)
+                    signUpViewModel.selectParentType(selectedType?.id)
                 }
             })
             val cardHeightPx =
@@ -141,7 +143,8 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                     transY += calYPosInCircle(radius, 2 - absPosition)
                     scale *= calScale(thirdItemRatio, absPosition - 1)
                 }
-                page.translationY = (if (position < 0) -transY else transY) - position * vpHeightPx
+                page.translationY =
+                    (if (position < 0) -transY else transY) - position * vpHeightPx
                 page.scaleX = scale
                 page.scaleY = scale
             }
@@ -249,10 +252,15 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                     }
 
                     SignUpPage.SELECT_PARENT_TYPE -> {
-                        val currentType = signUpViewModel.memberTypeLiveData.value?.type
+                        val currentTypeId = signUpViewModel.memberTypeLiveData.value?.selectedTypeId
                         val adapterStartPosition =
-                            parentTypeRollableAdapter.getTypeStartPosition(currentType as? MemberType.Parent)
-                        inSelectParentType.vpTypeCards.setCurrentItem(adapterStartPosition, false)
+                            parentTypeRollableAdapter?.getTypeStartPosition(parentTypeId = currentTypeId)
+                        adapterStartPosition?.let {
+                            inSelectParentType.vpTypeCards.setCurrentItem(
+                                it,
+                                false
+                            )
+                        }
                         inSelectParentType.root.isVisible = true
                     }
 
@@ -272,9 +280,9 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
 
         signUpViewModel.memberTypeLiveData.observe(viewLifecycleOwner) {
-            binding.inSelectType.tvBtnAccept.isEnabled = (it.isParentType != null)
+            binding.inSelectType.tvBtnAccept.isEnabled = (it.selectedType != null)
             binding.inSelectParentType.tvBtnAccept.isEnabled =
-                ((it.isParentType == true) && (it.type is MemberType.Parent))
+                it.isParent() && (it.selectedTypeId != null)
         }
 
         signUpViewModel.nickNameLiveData.observe(viewLifecycleOwner) {
@@ -350,5 +358,8 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     companion object {
         const val ARGUMENT_USER_ID_KEY = "argument_user_id_key"
         const val ARGUMENT_SOCIAL_LOGIN_TYPE_KEY = "argument_social_login_type_key"
+        const val ARGUMENT_PARENT_TYPES_KEY = "argument_parent_types_key"
+        //TODO parent type 받아옴
+//        fun newInstance()
     }
 }

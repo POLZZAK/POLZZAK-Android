@@ -72,16 +72,17 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 }
 
                 is ApiResult.Success -> {
-                    //TODO 로그인 성공 후 화면이동
-                }
-
-                is ApiResult.Error -> {
-                    if (it.code == 412) {
+                    if (it.data?.accessToken == null) {
                         val signUpBundle = Bundle().apply {
                             putString(SignUpFragment.ARGUMENT_USER_ID_KEY, it.data?.userName)
-                            putSerializable(
+                            putParcelable(
                                 SignUpFragment.ARGUMENT_SOCIAL_LOGIN_TYPE_KEY,
-                                it.data?.userType
+                                it.data?.socialType
+                            )
+                            val parentTypes = ArrayList(it.data?.parentTypes ?: emptyList())
+                            putParcelableArrayList(
+                                SignUpFragment.ARGUMENT_PARENT_TYPES_KEY,
+                                parentTypes
                             )
                         }
                         findNavController().navigate(
@@ -89,8 +90,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                             signUpBundle
                         )
                     } else {
-                        //TODO 기타 에러처리
+                        //TODO 로그인 성공
                     }
+                }
+
+                is ApiResult.Error -> {
+                    //TODO 에러처리
                 }
             }
         })

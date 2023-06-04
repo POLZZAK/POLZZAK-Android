@@ -7,7 +7,7 @@ object LoginConvertor {
     fun LoginResponse.LoginResponseData?.toLoginInfoUiModel() =
         LoginInfoUiModel(
             userName = this?.userName,
-            userType = this?.socialType?.toSocialLoginType(),
+            socialType = this?.socialType?.toSocialLoginType(),
             accessToken = this?.accessToken ?: ""
         )
 

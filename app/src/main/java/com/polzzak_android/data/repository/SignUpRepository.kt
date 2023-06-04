@@ -4,7 +4,6 @@ import com.polzzak_android.data.remote.model.response.CheckNickNameValidationRes
 import com.polzzak_android.data.remote.model.response.SignUpResponse
 import com.polzzak_android.data.remote.service.AuthService
 import com.polzzak_android.presentation.auth.model.SocialLoginType
-import com.polzzak_android.presentation.common.model.MemberType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -26,14 +25,14 @@ class SignUpRepository @Inject constructor(
 
     suspend fun requestSignUp(
         userName: String,
-        memberType: MemberType,
+        memberTypeId: Int,
         socialType: SocialLoginType,
         nickName: String,
         profileImagePath: String?,
     ): Response<SignUpResponse> {
         val signUpPart = createSignUpPart(
             userName = userName,
-            memberType = memberType,
+            memberTypeId = memberTypeId,
             socialType = socialType,
             nickName = nickName,
         )
@@ -49,14 +48,14 @@ class SignUpRepository @Inject constructor(
 
     private fun createSignUpPart(
         userName: String,
-        memberType: MemberType,
+        memberTypeId: Int,
         socialType: SocialLoginType,
         nickName: String,
     ): MultipartBody.Part {
         val jsonObject = JSONObject().apply {
             put("username", userName)
             put("socialType", socialType.toRequestParam())
-            put("memberType", memberType.toRemoteMemberType().name)
+            put("memberTypeDetailId", memberTypeId)
             put("nickname", nickName)
         }
         val requestBody = jsonObject.toString().toRequestBody("application/json".toMediaType())
