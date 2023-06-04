@@ -20,8 +20,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
 
     private lateinit var navController: NavController
 
-    private var googleLoginHelper: GoogleLoginHelper? = null
-    private var kakaoLoginHelper: KakaoLoginHelper? = null
+    private var _googleLoginHelper: GoogleLoginHelper? = null
+    override val googleLoginHelper get() = _googleLoginHelper
+
+    private var _kakaoLoginHelper: KakaoLoginHelper? = null
+    override val kakaoLoginHelper get() = _kakaoLoginHelper
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
@@ -39,27 +42,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
     }
 
     private fun initLoginHelper() {
-        googleLoginHelper = GoogleLoginHelper(activity = this).apply {
-            setLoginSuccessCallback {
-                it.serverAuthCode?.let { authCode ->
-                    mainViewModel.requestGoogleLogin(authCode = authCode)
-                } ?: run {
-                    //TODO id값, authcode가 안내려온 경우
-                }
-            }
-        }
-        kakaoLoginHelper = KakaoLoginHelper(context = this).apply {
-            setLoginSuccessCallback { token ->
-                mainViewModel.requestKakaoLogin(accessToken = token.accessToken)
-            }
-        }
-    }
-
-    override fun requestLoginGoogle() {
-        googleLoginHelper?.requestLogin()
-    }
-
-    override fun requestLoginKakao() {
-        kakaoLoginHelper?.requestLogin()
+        _googleLoginHelper = GoogleLoginHelper(activity = this)
+        _kakaoLoginHelper = KakaoLoginHelper(context = this)
     }
 }

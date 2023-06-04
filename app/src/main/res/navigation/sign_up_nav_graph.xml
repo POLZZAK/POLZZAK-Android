@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sign_up_nav_graph"
+    app:startDestination="@id/signUpFragment">
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.polzzak_android.presentation.auth.signup.SignUpFragment"
+        android:label="SignUpFragment"
+        tools:layout="@layout/fragment_signup">
+        <action android:id="@+id/action_signUpFragment_to_kidOnBoardingFragment"
+            app:destination="@id/kidOnBoardingFragment"/>
+        <action android:id="@+id/action_signUpFragment_to_protectorOnBoardingFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/kidOnBoardingFragment"
+        android:name="com.polzzak_android.presentation.onboarding.kid.KidOnBoardingFragment"
+        android:label="KidOnBoardingFragment"
+        tools:layout="@layout/fragment_on_boarding" />
+
+    <fragment
+        android:id="@+id/protectorOnBoardingFragment"
+        android:name="com.polzzak_android.presentation.onboarding.protector.ProtectorOnBoardingFragment"
+        android:label="ProtectorOnBoardingFragment"
+        tools:layout="@layout/fragment_on_boarding" />
+</navigation>
