@@ -12,8 +12,8 @@ import com.polzzak_android.presentation.auth.login.model.LoginConvertor.toSocial
 import com.polzzak_android.presentation.auth.login.model.LoginInfoUiModel
 import com.polzzak_android.presentation.auth.model.SocialLoginType
 import com.polzzak_android.presentation.common.model.ApiResult
-import com.polzzak_android.presentation.common.model.MemberType
-import com.polzzak_android.presentation.common.model.MemberType.Companion.KID_TYPE_ID
+import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail
+import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail.Companion.KID_TYPE_ID
 import com.polzzak_android.presentation.common.util.toApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -85,10 +85,10 @@ class LoginViewModel @Inject constructor(
             }
             val memberTypeModel = memberTypeResponse.toApiResult {
                 it?.memberTypeDetailList?.map { memberTypeResponse ->
-                    if (memberTypeResponse.memberTypeDetailId == KID_TYPE_ID) MemberType.Kid(
+                    if (memberTypeResponse.memberTypeDetailId == KID_TYPE_ID) MemberTypeDetail.Kid(
                         memberTypeResponse.memberTypeDetailId,
                         memberTypeResponse.detail
-                    ) else MemberType.Parent(
+                    ) else MemberTypeDetail.Parent(
                         memberTypeResponse.memberTypeDetailId,
                         memberTypeResponse.detail
                     )
@@ -108,7 +108,7 @@ class LoginViewModel @Inject constructor(
                     val loginInfoUiModel = LoginInfoUiModel(
                         userName = loginModel.data?.first,
                         socialType = loginModel.data?.second,
-                        parentTypes = memberTypeModel.data?.filterIsInstance<MemberType.Parent>()
+                        parentTypes = memberTypeModel.data?.filterIsInstance<MemberTypeDetail.Parent>()
                     )
                     _loginInfoLiveData.value = EventWrapper(ApiResult.success(loginInfoUiModel))
                 }

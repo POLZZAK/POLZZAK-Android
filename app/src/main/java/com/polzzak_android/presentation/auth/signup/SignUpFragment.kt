@@ -26,7 +26,7 @@ import com.polzzak_android.presentation.auth.signup.model.NickNameValidationStat
 import com.polzzak_android.presentation.auth.signup.model.SignUpPage
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ApiResult
-import com.polzzak_android.presentation.common.model.MemberType
+import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -102,7 +102,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     private fun initSelectParentTypeView(binding: FragmentSignupBinding) {
         val parentTypes = arguments?.getParcelableArrayListOrNull(
             ARGUMENT_PARENT_TYPES_KEY,
-            MemberType.Parent::class.java
+            MemberTypeDetail.Parent::class.java
         )?.toList() ?: emptyList()
         with(binding.inSelectParentType) {
             vpTypeCards.offscreenPageLimit = 2

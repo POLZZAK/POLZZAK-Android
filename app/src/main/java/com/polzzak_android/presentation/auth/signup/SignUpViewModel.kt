@@ -16,7 +16,7 @@ import com.polzzak_android.presentation.auth.signup.model.ProfileImageUiModel
 import com.polzzak_android.presentation.auth.signup.model.SignUpPage
 import com.polzzak_android.presentation.auth.signup.model.SignUpResultUiModel
 import com.polzzak_android.presentation.common.model.ApiResult
-import com.polzzak_android.presentation.common.model.MemberType.Companion.KID_TYPE_ID
+import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail.Companion.KID_TYPE_ID
 import com.polzzak_android.presentation.common.util.isError
 import com.polzzak_android.presentation.common.util.isSuccess
 import com.polzzak_android.presentation.common.util.toApiResult
