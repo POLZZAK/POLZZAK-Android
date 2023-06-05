@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.common.model
 
 import com.polzzak_android.data.remote.model.RemoteMemberType
 
+@Deprecated("서버에서 주는 모델 사용")
 sealed interface MemberType {
     val name: String
 

@@ -5,22 +5,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.polzzak_android.presentation.common.model.ApiResult
-import com.polzzak_android.presentation.common.model.MemberType
-import com.polzzak_android.presentation.auth.model.SocialLoginType
-import com.polzzak_android.presentation.common.util.isError
-import com.polzzak_android.presentation.common.util.isSuccess
 import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
-import com.polzzak_android.presentation.common.util.toApiResult
 import com.polzzak_android.data.repository.SignUpRepository
-import com.polzzak_android.data.repository.UserRepository
+import com.polzzak_android.presentation.auth.model.SocialLoginType
 import com.polzzak_android.presentation.auth.signup.model.MemberTypeUiModel
 import com.polzzak_android.presentation.auth.signup.model.NickNameUiModel
 import com.polzzak_android.presentation.auth.signup.model.NickNameValidationState
 import com.polzzak_android.presentation.auth.signup.model.ProfileImageUiModel
 import com.polzzak_android.presentation.auth.signup.model.SignUpPage
 import com.polzzak_android.presentation.auth.signup.model.SignUpResultUiModel
+import com.polzzak_android.presentation.common.model.ApiResult
+import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail.Companion.KID_TYPE_ID
+import com.polzzak_android.presentation.common.util.isError
+import com.polzzak_android.presentation.common.util.isSuccess
+import com.polzzak_android.presentation.common.util.toApiResult
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -29,7 +28,6 @@ import kotlinx.coroutines.launch
 
 class SignUpViewModel @AssistedInject constructor(
     private val signUpRepository: SignUpRepository,
-    private val userRepository: UserRepository,
     @Assisted private val userName: String?, @Assisted private val userType: SocialLoginType?
 ) : ViewModel() {
     private val _pageLiveData = MutableLiveData<SignUpPage>()
@@ -60,7 +58,7 @@ class SignUpViewModel @AssistedInject constructor(
     fun moveNextPage() {
         when (pageLiveData.value) {
             SignUpPage.SELECT_TYPE -> _pageLiveData.value =
-                if (memberTypeLiveData.value?.type is MemberType.Kid) SignUpPage.SET_NICKNAME else SignUpPage.SELECT_PARENT_TYPE
+                if (memberTypeLiveData.value?.isKid() == true) SignUpPage.SET_NICKNAME else SignUpPage.SELECT_PARENT_TYPE
 
             SignUpPage.SELECT_PARENT_TYPE -> _pageLiveData.value = SignUpPage.SET_NICKNAME
             SignUpPage.SET_NICKNAME -> _pageLiveData.value = SignUpPage.SET_PROFILE_IMAGE
@@ -73,18 +71,15 @@ class SignUpViewModel @AssistedInject constructor(
     fun movePrevPage() {
         when (pageLiveData.value) {
             SignUpPage.SELECT_PARENT_TYPE -> {
-                clearParentType()
                 _pageLiveData.value = SignUpPage.SELECT_TYPE
             }
 
             SignUpPage.SET_NICKNAME -> {
-                clearNickName()
                 _pageLiveData.value =
-                    if (memberTypeLiveData.value?.isParentType == true) SignUpPage.SELECT_PARENT_TYPE else SignUpPage.SELECT_TYPE
+                    if (memberTypeLiveData.value?.isParent() == true) SignUpPage.SELECT_PARENT_TYPE else SignUpPage.SELECT_TYPE
             }
 
             SignUpPage.SET_PROFILE_IMAGE -> {
-                clearProfileImage()
                 _pageLiveData.value = SignUpPage.SET_NICKNAME
             }
 
@@ -95,18 +90,22 @@ class SignUpViewModel @AssistedInject constructor(
     }
 
     fun selectTypeParent() {
-        if (memberTypeLiveData.value?.isParentType == true) return
-        _memberTypeLiveData.value = MemberTypeUiModel(type = null, isParentType = true)
+        if (memberTypeLiveData.value?.isParent() == true) return
+        _memberTypeLiveData.value = MemberTypeUiModel(selectedType = MemberTypeUiModel.Type.PARENT)
     }
 
     fun selectTypeKid() {
-        if (memberTypeLiveData.value?.type is MemberType.Kid) return
-        _memberTypeLiveData.value = MemberTypeUiModel(type = MemberType.Kid(), isParentType = false)
+        if (memberTypeLiveData.value?.isKid() == true) return
+        _memberTypeLiveData.value =
+            MemberTypeUiModel(
+                selectedType = MemberTypeUiModel.Type.KID,
+                selectedTypeId = KID_TYPE_ID
+            )
     }
 
-    fun selectParentType(parentType: MemberType.Parent?) {
+    fun selectParentType(selectedTypeId: Int?) {
         val memberTypeUiModel = memberTypeLiveData.value ?: MemberTypeUiModel()
-        _memberTypeLiveData.value = memberTypeUiModel.copy(type = parentType)
+        _memberTypeLiveData.value = memberTypeUiModel.copy(selectedTypeId = selectedTypeId)
     }
 
     fun setNickNameValue(nickName: String) {
@@ -116,20 +115,6 @@ class SignUpViewModel @AssistedInject constructor(
 
     fun setProfileImagePath(path: String?) {
         _profileImageLiveData.value = ProfileImageUiModel(path = path)
-    }
-
-    private fun clearProfileImage() {
-        _profileImageLiveData.value = ProfileImageUiModel()
-    }
-
-    private fun clearParentType() {
-        _memberTypeLiveData.value =
-            memberTypeLiveData.value?.run { copy(type = null) } ?: MemberTypeUiModel()
-    }
-
-    private fun clearNickName() {
-        checkNickNameValidationJob?.cancel()
-        _nickNameLiveData.value = NickNameUiModel()
     }
 
     fun requestCheckNickNameValidation() {
@@ -155,13 +140,13 @@ class SignUpViewModel @AssistedInject constructor(
             _signUpResultLiveData.value = EventWrapper(ApiResult.loading())
             safeLet(
                 userName,
-                memberTypeLiveData.value?.type,
+                memberTypeLiveData.value?.selectedTypeId,
                 userType,
                 nickNameLiveData.value?.nickName
-            ) { userName, memberType, userType, nickName ->
+            ) { userName, memberTypeId, userType, nickName ->
                 val result = signUpRepository.requestSignUp(
                     userName = userName,
-                    memberType = memberType,
+                    memberTypeId = memberTypeId,
                     socialType = userType,
                     nickName = nickName,
                     profileImagePath = profileImageLiveData.value?.path

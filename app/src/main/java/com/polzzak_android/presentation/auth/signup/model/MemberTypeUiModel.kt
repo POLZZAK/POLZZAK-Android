@@ -1,8 +1,14 @@
 package com.polzzak_android.presentation.auth.signup.model
 
-import com.polzzak_android.presentation.common.model.MemberType
-
 data class MemberTypeUiModel(
-    val type: MemberType? = null,
-    val isParentType: Boolean? = null
-)
+    val selectedType: Type? = null,
+    val selectedTypeId: Int? = null
+) {
+    enum class Type {
+        PARENT,
+        KID
+    }
+
+    fun isParent() = (selectedType == Type.PARENT)
+    fun isKid() = (selectedType == Type.KID)
+}
