@@ -7,7 +7,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
+import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.data.repository.SignUpRepository
+import com.polzzak_android.presentation.auth.model.MemberTypeDetail.Companion.KID_TYPE_ID
 import com.polzzak_android.presentation.auth.model.SocialLoginType
 import com.polzzak_android.presentation.auth.signup.model.MemberTypeUiModel
 import com.polzzak_android.presentation.auth.signup.model.NickNameUiModel
@@ -15,11 +17,7 @@ import com.polzzak_android.presentation.auth.signup.model.NickNameValidationStat
 import com.polzzak_android.presentation.auth.signup.model.ProfileImageUiModel
 import com.polzzak_android.presentation.auth.signup.model.SignUpPage
 import com.polzzak_android.presentation.auth.signup.model.SignUpResultUiModel
-import com.polzzak_android.presentation.common.model.ApiResult
-import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail.Companion.KID_TYPE_ID
-import com.polzzak_android.presentation.common.util.isError
-import com.polzzak_android.presentation.common.util.isSuccess
-import com.polzzak_android.presentation.common.util.toApiResult
+import com.polzzak_android.presentation.common.model.ModelState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -43,8 +41,8 @@ class SignUpViewModel @AssistedInject constructor(
     val profileImageLiveData: LiveData<ProfileImageUiModel> = _profileImageLiveData
 
     private val _signUpResultLiveData =
-        MutableLiveData<EventWrapper<ApiResult<SignUpResultUiModel>>>()
-    val signUpResultLiveData: LiveData<EventWrapper<ApiResult<SignUpResultUiModel>>> =
+        MutableLiveData<EventWrapper<ModelState<SignUpResultUiModel>>>()
+    val signUpResultLiveData: LiveData<EventWrapper<ModelState<SignUpResultUiModel>>> =
         _signUpResultLiveData
 
     private var checkNickNameValidationJob: Job? = null
@@ -122,38 +120,69 @@ class SignUpViewModel @AssistedInject constructor(
         checkNickNameValidationJob = viewModelScope.launch {
             val nickNameUiModel = nickNameLiveData.value ?: return@launch
             val nickName = nickNameUiModel.nickName ?: return@launch
-            val result = signUpRepository.requestCheckNickNameValidation(nickName = nickName)
-                .toApiResult { null }
-            if (result.isSuccess()) {
-                _nickNameLiveData.value =
-                    nickNameUiModel.copy(nickNameState = NickNameValidationState.VALID)
-            } else if (result.isError()) {
-                _nickNameLiveData.value =
-                    nickNameUiModel.copy(nickNameState = NickNameValidationState.INVALID)
-            }
+            signUpRepository.requestCheckNickNameValidation(nickName = nickName)
+                .onSuccess {
+                    _nickNameLiveData.value =
+                        nickNameUiModel.copy(nickNameState = NickNameValidationState.VALID)
+                }
+                .onError { exception, _ ->
+                    when (exception) {
+                        is ApiException.BadRequest -> {
+                            _nickNameLiveData.value =
+                                nickNameUiModel.copy(nickNameState = NickNameValidationState.INVALID)
+                        }
+
+                        else -> {
+                            //TODO 닉네임 중복 체크 에러
+                        }
+                    }
+                }
         }
     }
 
     fun requestSignUp() {
         if (signUpJob?.isCompleted == false) return
         signUpJob = viewModelScope.launch {
-            _signUpResultLiveData.value = EventWrapper(ApiResult.loading())
+            setSignUpResultLoading()
             safeLet(
                 userName,
                 memberTypeLiveData.value?.selectedTypeId,
                 userType,
                 nickNameLiveData.value?.nickName
             ) { userName, memberTypeId, userType, nickName ->
-                val result = signUpRepository.requestSignUp(
+                signUpRepository.requestSignUp(
                     userName = userName,
                     memberTypeId = memberTypeId,
                     socialType = userType,
                     nickName = nickName,
                     profileImagePath = profileImageLiveData.value?.path
-                )
+                ).onSuccess { signUpResponseData ->
+                    signUpResponseData?.accessToken?.let {
+                        val signUpResultUiModel =
+                            SignUpResultUiModel(accessToken = it, memberTypeId = memberTypeId)
+                        setSignUpResultSuccess(data = signUpResultUiModel)
+                    } ?: run {
+                        setSignUpResultError()
+                    }
+                }.onError { exception, _ ->
+                    setSignUpResultError(exception = exception)
+                }
             }
 
         }
+    }
+
+    private fun setSignUpResultLoading() {
+        _signUpResultLiveData.value = EventWrapper(ModelState.Loading())
+    }
+
+    private fun setSignUpResultSuccess(data: SignUpResultUiModel) {
+        _signUpResultLiveData.value = EventWrapper(ModelState.Success(data = data))
+
+    }
+
+    private fun setSignUpResultError(exception: Exception = ApiException.UnknownError()) {
+        _signUpResultLiveData.value = EventWrapper(ModelState.Error(exception = exception))
     }
 
     @AssistedFactory

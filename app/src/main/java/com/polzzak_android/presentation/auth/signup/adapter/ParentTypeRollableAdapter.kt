@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemSignupParentTypeBinding
-import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail
+import com.polzzak_android.presentation.auth.model.MemberTypeDetail
 
 class ParentTypeRollableAdapter(private val parentTypes: List<MemberTypeDetail.Parent?> = listOf(null)) :
     RecyclerView.Adapter<ParentTypeRollableAdapter.SignUpParentTypeItemViewHolder>() {

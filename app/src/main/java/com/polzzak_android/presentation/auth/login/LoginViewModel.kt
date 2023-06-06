@@ -5,20 +5,21 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.util.livedata.EventWrapper
+import com.polzzak_android.common.util.safeLet
+import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.MemberTypeRepository
 import com.polzzak_android.data.repository.UserRepository
-import com.polzzak_android.presentation.auth.login.model.LoginConvertor.toSocialLoginType
 import com.polzzak_android.presentation.auth.login.model.LoginInfoUiModel
+import com.polzzak_android.presentation.auth.model.MemberTypeDetail
 import com.polzzak_android.presentation.auth.model.SocialLoginType
-import com.polzzak_android.presentation.common.model.ApiResult
-import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail
-import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail.Companion.KID_TYPE_ID
-import com.polzzak_android.presentation.common.util.toApiResult
+import com.polzzak_android.presentation.auth.model.asMemberTypeDetail
+import com.polzzak_android.presentation.auth.model.asSocialLoginTypeOrNull
+import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.model.asMemberTypeOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,8 +30,8 @@ class LoginViewModel @Inject constructor(
     private val memberTypeRepository: MemberTypeRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val _loginInfoLiveData = MutableLiveData<EventWrapper<ApiResult<LoginInfoUiModel>>>()
-    val loginInfoLiveData: LiveData<EventWrapper<ApiResult<LoginInfoUiModel>>> = _loginInfoLiveData
+    private val _loginInfoLiveData = MutableLiveData<EventWrapper<ModelState<LoginInfoUiModel>>>()
+    val loginInfoLiveData: LiveData<EventWrapper<ModelState<LoginInfoUiModel>>> = _loginInfoLiveData
 
     private var loginJob: Job? = null
 
@@ -40,7 +41,7 @@ class LoginViewModel @Inject constructor(
             val googleOAuthTokensDeferred =
                 async { loginRepository.requestGoogleAccessToken(authCode = authCode) }
             val googleOAuthResponse = googleOAuthTokensDeferred.await()
-            val accessToken = googleOAuthResponse.body()?.accessToken
+            val accessToken = googleOAuthResponse.data?.accessToken
             accessToken?.let {
                 requestLogin(accessToken = it, loginType = SocialLoginType.GOOGLE)
             } ?: run {
@@ -58,67 +59,72 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun requestLogin(accessToken: String, loginType: SocialLoginType) {
-        coroutineScope {
-            _loginInfoLiveData.value = EventWrapper(ApiResult.loading())
+        setLoginResultLoading()
+        loginRepository.requestLogin(accessToken = accessToken, loginType = loginType)
+            .onSuccess {
+                requestUserInfo(accessToken = it?.accessToken ?: "")
+            }.onError { exception, loginResponseData ->
+                when (exception) {
+                    is ApiException.RequiredRegister -> {
+                        val userName = loginResponseData?.userName
+                        val socialType =
+                            asSocialLoginTypeOrNull(loginResponseData?.socialType ?: "")
+                        safeLet(userName, socialType) { _userName, _socialType ->
+                            requestParentTypes(userName = _userName, socialType = _socialType)
+                        } ?: run {
+                            setLoginResultError()
+                        }
+                    }
 
-            val loginDeferred = async {
-                loginRepository.requestLogin(
-                    accessToken = accessToken,
-                    loginType = loginType
-                )
-            }
-            val memberTypeDeferred = async { memberTypeRepository.requestMemberTypes() }
-
-            val loginResponse = loginDeferred.await()
-            val memberTypeResponse = memberTypeDeferred.await()
-
-            /*
-                TODO 에러케이스 정리 후 케이스 분기 처리(Result로 받은 뒤 success error 처리하는 방향으로 갈 예정)
-                아래 코드는 결과 출력용 임시 코드
-            */
-            val loginModel = loginResponse.toApiResult {
-                Triple(
-                    it?.userName,
-                    it?.socialType?.toSocialLoginType(),
-                    it?.accessToken ?: ""
-                )
-            }
-            val memberTypeModel = memberTypeResponse.toApiResult {
-                it?.memberTypeDetailList?.map { memberTypeResponse ->
-                    if (memberTypeResponse.memberTypeDetailId == KID_TYPE_ID) MemberTypeDetail.Kid(
-                        memberTypeResponse.memberTypeDetailId,
-                        memberTypeResponse.detail
-                    ) else MemberTypeDetail.Parent(
-                        memberTypeResponse.memberTypeDetailId,
-                        memberTypeResponse.detail
-                    )
+                    else -> {
+                        setLoginResultError(exception = exception)
+                    }
                 }
             }
-            when {
-                loginModel is ApiResult.Success -> {
-                    //로그인 성공 시
-                    //TODO 유저정보 요청(타입 분기처리)
-                    val loginInfoUiModel = LoginInfoUiModel(accessToken = loginModel.data?.third)
-                    _loginInfoLiveData.value =
-                        EventWrapper(ApiResult.success(loginInfoUiModel))
-                }
+    }
 
-                loginModel is ApiResult.Error && memberTypeModel is ApiResult.Success && loginModel.code == 412 -> {
-                    //회원가입 필요
-                    val loginInfoUiModel = LoginInfoUiModel(
-                        userName = loginModel.data?.first,
-                        socialType = loginModel.data?.second,
-                        parentTypes = memberTypeModel.data?.filterIsInstance<MemberTypeDetail.Parent>()
-                    )
-                    _loginInfoLiveData.value = EventWrapper(ApiResult.success(loginInfoUiModel))
-                }
-
-                else -> {
-                    _loginInfoLiveData.value =
-                        EventWrapper(ApiResult.Error(statusCode = 401, code = null))
-                }
+    private suspend fun requestUserInfo(accessToken: String) {
+        userRepository.requestUser(accessToken = accessToken).onSuccess {
+            val memberType = it?.memberType?.let { memberTypeResponseData ->
+                asMemberTypeOrNull(memberTypeResponseData)
+            } ?: run {
+                setLoginResultError()
+                return@onSuccess
             }
-
+            val loginInfoUiModel =
+                LoginInfoUiModel.Login(accessToken = accessToken, memberType = memberType)
+            setLoginResultSuccess(data = loginInfoUiModel)
+        }.onError { exception, _ ->
+            setLoginResultError(exception = exception)
         }
+    }
+
+    private suspend fun requestParentTypes(userName: String, socialType: SocialLoginType) {
+        memberTypeRepository.requestMemberTypes().onSuccess {
+            val parentTypes = it?.memberTypeDetailList?.map { responseData ->
+                asMemberTypeDetail(memberTypeDetailResponseData = responseData)
+            }?.filterIsInstance<MemberTypeDetail.Parent>() ?: emptyList()
+            val loginInfoUiModel =
+                LoginInfoUiModel.SignUp(
+                    userName = userName,
+                    socialType = socialType,
+                    parentTypes = parentTypes
+                )
+            setLoginResultSuccess(data = loginInfoUiModel)
+        }.onError { exception, _ ->
+            setLoginResultError(exception = exception)
+        }
+    }
+
+    private fun setLoginResultLoading() {
+        _loginInfoLiveData.value = EventWrapper(ModelState.Loading())
+    }
+
+    private fun setLoginResultSuccess(data: LoginInfoUiModel) {
+        _loginInfoLiveData.value = EventWrapper(ModelState.Success(data = data))
+    }
+
+    private fun setLoginResultError(exception: Exception = ApiException.UnknownError()) {
+        _loginInfoLiveData.value = EventWrapper(ModelState.Error(exception = exception))
     }
 }

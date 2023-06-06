@@ -1,7 +1,6 @@
 package com.polzzak_android.data.remote.model.response
 
 import com.google.gson.annotations.SerializedName
-import com.polzzak_android.data.remote.model.RemoteMemberType
 
 data class UserResponse(
     override val code: Int?,
@@ -13,7 +12,7 @@ data class UserResponse(
         @SerializedName("nickname")
         val nickName: String,
         @SerializedName("memberType")
-        val memberType: RemoteMemberType,
+        val memberType: MemberTypeResponseData,
         @SerializedName("profileUrl")
         val profileUrl: String
     )
