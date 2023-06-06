@@ -3,14 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/splashFragment">
 
     <include app:graph="@navigation/protector_nav_graph" />
     <include app:graph="@navigation/kid_nav_graph" />
+    <include app:graph="@navigation/sign_up_nav_graph" />
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.polzzak_android.presentation.splash.SplashFragment"
+        android:label="SplashFragment"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splashFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.polzzak_android.presentation.login.LoginFragment"
+        android:name="com.polzzak_android.presentation.auth.login.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login">
         <action
@@ -19,23 +32,16 @@
         <action
             android:id="@+id/action_loginFragment_to_kidHostFragment"
             app:destination="@id/kidHostFragment" />
-
         <action
             android:id="@+id/action_loginFragment_to_SignUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/sign_up_nav_graph" />
     </fragment>
-
-    <fragment
-        android:id="@+id/signUpFragment"
-        android:name="com.polzzak_android.presentation.signup.SignUpFragment"
-        android:label="SignUpFragment"
-        tools:layout="layout/fragment_signUp" />
 
     <fragment
         android:id="@+id/protectorHostFragment"
         android:name="com.polzzak_android.presentation.common.host.ProtectorHostFragment"
         android:label="fragment_protectort_host"
-        tools:layout="@layout/fragment_protectort_host"></fragment>
+        tools:layout="@layout/fragment_protectort_host" />
     <fragment
         android:id="@+id/kidHostFragment"
         android:name="com.polzzak_android.presentation.common.host.KidHostFragment"

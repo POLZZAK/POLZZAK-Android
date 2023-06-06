@@ -1,7 +1,7 @@
 package com.polzzak_android.data.repository
 
 import com.polzzak_android.BuildConfig
-import com.polzzak_android.common.model.SocialLoginType
+import com.polzzak_android.presentation.auth.model.SocialLoginType
 import com.polzzak_android.data.remote.model.request.GoogleOAuthRequest
 import com.polzzak_android.data.remote.model.request.LoginRequest
 import com.polzzak_android.data.remote.model.response.GoogleOAuthResponse

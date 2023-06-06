@@ -1,14 +1,12 @@
 package com.polzzak_android.data.repository
 
-import com.polzzak_android.common.model.MemberType
-import com.polzzak_android.common.model.SocialLoginType
 import com.polzzak_android.data.remote.model.response.CheckNickNameValidationResponse
 import com.polzzak_android.data.remote.model.response.SignUpResponse
 import com.polzzak_android.data.remote.service.AuthService
+import com.polzzak_android.presentation.auth.model.SocialLoginType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
@@ -27,39 +25,44 @@ class SignUpRepository @Inject constructor(
 
     suspend fun requestSignUp(
         userName: String,
-        memberType: MemberType,
+        memberTypeId: Int,
         socialType: SocialLoginType,
         nickName: String,
         profileImagePath: String?,
     ): Response<SignUpResponse> {
-        val signUpRequestBody = createSignUpRequestBody(
+        val signUpPart = createSignUpPart(
             userName = userName,
-            memberType = memberType,
+            memberTypeId = memberTypeId,
             socialType = socialType,
             nickName = nickName,
         )
-        val profileImageRequestBody = createProfileImageRequestBody(
-            profileImagePath = profileImagePath
-        )
-        return authService.requestSignUp(signUpRequestBody, profileImageRequestBody)
+        val profileImagePart = createProfileImagePart(profileImagePath = profileImagePath)
+        val multipartBody = MultipartBody.Builder()
+            .addPart(signUpPart)
+            .apply {
+                profileImagePart?.let { addPart(it) }
+            }.build()
+        val contentType = "multipart/form-data; charset=utf-8; boundary=${multipartBody.boundary}"
+        return authService.requestSignUp(contentType, multipartBody)
     }
 
-    private fun createSignUpRequestBody(
+    private fun createSignUpPart(
         userName: String,
-        memberType: MemberType,
+        memberTypeId: Int,
         socialType: SocialLoginType,
         nickName: String,
-    ): RequestBody {
+    ): MultipartBody.Part {
         val jsonObject = JSONObject().apply {
             put("username", userName)
-            put("memberType", memberType.toRemoteMemberType().name)
             put("socialType", socialType.toRequestParam())
+            put("memberTypeDetailId", memberTypeId)
             put("nickname", nickName)
         }
-        return jsonObject.toString().toRequestBody("application/json".toMediaType())
+        val requestBody = jsonObject.toString().toRequestBody("application/json".toMediaType())
+        return MultipartBody.Part.createFormData("registerRequest", "registerRequest", requestBody)
     }
 
-    private fun createProfileImageRequestBody(
+    private fun createProfileImagePart(
         profileImagePath: String?
     ): MultipartBody.Part? {
         val file = profileImagePath?.let { File(profileImagePath) } ?: return null

@@ -93,4 +93,14 @@
         parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bottom_sheet_modal</item>
     </style>
+    
+    <style name="MemberType" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textColor">@color/gray_700</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:background">@drawable/bg_member_type_label</item>
+        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:paddingVertical">6dp</item>
+    </style>
 </resources>

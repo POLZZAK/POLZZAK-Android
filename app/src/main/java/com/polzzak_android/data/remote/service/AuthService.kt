@@ -4,14 +4,12 @@ import com.polzzak_android.data.remote.model.request.LoginRequest
 import com.polzzak_android.data.remote.model.response.CheckNickNameValidationResponse
 import com.polzzak_android.data.remote.model.response.LoginResponse
 import com.polzzak_android.data.remote.model.response.SignUpResponse
-import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Multipart
+import retrofit2.http.Header
 import retrofit2.http.POST
-import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -27,10 +25,9 @@ interface AuthService {
         @Query("value") nickName: String,
     ): Response<CheckNickNameValidationResponse>
 
-    @Multipart
     @POST("/api/v1/auth/register")
     suspend fun requestSignUp(
-        @Part("registerRequest") registerRequest: RequestBody,
-        @Part image: MultipartBody.Part?
+        @Header("Content-Type") contentType: String,
+        @Body requestBody: RequestBody
     ): Response<SignUpResponse>
 }
