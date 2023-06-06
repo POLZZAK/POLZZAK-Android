@@ -16,7 +16,6 @@ import com.polzzak_android.presentation.common.model.MemberType
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.getSocialLoginManager
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 //TODO google login release keystore 추가(현재 debug keystore만 사용 중)
 @AndroidEntryPoint
@@ -68,7 +67,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     override fun initObserver() {
         super.initObserver()
         loginViewModel.loginInfoLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
-            Timber.d("${it}")
             when (it) {
                 is ModelState.Loading -> {
                     //TODO 로그인 인디케이터?
