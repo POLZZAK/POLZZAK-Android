@@ -1,6 +1,6 @@
 package com.polzzak_android.data.repository
 
-import com.polzzak_android.presentation.common.model.ApiResult
+import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.StampBoardGroup
 import com.polzzak_android.data.remote.model.response.StampBoardListResponse
 

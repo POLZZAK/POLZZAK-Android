@@ -19,14 +19,15 @@ import com.polzzak_android.common.util.getParcelableArrayListOrNull
 import com.polzzak_android.common.util.getParcelableOrNull
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentSignupBinding
+import com.polzzak_android.presentation.auth.model.MemberTypeDetail
 import com.polzzak_android.presentation.auth.model.SocialLoginType
 import com.polzzak_android.presentation.auth.signup.adapter.ParentTypeRollableAdapter
 import com.polzzak_android.presentation.auth.signup.model.NickNameUiModel
 import com.polzzak_android.presentation.auth.signup.model.NickNameValidationState
 import com.polzzak_android.presentation.auth.signup.model.SignUpPage
+import com.polzzak_android.presentation.common.MainViewModel
 import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.presentation.common.model.ApiResult
-import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail
+import com.polzzak_android.presentation.common.model.ModelState
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,9 +39,11 @@ import kotlin.math.sqrt
 class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     override val layoutResId = R.layout.fragment_signup
 
-
     @Inject
     lateinit var signUpViewModelAssistedFactory: SignUpViewModel.SignUpAssistedFactory
+
+    private val mainViewModel by viewModels<MainViewModel>(ownerProducer = { requireActivity() })
+
     private val signUpViewModel by viewModels<SignUpViewModel> {
         val userName = arguments?.getString(ARGUMENT_USER_ID_KEY, "")
         val socialType = arguments?.getParcelableOrNull(
@@ -304,16 +307,17 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
         signUpViewModel.signUpResultLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
             when (it) {
-                is ApiResult.Loading -> {
-                    //do nothing
+                is ModelState.Loading -> {
+                    //TODO 회원가입 로딩
                 }
 
-                is ApiResult.Success -> {
-                    //TODO 온보딩 페이지 이동
+                is ModelState.Success -> {
+                    mainViewModel.accessToken = it.data.accessToken
+                    //TODO 회원가입 보호자/아이 분기처리
                 }
 
-                is ApiResult.Error -> {
-                    //TODO 회원가입 실패 처리
+                is ModelState.Error -> {
+                    //TODO 회원가입 에러 핸들링
                 }
             }
         })

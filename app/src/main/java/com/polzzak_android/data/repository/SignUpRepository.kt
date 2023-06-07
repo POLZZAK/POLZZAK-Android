@@ -1,8 +1,9 @@
 package com.polzzak_android.data.repository
 
-import com.polzzak_android.data.remote.model.response.CheckNickNameValidationResponse
+import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.response.SignUpResponse
 import com.polzzak_android.data.remote.service.AuthService
+import com.polzzak_android.data.remote.util.requestCatching
 import com.polzzak_android.presentation.auth.model.SocialLoginType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -10,7 +11,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import retrofit2.Response
 import java.io.File
 import javax.inject.Inject
 
@@ -19,8 +19,8 @@ class SignUpRepository @Inject constructor(
 ) {
     suspend fun requestCheckNickNameValidation(
         nickName: String
-    ): Response<CheckNickNameValidationResponse> {
-        return authService.requestCheckNickNameValidation(nickName = nickName)
+    ): ApiResult<Nothing?> = requestCatching {
+        authService.requestCheckNickNameValidation(nickName = nickName)
     }
 
     suspend fun requestSignUp(
@@ -29,7 +29,7 @@ class SignUpRepository @Inject constructor(
         socialType: SocialLoginType,
         nickName: String,
         profileImagePath: String?,
-    ): Response<SignUpResponse> {
+    ): ApiResult<SignUpResponse.SignUpResponseData> = requestCatching {
         val signUpPart = createSignUpPart(
             userName = userName,
             memberTypeId = memberTypeId,
@@ -43,7 +43,7 @@ class SignUpRepository @Inject constructor(
                 profileImagePart?.let { addPart(it) }
             }.build()
         val contentType = "multipart/form-data; charset=utf-8; boundary=${multipartBody.boundary}"
-        return authService.requestSignUp(contentType, multipartBody)
+        authService.requestSignUp(contentType, multipartBody)
     }
 
     private fun createSignUpPart(

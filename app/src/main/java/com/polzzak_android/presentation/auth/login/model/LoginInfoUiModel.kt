@@ -1,12 +1,14 @@
 package com.polzzak_android.presentation.auth.login.model
 
 import com.polzzak_android.presentation.auth.model.SocialLoginType
-import com.polzzak_android.presentation.auth.signup.model.MemberTypeDetail
+import com.polzzak_android.presentation.auth.model.MemberTypeDetail
+import com.polzzak_android.presentation.common.model.MemberType
 
-data class LoginInfoUiModel(
-    val userName: String? = null,
-    val socialType: SocialLoginType? = null,
-    val accessToken: String? = null,
-    val parentTypes: List<MemberTypeDetail.Parent>? = null,
-    val memberType: MemberTypeDetail? = null
-)
+sealed interface LoginInfoUiModel {
+    data class Login(val accessToken: String, val memberType: MemberType) : LoginInfoUiModel
+    data class SignUp(
+        val userName: String,
+        val socialType: SocialLoginType,
+        val parentTypes: List<MemberTypeDetail.Parent>
+    ) : LoginInfoUiModel
+}

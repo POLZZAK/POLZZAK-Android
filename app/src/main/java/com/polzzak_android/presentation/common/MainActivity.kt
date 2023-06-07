@@ -45,4 +45,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         _googleLoginHelper = GoogleLoginHelper(activity = this)
         _kakaoLoginHelper = KakaoLoginHelper(context = this)
     }
+
+    fun getAccessToken() = mainViewModel.accessToken
 }

@@ -1,5 +1,6 @@
 package com.polzzak_android.data.remote.model
 
+@Deprecated("서버에서 내려주는 타입사용")
 enum class RemoteMemberType {
     MOTHER,
     FATHER,

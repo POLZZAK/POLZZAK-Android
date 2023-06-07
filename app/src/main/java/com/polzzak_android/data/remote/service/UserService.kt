@@ -8,7 +8,7 @@ import retrofit2.http.Header
 
 interface UserService {
     @GET("/api/v1/users/me")
-    fun requestUserInfo(
-        @Header("Authorization") accessToken: String,
+    suspend fun requestUserInfo(
+        @Header("Authorization") authorization: String,
     ): Response<UserResponse>
 }
