@@ -1,7 +1,6 @@
 package com.polzzak_android.presentation.main
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,11 +24,9 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.runtime.Composable
@@ -41,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -50,7 +46,6 @@ import com.polzzak_android.presentation.compose.Blue150
 import com.polzzak_android.presentation.compose.Blue200
 import com.polzzak_android.presentation.compose.Blue500
 import com.polzzak_android.presentation.compose.Blue600
-import com.polzzak_android.presentation.compose.Gray100
 import com.polzzak_android.presentation.compose.Gray200
 import com.polzzak_android.presentation.compose.Gray300
 import com.polzzak_android.presentation.compose.Gray400
@@ -99,9 +94,10 @@ fun StampBoardDetailScreen() {
             Spacer(modifier = Modifier.height(20.dp))
 
             /* 도장 동그라미 리스트 */
-            StampGridList()
-            
-
+            StampBoxGridList(
+                completedStampList = emptyList(),
+                goalStampCount = 40
+            )
         }
     }
 }
@@ -114,17 +110,18 @@ private fun StampBoardDetailScreenPreview() {
     }
 }
 
-/**
- * 스탬프 리스트
- */
 @Composable
-private fun StampGridList() {
-    val totalStampCount = 40    // 서버에서 내려옴
-    val isExpandButtonVisible = totalStampCount >= 40
-    var expanded by remember { mutableStateOf(false) }
+private fun StampBoxGridList(
+    completedStampList: List<Int>,  // TODO: 실제 데이터 타입으로 변경하기
+    goalStampCount: Int,
+    onCompletedStampClick: ((stampId: String) -> Unit)? = null,
+    onEmptyStampClick: (() -> Unit)? = null
+) {
+    val isExpandButtonVisible = goalStampCount >= 40    // 펼치기 버튼 표시 여부
+    val columnCount: Int = getColumnCount(stampCount = goalStampCount)  // 열 개수
+    val itemsHorizontalGap: Dp = getHorizontalGap(columnCount = columnCount)    // 도장 칸들 사이 간격 수치
 
-    val columnCount = getColumnCount(stampCount = totalStampCount)
-    val itemsHorizontalGap = getHorizontalGap(columnCount = columnCount)
+    var expanded by remember { mutableStateOf(false) }  // 펼침 여부
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(count = columnCount),
@@ -144,16 +141,28 @@ private fun StampGridList() {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(itemsHorizontalGap)
     ) {
-        val itemCount = getVisibleStampCount(stampCount = totalStampCount, expanded = expanded)
+        val itemCount = getVisibleStampCount(stampCount = goalStampCount, expanded = expanded)
 
-        items(itemCount) {
-            // TODO: 데이터 리스트는 따로 내려주기 때문에
-            //       인덱스로 꺼내고 없으면 숫자 표시해야 함
-            StampBox(
-                isStamped = false,
-                enabled = false,
-                text = (it + 1).toString()
-            )
+        items(
+            count = itemCount,
+            key = { it }
+        ) { index ->
+            // 완료된 도장 리스트에서 인덱스로 차례대로 꺼냈을 때
+            // 데이터가 있으면 완료된 도장 칸
+            // 데이터가 없으면 빈 도장 칸
+
+            // TODO: 밖에서 크기 조정하는 Box로 감싸기
+            completedStampList.getOrNull(index)?.let {
+                CompletedStamp(
+                    onClick = { onCompletedStampClick?.invoke(it.toString()) }
+                )
+            } ?: kotlin.run {
+                EmptyStamp(
+                    enabled = (index == completedStampList.size),   // 마지막으로 찍힌 도장 다음 칸이 활성화되어야 함
+                    numberText = (index + 1).toString(),
+                    onEnabledStampClick = onEmptyStampClick
+                )
+            }
         }
 
         if (isExpandButtonVisible) {
@@ -193,6 +202,9 @@ private fun getVisibleStampCount(stampCount: Int, expanded: Boolean): Int = when
     else -> stampCount
 }
 
+/**
+ * 펼치기/접기 토글 버튼
+ */
 @Composable
 private fun ExpandToggleButton(
     expanded: Boolean,
@@ -202,8 +214,8 @@ private fun ExpandToggleButton(
 ) {
     Divider()
 
-    val text = if (expanded) "접기" else "펼치기"
-    val icon = if (expanded) {
+    val text = if (expanded) "접기" else "펼치기"      // TODO: StringResource로 정의하기
+    val icon = if (expanded) {                      // TODO: 리소스 받아서 넣기
         Icons.Default.KeyboardArrowUp
     } else {
         Icons.Default.KeyboardArrowDown
@@ -222,50 +234,96 @@ private fun ExpandToggleButton(
     }
 }
 
+/**
+ * 도장이 찍힌(완료된) 도장 칸
+ */
 @Composable
-private fun StampBox(
-    isStamped: Boolean,
-    enabled: Boolean,
-    text: String = "",
+private fun CompletedStamp(
+    // TODO: 도장 이미지 파라미터 추가하기
     onClick: (() -> Unit)? = null
 ) {
-    // TODO: 컬럼 개수에 따라 도장 크기와 텍스트 크기 전부 바뀜... 바리에이션을 미리 다 만들어놔야 하는건지..
+    // 해당 컴포저블에서 도장 id 외에 다른 정보도 가지고 있어야 하는지?
+    // 도장 상세 정보 표시할 때 그냥 api 찔러서 정보 받아오는지?
+}
 
-    if (isStamped) {
-        // TODO: ImageView
+/**
+ * 빈 도장 칸
+ */
+@Composable
+private fun EmptyStamp(
+    enabled: Boolean,
+    numberText: String,
+    onEnabledStampClick: (() -> Unit)? = null
+) {
+    if (enabled) {
+        EnabledEmptyStamp(
+            numberText = numberText,
+            onClick = onEnabledStampClick
+        )
     } else {
-        val backgroundColor = if (enabled) Blue150 else Gray200
-        val backgroundBorderWidth = if (enabled) 2.dp else -1.dp    // 0dp를 줘도 border가 보임
-
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .aspectRatio(1f)
-                .clip(CircleShape)
-                .background(color = backgroundColor)
-                .border(width = backgroundBorderWidth, color = Blue200, shape = CircleShape)
-                .clickable(enabled = enabled) {
-                    onClick?.invoke()
-                }
-        ) {
-            val textColor = if (enabled) Blue600 else Gray400
-            Text(text = text, style = PolzzakTheme.typography.title2, color = textColor)
-        }
+        DisabledEmptyStamp(numberText = numberText)
     }
+}
+
+/**
+ * 활성화 된 빈 도장 칸
+ */
+@Composable
+private fun EnabledEmptyStamp(
+    numberText: String,
+    onClick: (() -> Unit)? = null
+) = Box(
+    contentAlignment = Alignment.Center,
+    modifier = Modifier
+        .aspectRatio(1f)
+        .drawBehind {
+            drawCircle(color = Blue150)
+        }
+        .border(color = Blue200, width = 1.dp, shape = CircleShape)
+        .clickable { onClick?.invoke() }
+) {
+    Text(
+        text = numberText,
+        style = PolzzakTheme.typography.title2,
+        color = Blue600
+    )
+}
+
+/**
+ * 비활성화 된 빈 도장 칸
+ */
+@Composable
+private fun DisabledEmptyStamp(
+    numberText: String
+) = Box(
+    contentAlignment = Alignment.Center,
+    modifier = Modifier
+        .aspectRatio(1f)
+        .drawBehind {
+            drawCircle(color = Gray200)
+        }
+) {
+    Text(
+        text = numberText,
+        style = PolzzakTheme.typography.title2,
+        color = Gray400
+    )
 }
 
 @Composable
 @Preview
-private fun StampBoxPreview() {
-    Column {
-        StampBox(
-            isStamped = false,
-            enabled = true
-        )
+private fun StampBoxGridListPreview() {
+    StampBoxGridList(
+        completedStampList = emptyList(),
+        goalStampCount = 40
+    )
+}
 
-        StampBox(
-            isStamped = false,
-            enabled = false
-        )
+@Composable
+@Preview
+private fun EmptyStampPreview() {
+    Column {
+        EmptyStamp(enabled = true, numberText = "1")
+        EmptyStamp(enabled = false, numberText = "1")
     }
 }
