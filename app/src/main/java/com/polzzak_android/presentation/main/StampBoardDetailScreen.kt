@@ -14,8 +14,11 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,6 +32,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,13 +43,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.polzzak_android.presentation.compose.Blue100
 import com.polzzak_android.presentation.compose.Blue150
 import com.polzzak_android.presentation.compose.Blue200
+import com.polzzak_android.presentation.compose.Blue400
 import com.polzzak_android.presentation.compose.Blue500
 import com.polzzak_android.presentation.compose.Blue600
+import com.polzzak_android.presentation.compose.Blue700
 import com.polzzak_android.presentation.compose.Gray200
 import com.polzzak_android.presentation.compose.Gray300
 import com.polzzak_android.presentation.compose.Gray400
@@ -55,21 +63,15 @@ import com.polzzak_android.presentation.compose.PolzzakTheme
 
 @Composable
 fun StampBoardDetailScreen() {
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 20.dp
-            ),
-        color = Color.Transparent
-    ){
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            /* 상단 도장판 이름과 디데이 영역 */
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        item {
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .padding(horizontal = 16.dp)
             ) {
                 Text(
                     text = "도장판 이름",
@@ -77,39 +79,66 @@ fun StampBoardDetailScreen() {
                     modifier = Modifier.weight(1f)
                 )
 
-                // TODO: 컴포넌트로 추출하기
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(corner = CornerSize(6.dp)))
-                        .background(color = Blue500)
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = "D+9",
-                        color = Color.White
-                    )
-                }
+                Chip(text = "D+9")
             }
+        }
 
+        item {
             Spacer(modifier = Modifier.height(20.dp))
+        }
 
-            /* 도장 동그라미 리스트 */
+        item {
             StampBoxGridList(
                 completedStampList = emptyList(),
-                goalStampCount = 40
+                goalStampCount = 60
             )
         }
     }
 }
 
+// 공용 컴포넌트로?
 @Composable
-@Preview
-private fun StampBoardDetailScreenPreview() {
-    PolzzakAppTheme {
-        StampBoardDetailScreen()
-    }
+fun Chip(text: String) = Text(
+    text = text,
+    color = Color.White,
+    style = PolzzakTheme.typography.subTitle3,
+    modifier = Modifier
+        .clip(RoundedCornerShape(corner = CornerSize(6.dp)))
+        .background(color = Blue500)
+        .padding(horizontal = 8.dp, vertical = 4.dp)
+)
+
+@Composable
+fun NoticeBar(text: String) = Row(
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = Modifier
+        .fillMaxWidth()
+        .background(color = Blue100, shape = RoundedCornerShape(8.dp))
+        .border(width = 1.dp, color = Blue700.copy(alpha = 0.16f))
+        .padding(horizontal = 16.dp, vertical = 12.dp)
+) {
+    Icon(
+        imageVector = Icons.Default.Notifications,
+        contentDescription = text,
+        tint = Blue400
+    )
+    Spacer(modifier = Modifier.width(8.dp))
+    Text(
+        text = text,
+        style = PolzzakTheme.typography.body2,
+        color = Blue600,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
 }
 
+@Composable
+@Preview
+fun NoticeBarPreview() {
+    NoticeBar(text = "도장 요청이 있어요!")
+}
+
+// TODO: 보호자용(도장 활성화o), 아이용(도장 활성화x) 구분해야함
 @Composable
 private fun StampBoxGridList(
     completedStampList: List<Int>,  // TODO: 실제 데이터 타입으로 변경하기
@@ -126,8 +155,14 @@ private fun StampBoxGridList(
     LazyVerticalGrid(
         columns = GridCells.Fixed(count = columnCount),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(itemsHorizontalGap),
+        userScrollEnabled = false,
         modifier = Modifier
             .fillMaxWidth()
+            .heightIn(max = 700.dp)
+            .wrapContentHeight()
+            .padding(horizontal = 16.dp)
             .background(
                 shape = RoundedCornerShape(CornerSize(12.dp)),
                 color = Color.White
@@ -137,9 +172,7 @@ private fun StampBoxGridList(
                 color = Gray200,
                 shape = RoundedCornerShape(CornerSize(12.dp))
             )
-            .animateContentSize(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        horizontalArrangement = Arrangement.spacedBy(itemsHorizontalGap)
+            .animateContentSize()
     ) {
         val itemCount = getVisibleStampCount(stampCount = goalStampCount, expanded = expanded)
 
@@ -167,7 +200,7 @@ private fun StampBoxGridList(
 
         if (isExpandButtonVisible) {
             // TODO: 누를때 pressed 효과 없애기
-            item(span = { GridItemSpan(columnCount) }) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
                 ExpandToggleButton(
                     expanded = expanded,
                     onClick = { expanded = !expanded }
@@ -212,7 +245,7 @@ private fun ExpandToggleButton(
 ) = Column(
     modifier = Modifier.clickable { onClick?.invoke() }
 ) {
-    Divider()
+    Divider(color = Gray200, thickness = 1.dp)
 
     val text = if (expanded) "접기" else "펼치기"      // TODO: StringResource로 정의하기
     val icon = if (expanded) {                      // TODO: 리소스 받아서 넣기
@@ -308,6 +341,14 @@ private fun DisabledEmptyStamp(
         style = PolzzakTheme.typography.title2,
         color = Gray400
     )
+}
+
+@Composable
+@Preview
+private fun StampBoardDetailScreenPreview() {
+    PolzzakAppTheme {
+        StampBoardDetailScreen()
+    }
 }
 
 @Composable
