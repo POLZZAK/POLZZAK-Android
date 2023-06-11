@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,10 +26,15 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonColors
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.ButtonElevation
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -43,6 +49,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -79,12 +88,13 @@ fun StampBoardDetailScreen() {
                     modifier = Modifier.weight(1f)
                 )
 
-                Chip(text = "D+9")
+                BlueChip(text = "D+9")
             }
         }
 
         item {
             Spacer(modifier = Modifier.height(20.dp))
+            // TODO: 조건에 따라 요청 알림 바 표시
         }
 
         item {
@@ -93,12 +103,149 @@ fun StampBoardDetailScreen() {
                 goalStampCount = 60
             )
         }
+
+        item {
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Surface(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 20.dp)
+                ) {
+                    Text(text = "미션 목록", style = PolzzakTheme.typography.subTitle3)
+                    SeeMore(toggleText = "접기" to "더보기", expandedProvider = { false })
+                }
+            }
+        }
+
+        // TODO: 실제 데이터 리스트로 바꾸기, 펼치기 기능 추가
+        items(
+            count = 3,
+            key = { it },
+        ) {
+            Surface(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = "미션 내용 $it",
+                    style = PolzzakTheme.typography.body3,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 3.dp)
+                        .padding(bottom = 12.dp)
+                )
+            }
+        }
+
+        // empty footer
+        item {
+            Surface(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(12.dp)
+            ) {
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Surface(modifier = Modifier.fillMaxWidth()) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 20.dp)
+                ){
+                    Text(
+                        text = "보상",
+                        style = PolzzakTheme.typography.subTitle3,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    // TODO: 실제 이미지로 변경하기
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .background(color = Blue200, shape = CircleShape)
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Text(text = "보상 제목", style = PolzzakTheme.typography.subTitle1)
+
+                    Spacer(modifier = Modifier.height(26.dp))
+
+                    PolzzakButton(
+                        text = "쿠폰 발급하기",
+                        onClick = { /*TODO*/ },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(14.dp))
+
+                    Text(
+                        text = "쿠폰 안내 텍스트",
+                        style = PolzzakTheme.typography.body4,
+                        color = Gray500
+                    )
+
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp)
+                    ) {
+                        // TODO: 조건 따라서 visibility 설정하기
+                        TextButton(onClick = { /*TODO*/ }) {
+                            Text(
+                                text = "도장판 삭제하기",
+                                style = PolzzakTheme.typography.body4.copy(fontWeight = FontWeight.SemiBold),
+                                color = Gray500,
+                                textDecoration = TextDecoration.Underline
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
-// 공용 컴포넌트로?
+// TODO: 컴포넌트 공용화
 @Composable
-fun Chip(text: String) = Text(
+fun PolzzakButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) = Button(
+    onClick = onClick,
+    contentPadding = PaddingValues(horizontal = 14.dp),
+    shape = RoundedCornerShape(8.dp),
+    colors = ButtonDefaults.buttonColors(
+        backgroundColor = Blue500,
+        contentColor = Color.White,
+        disabledBackgroundColor = Blue200,
+        disabledContentColor = Color.White
+    ),
+    elevation = ButtonDefaults.elevation(
+        defaultElevation = 0.dp,
+        pressedElevation = 0.dp,
+        hoveredElevation = 0.dp,
+        focusedElevation = 0.dp
+    ),
+    modifier = Modifier
+        .height(50.dp)
+        .then(modifier)
+) {
+    Text(text = text, style = PolzzakTheme.typography.subTitle3)
+}
+
+// TODO: 공용 컴포넌트로?
+@Composable
+fun BlueChip(text: String) = Text(
     text = text,
     color = Color.White,
     style = PolzzakTheme.typography.subTitle3,
@@ -243,28 +390,40 @@ private fun ExpandToggleButton(
     expanded: Boolean,
     onClick: (() -> Unit)? = null
 ) = Column(
-    modifier = Modifier.clickable { onClick?.invoke() }
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier
+        .fillMaxWidth()
+        .clickable { onClick?.invoke() }
 ) {
     Divider(color = Gray200, thickness = 1.dp)
+    Spacer(modifier = Modifier.height(16.dp))
+    SeeMore(
+        toggleText = "접기" to "펼치기",
+        expandedProvider = { expanded }
+    )
+}
 
-    val text = if (expanded) "접기" else "펼치기"      // TODO: StringResource로 정의하기
-    val icon = if (expanded) {                      // TODO: 리소스 받아서 넣기
-        Icons.Default.KeyboardArrowUp
-    } else {
-        Icons.Default.KeyboardArrowDown
-    }
-
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp)
-    ) {
-        Text(text = text, style = PolzzakTheme.typography.body4, color = Gray500)
-        Spacer(modifier = Modifier.width(4.dp))
-        Icon(imageVector = icon, contentDescription = "Expand", tint = Gray300)
-    }
+@Composable
+fun SeeMore(
+    toggleText: Pair<String, String>,
+    modifier: Modifier = Modifier,
+    expandedProvider: () -> Boolean
+) = Row(
+    horizontalArrangement = Arrangement.Center,
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = modifier
+) {
+    Text(
+        text = if (expandedProvider()) toggleText.first else toggleText.second,
+        style = PolzzakTheme.typography.body4,
+        color = Gray500
+    )
+    Spacer(modifier = Modifier.width(4.dp))
+    Icon(
+        imageVector = if (expandedProvider()) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+        contentDescription = "Expand",
+        tint = Gray300
+    )
 }
 
 /**
@@ -367,4 +526,10 @@ private fun EmptyStampPreview() {
         EmptyStamp(enabled = true, numberText = "1")
         EmptyStamp(enabled = false, numberText = "1")
     }
+}
+
+@Preview
+@Composable
+private fun PolzzakButtonPreview() {
+    PolzzakButton(text = "확인", onClick = { /*TODO*/ })
 }

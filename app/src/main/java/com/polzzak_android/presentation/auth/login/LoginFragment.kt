@@ -52,7 +52,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
         // todo: 보호자 프래그먼트 이동 임시 나중에 삭제
         binding.tvHello.setOnClickListener {
-            findNavController().navigate(R.id.action_to_detailFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_protectorHostFragment)
         }
 
         //TODO 테스트 코드 삭제
