@@ -12,10 +12,13 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.polzzak_android.databinding.FragmentSearchBinding
+import com.polzzak_android.presentation.common.MainActivity
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.search.model.SearchPageTypeModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 abstract class BaseSearchDialogFragment : DialogFragment() {
     private var _binding: FragmentSearchBinding? = null
     protected val binding get() = _binding!!
@@ -127,6 +130,8 @@ abstract class BaseSearchDialogFragment : DialogFragment() {
             }
         }
     }
+
+    private fun getAccessTokenOrNull(): String? = (activity as? MainActivity)?.getAccessToken()
 
     override fun onDestroyView() {
         super.onDestroyView()
