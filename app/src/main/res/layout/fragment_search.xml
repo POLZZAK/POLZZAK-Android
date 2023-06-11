@@ -26,48 +26,57 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="아이 찾기" />
 
+            <!-- TODO clear 버튼 width만큼 paddingEnd 추가 -->
             <EditText
                 android:id="@+id/etSearch"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:importantForAutofill="no"
                 android:inputType="text"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tvBtnCancel"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tvTitle"
                 tools:hint="아이 검색" />
 
-            <TextView
-                android:id="@+id/tvRequestListTitle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+            <ImageView
+                android:id="@+id/ivBtnClearText"
+                android:layout_width="20dp"
+                android:layout_height="0dp"
+                android:background="@color/black"
+                app:layout_constraintBottom_toBottomOf="@id/etSearch"
+                app:layout_constraintEnd_toEndOf="@id/etSearch"
+                app:layout_constraintTop_toTopOf="@id/etSearch" />
 
-                android:text="요청 보낸 목록"
-                android:textSize="20sp"
+            <TextView
+                android:id="@+id/tvBtnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="취소"
+                app:layout_constraintBottom_toBottomOf="@id/etSearch"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/etSearch"
+                app:layout_constraintTop_toTopOf="@id/etSearch" />
+
+            <include
+                android:id="@+id/inMain"
+                layout="@layout/layout_search_main"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/etSearch" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvRequestList"
+            <include
+                android:id="@+id/inRequest"
+                layout="@layout/layout_search_request"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constrainedHeight="true"
-                app:layout_constraintBottom_toTopOf="@id/tvBtnComplete"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvRequestListTitle" />
-
-            <TextView
-                android:id="@+id/tvBtnComplete"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="회원가입 완료" />
+                app:layout_constraintTop_toBottomOf="@id/etSearch"
+                tools:visibility="gone" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
