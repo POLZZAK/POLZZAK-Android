@@ -12,6 +12,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.polzzak_android.databinding.FragmentSearchBinding
+import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.search.model.SearchPageTypeModel
 
 abstract class BaseSearchDialogFragment : DialogFragment() {
@@ -78,6 +80,7 @@ abstract class BaseSearchDialogFragment : DialogFragment() {
     private fun initMainPageView() {
         with(binding.inMain) {
             tvBtnComplete.text = "나중에 할게요"
+            rvRequestList.adapter = BindableItemAdapter()
         }
 
     }
@@ -114,7 +117,14 @@ abstract class BaseSearchDialogFragment : DialogFragment() {
         }
 
         searchViewModel.requestLiveData.observe(viewLifecycleOwner) {
-
+            val requestListRecyclerView = binding.inMain.rvRequestList
+            val adapter =
+                (requestListRecyclerView.adapter as? BindableItemAdapter) ?: return@observe
+            when (it) {
+                is ModelState.Loading -> {}
+                is ModelState.Success -> {}
+                is ModelState.Error -> {}
+            }
         }
     }
 
