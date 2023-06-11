@@ -22,7 +22,7 @@ abstract class BindableItem<B : ViewDataBinding> {
     abstract fun areItemsTheSame(other: BindableItem<*>): Boolean
     abstract fun areContentsTheSame(other: BindableItem<*>): Boolean
 
-    fun createBinding(viewGroup: ViewGroup): B {
+    final fun createBinding(viewGroup: ViewGroup): B {
         binding?.let {
             return it
         } ?: run {
