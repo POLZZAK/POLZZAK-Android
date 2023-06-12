@@ -2,6 +2,7 @@ package com.polzzak_android.data.repository
 
 import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.request.LinkRequest
+import com.polzzak_android.data.remote.model.response.FamiliesDto
 import com.polzzak_android.data.remote.model.response.UserInfoDto
 import com.polzzak_android.data.remote.service.FamilyService
 import com.polzzak_android.data.remote.util.createHeaderAuthorization
@@ -66,21 +67,21 @@ class FamilyRepository @Inject constructor(
 
     suspend fun requestLinkedUsers(
         accessToken: String,
-    ): ApiResult<List<UserInfoDto>> = requestCatching {
+    ): ApiResult<FamiliesDto> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         familyService.requestLinkedUsers(authorization = authorization)
     }
 
     suspend fun requestSentRequestLinkUsers(
         accessToken: String,
-    ): ApiResult<List<UserInfoDto>> = requestCatching {
+    ): ApiResult<FamiliesDto> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         familyService.requestSentRequestLinkUsers(authorization = authorization)
     }
 
     suspend fun requestReceivedRequestLinkUsers(
         accessToken: String,
-    ): ApiResult<List<UserInfoDto>> = requestCatching {
+    ): ApiResult<FamiliesDto> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         familyService.requestReceivedRequestLinkUsers(authorization = authorization)
     }

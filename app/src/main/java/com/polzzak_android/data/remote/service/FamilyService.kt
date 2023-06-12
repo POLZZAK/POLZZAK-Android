@@ -3,7 +3,7 @@ package com.polzzak_android.data.remote.service
 import com.polzzak_android.data.remote.model.request.LinkRequest
 import com.polzzak_android.data.remote.model.response.EmptyDataResponse
 import com.polzzak_android.data.remote.model.response.UserResponse
-import com.polzzak_android.data.remote.model.response.UsersResponse
+import com.polzzak_android.data.remote.model.response.FamiliesResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -54,18 +54,18 @@ interface FamilyService {
     @GET("/api/v1/families")
     suspend fun requestLinkedUsers(
         @Header("Authorization") authorization: String,
-    ): Response<UsersResponse>
+    ): Response<FamiliesResponse>
 
     //내가 요청한 사용자
     @GET("/api/v1/families/requests/sent")
     suspend fun requestSentRequestLinkUsers(
         @Header("Authorization") authorization: String,
-    ): Response<UsersResponse>
+    ): Response<FamiliesResponse>
 
     //나에게 요청한 사용자
     @GET("/api/v1/families/requests/received")
     suspend fun requestReceivedRequestLinkUsers(
         @Header("Authorization") authorization: String,
-    ): Response<UsersResponse>
+    ): Response<FamiliesResponse>
 
 }
