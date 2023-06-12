@@ -7,7 +7,7 @@ import com.polzzak_android.presentation.common.util.BindableItem
 class SearchMainRequestEmptyItemModel :
     BindableItem<ItemSearchMainRequestEmptyBinding>() {
     override val layoutRes: Int = R.layout.item_search_main_request_empty
-    override fun bind(position: Int) {
+    override fun bind(binding: ItemSearchMainRequestEmptyBinding, position: Int) {
         //do nothing
     }
 

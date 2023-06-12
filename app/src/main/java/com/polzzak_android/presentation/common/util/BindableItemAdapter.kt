@@ -1,6 +1,8 @@
 package com.polzzak_android.presentation.common.util
 
+import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -13,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
  * BindableItem을 상속받은 class들로 update
  */
 class BindableItemAdapter :
-    RecyclerView.Adapter<BindableItemAdapter.BindableViewHolder>() {
+    RecyclerView.Adapter<BindableItemAdapter.BindableViewHolder<out ViewDataBinding>>() {
     private val asyncDiffer = AsyncListDiffer(this, DiffUtilCallback())
     val currentList: List<BindableItem<*>> get() = asyncDiffer.currentList
 
@@ -26,10 +28,17 @@ class BindableItemAdapter :
         asyncDiffer.submitList(newItems)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BindableViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): BindableViewHolder<out ViewDataBinding> {
         val item = currentList[viewType]
-        val binding = item.createBinding(viewGroup = parent)
-        return BindableViewHolder(item = item, binding = binding).apply {
+        val layoutInflater = LayoutInflater.from(parent.context)
+
+        return BindableViewHolder(
+            item = item,
+            binding = DataBindingUtil.inflate(layoutInflater, item.layoutRes, parent, false)
+        ).apply {
             item.onCreateViewHolder(parent = parent, position = viewType)
         }
     }
@@ -38,16 +47,16 @@ class BindableItemAdapter :
 
     override fun getItemCount(): Int = currentList.size
 
-    override fun onBindViewHolder(holder: BindableViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BindableViewHolder<out ViewDataBinding>, position: Int) {
         holder.bind(position)
     }
 
-    class BindableViewHolder(
-        private val item: BindableItem<*>,
-        private val binding: ViewDataBinding
+    class BindableViewHolder<B : ViewDataBinding>(
+        private val item: BindableItem<B>,
+        private val binding: B
     ) : ViewHolder(binding.root) {
         fun bind(position: Int) {
-            item.bind(position = position)
+            item.bind(binding = binding, position = position)
         }
     }
 

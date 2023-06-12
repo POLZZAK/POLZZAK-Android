@@ -8,13 +8,11 @@ import com.polzzak_android.presentation.common.util.BindableItem
 class SearchMainRequestItemModel(private val model: SearchMainRequestModel) :
     BindableItem<ItemSearchMainRequestBinding>() {
     override val layoutRes = R.layout.item_search_main_request
-    override fun bind(position: Int) {
-        binding?.let { binding ->
-            with(binding) {
-                tvNickName.text = model.nickName
-                Glide.with(root.context).load(model.profileUrl)
-                    .into(ivProfileImage)
-            }
+    override fun bind(binding: ItemSearchMainRequestBinding, position: Int) {
+        with(binding) {
+            tvNickName.text = model.nickName
+            Glide.with(root.context).load(model.profileUrl)
+                .into(ivProfileImage)
         }
     }
 
