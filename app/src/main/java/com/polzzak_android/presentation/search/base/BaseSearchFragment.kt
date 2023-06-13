@@ -14,8 +14,8 @@ import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
-import com.polzzak_android.presentation.search.model.SearchMainRequestEmptyItemModel
-import com.polzzak_android.presentation.search.model.SearchMainRequestItemModel
+import com.polzzak_android.presentation.search.item.SearchMainRequestEmptyItem
+import com.polzzak_android.presentation.search.item.SearchMainRequestItem
 import com.polzzak_android.presentation.search.model.SearchPageTypeModel
 
 abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>() {
@@ -120,9 +120,9 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>() {
                 is ModelState.Loading -> {}
                 is ModelState.Success -> {
                     if (it.data.isEmpty()) {
-                        items.add(SearchMainRequestEmptyItemModel())
+                        items.add(SearchMainRequestEmptyItem())
                     } else {
-                        items.addAll(it.data.map { model -> SearchMainRequestItemModel(model = model) })
+                        items.addAll(it.data.map { model -> SearchMainRequestItem(model = model) })
                     }
                 }
 
