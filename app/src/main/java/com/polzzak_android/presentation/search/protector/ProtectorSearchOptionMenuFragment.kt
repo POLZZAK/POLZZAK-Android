@@ -11,7 +11,7 @@ class ProtectorSearchOptionMenuFragment : BaseSearchOptionMenuFragment() {
     override val contentString: String = "칭찬 도장판을 만들려면\n아이와 연동이 필요해요"
     override val actionNavigateHostFragment: Int =
         R.id.action_protectorSearchOptionMenuFragment_to_protectorHostFragment
-    override val actionNavigateSearchDialogFragment: Int =
-        R.id.action_protectorSearchOptionMenuFragment_to_protectorSearchDialogFragment
+    override val actionNavigateSearchFragment: Int =
+        R.id.action_protectorSearchOptionMenuFragment_to_protectorSearchFragment
     override val searchButtonText: String = "보호자 찾기"
 }

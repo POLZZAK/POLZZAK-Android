@@ -5,13 +5,12 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
-import androidx.fragment.app.DialogFragment
+import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentSearchBinding
+import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
@@ -19,30 +18,20 @@ import com.polzzak_android.presentation.search.model.SearchMainRequestEmptyItemM
 import com.polzzak_android.presentation.search.model.SearchMainRequestItemModel
 import com.polzzak_android.presentation.search.model.SearchPageTypeModel
 
-abstract class BaseSearchDialogFragment : DialogFragment() {
-    private var _binding: FragmentSearchBinding? = null
-    protected val binding get() = _binding!!
+abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>() {
+    override val layoutResId: Int = R.layout.fragment_search
 
     abstract val searchViewModel: BaseSearchViewModel
     abstract val typeString: String
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
         initObserver()
-        isCancelable = false
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun initView() {
+    override fun initView() {
         with(binding) {
             //TODO string resource로 변경
             tvTitle.text = "$typeString 찾기"
@@ -57,6 +46,9 @@ abstract class BaseSearchDialogFragment : DialogFragment() {
                 hideKeyboard()
                 etSearch.clearFocus()
                 false
+            }
+            ivBtnBack.setOnClickListener {
+                //TODO back 버튼
             }
             initSearchEditTextView()
             initMainPageView()
@@ -85,7 +77,6 @@ abstract class BaseSearchDialogFragment : DialogFragment() {
             tvBtnComplete.text = "나중에 할게요"
             rvRequestList.adapter = BindableItemAdapter()
         }
-
     }
 
     private fun initRequestPageView() {
@@ -104,7 +95,7 @@ abstract class BaseSearchDialogFragment : DialogFragment() {
         }
     }
 
-    private fun initObserver() {
+    override fun initObserver() {
         searchViewModel.pageLiveData.observe(viewLifecycleOwner) {
             with(binding) {
                 inMain.root.isVisible = (it == SearchPageTypeModel.MAIN)
@@ -139,10 +130,5 @@ abstract class BaseSearchDialogFragment : DialogFragment() {
             }
             adapter.updateItem(item = items)
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

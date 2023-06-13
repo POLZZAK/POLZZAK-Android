@@ -16,7 +16,7 @@ abstract class BaseSearchOptionMenuFragment : BaseFragment<FragmentSearchOptionM
     abstract val searchButtonText: String
 
     @get:IdRes
-    abstract val actionNavigateSearchDialogFragment: Int
+    abstract val actionNavigateSearchFragment: Int
 
     @get:IdRes
     abstract val actionNavigateHostFragment: Int
@@ -29,7 +29,7 @@ abstract class BaseSearchOptionMenuFragment : BaseFragment<FragmentSearchOptionM
             tvContent.text = contentString
             tvBtnSearch.text = searchButtonText
             tvBtnSearch.setOnClickListener {
-                findNavController().navigate(actionNavigateSearchDialogFragment)
+                findNavController().navigate(actionNavigateSearchFragment)
             }
             tvBtnCancel.setOnClickListener {
                 findNavController().navigate(actionNavigateHostFragment)

@@ -39,7 +39,7 @@
         <!-- TODO 테스트용 임시 action 제거 -->
         <action
             android:id="@+id/action_test"
-            app:destination="@id/kidSearchDialogFragment" />
+            app:destination="@id/kidSearchFragment" />
     </fragment>
 
     <fragment
@@ -53,10 +53,10 @@
         android:label="KidHostFragment"
         tools:layout="@layout/fragment_kid_host" />
 
-    <!-- tODO 테스트용 임시 dialog 제거 -->
-    <dialog
-        android:id="@+id/kidSearchDialogFragment"
-        android:name="com.polzzak_android.presentation.search.kid.KidSearchDialogFragment"
-        android:label="KidSearchDialogFragment"
+    <!-- tODO 테스트용 임시 fragment 제거 -->
+    <fragment
+        android:id="@+id/kidSearchFragment"
+        android:name="com.polzzak_android.presentation.search.kid.KidSearchFragment"
+        android:label="KidSearchFragment"
         tools:layout="@layout/fragment_search" />
 </navigation>

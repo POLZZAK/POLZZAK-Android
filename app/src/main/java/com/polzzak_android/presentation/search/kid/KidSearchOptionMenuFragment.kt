@@ -11,7 +11,7 @@ class KidSearchOptionMenuFragment : BaseSearchOptionMenuFragment() {
     override val contentString: String = "칭찬 도장판을 받으려면\n보호자와 연동이 필요해요"
     override val actionNavigateHostFragment: Int =
         R.id.action_kidSearchOptionMenuFragment_to_kidHostFragment
-    override val actionNavigateSearchDialogFragment: Int =
-        R.id.action_kidSearchOptionMenuFragment_to_kidSearchDialogFragment
+    override val actionNavigateSearchFragment: Int =
+        R.id.action_kidSearchOptionMenuFragment_to_kidSearchFragment
     override val searchButtonText: String = "아이 찾기"
 }

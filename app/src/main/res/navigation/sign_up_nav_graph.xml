@@ -48,8 +48,8 @@
             android:id="@+id/action_kidSearchOptionMenuFragment_to_kidHostFragment"
             app:destination="@id/kidHostFragment" />
         <action
-            android:id="@+id/action_kidSearchOptionMenuFragment_to_kidSearchDialogFragment"
-            app:destination="@id/kidSearchDialogFragment" />
+            android:id="@+id/action_kidSearchOptionMenuFragment_to_kidSearchFragment"
+            app:destination="@id/kidSearchFragment" />
     </fragment>
 
     <fragment
@@ -61,29 +61,29 @@
             android:id="@+id/action_protectorSearchOptionMenuFragment_to_protectorHostFragment"
             app:destination="@id/protectorHostFragment" />
         <action
-            android:id="@+id/action_protectorSearchOptionMenuFragment_to_protectorSearchDialogFragment"
-            app:destination="@id/protectorSearchDialogFragment" />
+            android:id="@+id/action_protectorSearchOptionMenuFragment_to_protectorSearchFragment"
+            app:destination="@id/protectorSearchFragment" />
     </fragment>
 
-    <dialog
-        android:id="@+id/kidSearchDialogFragment"
-        android:name="com.polzzak_android.presentation.search.kid.KidSearchDialogFragment"
-        android:label="KidSearchDialogFragment"
+    <fragment
+        android:id="@+id/kidSearchFragment"
+        android:name="com.polzzak_android.presentation.search.kid.KidSearchFragment"
+        android:label="KidSearchFragment"
         tools:layout="@layout/fragment_search">
         <action
-            android:id="@+id/action_kidSearchDialogFragment_to_kidHostFragment"
+            android:id="@+id/action_kidSearchFragment_to_kidHostFragment"
             app:destination="@id/kidHostFragment" />
-    </dialog>
+    </fragment>
 
-    <dialog
-        android:id="@+id/protectorSearchDialogFragment"
-        android:name="com.polzzak_android.presentation.search.protector.ProtectorSearchDialogFragment"
-        android:label="ProtectorSearchDialogFragment"
+    <fragment
+        android:id="@+id/protectorSearchFragment"
+        android:name="com.polzzak_android.presentation.search.protector.ProtectorSearchFragment"
+        android:label="ProtectorSearchFragment"
         tools:layout="@layout/fragment_search">
         <action
-            android:id="@+id/action_protectorSearchDialogFragment_to_protectorHostFragment"
+            android:id="@+id/action_protectorSearchFragment_to_protectorHostFragment"
             app:destination="@id/protectorHostFragment" />
-    </dialog>
+    </fragment>
 
     <fragment
         android:id="@+id/protectorHostFragment"
@@ -93,7 +93,7 @@
 
     <fragment
         android:id="@+id/kidHostFragment"
-        android:name="com.polzzak_android.presentation.search.kid.KidSearchDialogFragment"
+        android:name="com.polzzak_android.presentation.search.kid.KidSearchFragment"
         android:label="KidHostFragment"
         tools:layout="@layout/fragment_kid_host" />
 </navigation>
