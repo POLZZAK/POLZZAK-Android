@@ -18,7 +18,7 @@ import com.polzzak_android.presentation.search.item.SearchMainRequestEmptyItem
 import com.polzzak_android.presentation.search.item.SearchMainRequestItem
 import com.polzzak_android.presentation.search.model.SearchPageTypeModel
 
-abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>() {
+abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseSearchClickListener {
     override val layoutResId: Int = R.layout.fragment_search
 
     abstract val searchViewModel: BaseSearchViewModel
@@ -122,7 +122,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>() {
                     if (it.data.isEmpty()) {
                         items.add(SearchMainRequestEmptyItem())
                     } else {
-                        items.addAll(it.data.map { model -> SearchMainRequestItem(model = model) })
+                        items.addAll(it.data.map { model ->
+                            SearchMainRequestItem(
+                                model = model,
+                                clickListener = this@BaseSearchFragment
+                            )
+                        })
                     }
                 }
 
@@ -130,5 +135,10 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>() {
             }
             adapter.updateItem(item = items)
         }
+    }
+
+    override fun displayCancelRequestDialog() {
+        //TODO 연동취소 dialog
+
     }
 }

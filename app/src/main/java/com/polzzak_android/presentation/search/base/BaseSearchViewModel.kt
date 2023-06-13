@@ -24,7 +24,11 @@ abstract class BaseSearchViewModel(
     private val _requestLiveData = MutableLiveData<ModelState<List<SearchMainRequestModel>>>()
     val requestLiveData: LiveData<ModelState<List<SearchMainRequestModel>>> = _requestLiveData
 
+    private val _cancelLinkLiveData = MutableLiveData<ModelState<Nothing?>>()
+    val cancelLinkLiveData: LiveData<ModelState<Nothing?>> = _cancelLinkLiveData
+
     private var fetchSentRequestJob: Job? = null
+    private var cancelRequestJob: Job? = null
 
     init {
         _requestLiveData.value = ModelState.Success(emptyList())
@@ -52,7 +56,23 @@ abstract class BaseSearchViewModel(
                     )
                 } ?: emptyList()
                 _requestLiveData.value = ModelState.Success(data = searchMainRequestModel)
+            }.onError { exception, familiesDto ->
+                //TODO error hadnling
             }
+        }
+    }
+
+    fun requestCancelRequestLink(accessToken: String, targetId: Int) {
+        if (fetchSentRequestJob?.isCompleted == false) return
+        fetchSentRequestJob = viewModelScope.launch {
+            _cancelLinkLiveData.value = ModelState.Loading()
+            familyRepository.requestDeleteLink(accessToken = accessToken, targetId = targetId)
+                .onSuccess {
+                    _cancelLinkLiveData.value =  ModelState.Success(it)
+                }.onError { exception, _ ->
+                    //TODO error handling
+
+                }
         }
     }
 }
