@@ -12,13 +12,13 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import com.polzzak_android.databinding.FragmentSearchBinding
-import com.polzzak_android.presentation.common.MainActivity
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.search.model.SearchMainRequestEmptyItemModel
+import com.polzzak_android.presentation.search.model.SearchMainRequestItemModel
 import com.polzzak_android.presentation.search.model.SearchPageTypeModel
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 abstract class BaseSearchDialogFragment : DialogFragment() {
     private var _binding: FragmentSearchBinding? = null
     protected val binding get() = _binding!!
@@ -123,15 +123,23 @@ abstract class BaseSearchDialogFragment : DialogFragment() {
             val requestListRecyclerView = binding.inMain.rvRequestList
             val adapter =
                 (requestListRecyclerView.adapter as? BindableItemAdapter) ?: return@observe
+            val items = mutableListOf<BindableItem<*>>()
+            //TODO 로딩, 에러케이스 적용
             when (it) {
                 is ModelState.Loading -> {}
-                is ModelState.Success -> {}
+                is ModelState.Success -> {
+                    if (it.data.isEmpty()) {
+                        items.add(SearchMainRequestEmptyItemModel())
+                    } else {
+                        items.addAll(it.data.map { model -> SearchMainRequestItemModel(model = model) })
+                    }
+                }
+
                 is ModelState.Error -> {}
             }
+            adapter.updateItem(item = items)
         }
     }
-
-    private fun getAccessTokenOrNull(): String? = (activity as? MainActivity)?.getAccessToken()
 
     override fun onDestroyView() {
         super.onDestroyView()

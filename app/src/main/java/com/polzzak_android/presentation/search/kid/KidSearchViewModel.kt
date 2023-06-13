@@ -1,11 +1,31 @@
 package com.polzzak_android.presentation.search.kid
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.polzzak_android.data.repository.FamilyRepository
 import com.polzzak_android.presentation.search.base.BaseSearchViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-@HiltViewModel
-class KidSearchViewModel @Inject constructor(familyRepository: FamilyRepository) :
-    BaseSearchViewModel(familyRepository) {
+class KidSearchViewModel @AssistedInject constructor(
+    familyRepository: FamilyRepository,
+    @Assisted initAccessToken: String
+) : BaseSearchViewModel(familyRepository, initAccessToken) {
+    @AssistedFactory
+    interface KidSearchViewModelAssistedFactory {
+        fun create(initAccessToken: String): KidSearchViewModel
+    }
+
+    companion object {
+        fun provideFactory(
+            kidSearchViewModelAssistedFactory: KidSearchViewModelAssistedFactory,
+            initAccessToken: String
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return kidSearchViewModelAssistedFactory.create(initAccessToken = initAccessToken) as T
+            }
+        }
+    }
 }
