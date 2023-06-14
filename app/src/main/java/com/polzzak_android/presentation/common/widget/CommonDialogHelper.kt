@@ -13,7 +13,7 @@ import androidx.fragment.app.DialogFragment
 import com.polzzak_android.R
 import com.polzzak_android.common.util.getDeviceSize
 import com.polzzak_android.databinding.CommonDialogBinding
-import com.polzzak_android.presentation.common.model.DialogModel
+import com.polzzak_android.presentation.common.model.CommonDialogModel
 import com.polzzak_android.presentation.common.model.DialogStyleType
 
 /**
@@ -21,17 +21,17 @@ import com.polzzak_android.presentation.common.model.DialogStyleType
  *
  * type의 DialogStypeType으로 바디 출력 형태 구분 (ALERT: 기본형, CALENDAR: 캘린더형, MISSION: 미션형)
  *
- * @see DialogModel
+ * @see CommonDialogModel
  */
 class CommonDialogHelper(
-    private val content: DialogModel,
+    private val content: CommonDialogModel,
     private var onCancelListener: (() -> OnButtonClickListener)? = null,
     private var onConfirmListener: (() -> OnButtonClickListener)? = null,
 ) : DialogFragment() {
 
     companion object {
         fun getInstance(
-            content: DialogModel,
+            content: CommonDialogModel,
             onCancelListener: (() -> OnButtonClickListener)? = null,
             onButtonClickListener: (() -> OnButtonClickListener)? = null,
         ): CommonDialogHelper {
