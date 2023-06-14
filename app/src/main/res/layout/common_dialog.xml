@@ -7,7 +7,7 @@
 
         <variable
             name="data"
-            type="com.polzzak_android.presentation.common.model.DialogModel" />
+            type="com.polzzak_android.presentation.common.model.CommonDialogModel" />
 
         <variable
             name="type"
