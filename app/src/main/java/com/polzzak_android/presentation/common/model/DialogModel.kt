@@ -1,11 +1,11 @@
-package com.polzzak_android.presentation.common.widget
+package com.polzzak_android.presentation.common.model
 
 import java.util.Calendar
 
 data class DialogModel(
     val type: DialogStyleType,
     val content: DialogContent,
-    val button: DialogButton
+    val button: CommonButtonModel
 ) {
     // todo: 린트 적용 전 임시
     init {
@@ -39,16 +39,6 @@ data class DialogMissionContent(
     val missionTime : String
 )
 
-data class DialogButton(
-    val buttonCount: ButtonCount,
-    val negativeButtonText: String? = "취소",
-    val positiveButtonText: String? = "확인",
-)
-
 enum class DialogStyleType {
     ALERT, CALENDAR, MISSION
-}
-
-enum class ButtonCount {
-    ONE, TWO
 }

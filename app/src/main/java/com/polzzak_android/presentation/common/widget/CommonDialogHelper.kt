@@ -13,6 +13,8 @@ import androidx.fragment.app.DialogFragment
 import com.polzzak_android.R
 import com.polzzak_android.common.util.getDeviceSize
 import com.polzzak_android.databinding.CommonDialogBinding
+import com.polzzak_android.presentation.common.model.DialogModel
+import com.polzzak_android.presentation.common.model.DialogStyleType
 
 /**
  * 다이얼로그 공통 코드
@@ -20,50 +22,20 @@ import com.polzzak_android.databinding.CommonDialogBinding
  * type의 DialogStypeType으로 바디 출력 형태 구분 (ALERT: 기본형, CALENDAR: 캘린더형, MISSION: 미션형)
  *
  * @see DialogModel
- *
- * <pre>
- * { @code
- * CommonDialogHelper.newInstance(
- *      content = DialogModel(
- *          type = DialogStyleType.ALERT,
- *          content = DialogContent(
- *              title = "제목",
- *              body = "내용",
- *              mission = DialogMissionContent(
- *                  img = "이미지 link",
- *                  missionTitle = "미션 제목",
- *                  missionTime = "미션 시간"
- *                  ),
- *              calendar = Calendar.getInstance()
- *          ),
- *          button = DialogButton(
- *              buttonCount = ButtonCount.ONE,
- *              negativeButtonText = "취소",
- *              positiveButtonText = "확인")
- *          ),
- *      onCancelListener = {
- *          // 취소 버튼 클릭 로직
- *      },
- *      onConfirmListener = {
- *          // 확인 버튼 클릭 로직
- *      }).show(childFragmentManager, "Dialog")
- * }
- * </pre>
- *
  */
 class CommonDialogHelper(
     private val content: DialogModel,
-    private var onCancelListener: (() -> Unit)? = null,
-    private var onConfirmListener: (() -> Unit)? = null,
+    private var onCancelListener: (() -> OnButtonClickListener)? = null,
+    private var onConfirmListener: (() -> OnButtonClickListener)? = null,
 ) : DialogFragment() {
 
     companion object {
-        fun newInstance(
+        fun getInstance(
             content: DialogModel,
-            onCancelListener: (() -> Unit)? = null,
-            onConfirmListener: (() -> Unit)? = null
+            onCancelListener: (() -> OnButtonClickListener)? = null,
+            onButtonClickListener: (() -> OnButtonClickListener)? = null,
         ): CommonDialogHelper {
-            return CommonDialogHelper(content, onCancelListener, onConfirmListener)
+            return CommonDialogHelper(content, onCancelListener, onButtonClickListener)
         }
     }
 
@@ -90,22 +62,25 @@ class CommonDialogHelper(
         binding.dialogMission.missionData = content.content.mission
     }
 
-    private fun getCalendarDate() {
+    private fun getCalendarDate(): String {
+        // todo: api 확정 후 변경
         binding.dialogCalendar.dialogCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            // todo 캘린더 로직 추가 -> api 확정 후
         }
+
+        return "로직 테스트"
     }
 
     private fun onClickListener() {
         binding.dialogNegativeButton.setOnClickListener {
-            onCancelListener?.invoke()
+            onCancelListener?.invoke()?.setBusinessLogic()
             dismiss()
         }
 
         binding.dialogPositiveButton.setOnClickListener {
-            onConfirmListener?.invoke()
+            onConfirmListener?.invoke()?.setBusinessLogic()
             if (content.type == DialogStyleType.CALENDAR) {
-                getCalendarDate()
+                val result = getCalendarDate()
+                onConfirmListener?.invoke()?.getReturnValue(result)
             }
             dismiss()
         }
