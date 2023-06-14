@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="com.polzzak_android.presentation.common.model.CommonDialogModel" />
+
+        <variable
+            name="type"
+            type="com.polzzak_android.presentation.common.model.DialogStyleType" />
+
+        <variable
+            name="buttonCount"
+            type="com.polzzak_android.presentation.common.model.ButtonCount" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_background"
+        android:backgroundTint="@color/white"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="40dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/dialog_title"
+            style="@style/subtitle.18.600"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@{data.content.title}"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="제목" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/dialog_type_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@id/dialog_button_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_title">
+
+            <TextView
+                android:id="@+id/dialog_body"
+                style="@style/subtitle.16.600"
+                setVisibility="@{data.type == type.ALERT }"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{data.content.body}"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="바디" />
+
+            <include
+                android:id="@+id/dialog_mission"
+                layout="@layout/common_dialog_mission"
+                setVisibility="@{data.type == type.MISSION }"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <include
+                android:id="@+id/dialog_calendar"
+                layout="@layout/common_dialog_calendar"
+                setVisibility="@{data.type == type.CALENDAR }"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/dialog_button_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_type_container">
+
+            <Button
+                android:id="@+id/dialog_negative_button"
+                style="@style/subtitle.16.600.modal.btn"
+                setVisibility="@{data.button.buttonCount == buttonCount.TWO}"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="11dp"
+                android:layout_weight="1"
+                android:background="@drawable/btn_modal_negative"
+                android:text="@{data.button.negativeButtonText}"
+                tools:text="취소" />
+
+            <Button
+                android:id="@+id/dialog_positive_button"
+                style="@style/subtitle.16.600.modal.btn"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/btn_modal_positive"
+                android:text="@{data.button.positiveButtonText}"
+                tools:text="확인" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
