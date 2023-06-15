@@ -41,7 +41,7 @@
 
     <fragment
         android:id="@+id/kidSearchOptionMenuFragment"
-        android:name="com.polzzak_android.presentation.search.kid.KidSearchOptionMenuFragment"
+        android:name="com.polzzak_android.presentation.link.search.kid.KidSearchOptionMenuFragment"
         android:label="KidSearchOptionMenuFragment"
         tools:layout="@layout/fragment_search_option_menu">
         <action
@@ -54,7 +54,7 @@
 
     <fragment
         android:id="@+id/protectorSearchOptionMenuFragment"
-        android:name="com.polzzak_android.presentation.search.protector.ProtectorSearchOptionMenuFragment"
+        android:name="com.polzzak_android.presentation.link.search.protector.ProtectorSearchOptionMenuFragment"
         android:label="ProtectorSearchOptionMenuFragment"
         tools:layout="@layout/fragment_search_option_menu">
         <action
@@ -67,7 +67,7 @@
 
     <fragment
         android:id="@+id/kidSearchFragment"
-        android:name="com.polzzak_android.presentation.search.kid.KidSearchFragment"
+        android:name="com.polzzak_android.presentation.link.search.kid.KidSearchFragment"
         android:label="KidSearchFragment"
         tools:layout="@layout/fragment_search">
         <action
@@ -77,7 +77,7 @@
 
     <fragment
         android:id="@+id/protectorSearchFragment"
-        android:name="com.polzzak_android.presentation.search.protector.ProtectorSearchFragment"
+        android:name="com.polzzak_android.presentation.link.search.protector.ProtectorSearchFragment"
         android:label="ProtectorSearchFragment"
         tools:layout="@layout/fragment_search">
         <action
@@ -93,7 +93,7 @@
 
     <fragment
         android:id="@+id/kidHostFragment"
-        android:name="com.polzzak_android.presentation.search.kid.KidSearchFragment"
+        android:name="com.polzzak_android.presentation.link.search.kid.KidSearchFragment"
         android:label="KidHostFragment"
         tools:layout="@layout/fragment_kid_host" />
 </navigation>

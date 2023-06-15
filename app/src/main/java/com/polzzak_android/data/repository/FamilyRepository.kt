@@ -72,17 +72,17 @@ class FamilyRepository @Inject constructor(
         familyService.requestLinkedUsers(authorization = authorization)
     }
 
-    suspend fun requestSentRequestLinkUsers(
+    suspend fun requestSentRequestLinks(
         accessToken: String,
     ): ApiResult<FamiliesDto> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
-        familyService.requestSentRequestLinkUsers(authorization = authorization)
+        familyService.requestSentRequestLinks(authorization = authorization)
     }
 
-    suspend fun requestReceivedRequestLinkUsers(
+    suspend fun requestReceivedRequestLinks(
         accessToken: String,
     ): ApiResult<FamiliesDto> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
-        familyService.requestReceivedRequestLinkUsers(authorization = authorization)
+        familyService.requestReceivedRequestLinks(authorization = authorization)
     }
 }

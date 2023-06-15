@@ -1,7 +1,7 @@
-package com.polzzak_android.presentation.search.protector
+package com.polzzak_android.presentation.link.search.protector
 
 import com.polzzak_android.R
-import com.polzzak_android.presentation.search.base.BaseSearchOptionMenuFragment
+import com.polzzak_android.presentation.link.search.base.BaseSearchOptionMenuFragment
 
 class ProtectorSearchOptionMenuFragment : BaseSearchOptionMenuFragment() {
     //TODO 임시 drawable -> 디자인가이드 적용 필요

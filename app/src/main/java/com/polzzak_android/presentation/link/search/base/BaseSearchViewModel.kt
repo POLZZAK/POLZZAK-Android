@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.search.base
+package com.polzzak_android.presentation.link.search.base
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.data.repository.FamilyRepository
 import com.polzzak_android.presentation.common.model.ModelState
-import com.polzzak_android.presentation.search.model.SearchMainRequestModel
-import com.polzzak_android.presentation.search.model.SearchPageTypeModel
+import com.polzzak_android.presentation.link.search.model.SearchMainRequestModel
+import com.polzzak_android.presentation.link.search.model.SearchPageTypeModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -27,12 +27,15 @@ abstract class BaseSearchViewModel(
     private val _cancelLinkLiveData = MutableLiveData<ModelState<Nothing?>>()
     val cancelLinkLiveData: LiveData<ModelState<Nothing?>> = _cancelLinkLiveData
 
+//    private val _searchUserLiveData = MutableLiveData<ModelState<User>>()
+
     private var fetchSentRequestJob: Job? = null
     private var cancelRequestJob: Job? = null
+    private var fetchUserJob: Job? = null
 
     init {
         _requestLiveData.value = ModelState.Success(emptyList())
-        requestSentRequestLinkUsers(accessToken = initAccessToken)
+        requestSentRequestLinks(accessToken = initAccessToken)
     }
 
     fun setPage(page: SearchPageTypeModel) {
@@ -44,10 +47,11 @@ abstract class BaseSearchViewModel(
         _searchQueryLiveData.value = query
     }
 
-    private fun requestSentRequestLinkUsers(accessToken: String) {
+    //TODO 이름변경 requestSentLinkRequestUsers
+    private fun requestSentRequestLinks(accessToken: String) {
         fetchSentRequestJob?.cancel()
         fetchSentRequestJob = viewModelScope.launch {
-            familyRepository.requestSentRequestLinkUsers(accessToken = accessToken).onSuccess {
+            familyRepository.requestSentRequestLinks(accessToken = accessToken).onSuccess {
                 val searchMainRequestModel = it?.families?.map { userInfoDto ->
                     SearchMainRequestModel(
                         userId = userInfoDto.memberId,
@@ -68,11 +72,27 @@ abstract class BaseSearchViewModel(
             _cancelLinkLiveData.value = ModelState.Loading()
             familyRepository.requestDeleteLink(accessToken = accessToken, targetId = targetId)
                 .onSuccess {
-                    _cancelLinkLiveData.value =  ModelState.Success(it)
+                    _cancelLinkLiveData.value = ModelState.Success(it)
                 }.onError { exception, _ ->
                     //TODO error handling
 
                 }
         }
+    }
+
+    fun requestSearchUserWithNickName(accessToken: String) {
+        //TODO 응답 성공 실패 구현
+        fetchUserJob?.cancel()
+        fetchUserJob = viewModelScope.launch {
+            val query = searchQueryLiveData.value ?: ""
+            familyRepository.requestUserWithNickName(accessToken = accessToken, nickName = query)
+                .onSuccess { }.onError { exception, userInfoDto -> }
+        }
+    }
+
+    fun cancelSearchUserWithNickNameJob() {
+        fetchUserJob?.cancel()
+        fetchUserJob = null
+        //TODO 모델 초기화
     }
 }

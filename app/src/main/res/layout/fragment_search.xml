@@ -59,7 +59,7 @@
 
         <include
             android:id="@+id/inMain"
-            layout="@layout/layout_search_main"
+            layout="@layout/layout_link_main"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -69,7 +69,7 @@
 
         <include
             android:id="@+id/inRequest"
-            layout="@layout/layout_search_request"
+            layout="@layout/layout_link_request"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"

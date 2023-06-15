@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.search.base
+package com.polzzak_android.presentation.link.search.base
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes

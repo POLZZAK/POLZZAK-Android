@@ -56,7 +56,7 @@
     <!-- tODO 테스트용 임시 fragment 제거 -->
     <fragment
         android:id="@+id/kidSearchFragment"
-        android:name="com.polzzak_android.presentation.search.kid.KidSearchFragment"
+        android:name="com.polzzak_android.presentation.link.search.kid.KidSearchFragment"
         android:label="KidSearchFragment"
         tools:layout="@layout/fragment_search" />
 </navigation>

@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.search.model
+package com.polzzak_android.presentation.link.search.model
 
 data class SearchMainRequestModel(
     val userId: Int,

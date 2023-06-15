@@ -58,13 +58,13 @@ interface FamilyService {
 
     //내가 요청한 사용자
     @GET("/api/v1/families/requests/sent")
-    suspend fun requestSentRequestLinkUsers(
+    suspend fun requestSentRequestLinks(
         @Header("Authorization") authorization: String,
     ): Response<FamiliesResponse>
 
     //나에게 요청한 사용자
     @GET("/api/v1/families/requests/received")
-    suspend fun requestReceivedRequestLinkUsers(
+    suspend fun requestReceivedRequestLinks(
         @Header("Authorization") authorization: String,
     ): Response<FamiliesResponse>
 

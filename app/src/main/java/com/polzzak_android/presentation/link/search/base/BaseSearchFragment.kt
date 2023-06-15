@@ -1,12 +1,15 @@
-package com.polzzak_android.presentation.search.base
+package com.polzzak_android.presentation.link.search.base
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import androidx.core.view.isVisible
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentSearchBinding
@@ -14,15 +17,16 @@ import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
-import com.polzzak_android.presentation.search.item.SearchMainRequestEmptyItem
-import com.polzzak_android.presentation.search.item.SearchMainRequestItem
-import com.polzzak_android.presentation.search.model.SearchPageTypeModel
+import com.polzzak_android.presentation.link.item.LinkMainEmptyItem
+import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
+import com.polzzak_android.presentation.link.search.model.SearchPageTypeModel
+import timber.log.Timber
 
 abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseSearchClickListener {
     override val layoutResId: Int = R.layout.fragment_search
 
     abstract val searchViewModel: BaseSearchViewModel
-    abstract val typeString: String
+    abstract val targetString: String
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,8 +38,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
     override fun initView() {
         with(binding) {
             //TODO string resource로 변경
-            tvTitle.text = "$typeString 찾기"
-            etSearch.hint = "$typeString 검색"
+            tvTitle.text = "$targetString 찾기"
             ivBtnClearText.setOnClickListener {
                 etSearch.setText("")
             }
@@ -44,7 +47,6 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
             }
             binding.root.setOnTouchListener { _, _ ->
                 hideKeyboard()
-                etSearch.clearFocus()
                 false
             }
             ivBtnBack.setOnClickListener {
@@ -58,6 +60,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
 
     private fun initSearchEditTextView() {
         with(binding.etSearch) {
+            hint = "$targetString 검색"
             setText(searchViewModel.searchQueryLiveData.value ?: "")
             setOnFocusChangeListener { _, isFocused ->
                 if (isFocused) searchViewModel.setPage(page = SearchPageTypeModel.REQUEST)
@@ -67,6 +70,21 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun afterTextChanged(p0: Editable?) {
                     searchViewModel.setSearchQuery(query = p0?.toString() ?: "")
+                }
+            })
+            imeOptions = EditorInfo.IME_ACTION_SEARCH
+            setOnEditorActionListener(object : TextView.OnEditorActionListener {
+                override fun onEditorAction(
+                    v: TextView?,
+                    actionId: Int,
+                    event: KeyEvent?
+                ): Boolean {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        hideKeyboard()
+                        Timber.d("${v?.text}")
+                        return true
+                    }
+                    return false
                 }
             })
         }
@@ -87,6 +105,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
 
     private fun hideKeyboard() {
         activity?.run {
+            binding.etSearch.clearFocus()
             val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputManager?.hideSoftInputFromWindow(
                 binding.etSearch.windowToken,
@@ -120,10 +139,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
                 is ModelState.Loading -> {}
                 is ModelState.Success -> {
                     if (it.data.isEmpty()) {
-                        items.add(SearchMainRequestEmptyItem())
+                        //TODO string resource로 변경
+                        items.add(LinkMainEmptyItem("보낸 요청이 없어요"))
                     } else {
                         items.addAll(it.data.map { model ->
-                            SearchMainRequestItem(
+                            LinkMainSentRequestItem(
                                 model = model,
                                 clickListener = this@BaseSearchFragment
                             )
