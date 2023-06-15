@@ -5,10 +5,10 @@ import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemLinkMainSentRequestBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.link.search.base.BaseSearchClickListener
-import com.polzzak_android.presentation.link.search.model.SearchMainRequestModel
+import com.polzzak_android.presentation.link.model.LinkUserModel
 
 class LinkMainSentRequestItem(
-    private val model: SearchMainRequestModel,
+    private val model: LinkUserModel,
     private val clickListener: BaseSearchClickListener
 ) :
     BindableItem<ItemLinkMainSentRequestBinding>() {

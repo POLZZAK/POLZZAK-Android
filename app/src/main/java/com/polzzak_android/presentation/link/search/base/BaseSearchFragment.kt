@@ -19,7 +19,7 @@ import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.link.item.LinkMainEmptyItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
-import com.polzzak_android.presentation.link.search.model.SearchPageTypeModel
+import com.polzzak_android.presentation.link.model.LinkPageTypeModel
 import timber.log.Timber
 
 abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseSearchClickListener {
@@ -43,7 +43,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
                 etSearch.setText("")
             }
             tvBtnCancel.setOnClickListener {
-                searchViewModel.setPage(SearchPageTypeModel.MAIN)
+                searchViewModel.setPage(LinkPageTypeModel.MAIN)
             }
             binding.root.setOnTouchListener { _, _ ->
                 hideKeyboard()
@@ -63,7 +63,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
             hint = "$targetString 검색"
             setText(searchViewModel.searchQueryLiveData.value ?: "")
             setOnFocusChangeListener { _, isFocused ->
-                if (isFocused) searchViewModel.setPage(page = SearchPageTypeModel.REQUEST)
+                if (isFocused) searchViewModel.setPage(page = LinkPageTypeModel.REQUEST)
             }
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -117,9 +117,9 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
     override fun initObserver() {
         searchViewModel.pageLiveData.observe(viewLifecycleOwner) {
             with(binding) {
-                inMain.root.isVisible = (it == SearchPageTypeModel.MAIN)
-                inRequest.root.isVisible = (it == SearchPageTypeModel.REQUEST)
-                tvBtnCancel.isVisible = (it == SearchPageTypeModel.REQUEST)
+                inMain.root.isVisible = (it == LinkPageTypeModel.MAIN)
+                inRequest.root.isVisible = (it == LinkPageTypeModel.REQUEST)
+                tvBtnCancel.isVisible = (it == LinkPageTypeModel.REQUEST)
             }
         }
 
