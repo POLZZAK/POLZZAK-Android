@@ -4,13 +4,12 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.polzzak_android.R
+import com.polzzak_android.databinding.FragmentProtectorHostBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.databinding.FragmentProtectortHostBinding
 
+class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
 
-class ProtectorHostFragment() : BaseFragment<FragmentProtectortHostBinding>() {
-
-    override val layoutResId = R.layout.fragment_protectort_host
+    override val layoutResId = R.layout.fragment_protector_host
     private lateinit var protectorNavController: NavController
 
     override fun initView() {

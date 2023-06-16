@@ -3,13 +3,13 @@ package com.polzzak_android.presentation.main.protector
 import androidx.fragment.app.Fragment
 import com.google.android.material.tabs.TabLayout
 import com.polzzak_android.R
+import com.polzzak_android.databinding.FragmentProtectorMainBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.databinding.FragmentMainBinding
 import com.polzzak_android.presentation.main.protector.completed.ProtectorCompletedFragment
 import com.polzzak_android.presentation.main.protector.progress.ProtectorProgressFragment
 
-class ProtectorMainFragment : BaseFragment<FragmentMainBinding>() {
-    override val layoutResId: Int = R.layout.fragment_main
+class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>() {
+    override val layoutResId: Int = R.layout.fragment_protector_main
 
     private val protectorProgressFragment = ProtectorProgressFragment.getInstance()
     private val protectorCompletedFragment = ProtectorCompletedFragment.getInstance()
