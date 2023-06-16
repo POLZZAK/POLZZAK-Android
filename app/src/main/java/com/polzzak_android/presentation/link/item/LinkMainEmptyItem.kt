@@ -14,5 +14,5 @@ class LinkMainEmptyItem(private val content: String) :
     override fun areItemsTheSame(other: BindableItem<*>) = other is LinkMainEmptyItem
 
     override fun areContentsTheSame(other: BindableItem<*>) =
-        other is LinkMainEmptyItem
+        other is LinkMainEmptyItem && this.content == other.content
 }
