@@ -12,8 +12,10 @@ import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.annotation.IdRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentSearchBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -49,6 +51,9 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     protected abstract val targetLinkMemberType: LinkMemberType
     protected abstract val linkMemberType: LinkMemberType
 
+    @get:IdRes
+    protected abstract val actionMoveMainFragment: Int
+
     @Inject
     lateinit var searchViewModelAssistedFactory: SearchViewModel.SearchViewModelAssistedFactory
 
@@ -66,10 +71,18 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     private val linkMemberTypeStringOrEmpty
         get() = context?.getString(linkMemberType.stringRes) ?: ""
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         with(binding) {
             //TODO string resource로 변경
+            initCommonView()
+            initMainPageView()
+            initRequestPageView()
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initCommonView() {
+        with(binding) {
             tvTitle.text = "$targetLinkTypeStringOrEmpty 찾기"
             ivBtnClearText.setOnClickListener {
                 etSearch.setText("")
@@ -85,8 +98,6 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
                 //TODO back 버튼
             }
             initSearchEditTextView()
-            initMainPageView()
-            initRequestPageView()
         }
     }
 
@@ -127,8 +138,20 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     private fun initMainPageView() {
         with(binding.inMain) {
             //TODO string resource 적용
-            tvBtnComplete.text = "나중에 할게요"
+            setEnabledBtnComplete(isEmpty = true)
             rvRequestList.adapter = BindableItemAdapter()
+            tvBtnComplete.setOnClickListener {
+                findNavController().navigate(actionMoveMainFragment)
+            }
+        }
+    }
+
+    //TODO 버튼 비활성화 여부 기획 문의 후 변경 필요(문의 중)
+    private fun setEnabledBtnComplete(isEmpty: Boolean) {
+        with(binding.inMain.tvBtnComplete) {
+            //TODO string resource 변경
+            this.text = if (isEmpty) "나중에 할게요" else "$targetLinkTypeStringOrEmpty 찾기 완료"
+            this.isEnabled = !isEmpty
         }
     }
 
@@ -188,6 +211,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
                             )
                         })
                     }
+                    setEnabledBtnComplete(isEmpty = it.data.isEmpty())
                 }
 
                 is ModelState.Error -> {}
