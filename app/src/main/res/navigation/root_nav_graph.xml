@@ -39,7 +39,7 @@
         <!-- TODO 테스트용 임시 action 제거 -->
         <action
             android:id="@+id/action_test"
-            app:destination="@id/kidSearchFragment" />
+            app:destination="@id/protectorSearchFragment" />
     </fragment>
 
     <fragment
@@ -55,8 +55,8 @@
 
     <!-- tODO 테스트용 임시 fragment 제거 -->
     <fragment
-        android:id="@+id/kidSearchFragment"
-        android:name="com.polzzak_android.presentation.link.search.kid.KidSearchFragment"
-        android:label="KidSearchFragment"
+        android:id="@+id/protectorSearchFragment"
+        android:name="com.polzzak_android.presentation.link.search.protector.ProtectorSearchFragment"
+        android:label="ProtectorSearchFragment"
         tools:layout="@layout/fragment_search" />
 </navigation>

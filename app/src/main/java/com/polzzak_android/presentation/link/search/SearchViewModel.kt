@@ -17,6 +17,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SearchViewModel @AssistedInject constructor(
@@ -34,20 +35,22 @@ class SearchViewModel @AssistedInject constructor(
     private val _requestLiveData = MutableLiveData<ModelState<List<LinkUserModel>>>()
     val requestLiveData: LiveData<ModelState<List<LinkUserModel>>> = _requestLiveData
 
-    private val _cancelLinkLiveData = MutableLiveData<ModelState<Nothing?>>()
-    val cancelLinkLiveData: LiveData<ModelState<Nothing?>> = _cancelLinkLiveData
+    private val _cancelLinkLiveData = MutableLiveData<ModelState<Unit?>>()
+    val cancelLinkLiveData: LiveData<ModelState<Unit?>> = _cancelLinkLiveData
 
     private val _searchUserLiveData = MutableLiveData<ModelState<LinkRequestUserModel>>()
     val searchUserLiveData: LiveData<ModelState<LinkRequestUserModel>> = _searchUserLiveData
 
-    private var fetchSentRequestJob: Job? = null
-    private var cancelRequestJob: Job? = null
-    private var fetchUserJob: Job? = null
+    private val _requestLinkLiveData = MutableLiveData<ModelState<Unit?>>()
+    val requestLinkLiveData: LiveData<ModelState<Unit?>> = _requestLinkLiveData
+
+    private var sentRequestJob: Job? = null
+    private var searchUserJob: Job? = null
 
     init {
         _requestLiveData.value = ModelState.Success(emptyList())
         resetSearchUserResult()
-        requestSentRequestLinks(accessToken = initAccessToken)
+        sentRequestLinks(accessToken = initAccessToken)
     }
 
     fun setPage(page: LinkPageTypeModel) {
@@ -59,9 +62,9 @@ class SearchViewModel @AssistedInject constructor(
         _searchQueryLiveData.value = query
     }
 
-    private fun requestSentRequestLinks(accessToken: String) {
-        fetchSentRequestJob?.cancel()
-        fetchSentRequestJob = viewModelScope.launch {
+    private fun sentRequestLinks(accessToken: String) {
+        sentRequestJob?.cancel()
+        sentRequestJob = viewModelScope.launch {
             familyRepository.requestSentRequestLinks(accessToken = accessToken).onSuccess {
                 val linkUserModel =
                     it?.families?.map { userInfoDto -> userInfoDto.toLinkUserModel() }
@@ -73,9 +76,17 @@ class SearchViewModel @AssistedInject constructor(
         }
     }
 
-    fun requestCancelRequestLink(accessToken: String, targetId: Int) {
-        if (fetchSentRequestJob?.isCompleted == false) return
-        fetchSentRequestJob = viewModelScope.launch {
+    fun requestLink(accessToken: String, targetId: Int) {
+        viewModelScope.launch {
+            _requestLinkLiveData.value = ModelState.Loading()
+            familyRepository.requestLink(accessToken = accessToken, targetId = targetId).onSuccess {
+                _requestLinkLiveData.value = ModelState.Success(data = it)
+            }.onError { exception, _ -> }
+        }
+    }
+
+    fun cancelRequestLink(accessToken: String, targetId: Int) {
+        viewModelScope.launch {
             _cancelLinkLiveData.value = ModelState.Loading()
             familyRepository.requestDeleteLink(accessToken = accessToken, targetId = targetId)
                 .onSuccess {
@@ -88,9 +99,10 @@ class SearchViewModel @AssistedInject constructor(
     }
 
     fun requestSearchUserWithNickName(accessToken: String) {
-        fetchUserJob?.cancel()
-        fetchUserJob = viewModelScope.launch {
+        searchUserJob?.cancel()
+        searchUserJob = viewModelScope.launch {
             _searchUserLiveData.value = ModelState.Loading()
+            delay(3000)
             val query = searchQueryLiveData.value ?: ""
             familyRepository.requestUserWithNickName(accessToken = accessToken, nickName = query)
                 .onSuccess { userInfoDto ->
@@ -108,8 +120,8 @@ class SearchViewModel @AssistedInject constructor(
     }
 
     fun cancelSearchUserWithNickNameJob() {
-        fetchUserJob?.cancel()
-        fetchUserJob = null
+        searchUserJob?.cancel()
+        searchUserJob = null
         resetSearchUserResult()
     }
 

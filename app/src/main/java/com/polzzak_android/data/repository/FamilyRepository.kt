@@ -24,7 +24,7 @@ class FamilyRepository @Inject constructor(
     suspend fun requestLink(
         accessToken: String,
         targetId: Int
-    ): ApiResult<Nothing?> = requestCatching {
+    ): ApiResult<Unit> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         familyService.requestLink(
             authorization = authorization,
@@ -35,7 +35,7 @@ class FamilyRepository @Inject constructor(
     suspend fun requestApproveLink(
         accessToken: String,
         targetId: Int
-    ): ApiResult<Nothing?> = requestCatching {
+    ): ApiResult<Unit> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         familyService.requestApproveLink(
             authorization = authorization,
@@ -46,7 +46,7 @@ class FamilyRepository @Inject constructor(
     suspend fun requestRejectLink(
         accessToken: String,
         targetId: Int
-    ): ApiResult<Nothing?> = requestCatching {
+    ): ApiResult<Unit> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         familyService.requestRejectLink(
             authorization = authorization,
@@ -57,7 +57,7 @@ class FamilyRepository @Inject constructor(
     suspend fun requestDeleteLink(
         accessToken: String,
         targetId: Int
-    ): ApiResult<Nothing?> = requestCatching {
+    ): ApiResult<Unit> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         familyService.requestDeleteLink(
             authorization = authorization,

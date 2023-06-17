@@ -7,6 +7,7 @@ import com.polzzak_android.common.util.loadCircleImageUrl
 import com.polzzak_android.databinding.ItemLinkRequestSuccessBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.link.model.LinkRequestUserModel
+import com.polzzak_android.presentation.link.search.SearchClickListener
 
 abstract class LinkRequestSuccessItem(
     private val userModel: LinkRequestUserModel,
@@ -22,7 +23,10 @@ abstract class LinkRequestSuccessItem(
         }
     }
 
-    private class NormalItem(private val userModel: LinkRequestUserModel.Normal) :
+    private class NormalItem(
+        private val userModel: LinkRequestUserModel.Normal,
+        private val clickListener: SearchClickListener
+    ) :
         LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
             other is NormalItem && this.userModel.user.userId == other.userModel.user.userId
@@ -36,11 +40,20 @@ abstract class LinkRequestSuccessItem(
                 tvBtnRequestCancel.isVisible = false
                 //TODO string resource, 버튼 background 적용
                 tvBtnRequest.text = "연동신청"
+                tvBtnRequest.setOnClickListener {
+                    clickListener.displayRequestLinkDialog(
+                        nickName = userModel.user.nickName,
+                        targetId = userModel.user.userId
+                    )
+                }
             }
         }
     }
 
-    private class SentItem(private val userModel: LinkRequestUserModel.Sent) :
+    private class SentItem(
+        private val userModel: LinkRequestUserModel.Sent,
+        private val clickListener: SearchClickListener
+    ) :
         LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
             other is SentItem && this.userModel.user.userId == other.userModel.user.userId
@@ -51,9 +64,12 @@ abstract class LinkRequestSuccessItem(
         override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
             super.bind(binding, position)
             with(binding) {
-                tvBtnRequestCancel.isVisible = false
+                tvBtnRequestCancel.isVisible = true
                 //TODO string resource, 버튼 background 적용
                 tvBtnRequest.text = "이미 보낸 요청"
+                tvBtnRequestCancel.setOnClickListener {
+                    clickListener.cancelRequestLink(targetId = userModel.user.userId)
+                }
             }
         }
     }
@@ -69,7 +85,7 @@ abstract class LinkRequestSuccessItem(
         override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
             super.bind(binding, position)
             with(binding) {
-                tvBtnRequestCancel.isVisible = true
+                tvBtnRequestCancel.isVisible = false
                 //TODO string resource, 버튼 background 적용
                 tvBtnRequest.text = "이미 링크된 유저"
             }
@@ -77,11 +93,17 @@ abstract class LinkRequestSuccessItem(
     }
 
     companion object {
-        fun newInstance(userModel: LinkRequestUserModel.Normal): LinkRequestSuccessItem =
-            NormalItem(userModel = userModel)
+        fun newInstance(
+            userModel: LinkRequestUserModel.Normal,
+            clickListener: SearchClickListener
+        ): LinkRequestSuccessItem =
+            NormalItem(userModel = userModel, clickListener = clickListener)
 
-        fun newInstance(userModel: LinkRequestUserModel.Sent): LinkRequestSuccessItem =
-            SentItem(userModel = userModel)
+        fun newInstance(
+            userModel: LinkRequestUserModel.Sent,
+            clickListener: SearchClickListener
+        ): LinkRequestSuccessItem =
+            SentItem(userModel = userModel, clickListener = clickListener)
 
         fun newInstance(userModel: LinkRequestUserModel.Linked): LinkRequestSuccessItem =
             LinkedItem(userModel = userModel)
