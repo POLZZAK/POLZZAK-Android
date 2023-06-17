@@ -1,51 +1,89 @@
 package com.polzzak_android.presentation.link.item
 
+import androidx.annotation.CallSuper
 import androidx.core.view.isVisible
 import com.polzzak_android.R
 import com.polzzak_android.common.util.loadCircleImageUrl
 import com.polzzak_android.databinding.ItemLinkRequestSuccessBinding
 import com.polzzak_android.presentation.common.util.BindableItem
-import com.polzzak_android.presentation.link.model.LinkUserModel
-import com.polzzak_android.presentation.link.model.LinkUserStatusModel
+import com.polzzak_android.presentation.link.model.LinkRequestUserModel
 
-class LinkRequestSuccessItem(
-    private val userModel: LinkUserModel,
-    private val statusModel: LinkUserStatusModel
-) :
-    BindableItem<ItemLinkRequestSuccessBinding>() {
+abstract class LinkRequestSuccessItem(
+    private val userModel: LinkRequestUserModel,
+) : BindableItem<ItemLinkRequestSuccessBinding>() {
     override val layoutRes: Int = R.layout.item_link_request_success
 
-    //TODO model 클래스 구현
-    override fun areItemsTheSame(other: BindableItem<*>) =
-        other is LinkRequestSuccessItem && this.userModel.userId == other.userModel.userId
-
-    override fun areContentsTheSame(other: BindableItem<*>) =
-        other is LinkRequestSuccessItem && this.userModel == other.userModel && this.statusModel == other.statusModel
-
+    @CallSuper
     override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
         with(binding) {
-            userModel.profileUrl?.let { binding.ivSuccessProfile.loadCircleImageUrl(imageUrl = it) }
-            tvSuccessBtnRequestCancel.isVisible = (statusModel == LinkUserStatusModel.SENT)
-            tvSuccessBtnRequestCancel.setOnClickListener{
-                //TODO 연동 취소 요청
-            }
-            when (statusModel) {
-                LinkUserStatusModel.NORMAL -> {
-                    //TODO 연동요청
-                }
-
-                LinkUserStatusModel.SENT -> {
-                    //TODO 이미 연동했어요
-                }
-
-                LinkUserStatusModel.LINKED -> {
-                    //TODO 연동 요청 완료
-                }
-
-                else -> {
-                    //do nothing
-                }
+            userModel.user?.let { user ->
+                ivProfile.loadCircleImageUrl(imageUrl = user.profileUrl)
             }
         }
+    }
+
+    private class NormalItem(private val userModel: LinkRequestUserModel.Normal) :
+        LinkRequestSuccessItem(userModel) {
+        override fun areItemsTheSame(other: BindableItem<*>): Boolean =
+            other is NormalItem && this.userModel.user.userId == other.userModel.user.userId
+
+        override fun areContentsTheSame(other: BindableItem<*>): Boolean =
+            other is NormalItem && this.userModel == other.userModel
+
+        override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
+            super.bind(binding, position)
+            with(binding) {
+                tvBtnRequestCancel.isVisible = false
+                //TODO string resource, 버튼 background 적용
+                tvBtnRequest.text = "연동신청"
+            }
+        }
+    }
+
+    private class SentItem(private val userModel: LinkRequestUserModel.Sent) :
+        LinkRequestSuccessItem(userModel) {
+        override fun areItemsTheSame(other: BindableItem<*>): Boolean =
+            other is SentItem && this.userModel.user.userId == other.userModel.user.userId
+
+        override fun areContentsTheSame(other: BindableItem<*>): Boolean =
+            other is SentItem && this.userModel == other.userModel
+
+        override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
+            super.bind(binding, position)
+            with(binding) {
+                tvBtnRequestCancel.isVisible = false
+                //TODO string resource, 버튼 background 적용
+                tvBtnRequest.text = "이미 보낸 요청"
+            }
+        }
+    }
+
+    private class LinkedItem(private val userModel: LinkRequestUserModel.Linked) :
+        LinkRequestSuccessItem(userModel) {
+        override fun areItemsTheSame(other: BindableItem<*>): Boolean =
+            other is LinkedItem && this.userModel.user.userId == other.userModel.user.userId
+
+        override fun areContentsTheSame(other: BindableItem<*>): Boolean =
+            other is LinkedItem && this.userModel == other.userModel
+
+        override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
+            super.bind(binding, position)
+            with(binding) {
+                tvBtnRequestCancel.isVisible = true
+                //TODO string resource, 버튼 background 적용
+                tvBtnRequest.text = "이미 링크된 유저"
+            }
+        }
+    }
+
+    companion object {
+        fun newInstance(userModel: LinkRequestUserModel.Normal): LinkRequestSuccessItem =
+            NormalItem(userModel = userModel)
+
+        fun newInstance(userModel: LinkRequestUserModel.Sent): LinkRequestSuccessItem =
+            SentItem(userModel = userModel)
+
+        fun newInstance(userModel: LinkRequestUserModel.Linked): LinkRequestSuccessItem =
+            LinkedItem(userModel = userModel)
     }
 }

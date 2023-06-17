@@ -1,6 +1,42 @@
 package com.polzzak_android.presentation.link.model
 
-data class LinkRequestUserModel(
-    val user: LinkUserModel? = null,
-    val status: LinkUserStatusModel = LinkUserStatusModel.GUIDE
-)
+import com.polzzak_android.data.remote.model.response.UserInfoDto
+import com.polzzak_android.presentation.common.model.asMemberTypeOrNull
+
+sealed interface LinkRequestUserModel {
+    val user: LinkUserModel?
+
+    data class Guide(val targetLinkMemberType: LinkMemberType) : LinkRequestUserModel {
+        override val user: LinkUserModel? = null
+    }
+
+    data class Empty(val nickName: String) : LinkRequestUserModel {
+        override val user: LinkUserModel? = null
+    }
+
+    data class Normal(override val user: LinkUserModel) : LinkRequestUserModel
+    data class Sent(override val user: LinkUserModel) : LinkRequestUserModel
+    data class Linked(override val user: LinkUserModel) : LinkRequestUserModel
+}
+
+fun UserInfoDto?.toLinkRequestUserModel(
+    nickName: String,
+    linkMemberType: LinkMemberType
+): LinkRequestUserModel {
+    //TODO string resource 적용
+    this ?: return LinkRequestUserModel.Empty(nickName = nickName)
+    val searchRequestMemberType =
+        asMemberTypeOrNull(memberTypeResponseData = this.memberType).toLinkRequestMemberTypeOrNull()
+    val userModel = this.toLinkUserModel()
+    return when {
+        (linkMemberType == searchRequestMemberType) -> LinkRequestUserModel.Empty(nickName = nickName)
+        this.status == "SENT" -> LinkRequestUserModel.Sent(user = userModel)
+        this.status == "APPROVE" -> LinkRequestUserModel.Linked(user = userModel)
+        listOf(
+            "NONE",
+            "RECEIVED"
+        ).contains(this.status) -> LinkRequestUserModel.Normal(user = userModel)
+
+        else -> LinkRequestUserModel.Empty(nickName = nickName)
+    }
+}

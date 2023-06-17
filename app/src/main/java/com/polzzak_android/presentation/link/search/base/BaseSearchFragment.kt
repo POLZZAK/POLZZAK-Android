@@ -2,50 +2,70 @@ package com.polzzak_android.presentation.link.search.base
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentSearchBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.link.item.LinkMainEmptyItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
+import com.polzzak_android.presentation.link.item.LinkRequestEmptyItem
+import com.polzzak_android.presentation.link.item.LinkRequestGuideItem
+import com.polzzak_android.presentation.link.item.LinkRequestLoadingItem
+import com.polzzak_android.presentation.link.item.LinkRequestSuccessItem
+import com.polzzak_android.presentation.link.model.LinkMemberType
 import com.polzzak_android.presentation.link.model.LinkPageTypeModel
-import timber.log.Timber
+import com.polzzak_android.presentation.link.model.LinkRequestUserModel
+import com.polzzak_android.presentation.link.search.SearchViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseSearchClickListener {
     override val layoutResId: Int = R.layout.fragment_search
 
-    abstract val searchViewModel: BaseSearchViewModel
-    abstract val targetString: String
+    protected abstract val targetLinkMemberType: LinkMemberType
+    protected abstract val linkMemberType: LinkMemberType
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initView()
-        initObserver()
+    @Inject
+    lateinit var searchViewModelAssistedFactory: SearchViewModel.SearchViewModelAssistedFactory
+
+    private val searchViewModel by viewModels<SearchViewModel> {
+        SearchViewModel.provideFactory(
+            searchViewModelAssistedFactory = searchViewModelAssistedFactory,
+            initAccessToken = getAccessTokenOrNull() ?: "",
+            linkMemberType = linkMemberType,
+            targetLinkMemberType = targetLinkMemberType
+        )
     }
+
+    private val targetLinkTypeStringOrEmpty
+        get() = context?.getString(targetLinkMemberType.stringRes) ?: ""
+    private val linkMemberTypeStringOrEmpty
+        get() = context?.getString(linkMemberType.stringRes) ?: ""
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initView() {
         with(binding) {
             //TODO string resource로 변경
-            tvTitle.text = "$targetString 찾기"
+            tvTitle.text = "$targetLinkTypeStringOrEmpty 찾기"
             ivBtnClearText.setOnClickListener {
                 etSearch.setText("")
             }
             tvBtnCancel.setOnClickListener {
                 searchViewModel.setPage(LinkPageTypeModel.MAIN)
             }
-            binding.root.setOnTouchListener { _, _ ->
+            root.setOnTouchListener { _, _ ->
                 hideKeyboard()
                 false
             }
@@ -60,7 +80,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
 
     private fun initSearchEditTextView() {
         with(binding.etSearch) {
-            hint = "$targetString 검색"
+            hint = "$targetLinkTypeStringOrEmpty 검색"
             setText(searchViewModel.searchQueryLiveData.value ?: "")
             setOnFocusChangeListener { _, isFocused ->
                 if (isFocused) searchViewModel.setPage(page = LinkPageTypeModel.REQUEST)
@@ -81,7 +101,9 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
                 ): Boolean {
                     if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                         hideKeyboard()
-                        Timber.d("${v?.text}")
+                        searchViewModel.requestSearchUserWithNickName(
+                            accessToken = getAccessTokenOrNull() ?: ""
+                        )
                         return true
                     }
                     return false
@@ -92,6 +114,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
 
     private fun initMainPageView() {
         with(binding.inMain) {
+            //TODO string resource 적용
             tvBtnComplete.text = "나중에 할게요"
             rvRequestList.adapter = BindableItemAdapter()
         }
@@ -99,7 +122,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
 
     private fun initRequestPageView() {
         with(binding.inRequest) {
-
+            rvSearchResult.adapter = BindableItemAdapter()
         }
     }
 
@@ -128,7 +151,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
                 ivBtnClearText.isVisible = it.isNotEmpty()
             }
         }
+        observeRequest()
+        observeSearchUser()
+    }
 
+    private fun observeRequest() {
         searchViewModel.requestLiveData.observe(viewLifecycleOwner) {
             val requestListRecyclerView = binding.inMain.rvRequestList
             val adapter =
@@ -155,6 +182,39 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), BaseS
             }
             adapter.updateItem(item = items)
         }
+    }
+
+    private fun observeSearchUser() {
+        searchViewModel.searchUserLiveData.observe(viewLifecycleOwner) {
+            val adapter =
+                (binding.inRequest.rvSearchResult.adapter as? BindableItemAdapter) ?: return@observe
+            val items = mutableListOf<BindableItem<*>>()
+            when (it) {
+                is ModelState.Loading -> {
+                    //TODO string resource 적용
+                    val nickName = searchViewModel.searchQueryLiveData.value ?: ""
+                    items.add(LinkRequestLoadingItem(nickName = nickName))
+                }
+
+                is ModelState.Success -> {
+                    val item = createRequestUserItem(model = it.data)
+                    items.add(item)
+                }
+
+                is ModelState.Error -> {
+                    //TODO 에러케이스 적용
+                }
+            }
+            adapter.updateItem(items)
+        }
+    }
+
+    private fun createRequestUserItem(model: LinkRequestUserModel): BindableItem<*> = when (model) {
+        is LinkRequestUserModel.Empty -> LinkRequestEmptyItem(model = model)
+        is LinkRequestUserModel.Guide -> LinkRequestGuideItem(model = model)
+        is LinkRequestUserModel.Normal -> LinkRequestSuccessItem.newInstance(userModel = model)
+        is LinkRequestUserModel.Sent -> LinkRequestSuccessItem.newInstance(userModel = model)
+        is LinkRequestUserModel.Linked -> LinkRequestSuccessItem.newInstance(userModel = model)
     }
 
     override fun displayCancelRequestDialog() {

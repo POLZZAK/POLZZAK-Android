@@ -4,15 +4,17 @@ import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemLinkRequestLoadingBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 
-class LinkRequestLoadingItem : BindableItem<ItemLinkRequestLoadingBinding>() {
+class LinkRequestLoadingItem(private val nickName: String) :
+    BindableItem<ItemLinkRequestLoadingBinding>() {
     override val layoutRes: Int = R.layout.item_link_request_loading
 
     override fun areItemsTheSame(other: BindableItem<*>): Boolean = other is LinkRequestLoadingItem
 
     override fun areContentsTheSame(other: BindableItem<*>): Boolean =
-        other is LinkRequestLoadingItem
+        other is LinkRequestLoadingItem && this.nickName == other.nickName
 
     override fun bind(binding: ItemLinkRequestLoadingBinding, position: Int) {
-        //do nothing
+        //TODO string resource 적용
+        binding.tvContent.text = "${nickName}님을\n열심히 찾는 중이에요"
     }
 }

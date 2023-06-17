@@ -8,25 +8,25 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/ivGuideIcon"
+            android:id="@+id/ivIcon"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:background="@drawable/ic_launcher_background"
-            app:layout_constraintBottom_toTopOf="@id/tvGuideContent"
+            app:layout_constraintBottom_toTopOf="@id/tvContent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
-            android:id="@+id/tvGuideContent"
+            android:id="@+id/tvContent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivGuideIcon"
+            app:layout_constraintTop_toBottomOf="@id/ivIcon"
             tools:text="연동된 아이에게\n칭찬 도장판을 만들어 줄 수 있어요" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

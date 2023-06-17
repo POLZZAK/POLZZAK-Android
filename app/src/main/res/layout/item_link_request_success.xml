@@ -8,10 +8,10 @@
         android:layout_height="match_parent">
 
         <ImageView
-            android:id="@+id/ivSuccessProfile"
+            android:id="@+id/ivProfile"
             android:layout_width="150dp"
             android:layout_height="150dp"
-            app:layout_constraintBottom_toTopOf="@id/tvSuccessNickName"
+            app:layout_constraintBottom_toTopOf="@id/tvNickName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -19,35 +19,35 @@
             tools:background="@drawable/ic_launcher_background" />
 
         <TextView
-            android:id="@+id/tvSuccessNickName"
+            android:id="@+id/tvNickName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
-            app:layout_constraintBottom_toTopOf="@id/tvSuccessBtnRequest"
+            app:layout_constraintBottom_toTopOf="@id/tvBtnRequest"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivSuccessProfile"
+            app:layout_constraintTop_toBottomOf="@id/ivProfile"
             tools:text="쿠우쿠우" />
 
         <TextView
-            android:id="@+id/tvSuccessBtnRequest"
+            android:id="@+id/tvBtnRequest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/tvSuccessBtnRequestCancel"
+            app:layout_constraintBottom_toTopOf="@id/tvBtnRequestCancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvSuccessNickName"
+            app:layout_constraintTop_toBottomOf="@id/tvNickName"
             tools:text="연동요청" />
 
         <TextView
-            android:id="@+id/tvSuccessBtnRequestCancel"
+            android:id="@+id/tvBtnRequestCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:text="앗 실수, 요청 취소 할래요"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvSuccessBtnRequest"
-            android:text="앗 실수, 요청 취소 할래요" />
+            app:layout_constraintTop_toBottomOf="@id/tvBtnRequest" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
