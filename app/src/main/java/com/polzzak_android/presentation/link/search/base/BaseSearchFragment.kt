@@ -146,12 +146,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         }
     }
 
-    //TODO 버튼 비활성화 여부 기획 문의 후 변경 필요(문의 중)
     private fun setEnabledBtnComplete(isEmpty: Boolean) {
         with(binding.inMain.tvBtnComplete) {
             //TODO string resource 변경
             this.text = if (isEmpty) "나중에 할게요" else "$targetLinkTypeStringOrEmpty 찾기 완료"
-            this.isEnabled = !isEmpty
+            this.isSelected = !isEmpty
         }
     }
 
