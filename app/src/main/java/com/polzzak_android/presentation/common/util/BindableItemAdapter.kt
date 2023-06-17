@@ -32,18 +32,13 @@ class BindableItemAdapter :
         parent: ViewGroup,
         viewType: Int
     ): BindableViewHolder<out ViewDataBinding> {
-        val item = currentList[viewType]
         val layoutInflater = LayoutInflater.from(parent.context)
-
         return BindableViewHolder(
-            item = item,
-            binding = DataBindingUtil.inflate(layoutInflater, item.layoutRes, parent, false)
-        ).apply {
-            item.onCreateViewHolder(parent = parent, position = viewType)
-        }
+            binding = DataBindingUtil.inflate(layoutInflater, viewType, parent, false)
+        )
     }
 
-    final override fun getItemViewType(position: Int): Int = position
+    final override fun getItemViewType(position: Int): Int = currentList[position].layoutRes
 
     override fun getItemCount(): Int = currentList.size
 
@@ -51,12 +46,15 @@ class BindableItemAdapter :
         holder.bind(position)
     }
 
-    class BindableViewHolder<B : ViewDataBinding>(
-        private val item: BindableItem<B>,
+    inner class BindableViewHolder<B : ViewDataBinding>(
         private val binding: B
     ) : ViewHolder(binding.root) {
         fun bind(position: Int) {
-            item.bind(binding = binding, position = position)
+            @Suppress("UNCHECKED_CAST")
+            (currentList[position] as? BindableItem<B>)?.bind(
+                binding = binding,
+                position = position
+            )
         }
     }
 
