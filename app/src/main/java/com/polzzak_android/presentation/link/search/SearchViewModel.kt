@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.data.repository.FamilyRepository
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.model.copyWithData
 import com.polzzak_android.presentation.link.model.LinkMemberType
 import com.polzzak_android.presentation.link.model.LinkPageTypeModel
 import com.polzzak_android.presentation.link.model.LinkRequestUserModel
@@ -17,7 +18,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SearchViewModel @AssistedInject constructor(
@@ -32,8 +32,8 @@ class SearchViewModel @AssistedInject constructor(
     private val _searchQueryLiveData = MutableLiveData<String>("")
     val searchQueryLiveData: LiveData<String> = _searchQueryLiveData
 
-    private val _requestLiveData = MutableLiveData<ModelState<List<LinkUserModel>>>()
-    val requestLiveData: LiveData<ModelState<List<LinkUserModel>>> = _requestLiveData
+    private val _requestSentLiveData = MutableLiveData<ModelState<List<LinkUserModel>>>()
+    val requestSentLiveData: LiveData<ModelState<List<LinkUserModel>>> = _requestSentLiveData
 
     private val _cancelLinkLiveData = MutableLiveData<ModelState<Unit?>>()
     val cancelLinkLiveData: LiveData<ModelState<Unit?>> = _cancelLinkLiveData
@@ -48,9 +48,9 @@ class SearchViewModel @AssistedInject constructor(
     private var searchUserJob: Job? = null
 
     init {
-        _requestLiveData.value = ModelState.Success(emptyList())
+        _requestSentLiveData.value = ModelState.Success(emptyList())
         resetSearchUserResult()
-        sentRequestLinks(accessToken = initAccessToken)
+        requestSentRequestLinks(accessToken = initAccessToken)
     }
 
     fun setPage(page: LinkPageTypeModel) {
@@ -62,39 +62,70 @@ class SearchViewModel @AssistedInject constructor(
         _searchQueryLiveData.value = query
     }
 
-    private fun sentRequestLinks(accessToken: String) {
+    //보낸목록 요청
+    private fun requestSentRequestLinks(accessToken: String) {
         sentRequestJob?.cancel()
         sentRequestJob = viewModelScope.launch {
             familyRepository.requestSentRequestLinks(accessToken = accessToken).onSuccess {
                 val linkUserModel =
                     it?.families?.map { userInfoDto -> userInfoDto.toLinkUserModel() }
                         ?: emptyList()
-                _requestLiveData.value = ModelState.Success(data = linkUserModel)
+                _requestSentLiveData.value = ModelState.Success(data = linkUserModel)
             }.onError { exception, familiesDto ->
                 //TODO error hadnling
             }
         }
     }
 
-    fun requestLink(accessToken: String, targetId: Int) {
+    //연동 요청
+    fun requestLink(accessToken: String, linkUserModel: LinkUserModel) {
         viewModelScope.launch {
             _requestLinkLiveData.value = ModelState.Loading()
-            familyRepository.requestLink(accessToken = accessToken, targetId = targetId).onSuccess {
-                _requestLinkLiveData.value = ModelState.Success(data = it)
-            }.onError { exception, _ -> }
+            familyRepository.requestLink(accessToken = accessToken, targetId = linkUserModel.userId)
+                .onSuccess {
+                    _requestLinkLiveData.value = ModelState.Success(data = it)
+
+                    //보낸 목록 갱신
+                    val requests = _requestSentLiveData.value?.data
+                    if (requests?.any { user -> user.userId == linkUserModel.userId } == false) {
+                        val updatedSentRequests = requests + listOf(linkUserModel)
+                        _requestSentLiveData.value =
+                            _requestSentLiveData.value?.copyWithData(newData = updatedSentRequests)
+                    }
+
+                    //아이디가 같을 경우 유저 검색 결과 갱신
+                    val updatedLinkRequestUserModel =
+                        LinkRequestUserModel.Sent(user = linkUserModel)
+                    updateSearchUserResult(updatedLinkRequestUserModel = updatedLinkRequestUserModel)
+
+                }.onError { exception, _ -> }
         }
     }
 
-    fun cancelRequestLink(accessToken: String, targetId: Int) {
+    //연동 취소 요청
+    fun requestCancelRequestLink(accessToken: String, linkUserModel: LinkUserModel) {
         viewModelScope.launch {
             _cancelLinkLiveData.value = ModelState.Loading()
-            familyRepository.requestDeleteLink(accessToken = accessToken, targetId = targetId)
-                .onSuccess {
-                    _cancelLinkLiveData.value = ModelState.Success(it)
-                }.onError { exception, _ ->
-                    //TODO error handling
+            familyRepository.requestDeleteLink(
+                accessToken = accessToken,
+                targetId = linkUserModel.userId
+            ).onSuccess {
+                _cancelLinkLiveData.value = ModelState.Success(it)
 
+                //보낸 목록 갱신
+                val requests = _requestSentLiveData.value?.data ?: return@onSuccess
+                val updatedSentRequests = requests.toMutableList().apply {
+                    removeIf { user -> user.userId == linkUserModel.userId }
                 }
+                _requestSentLiveData.value =
+                    _requestSentLiveData.value?.copyWithData(newData = updatedSentRequests)
+
+                //아이디가 같을 경우 유저 검색 결과 갱신
+                val updatedLinkRequestUserModel = LinkRequestUserModel.Normal(user = linkUserModel)
+                updateSearchUserResult(updatedLinkRequestUserModel = updatedLinkRequestUserModel)
+            }.onError { exception, _ ->
+                //TODO error handling
+            }
         }
     }
 
@@ -102,7 +133,6 @@ class SearchViewModel @AssistedInject constructor(
         searchUserJob?.cancel()
         searchUserJob = viewModelScope.launch {
             _searchUserLiveData.value = ModelState.Loading()
-            delay(3000)
             val query = searchQueryLiveData.value ?: ""
             familyRepository.requestUserWithNickName(accessToken = accessToken, nickName = query)
                 .onSuccess { userInfoDto ->
@@ -128,6 +158,14 @@ class SearchViewModel @AssistedInject constructor(
     private fun resetSearchUserResult() {
         _searchUserLiveData.value =
             ModelState.Success(LinkRequestUserModel.Guide(targetLinkMemberType = targetLinkMemberType))
+    }
+
+    private fun updateSearchUserResult(updatedLinkRequestUserModel: LinkRequestUserModel) {
+        val linkRequestUserModelState = searchUserLiveData.value
+        if (linkRequestUserModelState?.data?.user?.userId != updatedLinkRequestUserModel.user?.userId) return
+        if (searchUserJob?.isCompleted == false) return
+        _searchUserLiveData.value =
+            linkRequestUserModelState?.copyWithData(newData = updatedLinkRequestUserModel)
     }
 
     @AssistedFactory

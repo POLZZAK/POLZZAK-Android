@@ -39,6 +39,7 @@ import com.polzzak_android.presentation.link.item.LinkRequestSuccessItem
 import com.polzzak_android.presentation.link.model.LinkMemberType
 import com.polzzak_android.presentation.link.model.LinkPageTypeModel
 import com.polzzak_android.presentation.link.model.LinkRequestUserModel
+import com.polzzak_android.presentation.link.model.LinkUserModel
 import com.polzzak_android.presentation.link.search.SearchClickListener
 import com.polzzak_android.presentation.link.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -190,7 +191,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     }
 
     private fun observeRequest() {
-        searchViewModel.requestLiveData.observe(viewLifecycleOwner) {
+        searchViewModel.requestSentLiveData.observe(viewLifecycleOwner) {
             val requestListRecyclerView = binding.inMain.rvRequestList
             val adapter =
                 (requestListRecyclerView.adapter as? BindableItemAdapter) ?: return@observe
@@ -265,10 +266,10 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         is LinkRequestUserModel.Linked -> LinkRequestSuccessItem.newInstance(userModel = model)
     }
 
-    override fun displayCancelRequestDialog(nickName: String, targetId: Int) {
+    override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {
         val context = binding.root.context
         //TODO 로딩있는 다이얼로그 추가, title spannable 적용(현재 적용안됨)
-        val nickNameSpannable = SpannableString(nickName).apply {
+        val nickNameSpannable = SpannableString(linkUserModel.nickName).apply {
             val nickNameSpan = TextAppearanceSpan(context, R.style.subtitle_20_600)
             setSpan(nickNameSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
@@ -278,18 +279,15 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         }
         val title = TextUtils.concat(nickNameSpannable, contentSpannable).toString()
         displayLinkDialog(title = title, onPositiveButtonClickListener = {
-            searchViewModel.cancelRequestLink(
-                accessToken = getAccessTokenOrNull() ?: "",
-                targetId = targetId
-            )
+            cancelRequestLink(linkUserModel = linkUserModel)
         })
 
     }
 
-    override fun displayRequestLinkDialog(nickName: String, targetId: Int) {
+    override fun displayRequestLinkDialog(linkUserModel: LinkUserModel) {
         val context = binding.root.context
         //TODO 로딩있는 다이얼로그 추가, title spannable style 적용(style은 임시로, 현재 다이얼로그는 style이 적용안됨)
-        val nickNameSpannable = SpannableString(nickName).apply {
+        val nickNameSpannable = SpannableString(linkUserModel.nickName).apply {
             val nickNameSpan = TextAppearanceSpan(context, R.style.subtitle_20_600)
             setSpan(nickNameSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
@@ -301,7 +299,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         displayLinkDialog(title = title, onPositiveButtonClickListener = {
             searchViewModel.requestLink(
                 accessToken = getAccessTokenOrNull() ?: "",
-                targetId = targetId
+                linkUserModel = linkUserModel
             )
         })
     }
@@ -349,10 +347,10 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         searchViewModel.cancelSearchUserWithNickNameJob()
     }
 
-    override fun cancelRequestLink(targetId: Int) {
-        searchViewModel.cancelRequestLink(
+    override fun cancelRequestLink(linkUserModel: LinkUserModel) {
+        searchViewModel.requestCancelRequestLink(
             accessToken = getAccessTokenOrNull() ?: "",
-            targetId = targetId
+            linkUserModel = linkUserModel
         )
     }
 }

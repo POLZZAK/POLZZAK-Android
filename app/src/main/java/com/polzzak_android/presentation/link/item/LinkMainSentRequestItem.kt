@@ -19,10 +19,7 @@ class LinkMainSentRequestItem(
             Glide.with(root.context).load(model.profileUrl)
                 .into(ivProfileImage)
             tvBtnRequestCancel.setOnClickListener {
-                clickListener.displayCancelRequestDialog(
-                    nickName = model.nickName,
-                    targetId = model.userId
-                )
+                clickListener.displayCancelRequestDialog(linkUserModel = model)
             }
         }
     }

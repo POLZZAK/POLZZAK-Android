@@ -41,10 +41,7 @@ abstract class LinkRequestSuccessItem(
                 //TODO string resource, 버튼 background 적용
                 tvBtnRequest.text = "연동신청"
                 tvBtnRequest.setOnClickListener {
-                    clickListener.displayRequestLinkDialog(
-                        nickName = userModel.user.nickName,
-                        targetId = userModel.user.userId
-                    )
+                    clickListener.displayRequestLinkDialog(linkUserModel = userModel.user)
                 }
             }
         }
@@ -68,7 +65,7 @@ abstract class LinkRequestSuccessItem(
                 //TODO string resource, 버튼 background 적용
                 tvBtnRequest.text = "이미 보낸 요청"
                 tvBtnRequestCancel.setOnClickListener {
-                    clickListener.cancelRequestLink(targetId = userModel.user.userId)
+                    clickListener.cancelRequestLink(linkUserModel = userModel.user)
                 }
             }
         }
