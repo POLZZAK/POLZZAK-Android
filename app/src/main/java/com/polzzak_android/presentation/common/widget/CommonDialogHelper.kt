@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.common.widget
 
+import android.app.Dialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -19,7 +20,7 @@ import com.polzzak_android.presentation.common.model.DialogStyleType
 /**
  * 다이얼로그 공통 코드
  *
- * type의 DialogStypeType으로 바디 출력 형태 구분 (ALERT: 기본형, CALENDAR: 캘린더형, MISSION: 미션형)
+ * type의 DialogStypeType으로 바디 출력 형태 구분 (ALERT: 기본형, CALENDAR: 캘린더형, MISSION: 미션형, LOADING: 로딩형)
  *
  * @see CommonDialogModel
  */
@@ -33,14 +34,25 @@ class CommonDialogHelper(
         fun getInstance(
             content: CommonDialogModel,
             onCancelListener: (() -> OnButtonClickListener)? = null,
-            onButtonClickListener: (() -> OnButtonClickListener)? = null,
+            onConfirmListener: (() -> OnButtonClickListener)? = null,
         ): CommonDialogHelper {
-            return CommonDialogHelper(content, onCancelListener, onButtonClickListener)
+            return CommonDialogHelper(content, onCancelListener, onConfirmListener)
         }
     }
 
     private var _binding: CommonDialogBinding? = null
     val binding get() = _binding!!
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        // type이 '로딩'인 경우, 사용자 터치에 다이얼로그가 사라지지 않음
+        if (content.type == DialogStyleType.LOADING) {
+            dialog.setCancelable(false)
+            dialog.setCanceledOnTouchOutside(false)
+        }
+
+        return dialog
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
