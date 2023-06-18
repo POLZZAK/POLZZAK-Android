@@ -9,20 +9,29 @@
         android:id="@+id/protectorMainFragment"
         android:name="com.polzzak_android.presentation.main.protector.ProtectorMainFragment"
         android:label="ProtectorMainFragment"
-        tools:layout="@layout/fragment_main"/>
+        tools:layout="@layout/fragment_protector_main">
+        <action
+            android:id="@+id/action_protectorMainFragment_to_makeStampFragment"
+            app:destination="@id/makeStampFragment" />
+    </fragment>
     <fragment
         android:id="@+id/protectorCouponFragment"
         android:name="com.polzzak_android.presentation.coupon.protector.ProtectorCouponFragment"
         android:label="ProtectorCouponFragment"
-        tools:layout="@layout/fragment_coupon"/>
+        tools:layout="@layout/fragment_protector_coupon"/>
     <fragment
         android:id="@+id/protectorNotificationFragment"
         android:name="com.polzzak_android.presentation.notification.protector.ProtectorNotificationFragment"
         android:label="ProtectorNotificationFragment"
-        tools:layout="@layout/fragment_alarm"/>
+        tools:layout="@layout/fragment_protector_notification"/>
     <fragment
         android:id="@+id/protectorMyPageFragment"
         android:name="com.polzzak_android.presentation.myPage.protector.ProtectorMyPageFragment"
         android:label="ProtectorMyPageFragment"
-        tools:layout="@layout/fragment_my_page"/>
+        tools:layout="@layout/fragmentv_protector_my_page"/>
+    <fragment
+        android:id="@+id/makeStampFragment"
+        android:name="com.polzzak_android.presentation.makingStamp.MakeStampFragment"
+        android:label="fragment_make_stamp"
+        tools:layout="@layout/fragment_make_stamp" />
 </navigation>

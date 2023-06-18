@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.main.protector
 
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentProtectorMainBinding
@@ -19,6 +20,10 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>() {
 
         childFragmentManager.beginTransaction().replace(binding.fragmentContainer.id, protectorProgressFragment).commit()
         tabListener()
+
+        binding.fab.setOnClickListener {
+            findNavController().navigate(R.id.action_protectorMainFragment_to_makeStampFragment)
+        }
     }
 
     private fun tabListener() {

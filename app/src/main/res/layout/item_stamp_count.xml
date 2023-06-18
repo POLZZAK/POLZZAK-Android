@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="data"
+            type="Integer" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="60dp"
+        android:layout_height="38dp"
+        android:background="@drawable/bg_gray_stroke_white_bg_r8">
+
+        <TextView
+            android:id="@+id/item_stamp_count"
+            style="@style/subtitle.16.600"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            tools:text="1"
+            android:text="@{data.toString()}"
+            android:textColor="@color/gray_400" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="data"
+            type="String" />
+
+        <variable
+            name="warningMessage"
+            type="String" />
+
+        <variable
+            name="missionListSize"
+            type="Integer" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:background="@color/white">
+
+        <LinearLayout
+            android:id="@+id/item_mission_input_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_gray_stroke_white_bg_r8"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
+            app:layout_constraintEnd_toStartOf="@id/item_mission_del_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/item_mission_input"
+                style="@style/body.14.500"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:hint="미션을 입력해주세요"
+                android:maxLines="1"
+                android:text="@{data}"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray_400" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/item_mission_del_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/ic_trash_box"
+            android:visibility="@{missionListSize == 1 ? View.INVISIBLE : View.VISIBLE}"
+            app:layout_constraintBottom_toBottomOf="@id/item_mission_input_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/item_mission_input_container"
+            app:layout_constraintTop_toTopOf="@id/item_mission_input_container" />
+
+        <TextView
+            android:id="@+id/item_mission_warning_message"
+            style="@style/caption.12.600"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@{warningMessage}"
+            android:textColor="@color/error_500"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="@id/item_mission_input_container"
+            app:layout_constraintStart_toStartOf="@id/item_mission_input_container"
+            app:layout_constraintTop_toBottomOf="@id/item_mission_input_container"
+            tools:text="경고 메세지" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

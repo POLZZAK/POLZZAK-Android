@@ -27,7 +27,8 @@
                 android:id="@+id/mainContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/gray_100">
+                android:background="@color/gray_100"
+                android:paddingBottom="60dp">
 
                 <!-- 유저 필터링 -->
                 <androidx.constraintlayout.widget.ConstraintLayout
