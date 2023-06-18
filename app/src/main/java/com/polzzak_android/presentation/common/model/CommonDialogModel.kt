@@ -22,6 +22,10 @@ data class CommonDialogModel(
                 require(content.calendar == null) { "Calendar must be null for MISSION type" }
                 require(content.mission != null) { "Mission must not be null for MISSION type" }
             }
+            DialogStyleType.LOADING -> {
+                require(content.calendar == null) { "Calendar must be null for LOADING type" }
+                require(content.mission == null) { "Mission must be null for LOADING type" }
+            }
         }
     }
 }
@@ -40,5 +44,5 @@ data class CommonDialogMissionData(
 )
 
 enum class DialogStyleType {
-    ALERT, CALENDAR, MISSION
+    ALERT, CALENDAR, MISSION, LOADING
 }
