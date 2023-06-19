@@ -54,6 +54,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         binding.tvHello.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_protectorHostFragment)
         }
+
+        //TODO 테스트 코드 삭제
+        binding.ivLogoFirst.setOnClickListener {
+            findNavController().navigate(R.id.action_test)
+        }
     }
 
     override fun onDestroyView() {

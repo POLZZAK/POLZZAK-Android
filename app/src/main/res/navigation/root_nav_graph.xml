@@ -35,6 +35,11 @@
         <action
             android:id="@+id/action_loginFragment_to_SignUpFragment"
             app:destination="@id/sign_up_nav_graph" />
+
+        <!-- TODO 테스트용 임시 action 제거 -->
+        <action
+            android:id="@+id/action_test"
+            app:destination="@id/protectorSearchFragment" />
     </fragment>
 
     <fragment
@@ -47,4 +52,15 @@
         android:name="com.polzzak_android.presentation.common.host.KidHostFragment"
         android:label="KidHostFragment"
         tools:layout="@layout/fragment_kid_host" />
+
+    <!-- tODO 테스트용 임시 fragment 제거 -->
+    <fragment
+        android:id="@+id/protectorSearchFragment"
+        android:name="com.polzzak_android.presentation.link.search.protector.ProtectorSearchFragment"
+        android:label="ProtectorSearchFragment"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_test_protector_to_main"
+            app:destination="@id/protectorHostFragment" />
+    </fragment>
 </navigation>

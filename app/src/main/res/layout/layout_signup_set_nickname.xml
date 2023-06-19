@@ -31,6 +31,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
+        <!-- TODO clear 버튼 width만큼 paddingEnd 추가 -->
         <EditText
             android:id="@+id/etInput"
             android:layout_width="0dp"
