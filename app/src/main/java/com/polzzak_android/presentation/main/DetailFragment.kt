@@ -4,6 +4,7 @@ import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentStampDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.compose.PolzzakAppTheme
+import com.polzzak_android.presentation.main.detail.StampBoardDetailScreen
 
 /**
  * 임시 도장판 상세 화면용 Fragment
