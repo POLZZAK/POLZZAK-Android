@@ -43,6 +43,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/dialog_type_container"
+            setVisibility="@{data.button.buttonCount != buttonCount.ZERO}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -87,6 +88,7 @@
 
         <LinearLayout
             android:id="@+id/dialog_button_container"
+            setVisibility="@{data.button.buttonCount != buttonCount.ZERO}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
@@ -117,6 +119,19 @@
                 android:text="@{data.button.positiveButtonText}"
                 tools:text="확인" />
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/dialog_progress"
+            setVisibility="@{data.button.buttonCount == buttonCount.ZERO}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:indeterminateTint="@color/primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dialog_type_container"
+            app:layout_constraintVertical_bias="0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
