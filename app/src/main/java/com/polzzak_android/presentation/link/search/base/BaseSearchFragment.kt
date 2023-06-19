@@ -3,33 +3,24 @@ package com.polzzak_android.presentation.link.search.base
 import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Editable
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.TextUtils
 import android.text.TextWatcher
-import android.text.style.TextAppearanceSpan
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.annotation.IdRes
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentSearchBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.presentation.common.model.ButtonCount
-import com.polzzak_android.presentation.common.model.CommonButtonModel
-import com.polzzak_android.presentation.common.model.CommonDialogContent
-import com.polzzak_android.presentation.common.model.CommonDialogModel
-import com.polzzak_android.presentation.common.model.DialogStyleType
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
-import com.polzzak_android.presentation.common.widget.CommonDialogHelper
-import com.polzzak_android.presentation.common.widget.OnButtonClickListener
+import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.item.LinkMainEmptyItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
 import com.polzzak_android.presentation.link.item.LinkRequestEmptyItem
@@ -66,11 +57,13 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
             targetLinkMemberType = targetLinkMemberType
         )
     }
-
     private val targetLinkTypeStringOrEmpty
         get() = context?.getString(targetLinkMemberType.stringRes) ?: ""
     private val linkMemberTypeStringOrEmpty
         get() = context?.getString(linkMemberType.stringRes) ?: ""
+
+    private val dialogFactory: LinkDialogFactory = LinkDialogFactory()
+    private var dialog: DialogFragment? = null
 
     override fun initView() {
         with(binding) {
@@ -186,6 +179,45 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
                 ivBtnClearText.isVisible = it.isNotEmpty()
             }
         }
+        searchViewModel.requestLinkLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is ModelState.Loading -> {
+                    val nickName = searchViewModel.searchQueryLiveData.value ?: ""
+                    //TODO string resource 적용
+                    val loadingDialog = dialogFactory.createLoadingDialog(
+                        context = binding.root.context,
+                        nickName = nickName,
+                        content = "님에게\n연동 요청을 보낼까요?",
+                    )
+                    showDialog(newDialog = loadingDialog)
+                }
+
+                is ModelState.Success -> dismissDialog()
+                is ModelState.Error -> {
+                    //TODO 에러처리
+                }
+            }
+        }
+        searchViewModel.cancelLinkLiveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is ModelState.Loading -> {
+                    val nickName = searchViewModel.searchQueryLiveData.value ?: ""
+                    //TODO string resource 적용
+                    val loadingDialog = dialogFactory.createLoadingDialog(
+                        context = binding.root.context,
+                        nickName = nickName,
+                        content = "님에게 보낸\n연동 요청을 취소하시겠어요?",
+                    )
+                    showDialog(newDialog = loadingDialog)
+                }
+
+                is ModelState.Success -> dismissDialog()
+                is ModelState.Error -> {
+                    //TODO 에러처리
+                }
+            }
+
+        }
         observeRequest()
         observeSearchUser()
     }
@@ -267,80 +299,43 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     }
 
     override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {
-        val context = binding.root.context
-        //TODO 로딩있는 다이얼로그 추가, title spannable 적용(현재 적용안됨)
-        val nickNameSpannable = SpannableString(linkUserModel.nickName).apply {
-            val nickNameSpan = TextAppearanceSpan(context, R.style.subtitle_20_600)
-            setSpan(nickNameSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
-        val contentSpannable = SpannableString("님에게 보낸\n연동 요청을 취소하시겠어요?").apply {
-            val contentSpan = TextAppearanceSpan(context, R.style.body_13_500)
-            setSpan(contentSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
-        val title = TextUtils.concat(nickNameSpannable, contentSpannable).toString()
-        displayLinkDialog(title = title, onPositiveButtonClickListener = {
-            cancelRequestLink(linkUserModel = linkUserModel)
-        })
-
+        //TODO string resource 적용
+        val cancelLinkDialog =
+            dialogFactory.createLinkDialog(
+                context = binding.root.context,
+                nickName = linkUserModel.nickName,
+                content = "님에게 보낸\n연동 요청을 취소하시겠어요?",
+                onPositiveButtonClickListener = {
+                    cancelRequestLink(linkUserModel = linkUserModel)
+                })
+        showDialog(newDialog = cancelLinkDialog)
     }
 
     override fun displayRequestLinkDialog(linkUserModel: LinkUserModel) {
-        val context = binding.root.context
-        //TODO 로딩있는 다이얼로그 추가, title spannable style 적용(style은 임시로, 현재 다이얼로그는 style이 적용안됨)
-        val nickNameSpannable = SpannableString(linkUserModel.nickName).apply {
-            val nickNameSpan = TextAppearanceSpan(context, R.style.subtitle_20_600)
-            setSpan(nickNameSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
-        val contentSpannable = SpannableString("님에게 보낸\n연동 요청을 보낼까요?").apply {
-            val contentSpan = TextAppearanceSpan(context, R.style.body_13_500)
-            setSpan(contentSpan, 0, length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-        }
-        val title = TextUtils.concat(nickNameSpannable, contentSpannable).toString()
-        displayLinkDialog(title = title, onPositiveButtonClickListener = {
-            searchViewModel.requestLink(
-                accessToken = getAccessTokenOrNull() ?: "",
-                linkUserModel = linkUserModel
-            )
-        })
+        //TODO string resource 적용
+        val requestLinkDialog =
+            dialogFactory.createLinkDialog(
+                context = binding.root.context,
+                nickName = linkUserModel.nickName,
+                content = "님에게\n연동 요청을 보낼까요?",
+                onPositiveButtonClickListener = {
+                    searchViewModel.requestLink(
+                        accessToken = getAccessTokenOrNull() ?: "",
+                        linkUserModel = linkUserModel
+                    )
+                })
+        showDialog(newDialog = requestLinkDialog)
     }
 
-    private fun displayLinkDialog(title: String, onPositiveButtonClickListener: () -> Unit) {
-        CommonDialogHelper.getInstance(
-            content = CommonDialogModel(
-                type = DialogStyleType.ALERT,
-                content = CommonDialogContent(
-                    title = title,
-                    body = null
-                ),
-                button = CommonButtonModel(
-                    buttonCount = ButtonCount.TWO,
-                    negativeButtonText = "아니요",
-                    positiveButtonText = "네, 좋아요!"
-                )
-            ),
-            onCancelListener = {
-                object : OnButtonClickListener {
-                    override fun setBusinessLogic() {
-                        //do nothing
-                    }
+    private fun showDialog(newDialog: DialogFragment) {
+        dismissDialog()
+        dialog = newDialog
+        dialog?.show(childFragmentManager, null)
+    }
 
-                    override fun getReturnValue(value: Any) {
-                        //do nothing
-                    }
-                }
-            },
-            onButtonClickListener = {
-                object : OnButtonClickListener {
-                    override fun setBusinessLogic() {
-                        onPositiveButtonClickListener.invoke()
-                    }
-
-                    override fun getReturnValue(value: Any) {
-                        //do nothing
-                    }
-                }
-            }
-        ).show(childFragmentManager, null)
+    private fun dismissDialog() {
+        dialog?.dismiss()
+        dialog = null
     }
 
     override fun cancelSearch() {
