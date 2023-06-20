@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampMissionBinding
-import com.polzzak_android.presentation.makingStamp.MissionInteraction
+import com.polzzak_android.presentation.makingStamp.intreraction.MissionInteraction
 
 class MakeStampMissionAdapter(
     private val interaction: MissionInteraction,

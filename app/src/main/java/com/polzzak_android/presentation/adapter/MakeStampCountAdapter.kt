@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampCountBinding
-import com.polzzak_android.presentation.makingStamp.StampCountInteraction
+import com.polzzak_android.presentation.makingStamp.intreraction.StampCountInteraction
 import com.polzzak_android.presentation.makingStamp.StampCountSelectedHelper
 
 class MakeStampCountAdapter(

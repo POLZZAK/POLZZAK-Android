@@ -2,13 +2,15 @@ package com.polzzak_android.presentation.makingStamp
 
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentMakeStampBinding
 import com.polzzak_android.presentation.adapter.MakeStampCountAdapter
 import com.polzzak_android.presentation.adapter.MakeStampMissionAdapter
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.makingStamp.intreraction.MissionInteraction
+import com.polzzak_android.presentation.makingStamp.intreraction.StampCountInteraction
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -34,7 +36,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         }
 
         binding.missionExButton.setOnClickListener {
-            Toast.makeText(context, "미션 예시", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_makeStampFragment_to_exampleMissionFragment)
         }
     }
 

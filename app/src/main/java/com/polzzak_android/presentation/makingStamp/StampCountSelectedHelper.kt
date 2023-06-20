@@ -49,17 +49,22 @@ class StampCountSelectedHelper {
     }
 
     private fun setSelectedCount(view: TextView, isSelected: Boolean) {
-        view.isSelected = isSelected
-        view.setTextColor(
-            ContextCompat.getColor(
-                view.context,
-                if (isSelected) R.color.primary_600 else R.color.gray_400
-            )
-        )
-        if (isSelected) {
-            view.setBackgroundResource(R.drawable.bg_blue_stroke_blue_bg_r8)
+        val context = view.context
+
+        val textColor = if (isSelected) {
+            R.color.primary_600
         } else {
-            view.setBackgroundResource(R.drawable.bg_gray_stroke_white_bg_r8)
+            R.color.gray_400
         }
+
+        val backgroundColor = if (isSelected) {
+            R.drawable.bg_blue_stroke_blue_bg_r8
+        } else {
+            R.drawable.bg_gray_stroke_white_bg_r8
+        }
+
+        view.isSelected = isSelected
+        view.setTextColor(ContextCompat.getColor(context, textColor))
+        view.setBackgroundResource(backgroundColor)
     }
 }

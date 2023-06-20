@@ -70,6 +70,13 @@ class MakeStampViewModel @Inject constructor() : ViewModel() {
         _missionList.value = missionList
     }
 
+    fun addMissionList(newMissionList: List<String>) {
+        val currentMissionList = _missionList.value.orEmpty().toMutableList()
+        currentMissionList.addAll(newMissionList)
+        _missionList.value = currentMissionList
+        _missionListSize.value = currentMissionList.size
+    }
+
     fun deleteMission(mission: String) {
         val currentMissionList = _missionList.value.orEmpty().toMutableList()
         currentMissionList.remove(mission)
