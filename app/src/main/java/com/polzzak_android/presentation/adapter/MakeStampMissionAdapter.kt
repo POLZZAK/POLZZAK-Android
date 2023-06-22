@@ -65,7 +65,7 @@ class MakeStampMissionAdapter(
             binding.missionListSize = missionListSize
 
             binding.itemMissionDelButton.setOnClickListener {
-                interaction.onDeletedIconClicked(
+                interaction.onDeletedMissionIconClicked(
                     mission = value,
                     view = binding.itemMissionDelButton
                 )
