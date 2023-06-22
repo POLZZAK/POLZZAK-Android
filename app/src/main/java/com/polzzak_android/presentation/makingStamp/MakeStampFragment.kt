@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.makingStamp
 
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
@@ -9,6 +10,14 @@ import com.polzzak_android.databinding.FragmentMakeStampBinding
 import com.polzzak_android.presentation.adapter.MakeStampCountAdapter
 import com.polzzak_android.presentation.adapter.MakeStampMissionAdapter
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.model.CommonDialogContent
+import com.polzzak_android.presentation.common.model.CommonDialogModel
+import com.polzzak_android.presentation.common.model.DialogStyleType
+import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.widget.CommonDialogHelper
+import com.polzzak_android.presentation.common.widget.OnButtonClickListener
 import com.polzzak_android.presentation.makingStamp.intreraction.MissionInteraction
 import com.polzzak_android.presentation.makingStamp.intreraction.StampCountInteraction
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,12 +33,51 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
 
     private val makeStampViewModel: MakeStampViewModel by activityViewModels()
 
+    private val requestStampDialog = CommonDialogHelper.getInstance(
+        content = CommonDialogModel(
+            type = DialogStyleType.ALERT,
+            content = CommonDialogContent(
+                title = "도장판을 등록하시겠어요?",
+            ),
+            button = CommonButtonModel(
+                buttonCount = ButtonCount.TWO,
+                negativeButtonText = "아니요",
+                positiveButtonText = "네, 등록할게요"
+            )
+        ),
+        onConfirmListener = {
+            object : OnButtonClickListener {
+                override fun setBusinessLogic() {
+                    makeStampViewModel.makeStampBoard()
+                }
+                override fun getReturnValue(value: Any) {}
+            }
+        }
+    )
+
+    private val loadingStampDialog = CommonDialogHelper.getInstance(
+        content = CommonDialogModel(
+            type = DialogStyleType.LOADING,
+            content = CommonDialogContent(
+                title = "도장판이 곧 완성돼요"
+            ),
+            button = CommonButtonModel(
+                buttonCount = ButtonCount.ZERO,
+            )
+        )
+    )
+
     override fun initView() {
         super.initView()
         stampCountSelectHelper = StampCountSelectedHelper.getInstance()
 
         setAdapter()
         initData()
+
+        // todo: 도장 임시 등록
+        binding.tempRequest.setOnClickListener {
+            requestStampDialog.show(childFragmentManager, "Dialog")
+        }
 
         binding.missionEnrollButton.setOnClickListener {
             makeStampViewModel.createMission()
@@ -56,6 +104,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         makeStampViewModel.missionList.observe(this) { missionList ->
             stampMissionAdapter.submitList(missionList)
         }
+
         makeStampViewModel.missionListSize.observe(this) { missionListSize ->
             stampMissionAdapter.setMissionListSize(missionListSize)
 
@@ -71,6 +120,22 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
                 }
             }
         }
+
+        makeStampViewModel.makeStampBoardState.observe(this) { modelState ->
+            when (modelState) {
+                is ModelState.Loading -> {
+                    loadingStampDialog.show(childFragmentManager, null)
+                }
+                is ModelState.Success -> {
+                    loadingStampDialog.dismiss()
+                }
+                is ModelState.Error -> {
+                    val message = modelState.exception
+                    loadingStampDialog.dismiss()
+                    Toast.makeText(context, "실패: $message", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 
     private fun initData() {
@@ -81,10 +146,14 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
     }
 
     override fun onStampCountClicked(view: TextView, value: Int) {
-        stampCountSelectHelper.onCountClicked(view = view, value = value)
+        val isNewCount = stampCountSelectHelper.onCountClicked(view = view, value = value)
+
+        if (isNewCount) {
+            makeStampViewModel.setStampCount(value = value)
+        }
     }
 
-    override fun onDeletedIconClicked(mission: String, view: ImageButton) {
+    override fun onDeletedMissionIconClicked(mission: String, view: ImageButton) {
         makeStampViewModel.deleteMission(mission)
     }
 

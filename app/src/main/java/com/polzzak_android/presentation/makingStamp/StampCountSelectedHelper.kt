@@ -24,10 +24,15 @@ class StampCountSelectedHelper {
         setSelectedCount(view, isSelected)
     }
 
-    fun onCountClicked(view: TextView, value: Int) {
+    /**
+     * @return 기존 선택 값 여부 확인하여, 새롭게 갱신할 값(isNew)인지 아닌지 전달
+     */
+    fun onCountClicked(view: TextView, value: Int) : Boolean {
         val isSelected = checkSelectedCount(value)
         updateSelectedCount(isSelected, value)
         setSelectedCount(view, !isSelected)
+
+        return !isSelected
     }
 
     fun resetSelectedCount(view: TextView) {
