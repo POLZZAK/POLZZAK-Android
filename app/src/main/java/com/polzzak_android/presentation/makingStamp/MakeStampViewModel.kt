@@ -7,6 +7,10 @@ import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
 import com.polzzak_android.data.repository.StampBoardRepository
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.makingStamp.model.MakeStampCountModel
+import com.polzzak_android.presentation.makingStamp.model.MakeStampMissionListModel
+import com.polzzak_android.presentation.makingStamp.model.MakeStampNameModel
+import com.polzzak_android.presentation.makingStamp.model.MakeStampRewardModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,16 +20,21 @@ class MakeStampViewModel @Inject constructor(
     private val repository: StampBoardRepository
 ) : ViewModel() {
 
+    enum class MakeStampBardInputType {
+        NAME, REWARD, COUNT, MISSION_LIST
+    }
+
     private var _selectedKidId: Int = 0
 
-    private val _stampBoardName: MutableLiveData<String> = MutableLiveData()
+    private val _stampBoardName: MutableLiveData<MakeStampNameModel> = MutableLiveData()
+    val stampBoardName = _stampBoardName
 
-    private val _stampBoardReward: MutableLiveData<String> = MutableLiveData()
+    private val _stampBoardReward: MutableLiveData<MakeStampRewardModel> = MutableLiveData()
 
-    private val _stampCount: MutableLiveData<Int> = MutableLiveData()
+    private val _stampCount: MutableLiveData<MakeStampCountModel> = MutableLiveData()
     val stampCount = _stampCount
 
-    private val _missionList: MutableLiveData<List<String>> = MutableLiveData()
+    private val _missionList: MutableLiveData<MakeStampMissionListModel> = MutableLiveData()
     val missionList = _missionList
 
     private val _missionListSize: MutableLiveData<Int> = MutableLiveData()
@@ -36,24 +45,37 @@ class MakeStampViewModel @Inject constructor(
     val makeStampBoardState = _makeStampBoardState
 
     init {
-        setStampCount(0)
-        _missionList.value = listOf("test1", "test2")
-        _missionListSize.value = _missionList.value?.size ?: 0
+        _stampBoardName.value = MakeStampNameModel.init
+        _stampBoardReward.value = MakeStampRewardModel.init
+        _stampCount.value = MakeStampCountModel.init
 
-        // todo : 임시
-        _stampBoardName.value = "임시 보드 이름"
-        _stampBoardReward.value = "임시 보드 보상값"
+        _missionList.value = MakeStampMissionListModel.init
+        _missionListSize.value = _missionList.value!!.missionList.size
     }
 
     fun makeStampBoard() {
-        safeLet(_selectedKidId, _stampBoardName.value, _stampCount.value, _stampBoardReward.value, _missionList.value) {
-            id, name, count, reward, missionList ->
+
+        /**
+         * 유효성 체크
+         */
+        if (!validateInput(MakeStampBardInputType.NAME)) return
+        if (!validateInput(MakeStampBardInputType.REWARD)) return
+        if (!validateInput(MakeStampBardInputType.COUNT)) return
+        if (!validateInput(MakeStampBardInputType.MISSION_LIST)) return
+
+        safeLet(
+            _selectedKidId,
+            _stampBoardName.value,
+            _stampCount.value,
+            _stampBoardReward.value,
+            _missionList.value
+        ) { id, name, count, reward, missionList ->
             val request = MakeStampBoardRequest(
                 kidId = id,
-                stampBoardName = name,
-                stampBoardCount = count,
-                stampBoardReward = reward,
-                missionList = missionList
+                stampBoardName = name.name,
+                stampBoardCount = count.count,
+                stampBoardReward = reward.reward,
+                missionList = missionList.missionList
             )
 
             viewModelScope.launch {
@@ -61,7 +83,8 @@ class MakeStampViewModel @Inject constructor(
                 val response = repository.makeStampBoard(
                     // todo: 임시 토큰
                     token = "",
-                    newStampBoard = request)
+                    newStampBoard = request
+                )
                 response.onSuccess {
                     _makeStampBoardState.postValue(ModelState.Success("도장판 생성 성공"))
                 }.onError { exception, nothing ->
@@ -76,57 +99,152 @@ class MakeStampViewModel @Inject constructor(
     /**
      * 도장판 이름
      */
-    fun setStampBoardName(name: String) {
-        _stampBoardName.value = name
+    fun setStampBoardName(input: String) {
+        val currentName = _stampBoardName.value
+        _stampBoardName.value = currentName!!.copy(
+            name = input
+        )
     }
 
     /**
      * 도장판 보상
      */
-    fun setStampBoardReward(reward: String) {
-        _stampBoardReward.value = reward
+    fun setStampBoardReward(input: String) {
+        val currentReward = _stampBoardReward.value
+        _stampBoardReward.value = currentReward!!.copy(
+            reward = input
+        )
     }
 
     /**
      * 도장판 개수
      */
-    fun setStampCount(value: Int) {
-        _stampCount.value = value
+    fun setStampCount(input: Int) {
+        val currentCount = _stampCount.value
+        _stampCount.value = currentCount!!.copy(
+            count = input
+        )
     }
 
-    fun getStampCountList() = _stampCount.value
+    fun getStampCountList() = _stampCount.value!!.count
 
     /**
      * 미션
      */
     fun createMission() {
-        val currentMissionList = _missionList.value.orEmpty().toMutableList()
-        currentMissionList.add("")
-        _missionList.value = currentMissionList
-        _missionListSize.value = currentMissionList.size
+        val currentMissionList = _missionList.value
+        val mutableMissionList = currentMissionList!!.missionList.toMutableList()
+
+        mutableMissionList.add("")
+
+        _missionList.value = currentMissionList.copy(
+            missionList = mutableMissionList
+        )
+        _missionListSize.value = mutableMissionList.size
     }
 
-    fun updateMissionList(missionList: List<String>) {
-        _missionList.value = missionList
+    fun updateMissionList(input: List<String>) {
+        val currentMissionList = _missionList.value
+        _missionList.value = currentMissionList!!.copy(
+            missionList = input
+        )
     }
 
     fun addMissionList(newMissionList: List<String>) {
-        val currentMissionList = _missionList.value.orEmpty().toMutableList()
-        currentMissionList.addAll(newMissionList)
-        _missionList.value = currentMissionList
-        _missionListSize.value = currentMissionList.size
+        val currentMissionList = _missionList.value
+        val mutableMissionList = currentMissionList!!.missionList.toMutableList()
+
+        mutableMissionList.addAll(newMissionList)
+
+        _missionList.value = currentMissionList.copy(
+            missionList = mutableMissionList
+        )
+        _missionListSize.value = mutableMissionList.size
     }
 
     fun deleteMission(mission: String) {
-        val currentMissionList = _missionList.value.orEmpty().toMutableList()
-        currentMissionList.remove(mission)
-        _missionList.value = currentMissionList
-        _missionListSize.value = currentMissionList.size
+        val currentMissionList = _missionList.value
+        val mutableMissionList = currentMissionList!!.missionList.toMutableList()
+
+        mutableMissionList.remove(mission)
+
+        _missionList.value = currentMissionList.copy(
+            missionList = mutableMissionList
+        )
+        _missionListSize.value = mutableMissionList.size
     }
 
     fun setMissionListSize(size: Int) {
         _missionListSize.value = size
     }
 
-    fun getMissionListSize() = _missionList.value?.size ?: 0
+    fun getMissionListSize() = _missionList.value!!.missionList.size
+
+    /**
+     * 유효성 체크
+     */
+    private fun validateInput(type: MakeStampBardInputType): Boolean {
+        when (type) {
+            MakeStampBardInputType.NAME -> {
+                val result = MakeStampValidator.checkName(_stampBoardName.value!!.name)
+                val isValidate = result.first
+
+                if (!isValidate) {
+                    val currentName = _stampBoardName.value
+                    _stampBoardName.value = currentName!!.copy(
+                        isValidate = false,
+                        errorMessage = result.second
+                    )
+                }
+
+                return isValidate
+            }
+
+            MakeStampBardInputType.REWARD -> {
+                val result = MakeStampValidator.checkReward(_stampBoardReward.value!!.reward)
+                val isValidate = result.first
+
+                if (!isValidate) {
+                    val currentReward = _stampBoardReward.value
+                    _stampBoardReward.value = currentReward!!.copy(
+                        isValidate = false,
+                        errorMessage = result.second
+                    )
+                }
+
+                return isValidate
+            }
+
+            MakeStampBardInputType.COUNT -> {
+                val result = MakeStampValidator.checkCount(_stampCount.value!!.count)
+                val isValidate = result.first
+
+                if (!isValidate) {
+                    val currentCount = _stampCount.value
+                    _stampCount.value = currentCount!!.copy(
+                        isValidate = false,
+                        errorMessage = result.second
+                    )
+                }
+
+                return isValidate
+            }
+
+            MakeStampBardInputType.MISSION_LIST -> {
+                val result = MakeStampValidator.checkMission(_missionList.value!!.missionList)
+                val isValidate = result.first
+
+                if (!isValidate) {
+                    val currentMissionList = _missionList.value
+                    _missionList.value = currentMissionList!!.copy(
+                        isValidate = false,
+                        errorMessage = result.second.message,
+                        errorPosition = result.second.index
+                    )
+                }
+
+                return isValidate
+            }
+        }
+    }
 }

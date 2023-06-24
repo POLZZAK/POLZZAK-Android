@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.makingStamp
 
+import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -102,7 +103,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
     override fun initObserver() {
         super.initObserver()
         makeStampViewModel.missionList.observe(this) { missionList ->
-            stampMissionAdapter.submitList(missionList)
+            stampMissionAdapter.submitList(missionList.missionList)
         }
 
         makeStampViewModel.missionListSize.observe(this) { missionListSize ->
@@ -149,7 +150,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         val isNewCount = stampCountSelectHelper.onCountClicked(view = view, value = value)
 
         if (isNewCount) {
-            makeStampViewModel.setStampCount(value = value)
+            makeStampViewModel.setStampCount(input = value)
         }
     }
 
