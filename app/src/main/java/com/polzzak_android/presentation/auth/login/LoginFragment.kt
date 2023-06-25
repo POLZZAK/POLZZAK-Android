@@ -5,6 +5,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import androidx.core.content.ContextCompat
+import androidx.activity.addCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -19,6 +20,7 @@ import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.MemberType
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.getSocialLoginManager
+import com.polzzak_android.presentation.common.util.shotBackPressed
 import dagger.hilt.android.AndroidEntryPoint
 
 //TODO google login release keystore 추가(현재 debug keystore만 사용 중)
@@ -38,6 +40,13 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
     private val kakaoLoginSuccessCallback: (OAuthToken) -> Unit = { token ->
         loginViewModel.requestKakaoLogin(accessToken = token.accessToken)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.onBackPressedDispatcher?.addCallback(this) {
+            shotBackPressed()
+        }
     }
 
     override fun initView() {
