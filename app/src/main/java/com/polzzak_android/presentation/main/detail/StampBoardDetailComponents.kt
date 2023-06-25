@@ -76,7 +76,7 @@ fun StampBoardHeader(
             .padding(horizontal = 16.dp)
     ) {
         Text(
-            text = "도장판 이름",
+            text = title,
             style = PolzzakTheme.typography.title1,
             modifier = Modifier.weight(1f)
         )
