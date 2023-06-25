@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO 디자인 가이드 적용 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -12,9 +11,12 @@
             android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="@dimen/sign_up_select_parent_type_card_height"
-            android:background="@drawable/bg_signup_select_parent_type_card"
+            android:layout_marginHorizontal="24dp"
+            android:background="@drawable/selector_bg_signup_select_parent_type_card"
+            android:elevation="10dp"
             android:gravity="center"
             android:paddingVertical="15dp"
+            android:textColor="@color/selector_signup_select_parent_type_card"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

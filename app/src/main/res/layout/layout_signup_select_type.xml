@@ -2,62 +2,154 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- TODO 디자인 가이드 적용 -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="0dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="164dp"
-            android:gravity="center_horizontal"
-            android:text="회원 종류를 선택해주세요"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:paddingHorizontal="16dp">
 
-        <TextView
-            android:id="@+id/tvBtnSelectParent"
-            android:layout_width="0dp"
-            android:layout_height="201dp"
-            android:background="@color/blue_500"
-            android:gravity="center"
-            android:text="보호자\n회원"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tvBtnSelectKid"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle"
-            app:layout_constraintVertical_bias="0.0" />
+            <TextView
+                android:id="@+id/tvGuideTitle"
+                style="@style/title.22.700"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:text="@string/signup_select_type_guide_title"
+                android:textColor="@color/gray_800"
+                app:layout_constraintBottom_toTopOf="@id/tvGuideContent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvBtnSelectKid"
-            android:layout_width="0dp"
-            android:layout_height="201dp"
-            android:background="@color/gray_500"
-            android:gravity="center"
-            android:text="아이\n회원"
-            app:layout_constraintBottom_toBottomOf="@id/tvBtnSelectParent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tvBtnSelectParent"
-            app:layout_constraintTop_toTopOf="@id/tvBtnSelectParent" />
+            <TextView
+                android:id="@+id/tvGuideContent"
+                style="@style/body.15.500"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/signup_select_type_guide_content"
+                android:textColor="@color/gray_600"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvGuideTitle" />
 
-        <TextView
-            android:id="@+id/tvBtnAccept"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginBottom="38dp"
-            android:background="@drawable/bg_signup_set_nickname_btn_check_validation"
-            android:gravity="center"
-            android:paddingVertical="12dp"
-            android:text="다음"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvBtnSelectParent"
-            app:layout_constraintVertical_bias="1.0" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clSelectParentCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:background="@drawable/selector_bg_signup_select_type_card"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/clSelectKidCard"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvGuideContent"
+                app:layout_constraintVertical_bias="0.3">
+
+                <TextView
+                    android:id="@+id/tvParentCardTitle"
+                    style="@style/subtitle.16.600"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="14dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="@string/signup_select_type_parent_card_title"
+                    android:textColor="@color/selector_signup_select_type_card_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvParentCardContent"
+                    style="@style/caption.12.500"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="14dp"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="@string/signup_select_type_parent_card_content"
+                    android:textColor="@color/selector_signup_select_type_card_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvParentCardTitle" />
+
+                <ImageView
+                    android:id="@+id/ivParentCardLogo"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/ic_launcher_background"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvParentCardContent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/clSelectKidCard"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:background="@drawable/selector_bg_signup_select_type_card"
+                app:layout_constraintBottom_toBottomOf="@id/clSelectParentCard"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/clSelectParentCard"
+                app:layout_constraintTop_toTopOf="@id/clSelectParentCard"
+                app:layout_constraintVertical_bias="0.3">
+
+
+                <TextView
+                    android:id="@+id/tvKidCardTitle"
+                    style="@style/subtitle.16.600"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="14dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:text="@string/signup_select_type_kid_card_title"
+                    android:textColor="@color/selector_signup_select_type_card_title"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/tvKidCardContent"
+                    style="@style/caption.12.500"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="14dp"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:text="@string/signup_select_type_kid_card_content"
+                    android:textColor="@color/selector_signup_select_type_card_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvKidCardTitle" />
+
+                <ImageView
+                    android:id="@+id/ivKidCardLogo"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/ic_launcher_background"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tvKidCardContent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>

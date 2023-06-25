@@ -34,7 +34,6 @@ import javax.inject.Inject
 import kotlin.math.abs
 import kotlin.math.sqrt
 
-
 @AndroidEntryPoint
 class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     override val layoutResId = R.layout.fragment_signup
@@ -64,6 +63,10 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             hideKeyboard()
             signUpViewModel.movePrevPage()
         }
+        binding.tvBtnNext.setOnClickListener {
+            //TODO 이용약관에서 클릭 시 회원가입 요청 아닐경우 moveNextPage
+            signUpViewModel.moveNextPage()
+        }
         initSelectTypeView(binding = binding)
         initSelectParentTypeView(binding = binding)
         initSetNickNameView(binding = binding)
@@ -89,15 +92,11 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
     private fun initSelectTypeView(binding: FragmentSignupBinding) {
         with(binding.inSelectType) {
-            tvBtnSelectParent.setOnClickListener {
+            clSelectParentCard.setOnClickListener {
                 signUpViewModel.selectTypeParent()
             }
-            tvBtnSelectKid.setOnClickListener {
+            clSelectKidCard.setOnClickListener {
                 signUpViewModel.selectTypeKid()
-            }
-            tvBtnAccept.isEnabled = false
-            tvBtnAccept.setOnClickListener {
-                signUpViewModel.moveNextPage()
             }
         }
     }
@@ -113,10 +112,19 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 ParentTypeRollableAdapter(parentTypes = listOf(null) + parentTypes)
             vpTypeCards.adapter = parentTypeRollableAdapter
             vpTypeCards.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
+                override fun onPageScrolled(
+                    position: Int,
+                    positionOffset: Float,
+                    positionOffsetPixels: Int
+                ) {
+                    super.onPageScrolled(position, positionOffset, positionOffsetPixels)
                     val selectedType = parentTypeRollableAdapter?.getSelectedType(position)
-                    signUpViewModel.selectParentType(selectedType?.id)
+                    if (positionOffset == 0f) {
+                        signUpViewModel.selectParentType(selectedTypeId = selectedType?.id)
+
+                    } else {
+                        signUpViewModel.selectParentType(selectedTypeId = null)
+                    }
                 }
             })
             val cardHeightPx =
@@ -150,13 +158,9 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                     (if (position < 0) -transY else transY) - position * vpHeightPx
                 page.scaleX = scale
                 page.scaleY = scale
+                page.isSelected =
+                    (page.tag == ParentTypeRollableAdapter.ITEM_NORMAL_TAG && position == 0f)
             }
-
-            tvBtnAccept.isEnabled = false
-            tvBtnAccept.setOnClickListener {
-                signUpViewModel.moveNextPage()
-            }
-
         }
     }
 
@@ -180,10 +184,6 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 val textUiModel = signUpViewModel.nickNameLiveData.value ?: NickNameUiModel()
                 etInput.isSelected = true
                 setNickNameResultTextView(isFocused = isFocused, uiModel = textUiModel)
-            }
-            tvBtnAccept.isEnabled = false
-            tvBtnAccept.setOnClickListener {
-                signUpViewModel.moveNextPage()
             }
             tvBtnCheckValidation.setOnClickListener {
                 signUpViewModel.requestCheckNickNameValidation()
@@ -216,9 +216,6 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                     signUpViewModel.setProfileImagePath(path = path)
                 }
             }
-            tvBtnAccept.setOnClickListener {
-                signUpViewModel.requestSignUp()
-            }
         }
     }
 
@@ -243,12 +240,14 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     override fun initObserver() {
         super.initObserver()
         signUpViewModel.pageLiveData.observe(viewLifecycleOwner) {
+            refreshNextButton()
             with(binding) {
                 inSelectType.root.isVisible = false
                 inSelectParentType.root.isVisible = false
                 inSetNickName.root.isVisible = false
                 inSelectProfileImage.root.isVisible = false
-                ivBtnBack.isVisible = (it != SignUpPage.SELECT_TYPE && it != SignUpPage.ERROR)
+                clHeader.isVisible = it.isHeaderVisible
+                cpvProgressView.checkedCount = it.progressCount
                 when (it) {
                     SignUpPage.SELECT_TYPE -> {
                         inSelectType.root.isVisible = true
@@ -283,20 +282,23 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
 
         signUpViewModel.memberTypeLiveData.observe(viewLifecycleOwner) {
-            binding.inSelectType.tvBtnAccept.isEnabled = (it.selectedType != null)
-            binding.inSelectParentType.tvBtnAccept.isEnabled =
-                it.isParent() && (it.selectedTypeId != null)
+            with(binding.inSelectType) {
+                clSelectParentCard.isSelected = (it.isParent())
+                clSelectKidCard.isSelected = (it.isKid())
+            }
+            refreshNextButton()
         }
 
         signUpViewModel.nickNameLiveData.observe(viewLifecycleOwner) {
             with(binding.inSetNickName) {
-                tvBtnCheckValidation.isEnabled = validNickNameRegex.matches(it.nickName ?: "")
+                tvBtnCheckValidation.isEnabled =
+                    validNickNameRegex.matches(it.nickName ?: "")
                 //TODO string resource로 변경
                 tvBtnCheckValidation.text =
                     if (it.nickNameState == NickNameValidationState.VALID) "확인 완료" else "중복 확인"
                 setNickNameResultTextView(isFocused = etInput.isFocused, uiModel = it)
                 ivBtnClearText.isVisible = !it.nickName.isNullOrEmpty() && etInput.isFocused
-                tvBtnAccept.isEnabled = (it.nickNameState == NickNameValidationState.VALID)
+                refreshNextButton()
             }
         }
         signUpViewModel.profileImageLiveData.observe(viewLifecycleOwner) {
@@ -363,11 +365,22 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
     }
 
+    private fun refreshNextButton() {
+        val memberTypeData = signUpViewModel.memberTypeLiveData.value
+        val nickNameData = signUpViewModel.nickNameLiveData.value
+        //TODO 프로필 사진 설정페이지, 약관페이지 추가
+        binding.tvBtnNext.isEnabled = when (signUpViewModel.pageLiveData.value) {
+            SignUpPage.SELECT_TYPE -> memberTypeData?.selectedType != null
+            SignUpPage.SELECT_PARENT_TYPE -> memberTypeData?.selectedTypeId != null
+            SignUpPage.SET_NICKNAME -> nickNameData?.nickNameState == NickNameValidationState.VALID
+            else -> false
+        }
+    }
+
+
     companion object {
         const val ARGUMENT_USER_ID_KEY = "argument_user_id_key"
         const val ARGUMENT_SOCIAL_LOGIN_TYPE_KEY = "argument_social_login_type_key"
         const val ARGUMENT_PARENT_TYPES_KEY = "argument_parent_types_key"
-        //TODO parent type 받아옴
-//        fun newInstance()
     }
 }
