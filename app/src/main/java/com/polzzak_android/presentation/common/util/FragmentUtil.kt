@@ -7,3 +7,7 @@ import com.polzzak_android.presentation.common.MainActivity
 fun Fragment.getSocialLoginManager(): SocialLoginManager? = activity as? SocialLoginManager
 
 fun Fragment.getAccessTokenOrNull(): String? = (activity as? MainActivity)?.getAccessToken()
+
+fun Fragment.shotBackPressed() {
+    (activity as? MainActivity)?.backPressed()
+}
