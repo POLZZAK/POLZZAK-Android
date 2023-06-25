@@ -4,6 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -61,6 +62,7 @@ import com.polzzak_android.presentation.compose.Gray400
 import com.polzzak_android.presentation.compose.Gray500
 import com.polzzak_android.presentation.compose.PolzzakTheme
 import com.polzzak_android.presentation.main.model.MissionModel
+import com.polzzak_android.presentation.main.model.StampModel
 
 @Composable
 fun StampBoardHeader(
@@ -79,7 +81,7 @@ fun StampBoardHeader(
             modifier = Modifier.weight(1f)
         )
 
-        BlueChip(text = "D+9")
+        BlueChip(text = chipText)
     }
 }
 
@@ -251,7 +253,6 @@ fun RewardInfoSheetPreview() {
     )
 }
 
-// TODO: 잘 되는지 테스트
 @Composable
 fun StampBoxGridList(
     totalCount: Int,
@@ -349,7 +350,11 @@ fun ExpandToggleButton(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier
         .fillMaxWidth()
-        .clickable { onClick?.invoke() }
+        .clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = { onClick?.invoke() }
+        )
 ) {
     Divider(color = Gray200, thickness = 1.dp)
     Spacer(modifier = Modifier.height(16.dp))
@@ -387,11 +392,18 @@ fun SeeMore(
  */
 @Composable
 fun CompletedStamp(
-    // TODO: 도장 이미지 파라미터 추가하기
-    onClick: (() -> Unit)? = null
+    stamp: StampModel,
+    onClick: ((StampModel) -> Unit)? = null
 ) {
-    // 해당 컴포저블에서 도장 id 외에 다른 정보도 가지고 있어야 하는지?
-    // 도장 상세 정보 표시할 때 그냥 api 찔러서 정보 받아오는지?
+    // TODO: 이미지 리소스 추가하기
+    Box(
+        modifier = Modifier
+            .aspectRatio(1f)
+            .drawBehind {
+                drawCircle(color = Blue150)
+            }
+            .clickable(enabled = (onClick != null), onClick = { onClick?.invoke(stamp) })
+    )
 }
 
 /**

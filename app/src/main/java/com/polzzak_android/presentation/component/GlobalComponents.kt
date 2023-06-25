@@ -107,7 +107,7 @@ fun NoticeBar(text: String) = Row(
     modifier = Modifier
         .fillMaxWidth()
         .background(color = Blue100, shape = RoundedCornerShape(8.dp))
-        .border(width = 1.dp, color = Blue700.copy(alpha = 0.16f))
+        .border(width = 1.dp, color = Blue700.copy(alpha = 0.16f), shape = RoundedCornerShape(8.dp))
         .padding(horizontal = 16.dp, vertical = 12.dp)
 ) {
     Icon(
