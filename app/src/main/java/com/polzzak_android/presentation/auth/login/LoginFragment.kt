@@ -1,6 +1,10 @@
 package com.polzzak_android.presentation.auth.login
 
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import androidx.core.content.ContextCompat
 import androidx.activity.addCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -52,21 +56,41 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
         googleLoginHelper?.registerLoginSuccessCallback(callback = googleLoginSuccessCallback)
         kakaoLoginHelper?.registerLoginSuccessCallback(callback = kakaoLoginSuccessCallback)
-        binding.tvBtnStartGoogle.setOnClickListener {
-            googleLoginHelper?.requestLogin()
-        }
-        binding.tvBtnStartKakao.setOnClickListener {
-            kakaoLoginHelper?.requestLogin()
-        }
+        with(binding) {
+            tvBtnStartGoogle.setOnClickListener {
+                googleLoginHelper?.requestLogin()
+            }
+            tvBtnStartKakao.setOnClickListener {
+                kakaoLoginHelper?.requestLogin()
+            }
+            tvContent.text = createContentSpannable()
 
+        }
         // todo: 보호자 프래그먼트 이동 임시 나중에 삭제
-        binding.tvHello.setOnClickListener {
+        binding.ivLogo.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_protectorHostFragment)
         }
+    }
 
-        //TODO 테스트 코드 삭제
-        binding.ivLogoFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_test)
+    private fun createContentSpannable(): Spannable {
+        val content = getString(R.string.login_content)
+        val polzzakStr = getString(R.string.common_polzzak)
+        return SpannableStringBuilder(content).apply {
+            val contentColor = ContextCompat.getColor(binding.root.context, R.color.gray_600)
+            val polzzakColor = ContextCompat.getColor(binding.root.context, R.color.primary_600)
+            val polzzakStartIdx = content.indexOf(polzzakStr, 0)
+            setSpan(
+                ForegroundColorSpan(contentColor),
+                0,
+                content.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+            setSpan(
+                ForegroundColorSpan(polzzakColor),
+                polzzakStartIdx,
+                polzzakStartIdx + polzzakStr.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         }
     }
 
