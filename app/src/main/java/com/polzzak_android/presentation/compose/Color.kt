@@ -24,6 +24,10 @@ val Error100 = Color(0xFFFFEEEA)
 val Error200 = Color(0xFFFFDAD1)
 val Error500 = Color(0xFFFF6F50)
 
+val Dimmed40 = Color(0x66000000)
+val Dimmed60 = Color(0x99000000)
+val Dimmed80 = Color(0xCC000000)
+
 // TODO: 색깔도 커스텀 클래스 만들어서 PolzzakTheme으로 접근할 수 있게 해야할듯? -> 상황별 정의가 필요해짐
 
 /**
