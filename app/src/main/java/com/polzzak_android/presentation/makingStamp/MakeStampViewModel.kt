@@ -58,27 +58,29 @@ class MakeStampViewModel @Inject constructor(
         /**
          * 유효성 체크
          */
-        if (!validateInput(MakeStampBardInputType.NAME)) return
-        if (!validateInput(MakeStampBardInputType.REWARD)) return
-        if (!validateInput(MakeStampBardInputType.COUNT)) return
-        if (!validateInput(MakeStampBardInputType.MISSION_LIST)) return
+        val checkName = validateInput(MakeStampBardInputType.NAME)
+        val checkReward = validateInput(MakeStampBardInputType.REWARD)
+        val checkCount = validateInput(MakeStampBardInputType.COUNT)
+        val checkMission = validateInput(MakeStampBardInputType.MISSION_LIST)
 
-        safeLet(
-            _selectedKidId,
-            _stampBoardName.value,
-            _stampCount.value,
-            _stampBoardReward.value,
-            _missionList.value
-        ) { id, name, count, reward, missionList ->
-            makeStampBoard(
-                id = id,
-                nameModel = name,
-                countModel = count,
-                rewardModel = reward,
-                missionListModel = missionList
-            )
-        } ?: run {
-            // todo : 유효성 체크
+        if (checkName && checkReward && checkCount && checkMission) {
+            safeLet(
+                _selectedKidId,
+                _stampBoardName.value,
+                _stampCount.value,
+                _stampBoardReward.value,
+                _missionList.value
+            ) { id, name, count, reward, missionList ->
+                makeStampBoard(
+                    id = id,
+                    nameModel = name,
+                    countModel = count,
+                    rewardModel = reward,
+                    missionListModel = missionList
+                )
+            } ?: run {
+                // todo : 유효성 체크
+            }
         }
     }
 
