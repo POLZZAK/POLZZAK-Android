@@ -56,7 +56,7 @@ object MakeStampValidator {
             }
 
             val count = missionList.count { it == mission }
-            if (count > 2) {
+            if (count >= 2) {
                 return Pair(false, ResultMissionValidate("동일한 이름의 미션이 있어요", index))
             }
         }

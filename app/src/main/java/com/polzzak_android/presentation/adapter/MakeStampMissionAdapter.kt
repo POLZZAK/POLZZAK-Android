@@ -3,12 +3,15 @@ package com.polzzak_android.presentation.adapter
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemStampMissionBinding
 import com.polzzak_android.presentation.makingStamp.intreraction.MissionInteraction
+import com.polzzak_android.presentation.makingStamp.model.MakeStampMissionListModel
 
 class MakeStampMissionAdapter(
     private val interaction: MissionInteraction,
@@ -17,6 +20,8 @@ class MakeStampMissionAdapter(
 
     private var missionList: List<String>? = null
     private var missionListSize: Int = 0
+    private var errorMessage: String? = null
+    private var errorPosition: Int? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -29,7 +34,7 @@ class MakeStampMissionAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), position)
     }
 
     inner class ViewHolder(
@@ -60,7 +65,7 @@ class MakeStampMissionAdapter(
             })
         }
 
-        fun bind(value: String) {
+        fun bind(value: String, position: Int) {
             binding.data = value
             binding.missionListSize = missionListSize
 
@@ -69,6 +74,20 @@ class MakeStampMissionAdapter(
                     mission = value,
                     view = binding.itemMissionDelButton
                 )
+            }
+
+            // 유효성 체크
+            setValidateResult(position)
+        }
+
+        private fun setValidateResult(position: Int) {
+            if (errorPosition != null && errorPosition == position) {
+                binding.itemMissionInputContainer.setBackgroundResource(R.drawable.bg_red_stroke_white_bg_r8)
+                binding.errorMessage = errorMessage
+                binding.itemMissionErrorMessage.visibility = View.VISIBLE
+            } else {
+                binding.itemMissionInputContainer.setBackgroundResource(R.drawable.bg_gray_stroke_white_bg_r8)
+                binding.itemMissionErrorMessage.visibility = View.GONE
             }
         }
     }
@@ -82,6 +101,16 @@ class MakeStampMissionAdapter(
     fun setMissionListSize(size: Int) {
         missionListSize = size
         notifyDataSetChanged()
+    }
+
+    fun validate(model: MakeStampMissionListModel) {
+        if (model.isValidate) {
+            errorMessage = null
+            errorPosition = null
+        } else {
+            errorMessage = model.errorMessage
+            errorPosition = model.errorPosition
+        }
     }
 
     companion object {

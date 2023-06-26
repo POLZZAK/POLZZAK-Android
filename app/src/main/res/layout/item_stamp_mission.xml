@@ -12,7 +12,7 @@
             type="String" />
 
         <variable
-            name="warningMessage"
+            name="errorMessage"
             type="String" />
 
         <variable
@@ -64,12 +64,12 @@
             app:layout_constraintTop_toTopOf="@id/item_mission_input_container" />
 
         <TextView
-            android:id="@+id/item_mission_warning_message"
+            android:id="@+id/item_mission_error_message"
             style="@style/caption.12.600"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="@{warningMessage}"
+            android:text="@{errorMessage}"
             android:textColor="@color/error_500"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@id/item_mission_input_container"

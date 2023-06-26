@@ -109,6 +109,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         // 미션 리스트
         makeStampViewModel.missionList.observe(this) { missionList ->
             stampMissionAdapter.submitList(missionList.missionList)
+            stampMissionAdapter.validate(missionList)
         }
 
         // 미션 리스트 카운트
