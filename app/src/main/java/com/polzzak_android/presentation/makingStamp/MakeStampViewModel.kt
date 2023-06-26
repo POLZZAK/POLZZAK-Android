@@ -53,8 +53,7 @@ class MakeStampViewModel @Inject constructor(
         _missionListSize.value = _missionList.value!!.missionList.size
     }
 
-    fun makeStampBoard() {
-
+    fun validateInput() {
         /**
          * 유효성 체크
          */
@@ -70,29 +69,45 @@ class MakeStampViewModel @Inject constructor(
             _stampBoardReward.value,
             _missionList.value
         ) { id, name, count, reward, missionList ->
-            val request = MakeStampBoardRequest(
-                kidId = id,
-                stampBoardName = name.name,
-                stampBoardCount = count.count,
-                stampBoardReward = reward.reward,
-                missionList = missionList.missionList
+            makeStampBoard(
+                id = id,
+                nameModel = name,
+                countModel = count,
+                rewardModel = reward,
+                missionListModel = missionList
             )
-
-            viewModelScope.launch {
-                _makeStampBoardState.postValue(ModelState.Loading())
-                val response = repository.makeStampBoard(
-                    // todo: 임시 토큰
-                    token = "",
-                    newStampBoard = request
-                )
-                response.onSuccess {
-                    _makeStampBoardState.postValue(ModelState.Success("도장판 생성 성공"))
-                }.onError { exception, nothing ->
-                    _makeStampBoardState.postValue(ModelState.Error(exception))
-                }
-            }
         } ?: run {
             // todo : 유효성 체크
+        }
+    }
+
+    private fun makeStampBoard(
+        id: Int,
+        nameModel: MakeStampNameModel,
+        countModel: MakeStampCountModel,
+        rewardModel: MakeStampRewardModel,
+        missionListModel: MakeStampMissionListModel
+    ) {
+        val request = MakeStampBoardRequest(
+            kidId = id,
+            stampBoardName = nameModel.name,
+            stampBoardCount = countModel.count,
+            stampBoardReward = rewardModel.reward,
+            missionList = missionListModel.missionList
+        )
+
+        viewModelScope.launch {
+            _makeStampBoardState.postValue(ModelState.Loading())
+            val response = repository.makeStampBoard(
+                // todo: 임시 토큰
+                token = "",
+                newStampBoard = request
+            )
+            response.onSuccess {
+                _makeStampBoardState.postValue(ModelState.Success("도장판 생성 성공"))
+            }.onError { exception, nothing ->
+                _makeStampBoardState.postValue(ModelState.Error(exception))
+            }
         }
     }
 
@@ -188,9 +203,14 @@ class MakeStampViewModel @Inject constructor(
             MakeStampBardInputType.NAME -> {
                 val result = MakeStampValidator.checkName(_stampBoardName.value!!.name)
                 val isValidate = result.first
+                val currentName = _stampBoardName.value
 
-                if (!isValidate) {
-                    val currentName = _stampBoardName.value
+                if (isValidate) {
+                    _stampBoardName.value = currentName!!.copy(
+                        isValidate = true,
+                        errorMessage = null
+                    )
+                } else {
                     _stampBoardName.value = currentName!!.copy(
                         isValidate = false,
                         errorMessage = result.second
@@ -203,9 +223,14 @@ class MakeStampViewModel @Inject constructor(
             MakeStampBardInputType.REWARD -> {
                 val result = MakeStampValidator.checkReward(_stampBoardReward.value!!.reward)
                 val isValidate = result.first
+                val currentReward = _stampBoardReward.value
 
-                if (!isValidate) {
-                    val currentReward = _stampBoardReward.value
+                if (isValidate) {
+                    _stampBoardReward.value = currentReward!!.copy(
+                        isValidate = true,
+                        errorMessage = null
+                    )
+                } else {
                     _stampBoardReward.value = currentReward!!.copy(
                         isValidate = false,
                         errorMessage = result.second
@@ -218,9 +243,14 @@ class MakeStampViewModel @Inject constructor(
             MakeStampBardInputType.COUNT -> {
                 val result = MakeStampValidator.checkCount(_stampCount.value!!.count)
                 val isValidate = result.first
+                val currentCount = _stampCount.value
 
-                if (!isValidate) {
-                    val currentCount = _stampCount.value
+                if (isValidate) {
+                    _stampCount.value = currentCount!!.copy(
+                        isValidate = true,
+                        errorMessage = null
+                    )
+                } else {
                     _stampCount.value = currentCount!!.copy(
                         isValidate = false,
                         errorMessage = result.second
@@ -233,13 +263,21 @@ class MakeStampViewModel @Inject constructor(
             MakeStampBardInputType.MISSION_LIST -> {
                 val result = MakeStampValidator.checkMission(_missionList.value!!.missionList)
                 val isValidate = result.first
+                val currentMissionList = _missionList.value
 
-                if (!isValidate) {
-                    val currentMissionList = _missionList.value
+                if (isValidate) {
+                    _missionList.value = currentMissionList!!.copy(
+                        isValidate = true,
+                        errorMessage = null,
+                        errorPosition = null
+                    )
+                } else {
+                    val resultValue = result.second
+
                     _missionList.value = currentMissionList!!.copy(
                         isValidate = false,
-                        errorMessage = result.second.message,
-                        errorPosition = result.second.index
+                        errorMessage = resultValue.message,
+                        errorPosition = resultValue.index
                     )
                 }
 
