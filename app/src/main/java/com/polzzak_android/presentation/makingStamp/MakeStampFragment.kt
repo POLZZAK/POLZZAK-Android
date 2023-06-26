@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.makingStamp
 
+import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -103,10 +104,14 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
 
     override fun initObserver() {
         super.initObserver()
+        observeValidateResult()
+
+        // 미션 리스트
         makeStampViewModel.missionList.observe(this) { missionList ->
             stampMissionAdapter.submitList(missionList.missionList)
         }
 
+        // 미션 리스트 카운트
         makeStampViewModel.missionListSize.observe(this) { missionListSize ->
             stampMissionAdapter.setMissionListSize(missionListSize)
 
@@ -123,6 +128,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
             }
         }
 
+        // 미션 등록
         makeStampViewModel.makeStampBoardState.observe(this) { modelState ->
             when (modelState) {
                 is ModelState.Loading -> {
@@ -140,10 +146,54 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         }
     }
 
+    private fun observeValidateResult() {
+        // 이름
+        makeStampViewModel.stampBoardName.observe(this) { name ->
+            if (name.isValidate) {
+                binding.stampBoardName.setBackgroundResource(R.drawable.bg_gray_stroke_white_bg_r8)
+                binding.stampBoardNameError.visibility = View.GONE
+            } else {
+                binding.stampBoardName.setBackgroundResource(R.drawable.bg_red_stroke_white_bg_r8)
+                binding.stampBoardNameError.apply {
+                    visibility = View.VISIBLE
+                    text = name.errorMessage
+                }
+            }
+        }
+
+        // 보상
+        makeStampViewModel.stampBoardReward.observe(this) { reward ->
+            if (reward.isValidate) {
+                binding.stampBoardReward.setBackgroundResource(R.drawable.bg_gray_stroke_white_bg_r8)
+                binding.stampBoardRewardError.visibility = View.GONE
+            } else {
+                binding.stampBoardReward.setBackgroundResource(R.drawable.bg_red_stroke_white_bg_r8)
+                binding.stampBoardRewardError.apply {
+                    visibility = View.VISIBLE
+                    text = reward.errorMessage
+                }
+            }
+        }
+
+        // 도장 개수
+        makeStampViewModel.stampCount.observe(this) { count ->
+            if (count.isValidate) {
+                binding.stampCountRc.setBackgroundResource(R.drawable.bg_gray_stroke_white_bg_r8)
+                binding.stampBoardCountError.visibility = View.GONE
+            } else {
+                binding.stampCountRc.setBackgroundResource(R.drawable.bg_red_stroke_white_bg_r8)
+                binding.stampBoardCountError.apply {
+                    visibility = View.VISIBLE
+                    text = count.errorMessage
+                }
+            }
+        }
+    }
+
     private fun initData() {
         // 도장판 개수
         makeStampCountAdapter.submitList(listOf(10, 12, 16, 20, 25, 30, 36, 40, 48, 60))        // todo: 하드코딩 바꾸기?
-        stampCountSelectHelper.stampCount = makeStampViewModel.getStampCountList()!!
+        stampCountSelectHelper.stampCount = makeStampViewModel.getStampCountList()
         makeStampViewModel.setMissionListSize(makeStampViewModel.getMissionListSize())
     }
 

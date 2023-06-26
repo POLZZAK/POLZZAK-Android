@@ -30,6 +30,7 @@ class MakeStampViewModel @Inject constructor(
     val stampBoardName = _stampBoardName
 
     private val _stampBoardReward: MutableLiveData<MakeStampRewardModel> = MutableLiveData()
+    val stampBoardReward = _stampBoardReward
 
     private val _stampCount: MutableLiveData<MakeStampCountModel> = MutableLiveData()
     val stampCount = _stampCount

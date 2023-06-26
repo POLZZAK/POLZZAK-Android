@@ -111,6 +111,15 @@
 
             </LinearLayout>
 
+            <TextView
+                android:id="@+id/stamp_board_name_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/error_500"
+                android:visibility="gone"
+                tools:text="도장판 이름을 입력해주세요" />
+
             <!-- 보상 -->
             <TextView
                 style="@style/subtitle.16.600"
@@ -138,7 +147,16 @@
 
             </LinearLayout>
 
-            <!-- 보상 -->
+            <TextView
+                android:id="@+id/stamp_board_reward_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/error_500"
+                android:visibility="gone"
+                tools:text="보상을 입력해주세요" />
+
+            <!-- 도장 개수 -->
             <TextView
                 style="@style/subtitle.16.600"
                 android:layout_width="wrap_content"
@@ -160,6 +178,15 @@
                 app:spanCount="2"
                 tools:itemCount="10"
                 tools:listitem="@layout/item_stamp_count" />
+
+            <TextView
+                android:id="@+id/stamp_board_count_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/error_500"
+                android:visibility="gone"
+                tools:text="도장 개수를 선택해주세요" />
 
             <!-- 미션 -->
             <TextView
