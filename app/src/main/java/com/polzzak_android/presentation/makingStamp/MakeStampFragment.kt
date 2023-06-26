@@ -81,6 +81,8 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         binding.tempRequest.setOnClickListener {
             requestStampDialog.show(childFragmentManager, "Dialog")
         }
+        // todo: 닉네임 임시
+        binding.selectedKidName.text = "임시닉네임"
 
         binding.missionEnrollButton.setOnClickListener {
             makeStampViewModel.createMission()
@@ -196,6 +198,9 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         makeStampCountAdapter.submitList(listOf(10, 12, 16, 20, 25, 30, 36, 40, 48, 60))        // todo: 하드코딩 바꾸기?
         stampCountSelectHelper.stampCount = makeStampViewModel.getStampCountList()
         makeStampViewModel.setMissionListSize(makeStampViewModel.getMissionListSize())
+
+        // 뷰모델 데이터 초기화 todo: 수정 진입 시 변경 예정
+        makeStampViewModel.initData()
     }
 
     override fun onStampCountClicked(view: TextView, value: Int) {

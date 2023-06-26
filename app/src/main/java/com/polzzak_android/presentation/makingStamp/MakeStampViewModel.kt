@@ -46,6 +46,10 @@ class MakeStampViewModel @Inject constructor(
     val makeStampBoardState = _makeStampBoardState
 
     init {
+        initData()
+    }
+
+    fun initData() {
         _stampBoardName.value = MakeStampNameModel.init
         _stampBoardReward.value = MakeStampRewardModel.init
         _stampCount.value = MakeStampCountModel.init
