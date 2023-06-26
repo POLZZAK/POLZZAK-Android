@@ -3,8 +3,10 @@ package com.polzzak_android.data.remote
 import com.polzzak_android.BuildConfig
 import com.polzzak_android.data.remote.service.GoogleOAuthService
 import com.polzzak_android.data.remote.service.AuthService
+import com.polzzak_android.data.remote.service.StampBoardService
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.SignUpRepository
+import com.polzzak_android.data.repository.StampBoardRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -71,4 +73,15 @@ object ApiModule {
     fun provideSignUpRepository(
         authService: AuthService
     ): SignUpRepository = SignUpRepository(authService = authService)
+
+    @Singleton
+    @Provides
+    fun provideStampBoardRepository(
+        stampBoardService: StampBoardService
+    ): StampBoardRepository = StampBoardRepository(stampBoardService = stampBoardService)
+
+    @Singleton
+    @Provides
+    fun provideStampBoardService(@Named("Polzzak") retrofit: Retrofit): StampBoardService =
+        retrofit.create(StampBoardService::class.java)
 }

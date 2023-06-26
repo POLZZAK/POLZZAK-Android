@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="100dp"
+            tools:context=".presentation.makingStamp.MakeStampFragment">
+
+            <!-- 아이 선택 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/temp_request"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="임시 등록"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/selected_kid_profile_img"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="-20dp"
+                    android:background="@drawable/ic_launcher_background"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/kid_message" />
+
+                <TextView
+                    android:id="@+id/selected_kid_name"
+                    style="@style/caption.12.500"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="33dp"
+                    android:layout_marginEnd="10dp"
+                    android:background="@drawable/round_background"
+                    android:backgroundTint="@color/gray_800"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="3dp"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="@id/selected_kid_profile_img"
+                    app:layout_constraintEnd_toStartOf="@id/change_kid_icon"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    app:layout_constraintStart_toStartOf="@id/selected_kid_profile_img"
+                    app:layout_constraintTop_toTopOf="@id/selected_kid_profile_img"
+                    app:layout_constraintVertical_bias="0.9"
+                    tools:text="일이삼" />
+
+                <ImageButton
+                    android:id="@+id/change_kid_icon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@drawable/ic_refresh"
+                    app:layout_constraintBottom_toBottomOf="@id/selected_kid_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/selected_kid_name"
+                    app:layout_constraintTop_toTopOf="@id/selected_kid_name" />
+
+                <ImageView
+                    android:id="@+id/kid_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_request_stamp_balloon"
+                    app:layout_constraintStart_toEndOf="@id/selected_kid_profile_img"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- 이름 -->
+            <TextView
+                style="@style/subtitle.16.600"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="36dp"
+                android:text="이름"
+                android:textColor="@color/black" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/bg_gray_stroke_white_bg_r8">
+
+                <EditText
+                    android:id="@+id/stamp_board_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="도장판 이름을 입력해주세요"
+                    android:maxLines="1"
+                    android:padding="15dp"
+                    android:textColorHint="@color/gray_400" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/stamp_board_name_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/error_500"
+                android:visibility="gone"
+                tools:text="도장판 이름을 입력해주세요" />
+
+            <!-- 보상 -->
+            <TextView
+                style="@style/subtitle.16.600"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="보상"
+                android:textColor="@color/black" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/bg_gray_stroke_white_bg_r8">
+
+                <EditText
+                    android:id="@+id/stamp_board_reward"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:hint="도장판을 다 모으면 어떤 선물을 줄까요?"
+                    android:maxLines="1"
+                    android:padding="15dp"
+                    android:textColorHint="@color/gray_400" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/stamp_board_reward_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/error_500"
+                android:visibility="gone"
+                tools:text="보상을 입력해주세요" />
+
+            <!-- 도장 개수 -->
+            <TextView
+                style="@style/subtitle.16.600"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="도장 개수"
+                android:textColor="@color/black" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/stamp_count_rc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/bg_gray_stroke_white_bg_r8"
+                android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="20dp"
+                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                app:spanCount="2"
+                tools:itemCount="10"
+                tools:listitem="@layout/item_stamp_count" />
+
+            <TextView
+                android:id="@+id/stamp_board_count_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/error_500"
+                android:visibility="gone"
+                tools:text="도장 개수를 선택해주세요" />
+
+            <!-- 미션 -->
+            <TextView
+                style="@style/subtitle.16.600"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="미션"
+                android:textColor="@color/black" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/bg_gray_stroke_white_bg_r8"
+                android:orientation="vertical"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="20dp">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/mission_rc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:listitem="@layout/item_stamp_mission" />
+
+                <Button
+                    android:id="@+id/mission_enroll_button"
+                    style="@style/body.15.500.btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_blue_stroke_blue_bg_r8"
+                    android:backgroundTint="@color/primary"
+                    android:gravity="center"
+                    android:text="+ 미션 추가"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toTopOf="@id/mission_ex_button"
+                    app:layout_constraintEnd_toEndOf="@id/mission_rc"
+                    app:layout_constraintStart_toStartOf="@id/mission_rc"
+                    app:layout_constraintTop_toBottomOf="@id/mission_rc" />
+
+                <Button
+                    android:id="@+id/mission_ex_button"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/round_background"
+                    android:backgroundTint="@color/gray_500"
+                    android:drawableStart="@drawable/ic_example_list"
+                    android:drawablePadding="5dp"
+                    android:text="미션예시"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/mission_enroll_button" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</layout>
