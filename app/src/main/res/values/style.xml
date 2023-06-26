@@ -11,14 +11,17 @@
         <item name="android:textSize">24sp</item>
         <item name="fontFamily">@font/pretendard_semi_bold</item>
     </style>
+
     <style name="title.22.700" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">22sp</item>
         <item name="fontFamily">@font/pretendard_bold</item>
     </style>
+
     <style name="title.22.600" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">22sp</item>
         <item name="fontFamily">@font/pretendard_semi_bold</item>
     </style>
+
     <style name="title.20.700" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">20sp</item>
         <item name="fontFamily">@font/pretendard_bold</item>
@@ -29,25 +32,35 @@
         <item name="android:textSize">18sp</item>
         <item name="fontFamily">@font/pretendard_semi_bold</item>
     </style>
+
     <style name="subtitle.16.700" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">16sp</item>
         <item name="fontFamily">@font/pretendard_bold</item>
     </style>
+
     <style name="subtitle.16.600" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">16sp</item>
         <item name="fontFamily">@font/pretendard_semi_bold</item>
     </style>
+
     <style name="subtitle.16.600.modal.btn" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">@color/white</item>
         <item name="fontFamily">@font/pretendard_semi_bold</item>
     </style>
+
     <style name="subtitle.20.600" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">20sp</item>
         <item name="fontFamily">@font/pretendard_semi_bold</item>
     </style>
+
     <style name="subtitle.20.400" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">20sp</item>
+        <item name="fontFamily">@font/pretendard_regular</item>
+    </style>
+
+    <style name="subtitle.18.400" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">18sp</item>
         <item name="fontFamily">@font/pretendard_regular</item>
     </style>
 
@@ -61,16 +74,39 @@
         <item name="android:textColor">@color/white</item>
         <item name="fontFamily">@font/pretendard_medium</item>
     </style>
+
     <style name="body.14.600" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">14sp</item>
         <item name="fontFamily">@font/pretendard_semi_bold</item>
     </style>
+
     <style name="body.14.500" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">14sp</item>
         <item name="fontFamily">@font/pretendard_medium</item>
     </style>
+
     <style name="body.13.500" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">13sp</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="body.14.700" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">14sp</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <style name="body.18.700" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">18sp</item>
+        <item name="fontFamily">@font/pretendard_bold</item>
+    </style>
+
+    <style name="body.18.500" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">18sp</item>
+        <item name="fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="body.16.500" parent="Widget.AppCompat.TextView">
+        <item name="android:textSize">16sp</item>
         <item name="fontFamily">@font/pretendard_medium</item>
     </style>
 
@@ -79,26 +115,26 @@
         <item name="android:textSize">12sp</item>
         <item name="fontFamily">@font/pretendard_semi_bold</item>
     </style>
+
     <style name="caption.12.500" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">12sp</item>
         <item name="fontFamily">@font/pretendard_medium</item>
     </style>
+
     <style name="caption.12.700" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">12sp</item>
         <item name="fontFamily">@font/pretendard_bold</item>
     </style>
 
     <!--바텀시트 -->
-    <style name="AppBottomSheetDialogTheme"
-        parent="Theme.Design.Light.BottomSheetDialog">
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/AppModalStyle</item>
     </style>
 
-    <style name="AppModalStyle"
-        parent="Widget.Design.BottomSheet.Modal">
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@drawable/bottom_sheet_modal</item>
     </style>
-    
+
     <style name="MemberType" parent="Widget.AppCompat.TextView">
         <item name="android:textSize">14sp</item>
         <item name="fontFamily">@font/pretendard_semi_bold</item>

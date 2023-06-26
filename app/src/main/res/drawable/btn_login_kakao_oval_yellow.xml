@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <size
+                android:width="60dp"
+                android:height="60dp" />
+            <solid android:color="#FEE500" />
+        </shape>
+    </item>
+    <item
+        android:width="22dp"
+        android:height="20dp"
+        android:drawable="@drawable/ic_logo_kakao"
+        android:gravity="center"></item>
+</layer-list>

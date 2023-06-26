@@ -313,7 +313,11 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
                 is ModelState.Success -> {
                     mainViewModel.accessToken = it.data.accessToken
-                    //TODO 회원가입 보호자/아이 분기처리
+                    val action = when (it.data.memberTypeId) {
+                        MemberTypeDetail.KID_TYPE_ID -> R.id.action_signUpFragment_to_kidOnBoardingFragment
+                        else -> R.id.action_signUpFragment_to_protectorOnBoardingFragment
+                    }
+                    findNavController().navigate(action)
                 }
 
                 is ModelState.Error -> {

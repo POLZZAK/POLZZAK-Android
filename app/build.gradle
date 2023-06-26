@@ -32,6 +32,7 @@ android {
     buildFeatures {
         dataBinding true
         buildConfig true
+        compose true
     }
 
     buildTypes {
@@ -46,6 +47,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = '17'
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.1"
     }
 }
 
@@ -96,6 +100,15 @@ dependencies {
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.15.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
+
+    //Compose
+    implementation 'androidx.compose.material:material:1.4.3'
+    implementation 'androidx.compose.ui:ui-tooling-preview:1.4.3'
+    debugImplementation 'androidx.compose.ui:ui-tooling:1.4.3'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
+
+    //RxJava
+    implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
 }
 
 kapt {
