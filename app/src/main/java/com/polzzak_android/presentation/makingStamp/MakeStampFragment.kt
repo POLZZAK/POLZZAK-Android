@@ -1,6 +1,5 @@
 package com.polzzak_android.presentation.makingStamp
 
-import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -49,7 +48,9 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         onConfirmListener = {
             object : OnButtonClickListener {
                 override fun setBusinessLogic() {
-                    makeStampViewModel.makeStampBoard()
+                    makeStampViewModel.setStampBoardName(binding.stampBoardName.text.toString())
+                    makeStampViewModel.setStampBoardReward(binding.stampBoardReward.text.toString())
+                    makeStampViewModel.validateInput()
                 }
                 override fun getReturnValue(value: Any) {}
             }
