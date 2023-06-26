@@ -341,6 +341,14 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 if (uiModel.nickNameState == NickNameValidationState.VALID) R.color.primary else R.color.error_500
             )
             tvCheckDuplicatedResult.setTextColor(textColor)
+            val resultDrawableRes =
+                if (uiModel.nickNameState == NickNameValidationState.VALID) R.drawable.ic_signup_nickname_check_result_valid else 0
+            tvCheckDuplicatedResult.setCompoundDrawablesWithIntrinsicBounds(
+                resultDrawableRes,
+                0,
+                0,
+                0
+            )
             val lengthText = if (isFocused) "${(uiModel.nickName ?: "").length}/10" else ""
             tvInputLength.text = lengthText
         }
