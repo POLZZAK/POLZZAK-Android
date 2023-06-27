@@ -200,7 +200,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         makeStampViewModel.setMissionListSize(makeStampViewModel.getMissionListSize())
 
         // 뷰모델 데이터 초기화 todo: 수정 진입 시 변경 예정
-        makeStampViewModel.initData()
+//        makeStampViewModel.initData()
     }
 
     override fun onStampCountClicked(view: TextView, value: Int) {
