@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.common.host
 
+import androidx.activity.OnBackPressedCallback
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -24,6 +25,13 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
         val btmNav = binding.protectorBtmNav
         btmNav.setupWithNavController(protectorNavController)
 
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
+    }
+
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            protectorNavController.popBackStack()
+        }
     }
 
 }
