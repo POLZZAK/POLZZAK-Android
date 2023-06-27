@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,12 +16,45 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.component.PolzzakButton
 import com.polzzak_android.presentation.compose.Gray500
 import com.polzzak_android.presentation.compose.PolzzakTheme
 import com.polzzak_android.presentation.main.model.MissionModel
+import com.polzzak_android.presentation.main.model.StampBoardDetailModel
 import com.polzzak_android.presentation.main.model.StampBoardStatus
 import com.polzzak_android.presentation.main.model.StampModel
+import kotlinx.coroutines.flow.StateFlow
+
+@Composable
+fun StampBoardDetailScreen_Kid(
+    stampBoardData: StateFlow<ModelState<StampBoardDetailModel>>,
+    onStampClick: (StampModel) -> Unit,
+    onEmptyStampClick: () -> Unit,
+    onRewardButtonClick: () -> Unit
+) {
+    val state by stampBoardData.collectAsState()
+    /*val boardStatus by remember { derivedStateOf { state.data?.stampBoardStatus } }
+    val boardTitle by remember { derivedStateOf { state.data?.boardTitle } }
+    val dateCount by remember { derivedStateOf { state.data?.dateCount } }
+    val totalStampCount by remember { derivedStateOf { state.data?.totalStampCount } }
+    val stampList by remember { derivedStateOf { state.data?.stampList } }
+    val missionList by remember { derivedStateOf { state.data?.missionList } }
+    val rewardTitle by remember { derivedStateOf { state.data?.rewardTitle } }*/
+
+    StampBoardDetailScreen_Kid(
+        stampBoardStatus = state.data?.stampBoardStatus ?: StampBoardStatus.PROGRESS,
+        boardTitle = state.data?.boardTitle ?: "",
+        dateCount = state.data?.dateCount ?: 0,
+        totalStampCount = state.data?.totalStampCount ?: 16,
+        stampList = state.data?.stampList ?: emptyList(),
+        onStampClick = onStampClick,
+        onEmptyStampClick = onEmptyStampClick,
+        missionList = state.data?.missionList ?: emptyList(),
+        rewardTitle = state.data?.rewardTitle ?: "",
+        onRewardButtonClick = onRewardButtonClick
+    )
+}
 
 /**
  * 아이 도장판 상세 화면
@@ -36,7 +71,7 @@ import com.polzzak_android.presentation.main.model.StampModel
  * @param onRewardButtonClick 쿠폰 발급 버튼 눌렀을 때
  */
 @Composable
-fun StampBoardDetailScreen_Kid(
+private fun StampBoardDetailScreen_Kid(
     stampBoardStatus: StampBoardStatus,
     boardTitle: String,
     dateCount: Int,

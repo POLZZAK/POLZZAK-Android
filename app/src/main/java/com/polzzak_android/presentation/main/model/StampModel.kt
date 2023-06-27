@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.main.model
 
+import com.polzzak_android.data.remote.model.response.StampDto
 import java.time.LocalDateTime
 
 /**
@@ -10,4 +11,11 @@ data class StampModel(
     val stampDesignId: Int = 0,
     val missionContent: String = "",
     val createdDate: LocalDateTime = LocalDateTime.now()
+)
+
+fun StampDto.toModel(): StampModel = StampModel(
+    id = this.id,
+    stampDesignId = this.stampDesignId,
+    missionContent = this.missionContent,
+    createdDate = LocalDateTime.parse(this.createdDate)
 )

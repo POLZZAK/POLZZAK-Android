@@ -22,5 +22,11 @@ enum class StampBoardStatus {
     /**
      * 쿠폰 수령(완료)
      */
-    REWARDED
+    REWARDED;
+
+    companion object {
+        fun getStatus(value: String): StampBoardStatus? {
+            return StampBoardStatus.values().find { it.name.equals(value, true) }
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package com.polzzak_android.presentation.common.model
 
-sealed interface ModelState<T> {
+sealed interface ModelState<out T> {
     val data: T?
 
     data class Loading<T>(override val data: T? = null) : ModelState<T>
