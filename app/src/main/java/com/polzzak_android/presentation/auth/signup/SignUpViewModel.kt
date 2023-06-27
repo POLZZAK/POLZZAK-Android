@@ -37,7 +37,7 @@ class SignUpViewModel @AssistedInject constructor(
     private val _memberTypeLiveData = MutableLiveData<MemberTypeUiModel>()
     val memberTypeLiveData: LiveData<MemberTypeUiModel> = _memberTypeLiveData
 
-    private val _profileImageLiveData = MutableLiveData<ProfileImageUiModel>()
+    private val _profileImageLiveData = MutableLiveData<ProfileImageUiModel>(ProfileImageUiModel())
     val profileImageLiveData: LiveData<ProfileImageUiModel> = _profileImageLiveData
 
     private val _signUpResultLiveData =

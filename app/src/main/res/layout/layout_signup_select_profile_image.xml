@@ -1,38 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingHorizontal="16dp">
 
         <TextView
-            android:id="@+id/tvTitle"
+            android:id="@+id/tvGuideTitle"
+            style="@style/title.22.700"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="프로필 사진을 설정해주세요"
+            android:layout_marginTop="40dp"
+            android:text="@string/signup_select_profile_image_guide_title"
+            android:textColor="@color/gray_800"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvDescription"
+            android:id="@+id/tvGuideContent"
+            style="@style/body.15.500"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="나중에 설정해도 괜찮아요\n미설정 시 기본 사진으로 설정돼요"
+            android:layout_marginTop="16dp"
+            android:text="@string/signup_select_profile_image_guide_content"
+            android:textColor="@color/gray_600"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+            app:layout_constraintTop_toBottomOf="@id/tvGuideTitle" />
 
-        <ImageView
-            android:id="@+id/ivBtnSelectPicture"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clBtnSelectPicture"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvDescription" />
+            app:layout_constraintTop_toBottomOf="@id/tvGuideContent"
+            app:layout_constraintVertical_bias="0.3">
+
+            <ImageView
+                android:id="@+id/ivImage"
+                android:layout_width="127dp"
+                android:layout_height="127dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivIconEdit"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/ic_signup_select_profile_image_edit"
+                app:layout_constraintBottom_toBottomOf="@id/ivImage"
+                app:layout_constraintEnd_toEndOf="@id/ivImage" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

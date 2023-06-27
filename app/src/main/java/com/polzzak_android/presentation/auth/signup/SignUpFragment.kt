@@ -13,11 +13,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.bumptech.glide.Glide
 import com.polzzak_android.R
 import com.polzzak_android.common.util.getParcelableArrayListOrNull
 import com.polzzak_android.common.util.getParcelableOrNull
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
+import com.polzzak_android.common.util.loadCircleImageDrawableRes
+import com.polzzak_android.common.util.loadCircleImageUrl
 import com.polzzak_android.databinding.FragmentSignupBinding
 import com.polzzak_android.presentation.auth.model.MemberTypeDetail
 import com.polzzak_android.presentation.auth.model.SocialLoginType
@@ -210,7 +211,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
     private fun initSelectProfileImageView(binding: FragmentSignupBinding) {
         with(binding.inSelectProfileImage) {
-            ivBtnSelectPicture.setOnClickListener {
+            clBtnSelectPicture.setOnClickListener {
                 photoPicker?.invoke { uri ->
                     val path = getAbsPath(uri = uri)
                     signUpViewModel.setProfileImagePath(path = path)
@@ -303,8 +304,11 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
         signUpViewModel.profileImageLiveData.observe(viewLifecycleOwner) {
             with(binding.inSelectProfileImage) {
-                Glide.with(this@SignUpFragment).load(it.path)
-                    .into(ivBtnSelectPicture)
+                it.path?.let { path ->
+                    ivImage.loadCircleImageUrl(imageUrl = path)
+                } ?: run {
+                    ivImage.loadCircleImageDrawableRes(drawableRes = R.drawable.ic_launcher_background)
+                }
             }
         }
         signUpViewModel.signUpResultLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
@@ -381,6 +385,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             SignUpPage.SELECT_TYPE -> memberTypeData?.selectedType != null
             SignUpPage.SELECT_PARENT_TYPE -> memberTypeData?.selectedTypeId != null
             SignUpPage.SET_NICKNAME -> nickNameData?.nickNameState == NickNameValidationState.VALID
+            SignUpPage.SET_PROFILE_IMAGE -> true
             else -> false
         }
     }

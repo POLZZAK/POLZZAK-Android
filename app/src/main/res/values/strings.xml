@@ -39,5 +39,7 @@
     <string name="signup_set_nickname_pattern_guide">한글, 영문(대소문자 구별), 숫자 사용 가능 / 특수 문자, 공백 불가</string>
     <string name="signup_set_nickname_check_validation">중복 확인</string>
     <string name="signup_set_nickname_input_hint">닉네임을 입력해주세요</string>
+    <string name="signup_select_profile_image_guide_title">프로필 사진을 설정해주세요</string>
+    <string name="signup_select_profile_image_guide_content">나중에 설정해도 괜찮아요\n미설정 시 기본 사진으로 설정돼요</string>
 
 </resources>
