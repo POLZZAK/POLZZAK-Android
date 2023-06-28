@@ -83,6 +83,17 @@
             app:layout_constraintBottom_toTopOf="@id/tvBtnNext"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/clHeader"
+            tools:visibility="gone" />
+
+        <include
+            android:id="@+id/inTermsOfService"
+            layout="@layout/layout_signup_terms_of_service"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/tvBtnNext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/clHeader" />
 
         <TextView

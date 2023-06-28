@@ -41,5 +41,9 @@
     <string name="signup_set_nickname_input_hint">닉네임을 입력해주세요</string>
     <string name="signup_select_profile_image_guide_title">프로필 사진을 설정해주세요</string>
     <string name="signup_select_profile_image_guide_content">나중에 설정해도 괜찮아요\n미설정 시 기본 사진으로 설정돼요</string>
-
+    <string name="signup_complete">회원가입 완료</string>
+    <string name="signup_terms_of_service_guide_title">마지막으로 약관 동의가 필요해요</string>
+    <string name="signup_terms_of_service_agree_all">모두 동의</string>
+    <string name="signup_terms_of_service_agree_service">서비스 이용약관에 동의합니다.</string>
+    <string name="signup_terms_of_service_agree_privacy">개인정보처리방침에 동의합니다.</string>
 </resources>

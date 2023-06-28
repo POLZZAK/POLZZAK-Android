@@ -3,6 +3,7 @@ package com.polzzak_android.presentation.auth.signup
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
@@ -26,6 +27,7 @@ import com.polzzak_android.presentation.auth.signup.adapter.ParentTypeRollableAd
 import com.polzzak_android.presentation.auth.signup.model.NickNameUiModel
 import com.polzzak_android.presentation.auth.signup.model.NickNameValidationState
 import com.polzzak_android.presentation.auth.signup.model.SignUpPage
+import com.polzzak_android.presentation.auth.signup.model.SignUpTermsOfServiceModel
 import com.polzzak_android.presentation.common.MainViewModel
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
@@ -65,13 +67,17 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             signUpViewModel.movePrevPage()
         }
         binding.tvBtnNext.setOnClickListener {
-            //TODO 이용약관에서 클릭 시 회원가입 요청 아닐경우 moveNextPage
-            signUpViewModel.moveNextPage()
+            val pageData = signUpViewModel.pageLiveData.value ?: return@setOnClickListener
+            when (pageData) {
+                SignUpPage.TERMS_OF_SERVICE -> signUpViewModel.requestSignUp()
+                else -> signUpViewModel.moveNextPage()
+            }
         }
         initSelectTypeView(binding = binding)
         initSelectParentTypeView(binding = binding)
         initSetNickNameView(binding = binding)
         initSelectProfileImageView(binding = binding)
+        initTermsOfServiceView(binding = binding)
         addOnBackPressedDispatcher()
     }
 
@@ -220,6 +226,52 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
     }
 
+    private fun initTermsOfServiceView(binding: FragmentSignupBinding) {
+        with(binding.inTermsOfService) {
+            tvBtnCheckAll.setOnClickListener {
+                signUpViewModel.checkTermsOfService(clickModel = SignUpTermsOfServiceModel.ClickModel.ALL)
+            }
+            tvBtnCheckService.setOnClickListener {
+                signUpViewModel.checkTermsOfService(clickModel = SignUpTermsOfServiceModel.ClickModel.SERVICE)
+            }
+            tvBtnCheckPrivacy.setOnClickListener {
+                signUpViewModel.checkTermsOfService(clickModel = SignUpTermsOfServiceModel.ClickModel.PRIVACY)
+            }
+            ivBtnServiceDetail.setOnClickListener {
+                val detailDataBundle = Bundle().apply {
+                    putString(
+                        SignUpTermDetailFragment.ARGUMENT_TITLE_KEY,
+                        getString(R.string.signup_terms_of_service_detail_service_title)
+                    )
+                    putString(
+                        SignUpTermDetailFragment.ARGUMENT_CONTENT_KEY,
+                        getString(R.string.signup_terms_of_service_detail_service_content)
+                    )
+                }
+                findNavController().navigate(
+                    R.id.action_signUpFragment_to_signUpTermDetailFragment,
+                    detailDataBundle
+                )
+            }
+            ivBtnPrivacyDetail.setOnClickListener {
+                val detailDataBundle = Bundle().apply {
+                    putString(
+                        SignUpTermDetailFragment.ARGUMENT_TITLE_KEY,
+                        getString(R.string.signup_terms_of_service_detail_privacy_title)
+                    )
+                    putString(
+                        SignUpTermDetailFragment.ARGUMENT_CONTENT_KEY,
+                        getString(R.string.signup_terms_of_service_detail_privacy_content)
+                    )
+                }
+                findNavController().navigate(
+                    R.id.action_signUpFragment_to_signUpTermDetailFragment,
+                    detailDataBundle
+                )
+            }
+        }
+    }
+
     private fun getAbsPath(uri: Uri): String? {
         return try {
             val cursor = activity?.contentResolver?.query(
@@ -240,20 +292,26 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
     override fun initObserver() {
         super.initObserver()
+        observePageLiveData()
+        observeMemberTypeLiveData()
+        observeNickNameLiveData()
+        observeProfileImageLiveData()
+        observeTermsOfServiceLiveData()
+        observeSignUpResultLiveData()
+    }
+
+    private fun observePageLiveData() {
         signUpViewModel.pageLiveData.observe(viewLifecycleOwner) {
             refreshNextButton()
             with(binding) {
-                inSelectType.root.isVisible = false
-                inSelectParentType.root.isVisible = false
-                inSetNickName.root.isVisible = false
-                inSelectProfileImage.root.isVisible = false
+                inSelectType.root.isVisible = (it == SignUpPage.SELECT_TYPE)
+                inSelectParentType.root.isVisible = (it == SignUpPage.SELECT_PARENT_TYPE)
+                inSetNickName.root.isVisible = (it == SignUpPage.SET_NICKNAME)
+                inSelectProfileImage.root.isVisible = (it == SignUpPage.SET_PROFILE_IMAGE)
+                inTermsOfService.root.isVisible = (it == SignUpPage.TERMS_OF_SERVICE)
                 clHeader.isVisible = it.isHeaderVisible
                 cpvProgressView.checkedCount = it.progressCount
                 when (it) {
-                    SignUpPage.SELECT_TYPE -> {
-                        inSelectType.root.isVisible = true
-                    }
-
                     SignUpPage.SELECT_PARENT_TYPE -> {
                         val currentTypeId = signUpViewModel.memberTypeLiveData.value?.selectedTypeId
                         val adapterStartPosition =
@@ -264,24 +322,22 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                                 false
                             )
                         }
-                        inSelectParentType.root.isVisible = true
                     }
 
                     SignUpPage.SET_NICKNAME -> {
-                        inSetNickName.root.isVisible = true
                         inSetNickName.etInput.setText(signUpViewModel.nickNameLiveData.value?.nickName)
                     }
 
-                    SignUpPage.SET_PROFILE_IMAGE -> {
-                        inSelectProfileImage.root.isVisible = true
+                    else -> {
+                        //do nothing
                     }
-
-                    else -> {}
                 }
 
             }
         }
+    }
 
+    private fun observeMemberTypeLiveData() {
         signUpViewModel.memberTypeLiveData.observe(viewLifecycleOwner) {
             with(binding.inSelectType) {
                 clSelectParentCard.isSelected = (it.isParent())
@@ -290,6 +346,9 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             refreshNextButton()
         }
 
+    }
+
+    private fun observeNickNameLiveData() {
         signUpViewModel.nickNameLiveData.observe(viewLifecycleOwner) {
             with(binding.inSetNickName) {
                 tvBtnCheckValidation.isEnabled =
@@ -302,6 +361,9 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 refreshNextButton()
             }
         }
+    }
+
+    private fun observeProfileImageLiveData() {
         signUpViewModel.profileImageLiveData.observe(viewLifecycleOwner) {
             with(binding.inSelectProfileImage) {
                 it.path?.let { path ->
@@ -311,6 +373,20 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 }
             }
         }
+    }
+
+    private fun observeTermsOfServiceLiveData() {
+        signUpViewModel.termsOfServiceLiveData.observe(viewLifecycleOwner) {
+            with(binding.inTermsOfService) {
+                tvBtnCheckAll.isSelected = (it.isCheckedService && it.isCheckedPrivacy)
+                tvBtnCheckService.isSelected = it.isCheckedService
+                tvBtnCheckPrivacy.isSelected = it.isCheckedPrivacy
+                refreshNextButton()
+            }
+        }
+    }
+
+    private fun observeSignUpResultLiveData() {
         signUpViewModel.signUpResultLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
             when (it) {
                 is ModelState.Loading -> {
@@ -380,14 +456,25 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     private fun refreshNextButton() {
         val memberTypeData = signUpViewModel.memberTypeLiveData.value
         val nickNameData = signUpViewModel.nickNameLiveData.value
+        val termsOfServiceData = signUpViewModel.termsOfServiceLiveData.value
         //TODO 프로필 사진 설정페이지, 약관페이지 추가
-        binding.tvBtnNext.isEnabled = when (signUpViewModel.pageLiveData.value) {
-            SignUpPage.SELECT_TYPE -> memberTypeData?.selectedType != null
-            SignUpPage.SELECT_PARENT_TYPE -> memberTypeData?.selectedTypeId != null
-            SignUpPage.SET_NICKNAME -> nickNameData?.nickNameState == NickNameValidationState.VALID
-            SignUpPage.SET_PROFILE_IMAGE -> true
-            else -> false
+        val nextBtnStringRes = when (signUpViewModel.pageLiveData.value) {
+            SignUpPage.TERMS_OF_SERVICE -> R.string.signup_complete
+            else -> R.string.common_next
         }
+        binding.tvBtnNext.text = getString(nextBtnStringRes)
+        binding.tvBtnNext.isEnabled =
+            when (signUpViewModel.pageLiveData.value) {
+                SignUpPage.SELECT_TYPE -> memberTypeData?.selectedType != null
+                SignUpPage.SELECT_PARENT_TYPE -> memberTypeData?.selectedTypeId != null
+                SignUpPage.SET_NICKNAME -> nickNameData?.nickNameState == NickNameValidationState.VALID
+                SignUpPage.SET_PROFILE_IMAGE -> true
+                SignUpPage.TERMS_OF_SERVICE -> {
+                    termsOfServiceData?.run { isCheckedPrivacy && isCheckedService } ?: false
+                }
+
+                else -> false
+            }
     }
 
 
