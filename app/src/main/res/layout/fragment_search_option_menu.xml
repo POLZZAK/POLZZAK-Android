@@ -7,50 +7,94 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/ivIcon"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clContent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/tvContent"
+            android:layout_marginTop="90dp"
+            app:layout_constraintBottom_toTopOf="@id/clBtnGroup"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:background="@drawable/ic_launcher_background" />
+            app:layout_constraintVertical_chainStyle="spread_inside">
 
-        <TextView
-            android:id="@+id/tvContent"
+            <ImageView
+                android:id="@+id/ivIcon"
+                android:layout_width="256dp"
+                android:layout_height="256dp"
+
+                app:layout_constraintBottom_toTopOf="@id/tvContent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                tools:background="@drawable/ic_launcher_background" />
+
+            <TextView
+                android:id="@+id/tvContent"
+                style="@style/body.18.500"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="42dp"
+                android:gravity="center"
+                android:textColor="@color/gray_700"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ivIcon"
+                tools:text="칭찬 도장판을 만들려면\n아이와 연동이 필요해요" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clBtnGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_constraintBottom_toTopOf="@id/tvBtnSearch"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivIcon"
-            tools:text="칭찬 도장판을 만들려면\n아이와 연동이 필요해요" />
-
-        <TextView
-            android:id="@+id/tvBtnSearch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            app:layout_constraintBottom_toTopOf="@id/tvBtnCancel"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvContent"
-            tools:text="아이 찾기" />
-
-        <!-- TODO string resource 적용 -->
-        <TextView
-            android:id="@+id/tvBtnCancel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="나중에 할게요"
+            android:layout_marginBottom="36dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvBtnSearch"
-            tools:text="나중에 할게요" />
+            app:layout_constraintTop_toBottomOf="@id/clContent">
+
+            <TextView
+                android:id="@+id/tvBtnSearch"
+                style="@style/subtitle.16.600"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/shape_rectangle_primary_r8"
+                android:gravity="center"
+                android:paddingVertical="14dp"
+
+                android:textColor="@color/white"
+                app:layout_constraintBottom_toTopOf="@id/tvBtnCancel"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="아이 찾기" />
+
+            <!-- TODO string resource 적용 -->
+            <TextView
+                android:id="@+id/tvBtnCancel"
+                style="@style/subtitle.16.600"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:background="@drawable/shape_rectangle_white_stroke_gray_400_r8"
+                android:gravity="center"
+                android:paddingVertical="14dp"
+                android:text="@string/common_do_later"
+                android:textColor="@color/gray_400"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvBtnSearch"
+                app:layout_constraintVertical_bias="1.0"
+                tools:text="나중에 할게요" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
