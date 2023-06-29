@@ -3,51 +3,54 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO 디자인 가이드 적용, string res로 변경 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <!-- TODO 백버튼, progress 디자인 적용 -->
-        <ImageView
-            android:id="@+id/ivBtnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:background="@color/gray_100">
 
-        <ImageView
-            android:id="@+id/ivProgress1"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clHeader"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/ivProgress2"
-            app:layout_constraintEnd_toStartOf="@id/ivProgress2"
-            app:layout_constraintTop_toTopOf="@id/ivProgress2" />
-
-        <ImageView
-            android:id="@+id/ivProgress2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@id/ivProgress3"
-            app:layout_constraintEnd_toStartOf="@id/ivProgress3"
-            app:layout_constraintTop_toTopOf="@id/ivProgress3" />
-
-        <ImageView
-            android:id="@+id/ivProgress3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="10dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivBtnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_navigation_previous"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.polzzak_android.presentation.component.CheckedProgressView
+                android:id="@+id/cpvProgressView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                app:betweenMargins="8dp"
+                app:checkedDrawable="@drawable/shape_oval_primary_400"
+                app:drawableHeight="8dp"
+                app:drawableWidth="8dp"
+                app:layout_constraintBottom_toBottomOf="@id/ivBtnBack"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:maxCount="4"
+                app:uncheckedDrawable="@drawable/shape_oval_gray_300" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
 
         <include
             android:id="@+id/inSelectType"
             layout="@layout/layout_signup_select_type"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvBtnNext"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivBtnBack"
+            app:layout_constraintTop_toBottomOf="@id/clHeader"
             tools:visibility="gone" />
 
         <include
@@ -55,10 +58,10 @@
             layout="@layout/layout_signup_select_parent_type"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvBtnNext"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivBtnBack"
+            app:layout_constraintTop_toBottomOf="@id/clHeader"
             tools:visibility="gone" />
 
         <include
@@ -66,10 +69,10 @@
             layout="@layout/layout_signup_set_nickname"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvBtnNext"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivBtnBack"
+            app:layout_constraintTop_toBottomOf="@id/clHeader"
             tools:visibility="gone" />
 
         <include
@@ -77,9 +80,37 @@
             layout="@layout/layout_signup_select_profile_image"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/tvBtnNext"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivBtnBack" />
+            app:layout_constraintTop_toBottomOf="@id/clHeader"
+            tools:visibility="gone" />
+
+        <include
+            android:id="@+id/inTermsOfService"
+            layout="@layout/layout_signup_terms_of_service"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@id/tvBtnNext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/clHeader" />
+
+        <TextView
+            android:id="@+id/tvBtnNext"
+            style="@style/subtitle.16.600"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="36dp"
+            android:background="@drawable/selector_btn_signup_next"
+            android:gravity="center"
+            android:paddingHorizontal="24dp"
+            android:paddingVertical="12dp"
+            android:text="@string/common_next"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

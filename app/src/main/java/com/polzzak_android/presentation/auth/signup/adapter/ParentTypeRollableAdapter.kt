@@ -6,8 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemSignupParentTypeBinding
 import com.polzzak_android.presentation.auth.model.MemberTypeDetail
 
-class ParentTypeRollableAdapter(private val parentTypes: List<MemberTypeDetail.Parent?> = listOf(null)) :
-    RecyclerView.Adapter<ParentTypeRollableAdapter.SignUpParentTypeItemViewHolder>() {
+class ParentTypeRollableAdapter(
+    private val parentTypes: List<MemberTypeDetail.Parent?> = listOf(
+        null
+    )
+) : RecyclerView.Adapter<ParentTypeRollableAdapter.SignUpParentTypeItemViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -38,7 +41,13 @@ class ParentTypeRollableAdapter(private val parentTypes: List<MemberTypeDetail.P
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(parentType: MemberTypeDetail.Parent?) {
+            binding.root.tag = if (parentType == null) ITEM_EMPTY_TAG else ITEM_NORMAL_TAG
             binding.tvTitle.text = parentType?.label ?: "선택해주세요"
         }
+    }
+
+    companion object {
+        const val ITEM_EMPTY_TAG = "item_empty_tag"
+        const val ITEM_NORMAL_TAG = "item_normal_tag"
     }
 }

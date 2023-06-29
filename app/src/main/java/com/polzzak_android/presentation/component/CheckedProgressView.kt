@@ -98,7 +98,7 @@ class CheckedProgressView @JvmOverloads constructor(
         val checkedDrawable =
             checkedDrawableRes?.let { ContextCompat.getDrawable(context, it) }
         val uncheckedDrawable =
-            checkedDrawableRes?.let { ContextCompat.getDrawable(context, it) }
+            uncheckedDrawableRes?.let { ContextCompat.getDrawable(context, it) }
         var left = 0
         repeat(maxCount) {
             val target = if (it >= checkedCount) uncheckedDrawable else checkedDrawable

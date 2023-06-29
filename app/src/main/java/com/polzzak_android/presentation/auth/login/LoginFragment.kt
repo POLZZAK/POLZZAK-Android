@@ -14,6 +14,8 @@ import com.polzzak_android.R
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentLoginBinding
 import com.polzzak_android.presentation.auth.login.model.LoginInfoUiModel
+import com.polzzak_android.presentation.auth.model.MemberTypeDetail
+import com.polzzak_android.presentation.auth.model.SocialLoginType
 import com.polzzak_android.presentation.auth.signup.SignUpFragment
 import com.polzzak_android.presentation.common.MainViewModel
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -69,6 +71,16 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         // todo: 보호자 프래그먼트 이동 임시 나중에 삭제
         binding.ivLogo.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_protectorHostFragment)
+        }
+
+        //TODO 회원가입 이동 테스트
+        binding.tvTitle.setOnClickListener {
+            val mockSignUpModel = LoginInfoUiModel.SignUp(
+                userName = "t26",
+                socialType = SocialLoginType.GOOGLE,
+                parentTypes = List(17) { MemberTypeDetail.Parent(id = it + 2, label = "label:$it") }
+            )
+            signUp(model = mockSignUpModel)
         }
     }
 

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="16dp">
+
+        <TextView
+            android:id="@+id/tvGuideTitle"
+            style="@style/title.22.700"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/signup_terms_of_service_guide_title"
+            android:textColor="@color/gray_800"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clCheckAll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@color/primary_150"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvGuideTitle"
+            app:layout_goneMarginTop="16dp">
+
+            <TextView
+                android:id="@+id/tvBtnCheckAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="8dp"
+                android:text="@string/signup_terms_of_service_agree_all"
+                android:textColor="@color/selector_signup_terms_of_service_checklist"
+                app:drawableStartCompat="@drawable/selector_signup_terms_of_service_check"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:drawableStart="@drawable/selector_signup_terms_of_service_check" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tvBtnCheckService"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:drawablePadding="8dp"
+            android:text="@string/signup_terms_of_service_agree_service"
+            android:textColor="@color/selector_signup_terms_of_service_checklist"
+            app:drawableStartCompat="@drawable/selector_signup_terms_of_service_check"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/clCheckAll"
+            tools:drawableStart="@drawable/selector_signup_terms_of_service_check" />
+
+        <ImageView
+            android:id="@+id/ivBtnServiceDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/ic_navigation_right_gray_400"
+            app:layout_constraintBottom_toBottomOf="@id/tvBtnCheckService"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvBtnCheckService" />
+
+        <TextView
+            android:id="@+id/tvBtnCheckPrivacy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:drawablePadding="8dp"
+            android:text="@string/signup_terms_of_service_agree_privacy"
+            android:textColor="@color/selector_signup_terms_of_service_checklist"
+            app:drawableStartCompat="@drawable/selector_signup_terms_of_service_check"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvBtnCheckService"
+            tools:drawableStart="@drawable/selector_signup_terms_of_service_check" />
+
+        <ImageView
+            android:id="@+id/ivBtnPrivacyDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/ic_navigation_right_gray_400"
+            app:layout_constraintBottom_toBottomOf="@id/tvBtnCheckPrivacy"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvBtnCheckPrivacy" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -17,6 +17,7 @@ import com.polzzak_android.presentation.auth.signup.model.NickNameValidationStat
 import com.polzzak_android.presentation.auth.signup.model.ProfileImageUiModel
 import com.polzzak_android.presentation.auth.signup.model.SignUpPage
 import com.polzzak_android.presentation.auth.signup.model.SignUpResultUiModel
+import com.polzzak_android.presentation.auth.signup.model.SignUpTermsOfServiceModel
 import com.polzzak_android.presentation.common.model.ModelState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -37,13 +38,17 @@ class SignUpViewModel @AssistedInject constructor(
     private val _memberTypeLiveData = MutableLiveData<MemberTypeUiModel>()
     val memberTypeLiveData: LiveData<MemberTypeUiModel> = _memberTypeLiveData
 
-    private val _profileImageLiveData = MutableLiveData<ProfileImageUiModel>()
+    private val _profileImageLiveData = MutableLiveData<ProfileImageUiModel>(ProfileImageUiModel())
     val profileImageLiveData: LiveData<ProfileImageUiModel> = _profileImageLiveData
 
     private val _signUpResultLiveData =
         MutableLiveData<EventWrapper<ModelState<SignUpResultUiModel>>>()
     val signUpResultLiveData: LiveData<EventWrapper<ModelState<SignUpResultUiModel>>> =
         _signUpResultLiveData
+
+    private val _termsOfServiceLiveData = MutableLiveData<SignUpTermsOfServiceModel>()
+    val termsOfServiceLiveData: LiveData<SignUpTermsOfServiceModel> =
+        _termsOfServiceLiveData
 
     private var checkNickNameValidationJob: Job? = null
     private var signUpJob: Job? = null
@@ -60,6 +65,7 @@ class SignUpViewModel @AssistedInject constructor(
 
             SignUpPage.SELECT_PARENT_TYPE -> _pageLiveData.value = SignUpPage.SET_NICKNAME
             SignUpPage.SET_NICKNAME -> _pageLiveData.value = SignUpPage.SET_PROFILE_IMAGE
+            SignUpPage.SET_PROFILE_IMAGE -> _pageLiveData.value = SignUpPage.TERMS_OF_SERVICE
             else -> {
                 //do nothing
             }
@@ -79,6 +85,10 @@ class SignUpViewModel @AssistedInject constructor(
 
             SignUpPage.SET_PROFILE_IMAGE -> {
                 _pageLiveData.value = SignUpPage.SET_NICKNAME
+            }
+
+            SignUpPage.TERMS_OF_SERVICE -> {
+                _pageLiveData.value = SignUpPage.SET_PROFILE_IMAGE
             }
 
             else -> {
@@ -169,6 +179,21 @@ class SignUpViewModel @AssistedInject constructor(
                 }
             }
 
+        }
+    }
+
+    fun checkTermsOfService(clickModel: SignUpTermsOfServiceModel.ClickModel) {
+        val model = termsOfServiceLiveData.value ?: SignUpTermsOfServiceModel()
+        _termsOfServiceLiveData.value = when (clickModel) {
+            SignUpTermsOfServiceModel.ClickModel.SERVICE -> model.copy(isCheckedService = !model.isCheckedService)
+            SignUpTermsOfServiceModel.ClickModel.PRIVACY -> model.copy(isCheckedPrivacy = !model.isCheckedPrivacy)
+            SignUpTermsOfServiceModel.ClickModel.ALL -> {
+                val isChecked = !(model.isCheckedService && model.isCheckedPrivacy)
+                SignUpTermsOfServiceModel(
+                    isCheckedService = isChecked,
+                    isCheckedPrivacy = isChecked
+                )
+            }
         }
     }
 

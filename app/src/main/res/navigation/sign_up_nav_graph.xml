@@ -16,7 +16,16 @@
         <action
             android:id="@+id/action_signUpFragment_to_protectorOnBoardingFragment"
             app:destination="@id/protectorOnBoardingFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_signUpTermDetailFragment"
+            app:destination="@id/signUpTermDetailFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/signUpTermDetailFragment"
+        android:name="com.polzzak_android.presentation.auth.signup.SignUpTermDetailFragment"
+        android:label="SignUpTermDetailFragment"
+        tools:layout="@layout/fragment_signup_term_detail" />
 
     <fragment
         android:id="@+id/kidOnBoardingFragment"
