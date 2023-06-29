@@ -46,4 +46,27 @@
     <string name="signup_terms_of_service_agree_all">모두 동의</string>
     <string name="signup_terms_of_service_agree_service">서비스 이용약관에 동의합니다.</string>
     <string name="signup_terms_of_service_agree_privacy">개인정보처리방침에 동의합니다.</string>
+
+    <!-- OnBoarding -->
+    <string name="on_boarding_kid_first_title">폴짝!\n회원이 되신 것을 환영해요</string>
+    <string name="on_boarding_kid_first_content">칭찬 도장을 모으며\n폴짝! 성장해봐요</string>
+    <string name="on_boarding_kid_second_title">먼저 보호자와 연동이 필요해요!</string>
+    <string name="on_boarding_kid_second_content">보호자와 연동해야\n도장판을 받을 수 있어요</string>
+    <string name="on_boarding_kid_third_title">보호자와 함께\n도장판을 만들어보세요!</string>
+    <string name="on_boarding_kid_third_content">갖고 싶은 선물을 정하고\n선물을 얻기 위한 미션을 정해보세요</string>
+    <string name="on_boarding_kid_fourth_title">도장판을 다 모으면\n선물 쿠폰이 발행돼요!</string>
+    <string name="on_boarding_kid_fourth_content">수고했어요.\n원하는 게 있다면 도장판을 또 생성해봐요!</string>
+    <string name="on_boarding_kid_fifth_title">누가누가\n제일 높이 올라갈까!</string>
+    <string name="on_boarding_kid_fifth_content">포인트를 모아서\n계단을 폴짝! 올라갈 수 있어요</string>
+    <string name="on_boarding_parent_first_title">폴짝!\n회원이 되신 것을 환영해요</string>
+    <string name="on_boarding_parent_first_content">칭찬 도장을 모으며\n폴짝! 성장해봐요</string>
+    <string name="on_boarding_parent_second_title">먼저 아이와 연동이 필요해요!</string>
+    <string name="on_boarding_parent_second_content">아이와 연동을 해야\n도장판을 만들어 줄 수 있어요</string>
+    <string name="on_boarding_parent_third_title">아이와 함께\n도장판을 만들어보세요!</string>
+    <string name="on_boarding_parent_third_content">아이가 갖고 싶은 선물을 정하고\n함께 미션을 만들어보세요.</string>
+    <string name="on_boarding_parent_fourth_title">도장판을 다 모으면\n선물 쿠폰을 발행해주세요!</string>
+    <string name="on_boarding_parent_fourth_content">아이가 열심히 노력했어요.\n또 다른 도장판으로 동기부여를 해주세요!</string>
+    <string name="on_boarding_parent_fifth_title">열심히 활동하면\n포인트가 쌓여요!</string>
+    <string name="on_boarding_parent_fifth_content">아이와 열심히 활동하면\n계단을 폴짝! 올라갈 수 있어요</string>
+
 </resources>
