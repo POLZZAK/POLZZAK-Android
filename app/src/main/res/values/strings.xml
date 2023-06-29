@@ -16,6 +16,7 @@
     <string name="common_protector">보호자</string>
     <string name="common_polzzak">폴짝</string>
     <string name="common_next">다음</string>
+    <string name="common_do_start">시작하기</string>
 
     <!-- Login -->
     <string name="login_title">참 잘 했어요 도장 쾅!</string>

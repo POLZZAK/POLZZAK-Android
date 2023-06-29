@@ -25,4 +25,7 @@ class KidOnBoardingFragment : BaseOnBoardingFragment() {
             contentStringRes = contentStringResList[it]
         )
     }
+
+    override val actionMoveNextPage: Int =
+        R.id.action_kidOnBoardingFragment_to_kidSearchOptionMenuFragment
 }

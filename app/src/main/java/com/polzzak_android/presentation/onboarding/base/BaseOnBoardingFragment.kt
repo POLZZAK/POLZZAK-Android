@@ -1,8 +1,12 @@
 package com.polzzak_android.presentation.onboarding.base
 
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
+import androidx.annotation.IdRes
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.polzzak_android.R
 import com.polzzak_android.common.util.convertDp2Px
@@ -17,6 +21,9 @@ abstract class BaseOnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>(
     override val layoutResId = R.layout.fragment_on_boarding
     private val onBoardingViewModel by viewModels<OnBoardingViewModel>()
     abstract val pageData: List<OnBoardingPageModel>
+
+    @get:IdRes
+    abstract val actionMoveNextPage: Int
 
     override fun initView() {
         super.initView()
@@ -37,10 +44,13 @@ abstract class BaseOnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>(
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
                     cpvProgress.isVisible = (position < items.lastIndex)
-                    tvBtnStart.isVisible = (position == items.lastIndex)
+                    tvBtnStart.visibility = if (position == items.lastIndex) VISIBLE else INVISIBLE
                     cpvProgress.checkedCount = position + 1
                 }
             })
+            tvBtnStart.setOnClickListener {
+                findNavController().navigate(actionMoveNextPage)
+            }
         }
     }
 

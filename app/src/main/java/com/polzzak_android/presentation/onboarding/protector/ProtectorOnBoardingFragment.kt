@@ -25,4 +25,7 @@ class ProtectorOnBoardingFragment : BaseOnBoardingFragment() {
             contentStringRes = contentStringResList[it]
         )
     }
+
+    override val actionMoveNextPage: Int =
+        R.id.action_protectorOnBoardingFragment_to_protectorSearchOptionMenuFragment
 }

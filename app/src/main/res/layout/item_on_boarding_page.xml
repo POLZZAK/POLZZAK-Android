@@ -9,12 +9,15 @@
 
         <ImageView
             android:id="@+id/ivIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:layout_marginTop="90dp"
             android:background="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toTopOf="@id/tvTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -22,7 +25,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="90dp"
             android:textColor="@color/gray_800"
+            app:layout_constraintBottom_toTopOf="@id/tvContent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ivIcon"
@@ -35,7 +40,9 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginBottom="126dp"
             android:textColor="@color/gray_600"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
