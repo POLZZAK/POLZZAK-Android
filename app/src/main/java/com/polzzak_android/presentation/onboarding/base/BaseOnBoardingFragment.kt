@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.onboarding.base
 
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
+import androidx.activity.addCallback
 import androidx.annotation.IdRes
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
@@ -13,6 +14,7 @@ import com.polzzak_android.common.util.convertDp2Px
 import com.polzzak_android.databinding.FragmentOnBoardingBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.onboarding.OnBoardingViewModel
 import com.polzzak_android.presentation.onboarding.item.OnBoardingPageItem
 import com.polzzak_android.presentation.onboarding.model.OnBoardingPageModel
@@ -27,6 +29,9 @@ abstract class BaseOnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>(
 
     override fun initView() {
         super.initView()
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+            shotBackPressed()
+        }
         with(binding) {
             val adapter = BindableItemAdapter()
             vpPager.adapter = adapter
