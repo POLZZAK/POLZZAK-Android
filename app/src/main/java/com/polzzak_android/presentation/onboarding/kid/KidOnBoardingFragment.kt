@@ -22,7 +22,9 @@ class KidOnBoardingFragment : BaseOnBoardingFragment() {
     override val pageData = List(5) {
         OnBoardingPageModel(
             titleStringRes = titleStringResList[it],
-            contentStringRes = contentStringResList[it]
+            contentStringRes = contentStringResList[it],
+            progress = it + 1,
+            maxCount = 5
         )
     }
 

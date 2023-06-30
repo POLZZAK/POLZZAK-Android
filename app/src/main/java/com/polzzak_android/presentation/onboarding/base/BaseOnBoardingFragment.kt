@@ -1,25 +1,21 @@
 package com.polzzak_android.presentation.onboarding.base
 
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
 import androidx.activity.addCallback
 import androidx.annotation.IdRes
-import androidx.core.view.doOnPreDraw
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.polzzak_android.R
-import com.polzzak_android.common.util.convertDp2Px
 import com.polzzak_android.databinding.FragmentOnBoardingBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.shotBackPressed
+import com.polzzak_android.presentation.onboarding.OnBoardingClickListener
 import com.polzzak_android.presentation.onboarding.OnBoardingViewModel
 import com.polzzak_android.presentation.onboarding.item.OnBoardingPageItem
 import com.polzzak_android.presentation.onboarding.model.OnBoardingPageModel
 
-abstract class BaseOnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>() {
+abstract class BaseOnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>(),
+    OnBoardingClickListener {
     override val layoutResId = R.layout.fragment_on_boarding
     private val onBoardingViewModel by viewModels<OnBoardingViewModel>()
     abstract val pageData: List<OnBoardingPageModel>
@@ -37,32 +33,14 @@ abstract class BaseOnBoardingFragment : BaseFragment<FragmentOnBoardingBinding>(
             vpPager.adapter = adapter
             val items = pageData.map { createOnBoardingPageItem(uiModel = it) }
             adapter.updateItem(items)
-            val betweenMarginPx = convertDp2Px(binding.root.context, PAGE_BETWEEN_MARGIN_DP)
-            cpvProgress.betweenMarginsPx = betweenMarginPx
-            cpvProgress.maxCount = items.size
-            cpvProgress.doOnPreDraw {
-                cpvProgress.drawableWidthPx =
-                    (cpvProgress.width - (betweenMarginPx * items.size - 1)) / items.size
-            }
             vpPager.setCurrentItem(onBoardingViewModel.pageIndex, false)
-            vpPager.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    cpvProgress.isVisible = (position < items.lastIndex)
-                    tvBtnStart.visibility = if (position == items.lastIndex) VISIBLE else INVISIBLE
-                    cpvProgress.checkedCount = position + 1
-                }
-            })
-            tvBtnStart.setOnClickListener {
-                findNavController().navigate(actionMoveNextPage)
-            }
         }
     }
 
     private fun createOnBoardingPageItem(uiModel: OnBoardingPageModel): OnBoardingPageItem =
-        OnBoardingPageItem(model = uiModel)
+        OnBoardingPageItem(model = uiModel, clickListener = this@BaseOnBoardingFragment)
 
-    companion object {
-        private const val PAGE_BETWEEN_MARGIN_DP = 5
+    override fun onNext() {
+        findNavController().navigate(actionMoveNextPage)
     }
 }

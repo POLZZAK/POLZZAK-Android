@@ -4,5 +4,7 @@ import androidx.annotation.StringRes
 
 data class OnBoardingPageModel(
     @StringRes val titleStringRes: Int,
-    @StringRes val contentStringRes: Int
+    @StringRes val contentStringRes: Int,
+    val progress: Int,
+    val maxCount: Int
 )
