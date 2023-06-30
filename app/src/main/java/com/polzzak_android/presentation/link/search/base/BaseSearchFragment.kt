@@ -1,10 +1,10 @@
 package com.polzzak_android.presentation.link.search.base
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
@@ -13,6 +13,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentSearchBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -66,15 +68,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     private var dialog: DialogFragment? = null
 
     override fun initView() {
-        with(binding) {
-            //TODO string resource로 변경
-            initCommonView()
-            initMainPageView()
-            initRequestPageView()
-        }
+        initCommonView()
+        initMainPageView()
+        initRequestPageView()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun initCommonView() {
         with(binding) {
             tvTitle.text = "$targetLinkTypeStringOrEmpty 찾기"
@@ -84,12 +82,10 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
             tvBtnCancel.setOnClickListener {
                 searchViewModel.setPage(LinkPageTypeModel.MAIN)
             }
-            root.setOnTouchListener { _, _ ->
+            root.setOnTouchListener { view, motionEvent ->
                 hideKeyboard()
+                view.performClick()
                 false
-            }
-            ivBtnBack.setOnClickListener {
-                //TODO back 버튼
             }
             initSearchEditTextView()
         }
@@ -132,7 +128,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     private fun initMainPageView() {
         with(binding.inMain) {
             //TODO string resource 적용
-            setEnabledBtnComplete(isEmpty = true)
+//            setEnabledBtnComplete(isEmpty = true)
             rvRequestList.adapter = BindableItemAdapter()
             tvBtnComplete.setOnClickListener {
                 findNavController().navigate(actionMoveMainFragment)
@@ -151,26 +147,50 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     private fun initRequestPageView() {
         with(binding.inRequest) {
             rvSearchResult.adapter = BindableItemAdapter()
+            rvSearchResult.addOnItemTouchListener(object : OnItemTouchListener {
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    hideKeyboard()
+                    return false
+                }
+
+                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+                    //do nothing
+                }
+
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+                    //do nothing
+                }
+            })
         }
     }
 
     private fun hideKeyboard() {
+        //TODO 공통코드로 분리
         activity?.run {
-            binding.etSearch.clearFocus()
             val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputManager?.hideSoftInputFromWindow(
-                binding.etSearch.windowToken,
-                InputMethodManager.HIDE_NOT_ALWAYS
-            )
+            currentFocus?.let { currentFocus ->
+                inputManager?.hideSoftInputFromWindow(
+                    currentFocus.windowToken,
+                    InputMethodManager.HIDE_NOT_ALWAYS
+                )
+            }
         }
+
+        binding.etSearch.clearFocus()
     }
 
     override fun initObserver() {
         searchViewModel.pageLiveData.observe(viewLifecycleOwner) {
             with(binding) {
+                if (it == LinkPageTypeModel.MAIN) {
+                    hideKeyboard()
+                    etSearch.clearFocus()
+                }
                 inMain.root.isVisible = (it == LinkPageTypeModel.MAIN)
                 inRequest.root.isVisible = (it == LinkPageTypeModel.REQUEST)
                 tvBtnCancel.isVisible = (it == LinkPageTypeModel.REQUEST)
+                etSearch.setText("")
+                ivIconSearch.isVisible = (it == LinkPageTypeModel.MAIN)
             }
         }
 
@@ -243,11 +263,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
                             )
                         })
                     }
-                    setEnabledBtnComplete(isEmpty = it.data.isEmpty())
                 }
 
                 is ModelState.Error -> {}
             }
+            setEnabledBtnComplete(isEmpty = it.data.isNullOrEmpty())
             adapter.updateItem(item = items)
         }
     }

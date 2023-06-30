@@ -9,10 +9,15 @@
 
         <TextView
             android:id="@+id/tvRequestListTitle"
+            style="@style/subtitle.16.600"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="요청 보낸 목록"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/search_main_send_request_list"
+            android:textColor="@color/gray_600"
             android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/rvRequestList"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -21,6 +26,7 @@
             android:id="@+id/rvRequestList"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="6dp"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constrainedHeight="true"
@@ -33,9 +39,15 @@
 
         <TextView
             android:id="@+id/tvBtnComplete"
+            style="@style/subtitle.16.600"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="36dp"
+            android:background="@drawable/selector_btn_rectangle_r8_selected"
             android:gravity="center"
+            android:paddingVertical="12dp"
+            android:textColor="@color/white"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

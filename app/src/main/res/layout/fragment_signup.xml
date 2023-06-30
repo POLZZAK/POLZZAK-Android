@@ -103,7 +103,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="36dp"
-            android:background="@drawable/selector_btn_rectangle_r8"
+            android:background="@drawable/selector_btn_rectangle_r8_enabled"
             android:gravity="center"
             android:paddingHorizontal="24dp"
             android:paddingVertical="12dp"

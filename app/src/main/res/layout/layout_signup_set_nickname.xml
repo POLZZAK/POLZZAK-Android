@@ -78,7 +78,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/ic_signup_set_nickname_clear"
+                android:background="@drawable/ic_edit_text_clear"
                 app:layout_constraintBottom_toBottomOf="@id/etInput"
                 app:layout_constraintEnd_toEndOf="@id/etInput"
                 app:layout_constraintTop_toTopOf="@id/etInput" />

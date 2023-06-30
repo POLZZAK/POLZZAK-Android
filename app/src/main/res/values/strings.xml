@@ -20,6 +20,8 @@
     <string name="common_do_later">나중에 할게요</string>
     <string name="common_search_kid">아이 찾기</string>
     <string name="common_search_parent">보호자 찾기</string>
+    <string name="common_cancel_request">요청 취소</string>
+    <string name="common_cancel">취소</string>
 
     <!-- Login -->
     <string name="login_title">참 잘 했어요 도장 쾅!</string>
@@ -76,4 +78,5 @@
     <!-- Search -->
     <string name="search_main_kid_content">칭찬 도장판을 받으려면\n보호자와 연동이 필요해요</string>
     <string name="search_main_parent_content">칭찬 도장판을 만들려면\n아이와 연동이 필요해요</string>
+    <string name="search_main_send_request_list">요청 보낸 목록</string>
 </resources>
