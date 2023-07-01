@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.polzzak_android.R
+import com.polzzak_android.common.util.convertDp2Px
 import com.polzzak_android.databinding.FragmentSearchBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
@@ -24,6 +25,7 @@ import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.item.LinkMainEmptyItem
+import com.polzzak_android.presentation.link.item.LinkMainHeaderItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
 import com.polzzak_android.presentation.link.item.LinkRequestEmptyItem
 import com.polzzak_android.presentation.link.item.LinkRequestGuideItem
@@ -34,6 +36,7 @@ import com.polzzak_android.presentation.link.model.LinkPageTypeModel
 import com.polzzak_android.presentation.link.model.LinkRequestUserModel
 import com.polzzak_android.presentation.link.model.LinkUserModel
 import com.polzzak_android.presentation.link.search.SearchClickListener
+import com.polzzak_android.presentation.link.search.SearchMainItemDecoration
 import com.polzzak_android.presentation.link.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -127,9 +130,21 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
 
     private fun initMainPageView() {
         with(binding.inMain) {
-            //TODO string resource 적용
-//            setEnabledBtnComplete(isEmpty = true)
             rvRequestList.adapter = BindableItemAdapter()
+            val betweenMarginPx = convertDp2Px(
+                binding.root.context,
+                MAIN_REQUEST_ITEM_BETWEEN_MARGIN_DP
+            )
+            val bottomMarginPx = convertDp2Px(
+                binding.root.context,
+                MAIN_REQUEST_ITEM_BOTTOM_MARGIN_DP
+            )
+            rvRequestList.addItemDecoration(
+                SearchMainItemDecoration(
+                    betweenMarginPx = betweenMarginPx,
+                    bottomMarginPx = bottomMarginPx
+                )
+            )
             tvBtnComplete.setOnClickListener {
                 findNavController().navigate(actionMoveMainFragment)
             }
@@ -238,11 +253,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
             }
 
         }
+        observeMain()
         observeRequest()
-        observeSearchUser()
     }
 
-    private fun observeRequest() {
+    private fun observeMain() {
         searchViewModel.requestSentLiveData.observe(viewLifecycleOwner) {
             val requestListRecyclerView = binding.inMain.rvRequestList
             val adapter =
@@ -252,9 +267,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
             when (it) {
                 is ModelState.Loading -> {}
                 is ModelState.Success -> {
+                    val headerTitleStr = getString(R.string.search_main_header_text)
+                    items.add(LinkMainHeaderItem(text = headerTitleStr))
                     if (it.data.isEmpty()) {
-                        //TODO string resource로 변경
-                        items.add(LinkMainEmptyItem("보낸 요청이 없어요"))
+                        val emptyContentStr = getString(R.string.search_main_empty_text)
+                        items.add(LinkMainEmptyItem(text = emptyContentStr))
                     } else {
                         items.addAll(it.data.map { model ->
                             LinkMainSentRequestItem(
@@ -272,7 +289,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         }
     }
 
-    private fun observeSearchUser() {
+    private fun observeRequest() {
         searchViewModel.searchUserLiveData.observe(viewLifecycleOwner) {
             val adapter =
                 (binding.inRequest.rvSearchResult.adapter as? BindableItemAdapter) ?: return@observe
@@ -367,5 +384,10 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
             accessToken = getAccessTokenOrNull() ?: "",
             linkUserModel = linkUserModel
         )
+    }
+
+    companion object {
+        private const val MAIN_REQUEST_ITEM_BETWEEN_MARGIN_DP = 24
+        private const val MAIN_REQUEST_ITEM_BOTTOM_MARGIN_DP = 20
     }
 }
