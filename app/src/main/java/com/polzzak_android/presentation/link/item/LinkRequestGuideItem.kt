@@ -15,8 +15,10 @@ class LinkRequestGuideItem(private val model: LinkRequestUserModel.Guide) :
         other is LinkRequestGuideItem && this.model == other.model
 
     override fun bind(binding: ItemLinkRequestGuideBinding, position: Int) {
-        val targetString = binding.root.context.getString(model.targetLinkMemberType.stringRes)
-        //TODO string resource 적용
-        binding.tvContent.text = "연동된 ${targetString}에게\n칭찬 도장판을 만들어 줄 수 있어요"
+        val context = binding.root.context
+        val targetText = context.getString(model.targetLinkMemberType.stringRes)
+        val contentText = context.getString(R.string.search_request_guide_text, targetText)
+        binding.root.context
+        binding.tvContent.text = contentText
     }
 }
