@@ -15,7 +15,8 @@ class LinkRequestEmptyItem(private val model: LinkRequestUserModel.Empty) :
         other is LinkRequestEmptyItem && this.model == other.model
 
     override fun bind(binding: ItemLinkRequestEmptyBinding, position: Int) {
-        //TODO string resource 적용
-        binding.tvContent.text = "${model.nickName}님을\n찾을 수 없어요"
+        val contentText =
+            binding.root.context.getString(R.string.search_request_empty_text, model.nickName)
+        binding.tvContent.text = contentText
     }
 }
