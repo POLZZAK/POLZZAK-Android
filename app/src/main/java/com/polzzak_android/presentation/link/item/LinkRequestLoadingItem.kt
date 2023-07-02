@@ -17,8 +17,8 @@ class LinkRequestLoadingItem(
         other is LinkRequestLoadingItem && this.nickName == other.nickName
 
     override fun bind(binding: ItemLinkRequestLoadingBinding, position: Int) {
-        //TODO string resource 적용
-        binding.tvContent.text = "${nickName}님을\n열심히 찾는 중이에요"
+        binding.tvContent.text =
+            binding.root.context.getString(R.string.search_request_loading_text, nickName)
         binding.tvBtnCancel.setOnClickListener {
             clickListener.cancelSearch()
         }

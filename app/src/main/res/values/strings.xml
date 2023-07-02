@@ -82,4 +82,5 @@
     <string name="search_main_empty_text">보낸 요청이 없어요</string>
     <string name="search_request_guide_text">연동된 %s에게\n칭찬 도장판을 만들어 줄 수 있어요</string>
     <string name="search_request_empty_text">%s님을\n찾을 수 없어요</string>
+    <string name="search_request_loading_text">%s님을\n열심히 찾는 중이에요</string>
 </resources>

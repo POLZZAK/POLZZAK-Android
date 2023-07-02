@@ -7,10 +7,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- TODO Loading drawable 추가 -->
         <ImageView
             android:id="@+id/ivProgress"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/ic_launcher_background"
             app:layout_constraintBottom_toTopOf="@id/tvContent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -20,22 +21,28 @@
 
         <TextView
             android:id="@+id/tvContent"
+            style="@style/body.14.700"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:gravity="center"
+            android:textColor="@color/gray_800"
             app:layout_constraintBottom_toTopOf="@id/tvBtnCancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ivProgress"
             tools:text="쿠우쿠우님을\n열심히 찾는 중이에요" />
 
-        <!-- TODO string resource로 변경 -->
         <TextView
             android:id="@+id/tvBtnCancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/caption.12.700"
+            android:layout_width="93dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/shape_rectangle_primary_r4"
             android:gravity="center"
-            android:text="취소"
+            android:text="@string/common_cancel"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
