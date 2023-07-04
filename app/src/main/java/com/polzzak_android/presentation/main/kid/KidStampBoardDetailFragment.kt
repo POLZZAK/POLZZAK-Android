@@ -45,7 +45,9 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                         stampBoardData = viewModel.stampBoardData,
                         onStampClick = this@KidStampBoardDetailFragment::openStampInfoDialog,
                         onEmptyStampClick = this@KidStampBoardDetailFragment::openStampRequestDialog,
-                        onRewardButtonClick = {}
+                        onRewardButtonClick = {
+                            // TODO: api 나오면 구현
+                        }
                     )
                 }
             }
@@ -53,11 +55,27 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
     }
 
     private fun openStampInfoDialog(stamp: StampModel) {
-        // TODO: 도장 정보 다이얼로그 표시 동작 구현
-        // 도장 상세를 꼭 API 호출해야하나?
+        // TODO: 도장 이미지 표시
+        CommonDialogHelper.getInstance(
+            content = CommonDialogModel(
+                type = DialogStyleType.MISSION,
+                content = CommonDialogContent(
+                    title = "미션 완료",
+                    mission = CommonDialogMissionData(
+                        img = "",
+                        missionTitle = stamp.missionContent,
+                        missionTime = stamp.createdDate.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분"))
+                    )
+                ),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.ONE,
+                    positiveButtonText = "닫기"
+                )
+            )
+        ).show(childFragmentManager, "Dialog")
     }
 
     private fun openStampRequestDialog() {
-        // TODO: 도장 요청 모달 열기 동작 구현
+        // TODO: 도장 요청 모달 열기 동작 구현 -> 바텀시트 나오면
     }
 }
