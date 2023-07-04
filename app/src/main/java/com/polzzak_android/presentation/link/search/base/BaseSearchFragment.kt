@@ -158,8 +158,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
 
     private fun setEnabledBtnComplete(isEmpty: Boolean) {
         with(binding.inMain.tvBtnComplete) {
-            //TODO string resource 변경
-            this.text = if (isEmpty) "나중에 할게요" else "$targetLinkTypeStringOrEmpty 찾기 완료"
+            val context = binding.root.context
+            this.text =
+                if (isEmpty) context.getString(R.string.common_do_later) else context.getString(
+                    R.string.search_main_search_complete,
+                    targetLinkTypeStringOrEmpty
+                )
             this.isSelected = !isEmpty
         }
     }
@@ -241,12 +245,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         searchViewModel.cancelLinkLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is ModelState.Loading -> {
+                    val context = binding.root.context
                     val nickName = searchViewModel.searchQueryLiveData.value ?: ""
-                    //TODO string resource 적용
                     val loadingDialog = dialogFactory.createLoadingDialog(
-                        context = binding.root.context,
+                        context = context,
                         nickName = nickName,
-                        content = "님에게 보낸\n연동 요청을 취소하시겠어요?",
+                        content = context.getString(R.string.search_request_dialog_cancel_request_content),
                     )
                     showDialog(newDialog = loadingDialog)
                 }
@@ -301,7 +305,6 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
             val items = mutableListOf<BindableItem<*>>()
             when (it) {
                 is ModelState.Loading -> {
-                    //TODO string resource 적용
                     val nickName = searchViewModel.searchQueryLiveData.value ?: ""
                     items.add(
                         LinkRequestLoadingItem(
@@ -341,12 +344,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     }
 
     override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {
-        //TODO string resource 적용
+        val context = binding.root.context
         val cancelLinkDialog =
             dialogFactory.createLinkDialog(
-                context = binding.root.context,
+                context = context,
                 nickName = linkUserModel.nickName,
-                content = "님에게 보낸\n연동 요청을 취소하시겠어요?",
+                content = context.getString(R.string.search_request_dialog_cancel_request_content),
                 onPositiveButtonClickListener = {
                     cancelRequestLink(linkUserModel = linkUserModel)
                 })
@@ -354,12 +357,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     }
 
     override fun displayRequestLinkDialog(linkUserModel: LinkUserModel) {
-        //TODO string resource 적용
+        val context = binding.root.context
         val requestLinkDialog =
             dialogFactory.createLinkDialog(
-                context = binding.root.context,
+                context = context,
                 nickName = linkUserModel.nickName,
-                content = "님에게\n연동 요청을 보낼까요?",
+                content = context.getString(R.string.search_request_dialog_request_content),
                 onPositiveButtonClickListener = {
                     searchViewModel.requestLink(
                         accessToken = getAccessTokenOrNull() ?: "",

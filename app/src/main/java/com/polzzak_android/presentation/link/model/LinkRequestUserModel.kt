@@ -23,7 +23,6 @@ fun UserInfoDto?.toLinkRequestUserModel(
     nickName: String,
     linkMemberType: LinkMemberType
 ): LinkRequestUserModel {
-    //TODO string resource 적용
     this ?: return LinkRequestUserModel.Empty(nickName = nickName)
     val searchRequestMemberType =
         asMemberTypeOrNull(memberTypeResponseData = this.memberType).toLinkRequestMemberTypeOrNull()
