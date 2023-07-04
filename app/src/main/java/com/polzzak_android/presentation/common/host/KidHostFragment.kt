@@ -1,6 +1,8 @@
 package com.polzzak_android.presentation.common.host
 
+import androidx.activity.OnBackPressedCallback
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.polzzak_android.R
@@ -14,11 +16,33 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
 
     private lateinit var navController: NavController
 
+    // 시스템 back 버튼 동작 가로치개 위한 callback
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            navController.popBackStack()
+        }
+    }
+
     override fun initView() {
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
+
+        setupNavigationView()
+    }
+
+    private fun setupNavigationView() {
         val navHost = childFragmentManager.findFragmentById(R.id.kidFcvContainer) as NavHostFragment
         navController = navHost.navController
         NavigationUI.setupWithNavController(binding.kidBtmNav, navController)
 
-
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                destination.parent?.findStartDestination()?.id -> {
+                    backPressedCallback.isEnabled = false
+                }
+                else -> {
+                    backPressedCallback.isEnabled = true
+                }
+            }
+        }
     }
 }
