@@ -1,13 +1,11 @@
 package com.polzzak_android.presentation.auth.signup
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -31,6 +29,7 @@ import com.polzzak_android.presentation.auth.signup.model.SignUpTermsOfServiceMo
 import com.polzzak_android.presentation.common.MainViewModel
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -63,7 +62,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         super.initView()
         photoPicker = PhotoPicker(this)
         binding.ivBtnBack.setOnClickListener {
-            hideKeyboard()
+            hideKeyboardAndClearFocus()
             signUpViewModel.movePrevPage()
         }
         binding.tvBtnNext.setOnClickListener {
@@ -196,23 +195,16 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 signUpViewModel.requestCheckNickNameValidation()
             }
             binding.root.setOnTouchListener { _, _ ->
-                hideKeyboard()
+                hideKeyboardAndClearFocus()
                 etInput.clearFocus()
                 false
             }
         }
     }
 
-    private fun hideKeyboard() {
-        activity?.run {
-            val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            currentFocus?.let { currentFocus ->
-                inputManager?.hideSoftInputFromWindow(
-                    currentFocus.windowToken,
-                    InputMethodManager.HIDE_NOT_ALWAYS
-                )
-            }
-        }
+    private fun hideKeyboardAndClearFocus() {
+        hideKeyboard()
+        binding.inSetNickName.etInput.clearFocus()
     }
 
     private fun initSelectProfileImageView(binding: FragmentSignupBinding) {

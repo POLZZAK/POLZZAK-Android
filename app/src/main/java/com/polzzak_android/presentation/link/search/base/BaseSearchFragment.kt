@@ -1,12 +1,10 @@
 package com.polzzak_android.presentation.link.search.base
 
-import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.annotation.IdRes
@@ -24,6 +22,7 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.item.LinkMainEmptyItem
@@ -91,7 +90,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
                 searchViewModel.setPage(LinkPageTypeModel.MAIN)
             }
             root.setOnTouchListener { view, motionEvent ->
-                hideKeyboard()
+                hideKeyboardAndClearFocus()
                 view.performClick()
                 false
             }
@@ -121,7 +120,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
                     event: KeyEvent?
                 ): Boolean {
                     if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                        hideKeyboard()
+                        hideKeyboardAndClearFocus()
                         searchViewModel.requestSearchUserWithNickName(
                             accessToken = getAccessTokenOrNull() ?: ""
                         )
@@ -173,7 +172,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
             rvSearchResult.adapter = BindableItemAdapter()
             rvSearchResult.addOnItemTouchListener(object : OnItemTouchListener {
                 override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                    hideKeyboard()
+                    hideKeyboardAndClearFocus()
                     return false
                 }
 
@@ -188,28 +187,15 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         }
     }
 
-    private fun hideKeyboard() {
-        //TODO 공통코드로 분리
-        activity?.run {
-            val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            currentFocus?.let { currentFocus ->
-                inputManager?.hideSoftInputFromWindow(
-                    currentFocus.windowToken,
-                    InputMethodManager.HIDE_NOT_ALWAYS
-                )
-            }
-        }
-
+    private fun hideKeyboardAndClearFocus() {
+        hideKeyboard()
         binding.etSearch.clearFocus()
     }
 
     override fun initObserver() {
         searchViewModel.pageLiveData.observe(viewLifecycleOwner) {
             with(binding) {
-                if (it == LinkPageTypeModel.MAIN) {
-                    hideKeyboard()
-                    etSearch.clearFocus()
-                }
+                if (it == LinkPageTypeModel.MAIN) hideKeyboardAndClearFocus()
                 inMain.root.isVisible = (it == LinkPageTypeModel.MAIN)
                 inRequest.root.isVisible = (it == LinkPageTypeModel.REQUEST)
                 tvBtnCancel.isVisible = (it == LinkPageTypeModel.REQUEST)
