@@ -82,14 +82,14 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
 
     private fun initCommonView() {
         with(binding) {
-            tvTitle.text = "$targetLinkTypeStringOrEmpty 찾기"
+            tvTitle.text = context?.getString(R.string.search_title, targetLinkTypeStringOrEmpty)
             ivBtnClearText.setOnClickListener {
                 etSearch.setText("")
             }
             tvBtnCancel.setOnClickListener {
                 searchViewModel.setPage(LinkPageTypeModel.MAIN)
             }
-            root.setOnTouchListener { view, motionEvent ->
+            root.setOnTouchListener { view, _ ->
                 hideKeyboardAndClearFocus()
                 view.performClick()
                 false
@@ -100,7 +100,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
 
     private fun initSearchEditTextView() {
         with(binding.etSearch) {
-            hint = "$targetLinkTypeStringOrEmpty 검색"
+            hint = context?.getString(R.string.search_main_hint, targetLinkTypeStringOrEmpty)
             setText(searchViewModel.searchQueryLiveData.value ?: "")
             setOnFocusChangeListener { _, isFocused ->
                 if (isFocused) searchViewModel.setPage(page = LinkPageTypeModel.REQUEST)
@@ -212,12 +212,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         searchViewModel.requestLinkLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is ModelState.Loading -> {
+                    val context = binding.root.context
                     val nickName = searchViewModel.searchQueryLiveData.value ?: ""
-                    //TODO string resource 적용
                     val loadingDialog = dialogFactory.createLoadingDialog(
-                        context = binding.root.context,
+                        context = context,
                         nickName = nickName,
-                        content = "님에게\n연동 요청을 보낼까요?",
+                        content = context.getString(R.string.search_request_dialog_request_content),
                     )
                     showDialog(newDialog = loadingDialog)
                 }

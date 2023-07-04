@@ -77,6 +77,8 @@
     <string name="on_boarding_parent_fifth_content">아이와 열심히 활동하면\n계단을 폴짝! 올라갈 수 있어요</string>
 
     <!-- Search -->
+    <string name="search_title">%s 찾기</string>
+    <string name="search_main_hint">%s 닉네임 검색</string>
     <string name="search_main_kid_content">칭찬 도장판을 받으려면\n보호자와 연동이 필요해요</string>
     <string name="search_main_parent_content">칭찬 도장판을 만들려면\n아이와 연동이 필요해요</string>
     <string name="search_main_header_text">요청 보낸 목록</string>
