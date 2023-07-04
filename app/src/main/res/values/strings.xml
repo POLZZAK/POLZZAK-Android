@@ -22,6 +22,7 @@
     <string name="common_search_parent">보호자 찾기</string>
     <string name="common_cancel_request">요청 취소</string>
     <string name="common_cancel">취소</string>
+    <string name="common_request_link">연동 신청</string>
 
     <!-- Login -->
     <string name="login_title">참 잘 했어요 도장 쾅!</string>
@@ -83,4 +84,6 @@
     <string name="search_request_guide_text">연동된 %s에게\n칭찬 도장판을 만들어 줄 수 있어요</string>
     <string name="search_request_empty_text">%s님을\n찾을 수 없어요</string>
     <string name="search_request_loading_text">%s님을\n열심히 찾는 중이에요</string>
+    <string name="search_request_btn_cancel_request">앗 실수, 요청 취소 할래요</string>
+    <string name="search_request_request_complete">연동 요청 완료!</string>
 </resources>

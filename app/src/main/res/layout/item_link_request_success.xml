@@ -9,8 +9,8 @@
 
         <ImageView
             android:id="@+id/ivProfile"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="91dp"
+            android:layout_height="91dp"
             app:layout_constraintBottom_toTopOf="@id/tvNickName"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -20,9 +20,12 @@
 
         <TextView
             android:id="@+id/tvNickName"
+            style="@style/body.14.700"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:gravity="center"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toTopOf="@id/tvBtnRequest"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -31,8 +34,11 @@
 
         <TextView
             android:id="@+id/tvBtnRequest"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/caption.12.700"
+            android:layout_width="93dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
             app:layout_constraintBottom_toTopOf="@id/tvBtnRequestCancel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -41,13 +47,16 @@
 
         <TextView
             android:id="@+id/tvBtnRequestCancel"
+            style="@style/body.13.500"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:gravity="center"
-            android:text="앗 실수, 요청 취소 할래요"
+            android:textColor="@color/gray_500"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvBtnRequest" />
+            app:layout_constraintTop_toBottomOf="@id/tvBtnRequest"
+            tools:visibility="gone" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
