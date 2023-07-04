@@ -1,10 +1,12 @@
 package com.polzzak_android.presentation.main.protector.progress
 
 import android.graphics.Rect
+import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -154,6 +156,12 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
     override fun onStampPagerClicked(stampBoardItem: StampBoardSummary) {
         // Todo: 임시
         Toast.makeText(context, "${stampBoardItem.name} 클릭", Toast.LENGTH_SHORT).show()
+
+        // TODO: 부모 nav_graph.xml에도 같은 action 추가 필요
+        findNavController().navigate(
+            R.id.action_to_stampBoardDetailFragment,
+            Bundle().apply { putInt("boardId", stampBoardItem.stampBoardId) }
+        )
     }
 
     override fun setProgressAnim(curCnt: Int, totalCnt: Int, view: SemiCircleProgressView) {

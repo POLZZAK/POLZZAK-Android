@@ -400,9 +400,14 @@ fun CompletedStamp(
         modifier = Modifier
             .aspectRatio(1f)
             .drawBehind {
-                drawCircle(color = Blue150)
+                drawCircle(color = Color.Yellow, alpha = 0.5f)
             }
-            .clickable(enabled = (onClick != null), onClick = { onClick?.invoke(stamp) })
+            .clickable(
+                enabled = (onClick != null),
+                onClick = { onClick?.invoke(stamp) },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            )
     )
 }
 
@@ -452,7 +457,12 @@ fun EnabledEmptyStamp(
             drawCircle(color = Blue150)
         }
         .border(color = Blue200, width = 1.dp, shape = CircleShape)
-        .clickable(enabled = (onClick != null), onClick = { onClick?.invoke() })
+        .clickable(
+            enabled = (onClick != null),
+            onClick = { onClick?.invoke() },
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null
+        )
 ) {
     Text(
         text = numberText,
@@ -475,7 +485,12 @@ fun DisabledEmptyStamp(
         .drawBehind {
             drawCircle(color = Gray200)
         }
-        .clickable(enabled = (onClick != null), onClick = { onClick?.invoke() })
+        .clickable(
+            enabled = (onClick != null),
+            onClick = { onClick?.invoke() },
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null
+        )
 ) {
     Text(
         text = numberText,

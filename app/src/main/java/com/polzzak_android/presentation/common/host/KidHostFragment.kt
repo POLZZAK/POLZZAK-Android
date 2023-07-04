@@ -6,8 +6,9 @@ import androidx.navigation.ui.NavigationUI
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.databinding.FragmentKidHostBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
     override val layoutResId = R.layout.fragment_kid_host
 

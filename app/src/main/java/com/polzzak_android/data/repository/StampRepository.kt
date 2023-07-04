@@ -8,6 +8,7 @@ import com.polzzak_android.data.remote.model.response.StampBoardDetailDto
 import com.polzzak_android.data.remote.model.response.StampBoardDetailResponse
 import com.polzzak_android.data.remote.model.response.StampBoardListResponse
 import com.polzzak_android.data.remote.model.response.StampDto
+import javax.inject.Inject
 
 interface StampRepository {
     /**
@@ -24,7 +25,7 @@ interface StampRepository {
 /**
  * fake data 받기 위한 구현클래스
  */
-class MockStampRepositoryImpl : StampRepository {
+class MockStampRepositoryImpl @Inject constructor() : StampRepository {
     override suspend fun getStampBoardList(
         stampBoardGroup: StampBoardGroup,
         memberId: String
@@ -83,8 +84,8 @@ class MockStampRepositoryImpl : StampRepository {
             missions = listOf(
                 MissionDto(id = 1, content = "미션1"),
                 MissionDto(id = 2, content = "미션2"),
-                MissionDto(id = 2, content = "미션3"),
-                MissionDto(id = 2, content = "미션4")
+                MissionDto(id = 3, content = "미션3"),
+                MissionDto(id = 4, content = "미션4")
             ),
             stamps = listOf(
                 StampDto(id = 11, stampDesignId = 1, missionContent = "미션1", createdDate = "2023-06-12T15:31:12.213331766"),

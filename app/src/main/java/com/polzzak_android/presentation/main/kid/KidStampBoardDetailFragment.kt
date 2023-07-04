@@ -5,11 +5,20 @@ import androidx.fragment.app.viewModels
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentKidStampBoardDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.model.CommonDialogContent
+import com.polzzak_android.presentation.common.model.CommonDialogMissionData
+import com.polzzak_android.presentation.common.model.CommonDialogModel
+import com.polzzak_android.presentation.common.model.DialogStyleType
+import com.polzzak_android.presentation.common.widget.CommonDialogHelper
 import com.polzzak_android.presentation.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.main.detail.StampBoardDetailScreen_Kid
 import com.polzzak_android.presentation.main.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.main.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBinding>() {
@@ -20,7 +29,10 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
     override fun initView() {
         super.initView()
 
-        // TODO: 데이터 fetch 호출해줘야 함
+        val boardId = arguments?.getInt("boardId", -1) ?: -1
+        Timber.d(">> boardId = $boardId")
+
+        viewModel.fetchStampBoardDetailData(stampBoardId = boardId)
 
         binding.composeView.apply {
             setContent {

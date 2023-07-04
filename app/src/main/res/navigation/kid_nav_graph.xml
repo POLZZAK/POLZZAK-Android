@@ -10,7 +10,20 @@
         <fragment
             android:id="@+id/kidMainFragment"
             android:name="com.polzzak_android.presentation.main.kid.KidMainFragment"
-            android:label="KidMainFragment" />
+            android:label="KidMainFragment">
+            <action
+                android:id="@+id/action_to_stampBoardDetailFragment"
+                app:destination="@id/kidStampBoardDetailFragment">
+                <argument
+                    android:name="boardId"
+                    app:argType="integer"
+                    android:defaultValue="-1"/>
+            </action>
+        </fragment>
+        <fragment
+            android:id="@+id/kidStampBoardDetailFragment"
+            android:name="com.polzzak_android.presentation.main.kid.KidStampBoardDetailFragment"
+            android:label="KidStampBoardDetailFragment" />
     </navigation>
 
     <!-- 쿠폰 -->

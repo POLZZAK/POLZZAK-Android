@@ -34,13 +34,6 @@ fun StampBoardDetailScreen_Kid(
     onRewardButtonClick: () -> Unit
 ) {
     val state by stampBoardData.collectAsState()
-    /*val boardStatus by remember { derivedStateOf { state.data?.stampBoardStatus } }
-    val boardTitle by remember { derivedStateOf { state.data?.boardTitle } }
-    val dateCount by remember { derivedStateOf { state.data?.dateCount } }
-    val totalStampCount by remember { derivedStateOf { state.data?.totalStampCount } }
-    val stampList by remember { derivedStateOf { state.data?.stampList } }
-    val missionList by remember { derivedStateOf { state.data?.missionList } }
-    val rewardTitle by remember { derivedStateOf { state.data?.rewardTitle } }*/
 
     StampBoardDetailScreen_Kid(
         stampBoardStatus = state.data?.stampBoardStatus ?: StampBoardStatus.PROGRESS,
