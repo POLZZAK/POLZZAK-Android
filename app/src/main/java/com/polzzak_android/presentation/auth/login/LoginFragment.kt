@@ -71,6 +71,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         // todo: 보호자 프래그먼트 이동 임시 나중에 삭제
         binding.ivLogo.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_protectorHostFragment)
+//            findNavController().navigate(R.id.action_loginFragment_to_kidHostFragment)
         }
 
         //TODO 회원가입 이동 테스트
