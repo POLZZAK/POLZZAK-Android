@@ -1,6 +1,10 @@
 package com.polzzak_android.presentation.onboarding.model
 
+import androidx.annotation.StringRes
+
 data class OnBoardingPageModel(
-    val title: String,
-    val content: String
+    @StringRes val titleStringRes: Int,
+    @StringRes val contentStringRes: Int,
+    val progress: Int,
+    val maxCount: Int
 )

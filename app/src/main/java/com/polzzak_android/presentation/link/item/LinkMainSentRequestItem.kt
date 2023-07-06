@@ -1,11 +1,11 @@
 package com.polzzak_android.presentation.link.item
 
-import com.bumptech.glide.Glide
 import com.polzzak_android.R
+import com.polzzak_android.common.util.loadCircleImageUrl
 import com.polzzak_android.databinding.ItemLinkMainSentRequestBinding
 import com.polzzak_android.presentation.common.util.BindableItem
-import com.polzzak_android.presentation.link.search.SearchClickListener
 import com.polzzak_android.presentation.link.model.LinkUserModel
+import com.polzzak_android.presentation.link.search.SearchClickListener
 
 class LinkMainSentRequestItem(
     private val model: LinkUserModel,
@@ -16,8 +16,7 @@ class LinkMainSentRequestItem(
     override fun bind(binding: ItemLinkMainSentRequestBinding, position: Int) {
         with(binding) {
             tvNickName.text = model.nickName
-            Glide.with(root.context).load(model.profileUrl)
-                .into(ivProfileImage)
+            ivProfileImage.loadCircleImageUrl(imageUrl = model.profileUrl)
             tvBtnRequestCancel.setOnClickListener {
                 clickListener.displayCancelRequestDialog(linkUserModel = model)
             }

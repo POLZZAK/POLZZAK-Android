@@ -1,27 +1,32 @@
 package com.polzzak_android.presentation.link.search.base
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.activity.addCallback
 import androidx.annotation.IdRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.polzzak_android.R
+import com.polzzak_android.common.util.convertDp2Px
 import com.polzzak_android.databinding.FragmentSearchBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.hideKeyboard
+import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.item.LinkMainEmptyItem
+import com.polzzak_android.presentation.link.item.LinkMainHeaderItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
 import com.polzzak_android.presentation.link.item.LinkRequestEmptyItem
 import com.polzzak_android.presentation.link.item.LinkRequestGuideItem
@@ -32,6 +37,7 @@ import com.polzzak_android.presentation.link.model.LinkPageTypeModel
 import com.polzzak_android.presentation.link.model.LinkRequestUserModel
 import com.polzzak_android.presentation.link.model.LinkUserModel
 import com.polzzak_android.presentation.link.search.SearchClickListener
+import com.polzzak_android.presentation.link.search.SearchMainItemDecoration
 import com.polzzak_android.presentation.link.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -66,30 +72,27 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     private var dialog: DialogFragment? = null
 
     override fun initView() {
-        with(binding) {
-            //TODO string resource로 변경
-            initCommonView()
-            initMainPageView()
-            initRequestPageView()
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+            shotBackPressed()
         }
+        initCommonView()
+        initMainPageView()
+        initRequestPageView()
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private fun initCommonView() {
         with(binding) {
-            tvTitle.text = "$targetLinkTypeStringOrEmpty 찾기"
+            tvTitle.text = context?.getString(R.string.search_title, targetLinkTypeStringOrEmpty)
             ivBtnClearText.setOnClickListener {
                 etSearch.setText("")
             }
             tvBtnCancel.setOnClickListener {
                 searchViewModel.setPage(LinkPageTypeModel.MAIN)
             }
-            root.setOnTouchListener { _, _ ->
-                hideKeyboard()
+            root.setOnTouchListener { view, _ ->
+                hideKeyboardAndClearFocus()
+                view.performClick()
                 false
-            }
-            ivBtnBack.setOnClickListener {
-                //TODO back 버튼
             }
             initSearchEditTextView()
         }
@@ -97,7 +100,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
 
     private fun initSearchEditTextView() {
         with(binding.etSearch) {
-            hint = "$targetLinkTypeStringOrEmpty 검색"
+            hint = context?.getString(R.string.search_main_hint, targetLinkTypeStringOrEmpty)
             setText(searchViewModel.searchQueryLiveData.value ?: "")
             setOnFocusChangeListener { _, isFocused ->
                 if (isFocused) searchViewModel.setPage(page = LinkPageTypeModel.REQUEST)
@@ -117,7 +120,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
                     event: KeyEvent?
                 ): Boolean {
                     if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                        hideKeyboard()
+                        hideKeyboardAndClearFocus()
                         searchViewModel.requestSearchUserWithNickName(
                             accessToken = getAccessTokenOrNull() ?: ""
                         )
@@ -131,9 +134,21 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
 
     private fun initMainPageView() {
         with(binding.inMain) {
-            //TODO string resource 적용
-            setEnabledBtnComplete(isEmpty = true)
             rvRequestList.adapter = BindableItemAdapter()
+            val betweenMarginPx = convertDp2Px(
+                binding.root.context,
+                MAIN_REQUEST_ITEM_BETWEEN_MARGIN_DP
+            )
+            val bottomMarginPx = convertDp2Px(
+                binding.root.context,
+                MAIN_REQUEST_ITEM_BOTTOM_MARGIN_DP
+            )
+            rvRequestList.addItemDecoration(
+                SearchMainItemDecoration(
+                    betweenMarginPx = betweenMarginPx,
+                    bottomMarginPx = bottomMarginPx
+                )
+            )
             tvBtnComplete.setOnClickListener {
                 findNavController().navigate(actionMoveMainFragment)
             }
@@ -142,8 +157,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
 
     private fun setEnabledBtnComplete(isEmpty: Boolean) {
         with(binding.inMain.tvBtnComplete) {
-            //TODO string resource 변경
-            this.text = if (isEmpty) "나중에 할게요" else "$targetLinkTypeStringOrEmpty 찾기 완료"
+            val context = binding.root.context
+            this.text =
+                if (isEmpty) context.getString(R.string.common_do_later) else context.getString(
+                    R.string.search_main_search_complete,
+                    targetLinkTypeStringOrEmpty
+                )
             this.isSelected = !isEmpty
         }
     }
@@ -151,26 +170,37 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     private fun initRequestPageView() {
         with(binding.inRequest) {
             rvSearchResult.adapter = BindableItemAdapter()
+            rvSearchResult.addOnItemTouchListener(object : OnItemTouchListener {
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    hideKeyboardAndClearFocus()
+                    return false
+                }
+
+                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+                    //do nothing
+                }
+
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+                    //do nothing
+                }
+            })
         }
     }
 
-    private fun hideKeyboard() {
-        activity?.run {
-            binding.etSearch.clearFocus()
-            val inputManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputManager?.hideSoftInputFromWindow(
-                binding.etSearch.windowToken,
-                InputMethodManager.HIDE_NOT_ALWAYS
-            )
-        }
+    private fun hideKeyboardAndClearFocus() {
+        hideKeyboard()
+        binding.etSearch.clearFocus()
     }
 
     override fun initObserver() {
         searchViewModel.pageLiveData.observe(viewLifecycleOwner) {
             with(binding) {
+                if (it == LinkPageTypeModel.MAIN) hideKeyboardAndClearFocus()
                 inMain.root.isVisible = (it == LinkPageTypeModel.MAIN)
                 inRequest.root.isVisible = (it == LinkPageTypeModel.REQUEST)
                 tvBtnCancel.isVisible = (it == LinkPageTypeModel.REQUEST)
+                etSearch.setText("")
+                ivIconSearch.isVisible = (it == LinkPageTypeModel.MAIN)
             }
         }
 
@@ -182,12 +212,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         searchViewModel.requestLinkLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is ModelState.Loading -> {
+                    val context = binding.root.context
                     val nickName = searchViewModel.searchQueryLiveData.value ?: ""
-                    //TODO string resource 적용
                     val loadingDialog = dialogFactory.createLoadingDialog(
-                        context = binding.root.context,
+                        context = context,
                         nickName = nickName,
-                        content = "님에게\n연동 요청을 보낼까요?",
+                        content = context.getString(R.string.search_request_dialog_request_content),
                     )
                     showDialog(newDialog = loadingDialog)
                 }
@@ -201,12 +231,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
         searchViewModel.cancelLinkLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is ModelState.Loading -> {
+                    val context = binding.root.context
                     val nickName = searchViewModel.searchQueryLiveData.value ?: ""
-                    //TODO string resource 적용
                     val loadingDialog = dialogFactory.createLoadingDialog(
-                        context = binding.root.context,
+                        context = context,
                         nickName = nickName,
-                        content = "님에게 보낸\n연동 요청을 취소하시겠어요?",
+                        content = context.getString(R.string.search_request_dialog_cancel_request_content),
                     )
                     showDialog(newDialog = loadingDialog)
                 }
@@ -218,11 +248,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
             }
 
         }
+        observeMain()
         observeRequest()
-        observeSearchUser()
     }
 
-    private fun observeRequest() {
+    private fun observeMain() {
         searchViewModel.requestSentLiveData.observe(viewLifecycleOwner) {
             val requestListRecyclerView = binding.inMain.rvRequestList
             val adapter =
@@ -232,9 +262,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
             when (it) {
                 is ModelState.Loading -> {}
                 is ModelState.Success -> {
+                    val headerTitleStr = getString(R.string.search_main_header_text)
+                    items.add(LinkMainHeaderItem(text = headerTitleStr))
                     if (it.data.isEmpty()) {
-                        //TODO string resource로 변경
-                        items.add(LinkMainEmptyItem("보낸 요청이 없어요"))
+                        val emptyContentStr = getString(R.string.search_main_empty_text)
+                        items.add(LinkMainEmptyItem(text = emptyContentStr))
                     } else {
                         items.addAll(it.data.map { model ->
                             LinkMainSentRequestItem(
@@ -243,23 +275,22 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
                             )
                         })
                     }
-                    setEnabledBtnComplete(isEmpty = it.data.isEmpty())
                 }
 
                 is ModelState.Error -> {}
             }
+            setEnabledBtnComplete(isEmpty = it.data.isNullOrEmpty())
             adapter.updateItem(item = items)
         }
     }
 
-    private fun observeSearchUser() {
+    private fun observeRequest() {
         searchViewModel.searchUserLiveData.observe(viewLifecycleOwner) {
             val adapter =
                 (binding.inRequest.rvSearchResult.adapter as? BindableItemAdapter) ?: return@observe
             val items = mutableListOf<BindableItem<*>>()
             when (it) {
                 is ModelState.Loading -> {
-                    //TODO string resource 적용
                     val nickName = searchViewModel.searchQueryLiveData.value ?: ""
                     items.add(
                         LinkRequestLoadingItem(
@@ -299,12 +330,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     }
 
     override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {
-        //TODO string resource 적용
+        val context = binding.root.context
         val cancelLinkDialog =
             dialogFactory.createLinkDialog(
-                context = binding.root.context,
+                context = context,
                 nickName = linkUserModel.nickName,
-                content = "님에게 보낸\n연동 요청을 취소하시겠어요?",
+                content = context.getString(R.string.search_request_dialog_cancel_request_content),
                 onPositiveButtonClickListener = {
                     cancelRequestLink(linkUserModel = linkUserModel)
                 })
@@ -312,12 +343,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
     }
 
     override fun displayRequestLinkDialog(linkUserModel: LinkUserModel) {
-        //TODO string resource 적용
+        val context = binding.root.context
         val requestLinkDialog =
             dialogFactory.createLinkDialog(
-                context = binding.root.context,
+                context = context,
                 nickName = linkUserModel.nickName,
-                content = "님에게\n연동 요청을 보낼까요?",
+                content = context.getString(R.string.search_request_dialog_request_content),
                 onPositiveButtonClickListener = {
                     searchViewModel.requestLink(
                         accessToken = getAccessTokenOrNull() ?: "",
@@ -347,5 +378,10 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), Searc
             accessToken = getAccessTokenOrNull() ?: "",
             linkUserModel = linkUserModel
         )
+    }
+
+    companion object {
+        private const val MAIN_REQUEST_ITEM_BETWEEN_MARGIN_DP = 24
+        private const val MAIN_REQUEST_ITEM_BOTTOM_MARGIN_DP = 20
     }
 }

@@ -9,17 +9,25 @@
 
         <ImageView
             android:id="@+id/ivIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="256dp"
+            android:layout_height="256dp"
+            android:layout_marginTop="90dp"
             android:background="@drawable/ic_launcher_background"
+            app:layout_constraintBottom_toTopOf="@id/tvTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/tvTitle"
+            style="@style/title.22.700"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="90dp"
+            android:textColor="@color/gray_800"
+            app:layout_constraintBottom_toTopOf="@id/tvContent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ivIcon"
@@ -27,34 +35,43 @@
 
         <TextView
             android:id="@+id/tvContent"
+            style="@style/body.15.500"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="126dp"
+            android:textColor="@color/gray_600"
+            app:layout_constraintBottom_toTopOf="@id/tvBtnStart"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
             tools:text="아이가 갖고 싶은 선물을 정하고\n함께 미션을 만들어보세요." />
 
-        <!-- TODO 디자인가이드 drawable, margin 적용 -->
         <com.polzzak_android.presentation.component.CheckedProgressView
             android:id="@+id/cpvProgress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:betweenMargins="8dp"
-            app:checkedDrawable="@color/error_100"
-            app:drawableHeight="20dp"
-            app:drawableWidth="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:uncheckedDrawable="@color/error_500" />
-
-        <!-- TODO string resource 적용 -->
-        <TextView
-            android:id="@+id/tvBtnStart"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:checkedDrawable="@drawable/shape_rectangle_primary"
+            app:drawableHeight="4dp"
+            app:layout_constraintBottom_toBottomOf="@id/tvBtnStart"
+            app:layout_constraintEnd_toEndOf="@id/tvBtnStart"
+            app:layout_constraintStart_toStartOf="@id/tvBtnStart"
+            app:layout_constraintTop_toTopOf="@id/tvBtnStart"
+            app:uncheckedDrawable="@drawable/shape_rectangle_primary_150" />
+
+        <TextView
+            android:id="@+id/tvBtnStart"
+            style="@style/subtitle.16.600"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="36dp"
+            android:background="@drawable/selector_btn_rectangle_r8_enabled"
             android:gravity="center"
-            android:text="시작하기"
+            android:paddingVertical="14dp"
+            android:text="@string/common_do_start"
+            android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

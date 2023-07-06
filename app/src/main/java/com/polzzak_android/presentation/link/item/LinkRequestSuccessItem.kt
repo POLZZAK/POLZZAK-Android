@@ -1,6 +1,9 @@
 package com.polzzak_android.presentation.link.item
 
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import androidx.annotation.CallSuper
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.polzzak_android.R
 import com.polzzak_android.common.util.loadCircleImageUrl
@@ -26,8 +29,7 @@ abstract class LinkRequestSuccessItem(
     private class NormalItem(
         private val userModel: LinkRequestUserModel.Normal,
         private val clickListener: SearchClickListener
-    ) :
-        LinkRequestSuccessItem(userModel) {
+    ) : LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
             other is NormalItem && this.userModel.user.userId == other.userModel.user.userId
 
@@ -36,13 +38,18 @@ abstract class LinkRequestSuccessItem(
 
         override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
             super.bind(binding, position)
+            val context = binding.root.context
             with(binding) {
                 tvBtnRequestCancel.isVisible = false
-                //TODO string resource, 버튼 background 적용
-                tvBtnRequest.text = "연동신청"
+                tvNickName.isVisible = true
+                tvNickName.text = userModel.user.nickName
+                val btnText = context.getString(R.string.common_request_link)
+                tvBtnRequest.text = btnText
                 tvBtnRequest.setOnClickListener {
                     clickListener.displayRequestLinkDialog(linkUserModel = userModel.user)
                 }
+                tvBtnRequest.setTextColor(ContextCompat.getColor(context, R.color.white))
+                tvBtnRequest.setBackgroundResource(R.drawable.shape_rectangle_primary_r4)
             }
         }
     }
@@ -50,8 +57,7 @@ abstract class LinkRequestSuccessItem(
     private class SentItem(
         private val userModel: LinkRequestUserModel.Sent,
         private val clickListener: SearchClickListener
-    ) :
-        LinkRequestSuccessItem(userModel) {
+    ) : LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
             other is SentItem && this.userModel.user.userId == other.userModel.user.userId
 
@@ -61,16 +67,27 @@ abstract class LinkRequestSuccessItem(
         override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
             super.bind(binding, position)
             with(binding) {
+                val context = root.context
                 tvBtnRequestCancel.isVisible = true
-                //TODO string resource, 버튼 background 적용
-                tvBtnRequest.text = "이미 보낸 요청"
+                tvNickName.isVisible = true
+                tvNickName.text = userModel.user.nickName
+                tvBtnRequest.text = context.getString(R.string.search_request_request_complete)
+                tvBtnRequest.setTextColor(ContextCompat.getColor(context, R.color.primary))
+                tvBtnRequest.setBackgroundResource(R.drawable.shape_rectangle_white_stroke_primary_r4)
+                val btnRequestCancelText =
+                    context.getString(R.string.search_request_btn_cancel_request)
+                val btnRequestCancelSpannable = SpannableString(btnRequestCancelText).apply {
+                    setSpan(UnderlineSpan(), 0, btnRequestCancelText.length, 0)
+                }
+                tvBtnRequestCancel.text = btnRequestCancelSpannable
                 tvBtnRequestCancel.setOnClickListener {
-                    clickListener.cancelRequestLink(linkUserModel = userModel.user)
+                    clickListener.displayCancelRequestDialog(linkUserModel = userModel.user)
                 }
             }
         }
     }
 
+    //TODO 온보딩 후 찾기 페이지에선 없음(연동관리 페이지 에서 디자인 및 추가구현 필요)
     private class LinkedItem(private val userModel: LinkRequestUserModel.Linked) :
         LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =

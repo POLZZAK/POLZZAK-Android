@@ -3,55 +3,71 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!--TODO 디자인 가이드 적용 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/ivBtnBack"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/ic_launcher_background"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/tvTitle"
+            style="@style/body.18.500"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:textColor="@color/gray_800"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivBtnBack"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="아이 찾기" />
 
-        <!-- TODO clear 버튼 width만큼 paddingEnd 추가 -->
         <EditText
             android:id="@+id/etSearch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/shape_rectangle_white_stroke_gray_300_r8"
             android:importantForAutofill="no"
             android:inputType="text"
+            android:paddingVertical="12dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="36dp"
+            android:textColorHint="@color/gray_500"
             app:layout_constraintEnd_toStartOf="@id/tvBtnCancel"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
-            tools:hint="아이 검색" />
+            tools:hint="아이 닉네임 검색" />
+
+        <ImageView
+            android:id="@+id/ivIconSearch"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/ic_search"
+            app:layout_constraintBottom_toBottomOf="@id/etSearch"
+            app:layout_constraintEnd_toEndOf="@id/etSearch"
+            app:layout_constraintTop_toTopOf="@id/etSearch" />
 
         <ImageView
             android:id="@+id/ivBtnClearText"
-            android:layout_width="20dp"
-            android:layout_height="0dp"
-            android:background="@color/black"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/ic_edit_text_clear"
             app:layout_constraintBottom_toBottomOf="@id/etSearch"
             app:layout_constraintEnd_toEndOf="@id/etSearch"
             app:layout_constraintTop_toTopOf="@id/etSearch" />
 
         <TextView
             android:id="@+id/tvBtnCancel"
+            style="@style/body.14.600"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="취소"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="28dp"
+            android:text="@string/common_cancel"
+            android:textColor="@color/gray_600"
             app:layout_constraintBottom_toBottomOf="@id/etSearch"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/etSearch"

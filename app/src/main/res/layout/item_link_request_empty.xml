@@ -7,10 +7,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- TODO drawable 적용 -->
         <ImageView
             android:id="@+id/ivIcon"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:background="@drawable/ic_launcher_background"
             app:layout_constraintBottom_toTopOf="@id/tvContent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -22,6 +23,7 @@
             android:id="@+id/tvContent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
