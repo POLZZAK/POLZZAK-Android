@@ -91,4 +91,9 @@
     <string name="search_request_request_complete">연동 요청 완료!</string>
     <string name="search_request_dialog_cancel_request_content">님에게 보낸\n연동 요청을 취소하시겠어요?</string>
     <string name="search_request_dialog_request_content">님에게\n연동 요청을 보낼까요?</string>
+
+    <!-- LinkManagement-->
+    <string name="link_management_tab_link">연동 목록</string>
+    <string name="link_management_tab_received">받은 요청</string>
+    <string name="link_management_tab_sent">보낸 요청</string>
 </resources>
