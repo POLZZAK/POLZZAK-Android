@@ -110,11 +110,12 @@ fun StampBoardDetailScreen_Protector(
                 },
                 rewardButton = {
                     PolzzakButton(
-                        text = getCouponButtonText(stampBoardStatus),
                         onClick = onRewardButtonClick,
-                        modifier = Modifier.fillMaxWidth(),
-                        enabled = getCouponButtonEnable(stampBoardStatus)
-                    )
+                        enabled = getCouponButtonEnable(stampBoardStatus),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = getCouponButtonText(stampBoardStatus))
+                    }
                 },
                 rewardStateText = {
                     Text(

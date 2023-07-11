@@ -228,10 +228,11 @@ fun RewardInfoSheetPreview() {
         },
         rewardButton = {
             PolzzakButton(
-                text = "쿠폰 발급하기",
                 onClick = { /*TODO*/ },
                 modifier = Modifier.fillMaxWidth()
-            )
+            ) {
+                Text(text = "쿠폰 발급하기")
+            }
         },
         rewardStateText = {
             Text(
