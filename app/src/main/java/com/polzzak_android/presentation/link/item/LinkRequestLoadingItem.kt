@@ -3,11 +3,11 @@ package com.polzzak_android.presentation.link.item
 import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemLinkRequestLoadingBinding
 import com.polzzak_android.presentation.common.util.BindableItem
-import com.polzzak_android.presentation.link.search.SearchClickListener
+import com.polzzak_android.presentation.link.LinkMainClickListener
 
 class LinkRequestLoadingItem(
     private val nickName: String,
-    private val clickListener: SearchClickListener
+    private val clickListener: LinkMainClickListener
 ) : BindableItem<ItemLinkRequestLoadingBinding>() {
     override val layoutRes: Int = R.layout.item_link_request_loading
 

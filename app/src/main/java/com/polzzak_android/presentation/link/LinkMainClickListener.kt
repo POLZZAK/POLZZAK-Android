@@ -1,9 +1,8 @@
-package com.polzzak_android.presentation.link.search
+package com.polzzak_android.presentation.link
 
 import com.polzzak_android.presentation.link.model.LinkUserModel
 
-//TODO 연동관리 화면이랑 공용으로 사용하도록 변경 or 클릭리스너 분리
-interface SearchClickListener {
+interface LinkMainClickListener {
     //연동 요청 취소 다이얼로그
     fun displayCancelRequestDialog(linkUserModel: LinkUserModel)
 

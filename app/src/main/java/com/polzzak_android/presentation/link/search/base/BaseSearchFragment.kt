@@ -25,6 +25,7 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.link.LinkDialogFactory
+import com.polzzak_android.presentation.link.LinkMainClickListener
 import com.polzzak_android.presentation.link.item.LinkMainEmptyItem
 import com.polzzak_android.presentation.link.item.LinkMainHeaderItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
@@ -36,14 +37,13 @@ import com.polzzak_android.presentation.link.model.LinkMemberType
 import com.polzzak_android.presentation.link.model.LinkPageTypeModel
 import com.polzzak_android.presentation.link.model.LinkRequestUserModel
 import com.polzzak_android.presentation.link.model.LinkUserModel
-import com.polzzak_android.presentation.link.search.SearchClickListener
 import com.polzzak_android.presentation.link.search.SearchMainItemDecoration
 import com.polzzak_android.presentation.link.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), SearchClickListener {
+abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkMainClickListener {
     override val layoutResId: Int = R.layout.fragment_search
 
     protected abstract val targetLinkMemberType: LinkMemberType

@@ -10,7 +10,7 @@ import com.polzzak_android.common.util.loadCircleImageUrl
 import com.polzzak_android.databinding.ItemLinkRequestSuccessBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.link.model.LinkRequestUserModel
-import com.polzzak_android.presentation.link.search.SearchClickListener
+import com.polzzak_android.presentation.link.LinkMainClickListener
 
 abstract class LinkRequestSuccessItem(
     private val userModel: LinkRequestUserModel,
@@ -28,7 +28,7 @@ abstract class LinkRequestSuccessItem(
 
     private class NormalItem(
         private val userModel: LinkRequestUserModel.Normal,
-        private val clickListener: SearchClickListener
+        private val clickListener: LinkMainClickListener
     ) : LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
             other is NormalItem && this.userModel.user.userId == other.userModel.user.userId
@@ -56,7 +56,7 @@ abstract class LinkRequestSuccessItem(
 
     private class SentItem(
         private val userModel: LinkRequestUserModel.Sent,
-        private val clickListener: SearchClickListener
+        private val clickListener: LinkMainClickListener
     ) : LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
             other is SentItem && this.userModel.user.userId == other.userModel.user.userId
@@ -109,13 +109,13 @@ abstract class LinkRequestSuccessItem(
     companion object {
         fun newInstance(
             userModel: LinkRequestUserModel.Normal,
-            clickListener: SearchClickListener
+            clickListener: LinkMainClickListener
         ): LinkRequestSuccessItem =
             NormalItem(userModel = userModel, clickListener = clickListener)
 
         fun newInstance(
             userModel: LinkRequestUserModel.Sent,
-            clickListener: SearchClickListener
+            clickListener: LinkMainClickListener
         ): LinkRequestSuccessItem =
             SentItem(userModel = userModel, clickListener = clickListener)
 

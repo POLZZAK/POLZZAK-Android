@@ -61,8 +61,8 @@
             app:layout_constraintTop_toTopOf="@id/etSearch" />
 
         <include
-            android:id="@+id/inHome"
-            layout="@layout/layout_link_management_home"
+            android:id="@+id/inMain"
+            layout="@layout/layout_link_management_main"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"

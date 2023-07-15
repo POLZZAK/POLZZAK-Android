@@ -23,6 +23,8 @@
     <string name="common_cancel_request">요청 취소</string>
     <string name="common_cancel">취소</string>
     <string name="common_request_link">연동 신청</string>
+    <string name="common_accept">수락</string>
+    <string name="common_decline">거절</string>
 
     <!-- Login -->
     <string name="login_title">참 잘 했어요 도장 쾅!</string>

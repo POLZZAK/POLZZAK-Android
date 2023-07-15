@@ -21,13 +21,33 @@
             app:tabTextColor="@color/gray_300" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvLinkList"
+            android:id="@+id/rvLinked"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tlTab" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvReceived"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tlTab" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tlTab" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
