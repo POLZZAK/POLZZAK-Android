@@ -16,7 +16,6 @@ abstract class BaseFragment<B : ViewDataBinding> : Fragment() {
     protected abstract val layoutResId: Int
     private var _binding: B? = null
     protected val binding get() = _binding!!
-
     override fun onAttach(context: Context) {
         (activity as? MainActivity)?.resetBackPressedEvent()
         super.onAttach(context)
@@ -34,6 +33,7 @@ abstract class BaseFragment<B : ViewDataBinding> : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.lifecycleOwner = viewLifecycleOwner
         initView()
+        setToolbar()
         initObserver()
         super.onViewCreated(view, savedInstanceState)
     }
@@ -43,6 +43,7 @@ abstract class BaseFragment<B : ViewDataBinding> : Fragment() {
         _binding = null
     }
 
+    protected open fun setToolbar() {}
     protected open fun initView() {}
     protected open fun initObserver() {}
 }
