@@ -11,21 +11,24 @@ import com.polzzak_android.databinding.FragmentMakeStampBinding
 import com.polzzak_android.presentation.adapter.MakeStampCountAdapter
 import com.polzzak_android.presentation.adapter.MakeStampMissionAdapter
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.base.ToolbarIconInteraction
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.CommonDialogContent
 import com.polzzak_android.presentation.common.model.CommonDialogModel
 import com.polzzak_android.presentation.common.model.DialogStyleType
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.model.ToolbarData
 import com.polzzak_android.presentation.common.widget.CommonDialogHelper
 import com.polzzak_android.presentation.common.widget.OnButtonClickListener
+import com.polzzak_android.presentation.common.widget.ToolbarHelper
 import com.polzzak_android.presentation.makingStamp.intreraction.MissionInteraction
 import com.polzzak_android.presentation.makingStamp.intreraction.StampCountInteraction
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountInteraction,
-    MissionInteraction {
+    MissionInteraction, ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_make_stamp
 
     private lateinit var makeStampCountAdapter: MakeStampCountAdapter
@@ -33,6 +36,23 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
     private lateinit var stampMissionAdapter: MakeStampMissionAdapter
 
     private val makeStampViewModel: MakeStampViewModel by activityViewModels()
+
+
+    override fun setToolbar() {
+        super.setToolbar()
+
+        ToolbarHelper(
+            data = ToolbarData(
+                popStack = findNavController(),
+                titleText = "도장판 생성",
+                iconText = "등록",
+                iconInteraction = this
+            ),
+            backButtonView =binding.toolbar.toolbarBackButton,
+            titleView = binding.toolbar.toolbarTitle,
+            textIconView = binding.toolbar.toolbarTextIcon,
+        ).set()
+    }
 
     private val requestStampDialog = CommonDialogHelper.getInstance(
         content = CommonDialogModel(
@@ -77,10 +97,6 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         setAdapter()
         initData()
 
-        // todo: 도장 임시 등록
-        binding.tempRequest.setOnClickListener {
-            requestStampDialog.show(childFragmentManager, "Dialog")
-        }
         // todo: 닉네임 임시
         binding.selectedKidName.text = "임시닉네임"
 
@@ -217,6 +233,11 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
 
     override fun updateMissionList(missionList: List<String>) {
         makeStampViewModel.updateMissionList(missionList)
+    }
+
+    override fun onToolbarIconClicked() {
+        // 도장판 등록
+        requestStampDialog.show(childFragmentManager, "Dialog")
     }
 
 }
