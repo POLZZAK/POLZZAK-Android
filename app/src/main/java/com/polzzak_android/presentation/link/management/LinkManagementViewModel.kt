@@ -43,7 +43,7 @@ class LinkManagementViewModel : ViewModel() {
         getLinkedUsersJob = viewModelScope.launch {
             _linkedUsersLiveData.value = ModelState.Loading()
             delay(300)
-            _linkedUsersLiveData.value = ModelState.Success(getUserMockData())
+            _linkedUsersLiveData.value = ModelState.Success(getUserMockData(17))
         }
     }
 
@@ -54,7 +54,7 @@ class LinkManagementViewModel : ViewModel() {
         getReceivedRequestJob = viewModelScope.launch {
             _receivedRequestLiveData.value = ModelState.Loading()
             delay(300)
-            _receivedRequestLiveData.value = ModelState.Success(getUserMockData())
+            _receivedRequestLiveData.value = ModelState.Success(getUserMockData(33))
         }
     }
 
@@ -65,12 +65,12 @@ class LinkManagementViewModel : ViewModel() {
         getSentRequestJob = viewModelScope.launch {
             _sentRequestLiveData.value = ModelState.Loading()
             delay(300)
-            _sentRequestLiveData.value = ModelState.Success(getUserMockData())
+            _sentRequestLiveData.value = ModelState.Success(getUserMockData(21))
         }
     }
 }
 
-private fun getUserMockData() = List(31) {
+private fun getUserMockData(count: Int) = List(count) {
     LinkUserModel(
         userId = it,
         nickName = "name$it",
