@@ -118,6 +118,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
             liveData = linkManagementViewModel.deleteLinkLiveData,
             contentStringRes = R.string.link_dialog_delete_link_content
         )
+        observeDialogResult(
+            liveData = linkManagementViewModel.approveRequestLiveData,
+            contentStringRes = R.string.link_dialog_approve_request_content
+        )
     }
 
     private fun observeLinkRequestStatus() {
@@ -198,7 +202,12 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
 
                 is ModelState.Success -> {
                     val receivedRequestItems =
-                        it.data.map { linkUserModel -> LinkMainReceivedRequestItem(model = linkUserModel) }
+                        it.data.map { linkUserModel ->
+                            LinkMainReceivedRequestItem(
+                                model = linkUserModel,
+                                clickListener = this@BaseLinkManagementFragment
+                            )
+                        }
                     items.addAll(receivedRequestItems)
                 }
 
@@ -285,6 +294,23 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                     )
                 })
         showDialog(newDialog = requestLinkDialog)
+    }
+
+    override fun displayApproveRequestDialog(linkUserModel: LinkUserModel) {
+        val context = binding.root.context
+        val approveRequestDialog =
+            dialogFactory.createLinkDialog(
+                context = context,
+                nickName = linkUserModel.nickName,
+                content = context.getString(R.string.link_dialog_approve_request_content),
+                negativeButtonStringRes = R.string.link_dialog_btn_negative,
+                positiveButtonStringRes = R.string.link_dialog_btn_positive_approve_request,
+                onPositiveButtonClickListener = {
+                    linkManagementViewModel.requestApproveLinkRequest(
+                        accessToken = getAccessTokenOrNull() ?: "", linkUserModel = linkUserModel
+                    )
+                })
+        showDialog(newDialog = approveRequestDialog)
     }
 
     private fun showDialog(newDialog: DialogFragment) {

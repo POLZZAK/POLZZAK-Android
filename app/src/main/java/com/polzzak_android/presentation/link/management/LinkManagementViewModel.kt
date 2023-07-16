@@ -52,6 +52,10 @@ class LinkManagementViewModel @AssistedInject constructor(
     val deleteLinkLiveData: LiveData<ModelState<String>> = _deleteLinkLiveData
     private val deleteLinkJobMap: HashMap<Int, Job> = HashMap()
 
+    private val _approveRequestLiveData = MutableLiveData<ModelState<String>>()
+    val approveRequestLiveData: LiveData<ModelState<String>> = _approveRequestLiveData
+    private val approveRequestJobMap: HashMap<Int, Job> = HashMap()
+
     init {
         requestRequestStatus(accessToken = initAccessToken)
     }
@@ -125,6 +129,34 @@ class LinkManagementViewModel @AssistedInject constructor(
                     }
                     _linkedUsersLiveData.value =
                         _linkedUsersLiveData.value?.copyWithData(newData = updatedLinkedUsers)
+                }.onError { exception, _ ->
+                    //TODO 에러처리
+                }
+        }
+    }
+
+    //요청 승락
+    fun requestApproveLinkRequest(accessToken: String, linkUserModel: LinkUserModel) {
+        val userId = linkUserModel.userId
+        if (approveRequestJobMap[userId]?.isCompleted == false) return
+        approveRequestJobMap[userId] = viewModelScope.launch {
+            _approveRequestLiveData.value = ModelState.Loading(data = linkUserModel.nickName)
+            familyRepository.requestApproveLinkRequest(accessToken = accessToken, targetId = userId)
+                .onSuccess {
+                    _approveRequestLiveData.value =
+                        ModelState.Success(data = linkUserModel.nickName)
+
+                    val linkedUsers = _linkedUsersLiveData.value?.data ?: return@onSuccess
+                    val receivedRequests = _receivedRequestLiveData.value?.data ?: return@onSuccess
+                    val updatedLinkedUsers = linkedUsers + linkUserModel
+                    val updatedReceivedRequests = receivedRequests.toMutableList().apply {
+                        removeIf { user -> user.userId == userId }
+                    }
+
+                    _linkedUsersLiveData.value =
+                        _linkedUsersLiveData.value?.copyWithData(updatedLinkedUsers)
+                    _receivedRequestLiveData.value =
+                        _receivedRequestLiveData.value?.copyWithData(updatedReceivedRequests)
                 }.onError { exception, _ ->
                     //TODO 에러처리
                 }

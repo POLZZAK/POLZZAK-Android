@@ -88,6 +88,7 @@
     <string name="link_dialog_cancel_request_content">님에게 보낸\n연동 요청을 취소하시겠어요?</string>
     <string name="link_dialog_request_content">님에게\n연동 요청을 보낼까요?</string>
     <string name="link_dialog_delete_link_content">님과\n연동을 해제하시겠어요?</string>
+    <string name="link_dialog_approve_request_content">님의\n연동 요청을 수락하시겠어요?</string>
 
     <!-- Search -->
     <string name="search_title">%s 찾기</string>

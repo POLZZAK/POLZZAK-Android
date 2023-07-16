@@ -12,6 +12,9 @@ interface LinkClickListener {
     //연동 삭제 다이얼로그
     fun displayDeleteLinkDialog(linkUserModel: LinkUserModel) {}
 
+    //연동 요청 수락 다이얼로그
+    fun displayApproveRequestDialog(linkUserModel: LinkUserModel) {}
+
     //연동 요청 취소
     fun cancelRequestLink(linkUserModel: LinkUserModel) {}
 
