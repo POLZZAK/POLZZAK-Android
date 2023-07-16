@@ -71,7 +71,7 @@ class FamilyRepository @Inject constructor(
         targetId: Int
     ): ApiResult<Unit> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
-        familyService.requestCancelLinkRequest(
+        familyService.requestDeleteLink(
             authorization = authorization,
             id = targetId
         )

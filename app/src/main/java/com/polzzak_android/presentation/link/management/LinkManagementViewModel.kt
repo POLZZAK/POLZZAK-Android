@@ -10,11 +10,11 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.model.copyWithData
 import com.polzzak_android.presentation.link.management.model.LinkManagementMainTabTypeModel
 import com.polzzak_android.presentation.link.model.LinkUserModel
+import com.polzzak_android.presentation.link.model.toLinkUserModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class LinkManagementViewModel @AssistedInject constructor(
@@ -46,9 +46,9 @@ class LinkManagementViewModel @AssistedInject constructor(
     private val approveRequestJobMap: HashMap<Int, Job> = HashMap()
 
     init {
-        requestLinkedUsers()
-        requestSentRequest()
-        requestReceivedRequest()
+        requestLinkedUsers(accessToken = initAccessToken)
+        requestSentRequest(accessToken = initAccessToken)
+        requestReceivedRequest(accessToken = initAccessToken)
     }
 
     fun setMainTabType(tabType: LinkManagementMainTabTypeModel) {
@@ -57,32 +57,43 @@ class LinkManagementViewModel @AssistedInject constructor(
     }
 
     //링크된 유저
-    fun requestLinkedUsers() {
+    fun requestLinkedUsers(accessToken: String) {
         if (getLinkedUsersJob?.isCompleted == false) return
         getLinkedUsersJob = viewModelScope.launch {
             _linkedUsersLiveData.value = ModelState.Loading()
-            delay(300)
-            _linkedUsersLiveData.value = ModelState.Success(getUserMockData(17))
+            familyRepository.requestLinkedUsers(accessToken = accessToken).onSuccess {
+                val data = it?.families?.map { userInfoDto -> userInfoDto.toLinkUserModel() }
+                    ?: emptyList()
+                _linkedUsersLiveData.value = ModelState.Success(data = data)
+            }.onError { exception, _ ->
+                //TODO 에러처리
+            }
         }
     }
 
     //받은 요청
-    fun requestReceivedRequest() {
+    fun requestReceivedRequest(accessToken: String) {
         if (getReceivedRequestJob?.isCompleted == false) return
         getReceivedRequestJob = viewModelScope.launch {
             _receivedRequestLiveData.value = ModelState.Loading()
-            delay(300)
-            _receivedRequestLiveData.value = ModelState.Success(getUserMockData(33))
+            familyRepository.requestReceivedRequestLinks(accessToken = accessToken).onSuccess {
+                val data = it?.families?.map { userInfoDto -> userInfoDto.toLinkUserModel() }
+                    ?: emptyList()
+                _receivedRequestLiveData.value = ModelState.Success(data = data)
+            }
         }
     }
 
     //보낸 요청
-    fun requestSentRequest() {
+    fun requestSentRequest(accessToken: String) {
         if (getSentRequestJob?.isCompleted == false) return
         getSentRequestJob = viewModelScope.launch {
             _sentRequestLiveData.value = ModelState.Loading()
-            delay(300)
-            _sentRequestLiveData.value = ModelState.Success(getUserMockData(21))
+            familyRepository.requestSentRequestLinks(accessToken = accessToken).onSuccess {
+                val data = it?.families?.map { userInfoDto -> userInfoDto.toLinkUserModel() }
+                    ?: emptyList()
+                _sentRequestLiveData.value = ModelState.Success(data = data)
+            }
         }
     }
 
@@ -156,12 +167,4 @@ class LinkManagementViewModel @AssistedInject constructor(
             }
         }
     }
-}
-
-private fun getUserMockData(count: Int) = List(count) {
-    LinkUserModel(
-        userId = it,
-        nickName = "name$it",
-        profileUrl = "https://picsum.photos/id/${it + 1}/200/300"
-    )
 }
