@@ -25,6 +25,7 @@ import com.polzzak_android.presentation.link.item.LinkMainReceivedRequestItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
 import com.polzzak_android.presentation.link.management.LinkManagementMainItemDecoration
 import com.polzzak_android.presentation.link.management.LinkManagementViewModel
+import com.polzzak_android.presentation.link.management.item.LinkManagementMainEmptyItem
 import com.polzzak_android.presentation.link.management.model.LinkManagementMainTabTypeModel
 import com.polzzak_android.presentation.link.model.LinkMemberType
 import com.polzzak_android.presentation.link.model.LinkUserModel
@@ -147,6 +148,12 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                                 model = linkUserModel,
                                 clickListener = this@BaseLinkManagementFragment
                             )
+                        }.ifEmpty {
+                            val content = getString(
+                                R.string.link_management_empty_link,
+                                targetLinkTypeStringOrEmpty
+                            )
+                            listOf(LinkManagementMainEmptyItem(content = content))
                         }
                     items.addAll(linkedUserItems)
                 }
@@ -177,11 +184,14 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                                 model = linkUserModel,
                                 clickListener = this@BaseLinkManagementFragment
                             )
+                        }.ifEmpty {
+                            val content = getString(R.string.link_management_empty_received)
+                            listOf(LinkManagementMainEmptyItem(content = content))
                         }
                     items.addAll(receivedRequestItems)
                     setTabUpdatedStatusVisibility(
                         tabTypeModel = LinkManagementMainTabTypeModel.RECEIVED,
-                        isVisible = receivedRequestItems.isNotEmpty()
+                        isVisible = it.data.isNotEmpty()
                     )
 
                 }
@@ -212,11 +222,14 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                                 model = linkUserModel,
                                 clickListener = this@BaseLinkManagementFragment
                             )
+                        }.ifEmpty {
+                            val content = getString(R.string.link_management_empty_sent)
+                            listOf(LinkManagementMainEmptyItem(content = content))
                         }
                     items.addAll(sentRequestItems)
                     setTabUpdatedStatusVisibility(
                         tabTypeModel = LinkManagementMainTabTypeModel.SENT,
-                        isVisible = sentRequestItems.isNotEmpty()
+                        isVisible = it.data.isNotEmpty()
                     )
                 }
 

@@ -26,7 +26,7 @@ import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.LinkClickListener
-import com.polzzak_android.presentation.link.item.LinkMainEmptyItem
+import com.polzzak_android.presentation.link.search.item.SearchMainEmptyItem
 import com.polzzak_android.presentation.link.item.LinkMainHeaderItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
 import com.polzzak_android.presentation.link.item.LinkRequestEmptyItem
@@ -266,7 +266,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                     items.add(LinkMainHeaderItem(text = headerTitleStr))
                     if (it.data.isEmpty()) {
                         val emptyContentStr = getString(R.string.search_main_empty_text)
-                        items.add(LinkMainEmptyItem(text = emptyContentStr))
+                        items.add(SearchMainEmptyItem(text = emptyContentStr))
                     } else {
                         items.addAll(it.data.map { model ->
                             LinkMainSentRequestItem(

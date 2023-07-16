@@ -109,4 +109,7 @@
     <string name="link_management_tab_link">연동 목록</string>
     <string name="link_management_tab_received">받은 요청</string>
     <string name="link_management_tab_sent">보낸 요청</string>
+    <string name="link_management_empty_link">연동된 %s가 없어요</string>
+    <string name="link_management_empty_received">받은 요청이 없어요</string>
+    <string name="link_management_empty_sent">보낸 요청이 없어요</string>
 </resources>
