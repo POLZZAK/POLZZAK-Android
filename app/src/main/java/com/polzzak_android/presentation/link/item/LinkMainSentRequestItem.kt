@@ -5,11 +5,11 @@ import com.polzzak_android.common.util.loadCircleImageUrl
 import com.polzzak_android.databinding.ItemLinkMainSentRequestBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.link.model.LinkUserModel
-import com.polzzak_android.presentation.link.LinkMainClickListener
+import com.polzzak_android.presentation.link.LinkClickListener
 
 class LinkMainSentRequestItem(
     private val model: LinkUserModel,
-    private val clickListener: LinkMainClickListener
+    private val clickListener: LinkClickListener
 ) : BindableItem<ItemLinkMainSentRequestBinding>() {
     override val layoutRes = R.layout.item_link_main_sent_request
     override fun bind(binding: ItemLinkMainSentRequestBinding, position: Int) {

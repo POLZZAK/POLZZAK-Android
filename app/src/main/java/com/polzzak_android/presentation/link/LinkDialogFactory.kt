@@ -5,6 +5,7 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.style.TextAppearanceSpan
+import androidx.annotation.StringRes
 import androidx.fragment.app.DialogFragment
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.model.ButtonCount
@@ -21,6 +22,8 @@ class LinkDialogFactory {
         context: Context,
         nickName: String,
         content: String,
+        @StringRes positiveButtonStringRes: Int,
+        @StringRes negativeButtonStringRes: Int,
         onPositiveButtonClickListener: () -> Unit
     ): DialogFragment =
         CommonDialogHelper.getInstance(
@@ -36,8 +39,8 @@ class LinkDialogFactory {
                 ),
                 button = CommonButtonModel(
                     buttonCount = ButtonCount.TWO,
-                    negativeButtonText = "아니요",
-                    positiveButtonText = "네, 좋아요!"
+                    negativeButtonText = context.getString(negativeButtonStringRes),
+                    positiveButtonText = context.getString(positiveButtonStringRes)
                 )
             ),
             onCancelListener = {

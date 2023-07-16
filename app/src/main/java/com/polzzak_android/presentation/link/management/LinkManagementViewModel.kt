@@ -26,8 +26,10 @@ class LinkManagementViewModel @AssistedInject constructor(
     private val _mainTabTypeLiveData = MutableLiveData(LinkManagementMainTabTypeModel.LINKED)
     val mainTabTypeLiveData: LiveData<LinkManagementMainTabTypeModel> = _mainTabTypeLiveData
 
-    private val _requestStatusLiveData = MutableLiveData<ModelState<LinkManagementRequestStatusModel>>()
-    val requestStatusLiveData: LiveData<ModelState<LinkManagementRequestStatusModel>> = _requestStatusLiveData
+    private val _requestStatusLiveData =
+        MutableLiveData<ModelState<LinkManagementRequestStatusModel>>()
+    val requestStatusLiveData: LiveData<ModelState<LinkManagementRequestStatusModel>> =
+        _requestStatusLiveData
     private var requestStatusJob: Job? = null
 
     private val _linkedUsersLiveData = MutableLiveData<ModelState<List<LinkUserModel>>>()
@@ -46,8 +48,8 @@ class LinkManagementViewModel @AssistedInject constructor(
     private var isSentRequestInitialized = false
     private var getSentRequestJob: Job? = null
 
-    private val _deleteLinkLiveData = MutableLiveData<ModelState<Unit?>>()
-    val deleteLinkLiveData: LiveData<ModelState<Unit?>> = _deleteLinkLiveData
+    private val _deleteLinkLiveData = MutableLiveData<ModelState<String>>()
+    val deleteLinkLiveData: LiveData<ModelState<String>> = _deleteLinkLiveData
     private val deleteLinkJobMap: HashMap<Int, Job> = HashMap()
 
     init {
@@ -112,9 +114,10 @@ class LinkManagementViewModel @AssistedInject constructor(
         val userId = linkUserModel.userId
         if (deleteLinkJobMap[userId]?.isCompleted == false) return
         deleteLinkJobMap[userId] = viewModelScope.launch {
+            _deleteLinkLiveData.value = ModelState.Loading(data = linkUserModel.nickName)
             familyRepository.requestDeleteLink(accessToken = accessToken, targetId = userId)
                 .onSuccess {
-                    _deleteLinkLiveData.value = ModelState.Success(it)
+                    _deleteLinkLiveData.value = ModelState.Success(data = linkUserModel.nickName)
 
                     val linkedUsers = _linkedUsersLiveData.value?.data ?: return@onSuccess
                     val updatedLinkedUsers = linkedUsers.toMutableList().apply {

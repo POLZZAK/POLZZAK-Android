@@ -2,9 +2,11 @@ package com.polzzak_android.presentation.link.management.base
 
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -17,7 +19,7 @@ import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.link.LinkDialogFactory
-import com.polzzak_android.presentation.link.LinkMainClickListener
+import com.polzzak_android.presentation.link.LinkClickListener
 import com.polzzak_android.presentation.link.item.LinkMainLinkedUserItem
 import com.polzzak_android.presentation.link.item.LinkMainReceivedRequestItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
@@ -31,7 +33,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementBinding>(),
-    LinkMainClickListener {
+    LinkClickListener {
     override val layoutResId: Int = R.layout.fragment_link_management
 
     protected abstract val targetLinkMemberType: LinkMemberType
@@ -112,6 +114,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         observeLinkedUsers()
         observeReceivedRequest()
         observeSentRequest()
+        observeDialogResult(
+            liveData = linkManagementViewModel.deleteLinkLiveData,
+            contentStringRes = R.string.link_dialog_delete_link_content
+        )
     }
 
     private fun observeLinkRequestStatus() {
@@ -163,7 +169,12 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
 
                 is ModelState.Success -> {
                     val linkedUserItems =
-                        it.data.map { linkUserModel -> LinkMainLinkedUserItem(model = linkUserModel) }
+                        it.data.map { linkUserModel ->
+                            LinkMainLinkedUserItem(
+                                model = linkUserModel,
+                                clickListener = this@BaseLinkManagementFragment
+                            )
+                        }
                     items.addAll(linkedUserItems)
                 }
 
@@ -228,11 +239,64 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         }
     }
 
+    private fun observeDialogResult(
+        liveData: LiveData<ModelState<String>>,
+        @StringRes contentStringRes: Int
+    ) {
+        liveData.observe(viewLifecycleOwner) {
+            when (it) {
+                is ModelState.Loading -> {
+                    val context = binding.root.context
+                    val nickName = it.data ?: ""
+                    val loadingDialog = dialogFactory.createLoadingDialog(
+                        context = context,
+                        nickName = nickName,
+                        content = context.getString(contentStringRes),
+                    )
+                    showDialog(newDialog = loadingDialog)
+                }
+
+                is ModelState.Success -> dismissDialog()
+                is ModelState.Error -> {
+                    //TODO 에러처리
+                }
+            }
+        }
+    }
+
     override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {
 
     }
 
     override fun displayRequestLinkDialog(linkUserModel: LinkUserModel) {}
+
+    override fun displayDeleteLinkDialog(linkUserModel: LinkUserModel) {
+        val context = binding.root.context
+        val requestLinkDialog =
+            dialogFactory.createLinkDialog(
+                context = context,
+                nickName = linkUserModel.nickName,
+                content = context.getString(R.string.link_dialog_delete_link_content),
+                negativeButtonStringRes = R.string.link_dialog_btn_negative,
+                positiveButtonStringRes = R.string.link_dialog_btn_positive_delete_link,
+                onPositiveButtonClickListener = {
+                    linkManagementViewModel.requestDeleteLink(
+                        accessToken = getAccessTokenOrNull() ?: "", linkUserModel = linkUserModel
+                    )
+                })
+        showDialog(newDialog = requestLinkDialog)
+    }
+
+    private fun showDialog(newDialog: DialogFragment) {
+        dismissDialog()
+        dialog = newDialog
+        dialog?.show(childFragmentManager, null)
+    }
+
+    private fun dismissDialog() {
+        dialog?.dismiss()
+        dialog = null
+    }
 
     override fun cancelRequestLink(linkUserModel: LinkUserModel) {}
 

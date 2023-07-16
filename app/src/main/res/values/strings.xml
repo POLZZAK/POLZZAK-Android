@@ -78,6 +78,17 @@
     <string name="on_boarding_parent_fifth_title">열심히 활동하면\n포인트가 쌓여요!</string>
     <string name="on_boarding_parent_fifth_content">아이와 열심히 활동하면\n계단을 폴짝! 올라갈 수 있어요</string>
 
+    <!-- Link 공통 -->
+    <string name="link_dialog_btn_negative">아니요</string>
+    <string name="link_dialog_btn_positive_delete_link">네, 해제할래요</string>
+    <string name="link_dialog_btn_positive_reject_request">네, 거절할래요</string>
+    <string name="link_dialog_btn_positive_approve_request">네, 좋아요!</string>
+    <string name="link_dialog_btn_positive_cancel_request">네, 취소할래요</string>
+    <string name="link_dialog_btn_positive_request_link">네, 좋아요!</string>
+    <string name="link_dialog_cancel_request_content">님에게 보낸\n연동 요청을 취소하시겠어요?</string>
+    <string name="link_dialog_request_content">님에게\n연동 요청을 보낼까요?</string>
+    <string name="link_dialog_delete_link_content">님과\n연동을 해제하시겠어요?</string>
+
     <!-- Search -->
     <string name="search_title">%s 찾기</string>
     <string name="search_main_hint">%s 닉네임 검색</string>
@@ -91,8 +102,6 @@
     <string name="search_request_loading_text">%s님을\n열심히 찾는 중이에요</string>
     <string name="search_request_btn_cancel_request">앗 실수, 요청 취소 할래요</string>
     <string name="search_request_request_complete">연동 요청 완료!</string>
-    <string name="search_request_dialog_cancel_request_content">님에게 보낸\n연동 요청을 취소하시겠어요?</string>
-    <string name="search_request_dialog_request_content">님에게\n연동 요청을 보낼까요?</string>
 
     <!-- LinkManagement-->
     <string name="link_management_title">연동 관리</string>
