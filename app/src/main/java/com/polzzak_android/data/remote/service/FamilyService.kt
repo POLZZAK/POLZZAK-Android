@@ -4,6 +4,7 @@ import com.polzzak_android.data.remote.model.request.LinkRequest
 import com.polzzak_android.data.remote.model.response.EmptyDataResponse
 import com.polzzak_android.data.remote.model.response.UserResponse
 import com.polzzak_android.data.remote.model.response.FamiliesResponse
+import com.polzzak_android.data.remote.model.response.LinkRequestStatusResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -36,9 +37,6 @@ interface FamilyService {
         @Path("id") id: Int
     ): Response<EmptyDataResponse>
 
-//    //연동 삭제
-//    @DELETE("/api/v1/families/{id}")
-//    suspend fun requestDeleteLink
     //연동 요청 거절
     @DELETE("/api/v1/families/reject/{id}")
     suspend fun requestRejectLinkRequest(
@@ -49,6 +47,13 @@ interface FamilyService {
     //연동 요청 취소
     @DELETE("/api/v1/families/cancel/{id}")
     suspend fun requestCancelLinkRequest(
+        @Header("Authorization") authorization: String,
+        @Path("id") id: Int
+    ): Response<EmptyDataResponse>
+
+    //연동 삭제
+    @DELETE("/api/v1/families/{id}")
+    suspend fun requestDeleteLink(
         @Header("Authorization") authorization: String,
         @Path("id") id: Int
     ): Response<EmptyDataResponse>
@@ -71,4 +76,9 @@ interface FamilyService {
         @Header("Authorization") authorization: String,
     ): Response<FamiliesResponse>
 
+    //새로운 요청 여부
+    @GET("/api/v1/families/new-request-mark")
+    suspend fun requestIsRequestUpdated(
+        @Header("Authorization") authorization: String
+    ): Response<LinkRequestStatusResponse>
 }

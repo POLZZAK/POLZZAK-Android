@@ -3,6 +3,7 @@ package com.polzzak_android.data.repository
 import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.request.LinkRequest
 import com.polzzak_android.data.remote.model.response.FamiliesDto
+import com.polzzak_android.data.remote.model.response.LinkRequestStatusResponse
 import com.polzzak_android.data.remote.model.response.UserInfoDto
 import com.polzzak_android.data.remote.service.FamilyService
 import com.polzzak_android.data.remote.util.createHeaderAuthorization
@@ -65,6 +66,17 @@ class FamilyRepository @Inject constructor(
         )
     }
 
+    suspend fun requestDeleteLink(
+        accessToken: String,
+        targetId: Int
+    ): ApiResult<Unit> = requestCatching {
+        val authorization = createHeaderAuthorization(accessToken = accessToken)
+        familyService.requestCancelLinkRequest(
+            authorization = authorization,
+            id = targetId
+        )
+    }
+
     suspend fun requestLinkedUsers(
         accessToken: String,
     ): ApiResult<FamiliesDto> = requestCatching {
@@ -84,5 +96,12 @@ class FamilyRepository @Inject constructor(
     ): ApiResult<FamiliesDto> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         familyService.requestReceivedRequestLinks(authorization = authorization)
+    }
+
+    suspend fun requestIsRequestUpdated(
+        accessToken: String
+    ): ApiResult<LinkRequestStatusResponse.LinkRequestStatusDto> = requestCatching {
+        val authorization = createHeaderAuthorization(accessToken = accessToken)
+        familyService.requestIsRequestUpdated(authorization = authorization)
     }
 }
