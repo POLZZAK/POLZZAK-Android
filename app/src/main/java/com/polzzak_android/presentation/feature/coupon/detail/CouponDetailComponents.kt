@@ -146,7 +146,7 @@ fun CouponHeaderContent(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier
         .fillMaxWidth()
-        .padding(horizontal = 60.dp)
+        .padding(horizontal = 26.dp)
 ) {
     Text(
         text = "Reward",
@@ -159,7 +159,7 @@ fun CouponHeaderContent(
         color = Gray800,
         style = PolzzakTheme.typography.subTitle4,
         maxLines = 2,
-        overflow = TextOverflow.Ellipsis,
+        overflow = TextOverflow.Clip,
         textAlign = TextAlign.Center
     )
 }
