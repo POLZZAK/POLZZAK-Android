@@ -68,11 +68,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
 
     private fun initHomeView() {
         with(binding.inMain) {
-            val tabs = listOf(
-                LinkManagementMainTabTypeModel.LINKED,
-                LinkManagementMainTabTypeModel.RECEIVED,
-                LinkManagementMainTabTypeModel.SENT
-            )
+            val tabs = LinkManagementMainTabTypeModel.values()
 
             tabs.forEach {
                 val tab = tlTab.newTab().setCustomView(R.layout.item_link_management_tab)
@@ -110,7 +106,6 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
     override fun initObserver() {
         super.initObserver()
         observeHomeTabType()
-        observeLinkRequestStatus()
         observeLinkedUsers()
         observeReceivedRequest()
         observeSentRequest()
@@ -124,39 +119,12 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         )
     }
 
-    private fun observeLinkRequestStatus() {
-        linkManagementViewModel.requestStatusLiveData.observe(viewLifecycleOwner) {
-            with(binding.inMain) {
-                when (it) {
-                    is ModelState.Success -> {
-                        repeat(tlTab.tabCount) { position ->
-                            tlTab.getTabAt(position)?.view?.findViewById<ImageView>(R.id.ivUpdatedStatus)?.isVisible =
-                                it.data.itemsVisible.getOrElse(position) { false }
-                        }
-                    }
-
-                    else -> {
-                        //TODO 에러처리
-                    }
-                }
-            }
-        }
-    }
-
     private fun observeHomeTabType() {
         linkManagementViewModel.mainTabTypeLiveData.observe(viewLifecycleOwner) {
             with(binding.inMain) {
                 rvLinked.isVisible = (it == LinkManagementMainTabTypeModel.LINKED)
                 rvReceived.isVisible = (it == LinkManagementMainTabTypeModel.RECEIVED)
                 rvSent.isVisible = (it == LinkManagementMainTabTypeModel.SENT)
-                when (it) {
-                    LinkManagementMainTabTypeModel.LINKED -> linkManagementViewModel.requestLinkedUsers()
-                    LinkManagementMainTabTypeModel.RECEIVED -> linkManagementViewModel.requestReceivedRequest()
-                    LinkManagementMainTabTypeModel.SENT -> linkManagementViewModel.requestSentRequest()
-                    else -> {
-                        //do nothing
-                    }
-                }
             }
         }
     }
@@ -209,6 +177,11 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                             )
                         }
                     items.addAll(receivedRequestItems)
+                    setTabUpdatedStatusVisibility(
+                        tabTypeModel = LinkManagementMainTabTypeModel.RECEIVED,
+                        isVisible = receivedRequestItems.isNotEmpty()
+                    )
+
                 }
 
                 is ModelState.Error -> {
@@ -238,6 +211,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                             )
                         }
                     items.addAll(sentRequestItems)
+                    setTabUpdatedStatusVisibility(
+                        tabTypeModel = LinkManagementMainTabTypeModel.SENT,
+                        isVisible = sentRequestItems.isNotEmpty()
+                    )
                 }
 
                 is ModelState.Error -> {
@@ -246,6 +223,15 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
             }
             adapter.updateItem(item = items)
         }
+    }
+
+    private fun setTabUpdatedStatusVisibility(
+        tabTypeModel: LinkManagementMainTabTypeModel,
+        isVisible: Boolean
+    ) {
+        val tabPosition = tabTypeModel.ordinal
+        binding.inMain.tlTab.getTabAt(tabPosition)?.view?.findViewById<ImageView>(R.id.ivUpdatedStatus)?.isVisible =
+            isVisible
     }
 
     private fun observeDialogResult(
