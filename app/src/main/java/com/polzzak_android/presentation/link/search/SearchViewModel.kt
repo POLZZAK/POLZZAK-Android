@@ -111,7 +111,7 @@ class SearchViewModel @AssistedInject constructor(
         }
     }
 
-    //연동 취소 요청
+    //연동 요청 취소
     fun requestCancelRequestLink(accessToken: String, linkUserModel: LinkUserModel) {
         val userId = linkUserModel.userId
         if (cancelLinkJobMap[userId]?.isCompleted == false) return
