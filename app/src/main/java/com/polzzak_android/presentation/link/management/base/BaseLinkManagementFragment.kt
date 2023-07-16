@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.link.management.base
 
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
@@ -12,6 +13,7 @@ import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.LinkMainClickListener
 import com.polzzak_android.presentation.link.item.LinkMainLinkedUserItem
 import com.polzzak_android.presentation.link.item.LinkMainReceivedRequestItem
@@ -35,6 +37,9 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         get() = context?.getString(targetLinkMemberType.stringRes) ?: ""
     private val linkMemberTypeStringOrEmpty
         get() = context?.getString(linkMemberType.stringRes) ?: ""
+
+    private val dialogFactory: LinkDialogFactory = LinkDialogFactory()
+    private var dialog: DialogFragment? = null
 
     override fun initView() {
         super.initView()

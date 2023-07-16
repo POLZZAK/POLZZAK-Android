@@ -81,7 +81,7 @@ class SearchViewModel @AssistedInject constructor(
     fun requestLink(accessToken: String, linkUserModel: LinkUserModel) {
         viewModelScope.launch {
             _requestLinkLiveData.value = ModelState.Loading()
-            familyRepository.requestLink(accessToken = accessToken, targetId = linkUserModel.userId)
+            familyRepository.requestLinkRequest(accessToken = accessToken, targetId = linkUserModel.userId)
                 .onSuccess {
                     _requestLinkLiveData.value = ModelState.Success(data = it)
 
@@ -106,7 +106,7 @@ class SearchViewModel @AssistedInject constructor(
     fun requestCancelRequestLink(accessToken: String, linkUserModel: LinkUserModel) {
         viewModelScope.launch {
             _cancelLinkLiveData.value = ModelState.Loading()
-            familyRepository.requestDeleteLink(
+            familyRepository.requestCancelLinkRequest(
                 accessToken = accessToken,
                 targetId = linkUserModel.userId
             ).onSuccess {

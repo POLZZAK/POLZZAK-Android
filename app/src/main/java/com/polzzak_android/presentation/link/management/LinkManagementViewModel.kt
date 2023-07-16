@@ -4,14 +4,22 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.polzzak_android.data.repository.FamilyRepository
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.model.copyWithData
 import com.polzzak_android.presentation.link.management.model.LinkManagementMainTabTypeModel
+import com.polzzak_android.presentation.link.model.LinkRequestUserModel
 import com.polzzak_android.presentation.link.model.LinkUserModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LinkManagementViewModel : ViewModel() {
+@HiltViewModel
+class LinkManagementViewModel @Inject constructor(
+    familyRepository: FamilyRepository
+) : ViewModel() {
     private val _mainTabTypeLiveData = MutableLiveData(LinkManagementMainTabTypeModel.LINKED)
     val mainTabTypeLiveData: LiveData<LinkManagementMainTabTypeModel> = _mainTabTypeLiveData
 
@@ -30,6 +38,7 @@ class LinkManagementViewModel : ViewModel() {
     val sentRequestLiveData: LiveData<ModelState<List<LinkUserModel>>> = _sentRequestLiveData
     private var isSentRequestInitialized = false
     private var getSentRequestJob: Job? = null
+
 
     fun setMainTabType(tabType: LinkManagementMainTabTypeModel) {
         if (tabType == mainTabTypeLiveData.value) return
@@ -68,6 +77,36 @@ class LinkManagementViewModel : ViewModel() {
             _sentRequestLiveData.value = ModelState.Success(getUserMockData(21))
         }
     }
+
+    fun requestCancelLink(accessToken: String, linkUserModel: LinkUserModel) {
+
+    }
+
+//    fun requestCancelRequestLink(accessToken: String, linkUserModel: LinkUserModel) {
+//        viewModelScope.launch {
+//            _cancelLinkLiveData.value = ModelState.Loading()
+//            familyRepository.requestDeleteLink(
+//                accessToken = accessToken,
+//                targetId = linkUserModel.userId
+//            ).onSuccess {
+//                _cancelLinkLiveData.value = ModelState.Success(it)
+//
+//                //보낸 목록 갱신
+//                val requests = _requestSentLiveData.value?.data ?: return@onSuccess
+//                val updatedSentRequests = requests.toMutableList().apply {
+//                    removeIf { user -> user.userId == linkUserModel.userId }
+//                }
+//                _requestSentLiveData.value =
+//                    _requestSentLiveData.value?.copyWithData(newData = updatedSentRequests)
+//
+//                //아이디가 같을 경우 유저 검색 결과 갱신
+//                val updatedLinkRequestUserModel = LinkRequestUserModel.Normal(user = linkUserModel)
+//                updateSearchUserResult(updatedLinkRequestUserModel = updatedLinkRequestUserModel)
+//            }.onError { exception, _ ->
+//                //TODO error handling
+//            }
+//        }
+//    }
 }
 
 private fun getUserMockData(count: Int) = List(count) {

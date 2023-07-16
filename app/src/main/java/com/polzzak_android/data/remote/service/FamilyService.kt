@@ -22,30 +22,33 @@ interface FamilyService {
         @Query("nickname") nickName: String
     ): Response<UserResponse>
 
-    //연동 신청
+    //연동 요청
     @POST("/api/v1/families")
-    suspend fun requestLink(
+    suspend fun requestLinkRequest(
         @Header("Authorization") authorization: String,
         @Body linkRequest: LinkRequest
     ): Response<EmptyDataResponse>
 
-    //연동 승인
+    //연동 요청 승인
     @PATCH("/api/v1/families/approve/{id}")
-    suspend fun requestApproveLink(
+    suspend fun requestApproveLinkRequest(
         @Header("Authorization") authorization: String,
         @Path("id") id: Int
     ): Response<EmptyDataResponse>
 
-    //연동 거절
+//    //연동 삭제
+//    @DELETE("/api/v1/families/{id}")
+//    suspend fun requestDeleteLink
+    //연동 요청 거절
     @DELETE("/api/v1/families/reject/{id}")
-    suspend fun requestRejectLink(
+    suspend fun requestRejectLinkRequest(
         @Header("Authorization") authorization: String,
         @Path("id") id: Int
     ): Response<EmptyDataResponse>
 
-    //연동 취소
+    //연동 요청 취소
     @DELETE("/api/v1/families/cancel/{id}")
-    suspend fun requestDeleteLink(
+    suspend fun requestCancelLinkRequest(
         @Header("Authorization") authorization: String,
         @Path("id") id: Int
     ): Response<EmptyDataResponse>
