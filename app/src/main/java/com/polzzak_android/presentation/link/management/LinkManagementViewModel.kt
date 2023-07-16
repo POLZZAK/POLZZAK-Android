@@ -57,7 +57,7 @@ class LinkManagementViewModel @AssistedInject constructor(
     }
 
     //링크된 유저
-    fun requestLinkedUsers(accessToken: String) {
+    private fun requestLinkedUsers(accessToken: String) {
         if (getLinkedUsersJob?.isCompleted == false) return
         getLinkedUsersJob = viewModelScope.launch {
             _linkedUsersLiveData.value = ModelState.Loading()
@@ -72,7 +72,7 @@ class LinkManagementViewModel @AssistedInject constructor(
     }
 
     //받은 요청
-    fun requestReceivedRequest(accessToken: String) {
+    private fun requestReceivedRequest(accessToken: String) {
         if (getReceivedRequestJob?.isCompleted == false) return
         getReceivedRequestJob = viewModelScope.launch {
             _receivedRequestLiveData.value = ModelState.Loading()
@@ -85,7 +85,7 @@ class LinkManagementViewModel @AssistedInject constructor(
     }
 
     //보낸 요청
-    fun requestSentRequest(accessToken: String) {
+    private fun requestSentRequest(accessToken: String) {
         if (getSentRequestJob?.isCompleted == false) return
         getSentRequestJob = viewModelScope.launch {
             _sentRequestLiveData.value = ModelState.Loading()
