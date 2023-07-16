@@ -98,10 +98,10 @@ class FamilyRepository @Inject constructor(
         familyService.requestReceivedRequestLinks(authorization = authorization)
     }
 
-    suspend fun requestIsRequestUpdated(
+    suspend fun requestLinkRequestStatus(
         accessToken: String
     ): ApiResult<LinkRequestStatusResponse.LinkRequestStatusDto> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
-        familyService.requestIsRequestUpdated(authorization = authorization)
+        familyService.requestLinkRequestStatus(authorization = authorization)
     }
 }

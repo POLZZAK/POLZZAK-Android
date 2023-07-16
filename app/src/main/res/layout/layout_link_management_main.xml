@@ -16,9 +16,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tabBackground="@drawable/selector_bg_link_management_tab"
             app:tabIndicatorHeight="0dp"
-            app:tabSelectedTextColor="@color/primary"
-            app:tabTextAppearance="@style/subtitle.16.700"
-            app:tabTextColor="@color/gray_300" />
+            app:tabPadding="0dp" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvLinked"

@@ -78,7 +78,7 @@ interface FamilyService {
 
     //새로운 요청 여부
     @GET("/api/v1/families/new-request-mark")
-    suspend fun requestIsRequestUpdated(
+    suspend fun requestLinkRequestStatus(
         @Header("Authorization") authorization: String
     ): Response<LinkRequestStatusResponse>
 }

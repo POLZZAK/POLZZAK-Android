@@ -9,8 +9,8 @@ data class LinkRequestStatusResponse(
 ) : BaseResponse<LinkRequestStatusResponse.LinkRequestStatusDto> {
     data class LinkRequestStatusDto(
         @SerializedName("isFamilyReceived")
-        val isReceivedUpdated: Boolean,
+        val isReceivedRequestUpdated: Boolean,
         @SerializedName("isFamilySent")
-        val isFamilySentUpdated: Boolean
+        val isSentRequestUpdated: Boolean
     )
 }

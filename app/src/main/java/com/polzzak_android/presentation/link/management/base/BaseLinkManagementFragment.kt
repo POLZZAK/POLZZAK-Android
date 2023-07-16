@@ -1,5 +1,7 @@
 package com.polzzak_android.presentation.link.management.base
 
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -13,6 +15,7 @@ import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.LinkMainClickListener
 import com.polzzak_android.presentation.link.item.LinkMainLinkedUserItem
@@ -23,7 +26,10 @@ import com.polzzak_android.presentation.link.management.LinkManagementViewModel
 import com.polzzak_android.presentation.link.management.model.LinkManagementMainTabTypeModel
 import com.polzzak_android.presentation.link.model.LinkMemberType
 import com.polzzak_android.presentation.link.model.LinkUserModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementBinding>(),
     LinkMainClickListener {
     override val layoutResId: Int = R.layout.fragment_link_management
@@ -31,7 +37,14 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
     protected abstract val targetLinkMemberType: LinkMemberType
     protected abstract val linkMemberType: LinkMemberType
 
-    private val linkManagementViewModel by viewModels<LinkManagementViewModel>()
+    @Inject
+    lateinit var linkManagementViewModelAssistedFactory: LinkManagementViewModel.LinkManagementViewModelAssistedFactory
+    private val linkManagementViewModel by viewModels<LinkManagementViewModel> {
+        LinkManagementViewModel.provideFactory(
+            linkManagementViewModelAssistedFactory = linkManagementViewModelAssistedFactory,
+            initAccessToken = getAccessTokenOrNull() ?: "",
+        )
+    }
 
     private val targetLinkTypeStringOrEmpty
         get() = context?.getString(targetLinkMemberType.stringRes) ?: ""
@@ -58,9 +71,15 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 LinkManagementMainTabTypeModel.RECEIVED,
                 LinkManagementMainTabTypeModel.SENT
             )
+
             tabs.forEach {
-                tlTab.addTab(tlTab.newTab().setText(it.titleStringRes))
+                val tab = tlTab.newTab().setCustomView(R.layout.item_link_management_tab)
+                    .setText(it.titleStringRes)
+                tab.view.findViewById<TextView>(R.id.tvTitle)
+                    .setText(it.titleStringRes)
+                tlTab.addTab(tab)
             }
+
             tlTab.addOnTabSelectedListener(object : OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab?) {
                     val position = tab?.position ?: return
@@ -89,9 +108,29 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
     override fun initObserver() {
         super.initObserver()
         observeHomeTabType()
+        observeLinkRequestStatus()
         observeLinkedUsers()
         observeReceivedRequest()
         observeSentRequest()
+    }
+
+    private fun observeLinkRequestStatus() {
+        linkManagementViewModel.requestStatusLiveData.observe(viewLifecycleOwner) {
+            with(binding.inMain) {
+                when (it) {
+                    is ModelState.Success -> {
+                        repeat(tlTab.tabCount) { position ->
+                            tlTab.getTabAt(position)?.view?.findViewById<ImageView>(R.id.ivUpdatedStatus)?.isVisible =
+                                it.data.itemsVisible.getOrElse(position) { false }
+                        }
+                    }
+
+                    else -> {
+                        //TODO 에러처리
+                    }
+                }
+            }
+        }
     }
 
     private fun observeHomeTabType() {
