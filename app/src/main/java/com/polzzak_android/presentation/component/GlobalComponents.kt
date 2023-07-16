@@ -51,7 +51,6 @@ import com.polzzak_android.presentation.common.compose.Gray400
 import com.polzzak_android.presentation.common.compose.NoRippleTheme
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
 
-
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PolzzakButton(
@@ -80,7 +79,7 @@ fun PolzzakButton(
                 MutableInteractionSource()
             }
         ) {
-            ProvideTextStyle(value = PolzzakTheme.typography.subTitle3) {
+            ProvideTextStyle(value = PolzzakTheme.typography.semiBold16) {
                 Row(
                     modifier = Modifier
                         .defaultMinSize(
@@ -168,7 +167,7 @@ fun ButtonPreview() {
 fun BlueChip(text: String) = Text(
     text = text,
     color = Color.White,
-    style = PolzzakTheme.typography.subTitle3,
+    style = PolzzakTheme.typography.semiBold16,
     modifier = Modifier
         .clip(RoundedCornerShape(corner = CornerSize(6.dp)))
         .background(color = Blue500)
@@ -201,7 +200,7 @@ fun NoticeBar(text: String) = Row(
     Spacer(modifier = Modifier.width(8.dp))
     Text(
         text = text,
-        style = PolzzakTheme.typography.body2,
+        style = PolzzakTheme.typography.semiBold14,
         color = Blue600,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis

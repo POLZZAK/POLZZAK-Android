@@ -77,7 +77,7 @@ fun StampBoardHeader(
     ) {
         Text(
             text = title,
-            style = PolzzakTheme.typography.title1,
+            style = PolzzakTheme.typography.semiBold24,
             modifier = Modifier.weight(1f)
         )
 
@@ -107,7 +107,7 @@ fun LazyListScope.expandMissionList(
             ) {
                 Text(
                     text = "미션 목록",
-                    style = PolzzakTheme.typography.subTitle3
+                    style = PolzzakTheme.typography.semiBold16
                 )
 
                 if (missions.size > 3) {
@@ -128,7 +128,7 @@ fun LazyListScope.expandMissionList(
         Surface(modifier = Modifier.fillMaxWidth()) {
             Text(
                 text = mission.content,
-                style = PolzzakTheme.typography.body3,
+                style = PolzzakTheme.typography.medium14,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 3.dp)
@@ -181,7 +181,7 @@ fun RewardInfoSheet(
         ){
             Text(
                 text = "보상",
-                style = PolzzakTheme.typography.subTitle3,
+                style = PolzzakTheme.typography.semiBold16,
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -224,7 +224,7 @@ fun RewardInfoSheet(
 fun RewardInfoSheetPreview() {
     RewardInfoSheet(
         rewardTitle = {
-            Text(text = "보상 제목", style = PolzzakTheme.typography.subTitle1)
+            Text(text = "보상 제목", style = PolzzakTheme.typography.semiBold18)
         },
         rewardButton = {
             PolzzakButton(
@@ -237,7 +237,7 @@ fun RewardInfoSheetPreview() {
         rewardStateText = {
             Text(
                 text = "쿠폰 안내 텍스트",
-                style = PolzzakTheme.typography.body4,
+                style = PolzzakTheme.typography.medium13,
                 color = Gray500
             )
         },
@@ -245,7 +245,7 @@ fun RewardInfoSheetPreview() {
             TextButton(onClick = { /*TODO*/ }) {
                 Text(
                     text = "도장판 삭제하기",
-                    style = PolzzakTheme.typography.body4.copy(fontWeight = FontWeight.SemiBold),
+                    style = PolzzakTheme.typography.medium13.copy(fontWeight = FontWeight.SemiBold),
                     color = Gray500,
                     textDecoration = TextDecoration.Underline
                 )
@@ -377,7 +377,7 @@ fun SeeMore(
 ) {
     Text(
         text = if (expandedProvider()) toggleText.first else toggleText.second,
-        style = PolzzakTheme.typography.body4,
+        style = PolzzakTheme.typography.medium13,
         color = Gray500
     )
     Spacer(modifier = Modifier.width(4.dp))
@@ -467,7 +467,7 @@ fun EnabledEmptyStamp(
 ) {
     Text(
         text = numberText,
-        style = PolzzakTheme.typography.title2,
+        style = PolzzakTheme.typography.semiBold22,
         color = Blue600
     )
 }
@@ -495,7 +495,7 @@ fun DisabledEmptyStamp(
 ) {
     Text(
         text = numberText,
-        style = PolzzakTheme.typography.title2,
+        style = PolzzakTheme.typography.semiBold22,
         color = Gray400
     )
 }

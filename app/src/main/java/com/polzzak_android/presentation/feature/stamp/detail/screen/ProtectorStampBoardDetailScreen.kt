@@ -106,7 +106,7 @@ fun StampBoardDetailScreen_Protector(
 
             RewardInfoSheet(
                 rewardTitle = {
-                    Text(text = rewardTitle, style = PolzzakTheme.typography.subTitle1)
+                    Text(text = rewardTitle, style = PolzzakTheme.typography.semiBold18)
                 },
                 rewardButton = {
                     PolzzakButton(
@@ -120,7 +120,7 @@ fun StampBoardDetailScreen_Protector(
                 rewardStateText = {
                     Text(
                         text = getCouponInfoText(stampBoardStatus),
-                        style = PolzzakTheme.typography.body4,
+                        style = PolzzakTheme.typography.medium13,
                         color = Gray500
                     )
                 },
@@ -128,7 +128,7 @@ fun StampBoardDetailScreen_Protector(
                     TextButton(onClick = onBoardDeleteClick) {
                         Text(
                             text = "도장판 삭제하기",
-                            style = PolzzakTheme.typography.body4.copy(fontWeight = FontWeight.SemiBold),
+                            style = PolzzakTheme.typography.medium13.copy(fontWeight = FontWeight.SemiBold),
                             color = Gray500,
                             textDecoration = TextDecoration.Underline
                         )

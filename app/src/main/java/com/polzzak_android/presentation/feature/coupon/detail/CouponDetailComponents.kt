@@ -151,13 +151,13 @@ fun CouponHeaderContent(
     Text(
         text = "Reward",
         color = Blue600,
-        style = PolzzakTheme.typography.subTitle3
+        style = PolzzakTheme.typography.semiBold16
     )
     Spacer(modifier = Modifier.height(10.dp))
     Text(
         text = title,
         color = Gray800,
-        style = PolzzakTheme.typography.subTitle4,
+        style = PolzzakTheme.typography.semiBold20,
         maxLines = 2,
         overflow = TextOverflow.Clip,
         textAlign = TextAlign.Center
@@ -223,12 +223,12 @@ private fun UserProfile(
     )
     Spacer(modifier = Modifier.width(14.dp))
     Column {
-        Text(text = label, color = Gray500, style = PolzzakTheme.typography.body4)
+        Text(text = label, color = Gray500, style = PolzzakTheme.typography.medium13)
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = name,
             color = Gray800,
-            style = PolzzakTheme.typography.subTitle3,
+            style = PolzzakTheme.typography.semiBold16,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -255,7 +255,7 @@ private fun LabeledCounter(
                 indication = null
             )
     ) {
-        Text(text = label, color = Gray500, style = PolzzakTheme.typography.body4)
+        Text(text = label, color = Gray500, style = PolzzakTheme.typography.medium13)
         if (onClick != null) {
             Spacer(modifier = Modifier.width(2.dp))
             Icon(
@@ -271,14 +271,14 @@ private fun LabeledCounter(
         Text(
             text = value.toString(),
             color = Blue600,
-            style = PolzzakTheme.typography.subTitle1,
+            style = PolzzakTheme.typography.semiBold18,
             modifier = Modifier.alignByBaseline()
         )
         Spacer(modifier = Modifier.width(2.dp))
         Text(
             text = unit,
             color = Blue600,
-            style = PolzzakTheme.typography.caption1,
+            style = PolzzakTheme.typography.semiBold12,
             modifier = Modifier.alignByBaseline()
         )
     }
@@ -309,11 +309,11 @@ private fun MissionDate(
     label: String,
     date: LocalDate
 ) = Column {
-    Text(text = label, color = Gray500, style = PolzzakTheme.typography.body4)
+    Text(text = label, color = Gray500, style = PolzzakTheme.typography.medium13)
     Spacer(modifier = Modifier.height(2.dp))
 
     val dateText = date.format(DateTimeFormatter.ofPattern("yyyy. MM. dd"))
-    Text(text = dateText, color = Gray800, style = PolzzakTheme.typography.subTitle1)
+    Text(text = dateText, color = Gray800, style = PolzzakTheme.typography.semiBold18)
 }
 
 @Preview(device = "spec:width=500dp,height=891dp", showBackground = false)
