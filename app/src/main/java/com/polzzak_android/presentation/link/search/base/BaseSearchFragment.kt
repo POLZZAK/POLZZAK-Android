@@ -25,7 +25,7 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.link.LinkDialogFactory
-import com.polzzak_android.presentation.link.LinkMainClickListener
+import com.polzzak_android.presentation.link.LinkClickListener
 import com.polzzak_android.presentation.link.item.LinkMainEmptyItem
 import com.polzzak_android.presentation.link.item.LinkMainHeaderItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
@@ -43,7 +43,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkMainClickListener {
+abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkClickListener {
     override val layoutResId: Int = R.layout.fragment_search
 
     protected abstract val targetLinkMemberType: LinkMemberType
@@ -213,11 +213,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkM
             when (it) {
                 is ModelState.Loading -> {
                     val context = binding.root.context
-                    val nickName = searchViewModel.searchQueryLiveData.value ?: ""
+                    val nickName = it.data ?: ""
                     val loadingDialog = dialogFactory.createLoadingDialog(
                         context = context,
                         nickName = nickName,
-                        content = context.getString(R.string.search_request_dialog_request_content),
+                        content = context.getString(R.string.link_dialog_request_content),
                     )
                     showDialog(newDialog = loadingDialog)
                 }
@@ -232,11 +232,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkM
             when (it) {
                 is ModelState.Loading -> {
                     val context = binding.root.context
-                    val nickName = searchViewModel.searchQueryLiveData.value ?: ""
+                    val nickName = it.data ?: ""
                     val loadingDialog = dialogFactory.createLoadingDialog(
                         context = context,
                         nickName = nickName,
-                        content = context.getString(R.string.search_request_dialog_cancel_request_content),
+                        content = context.getString(R.string.link_dialog_cancel_request_content),
                     )
                     showDialog(newDialog = loadingDialog)
                 }
@@ -335,7 +335,9 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkM
             dialogFactory.createLinkDialog(
                 context = context,
                 nickName = linkUserModel.nickName,
-                content = context.getString(R.string.search_request_dialog_cancel_request_content),
+                content = context.getString(R.string.link_dialog_cancel_request_content),
+                negativeButtonStringRes = R.string.link_dialog_btn_negative,
+                positiveButtonStringRes = R.string.link_dialog_btn_positive_cancel_request,
                 onPositiveButtonClickListener = {
                     cancelRequestLink(linkUserModel = linkUserModel)
                 })
@@ -348,7 +350,9 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkM
             dialogFactory.createLinkDialog(
                 context = context,
                 nickName = linkUserModel.nickName,
-                content = context.getString(R.string.search_request_dialog_request_content),
+                content = context.getString(R.string.link_dialog_request_content),
+                negativeButtonStringRes = R.string.link_dialog_btn_negative,
+                positiveButtonStringRes = R.string.link_dialog_btn_positive_request_link,
                 onPositiveButtonClickListener = {
                     searchViewModel.requestLink(
                         accessToken = getAccessTokenOrNull() ?: "",

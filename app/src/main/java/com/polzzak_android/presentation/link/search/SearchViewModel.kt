@@ -36,16 +36,16 @@ class SearchViewModel @AssistedInject constructor(
     val requestSentLiveData: LiveData<ModelState<List<LinkUserModel>>> = _requestSentLiveData
     private var sentRequestJob: Job? = null
 
-    private val _cancelLinkLiveData = MutableLiveData<ModelState<Unit?>>()
-    val cancelLinkLiveData: LiveData<ModelState<Unit?>> = _cancelLinkLiveData
+    private val _cancelLinkLiveData = MutableLiveData<ModelState<String>>()
+    val cancelLinkLiveData: LiveData<ModelState<String>> = _cancelLinkLiveData
     private val cancelLinkJobMap: HashMap<Int, Job> = HashMap()
 
     private val _searchUserLiveData = MutableLiveData<ModelState<LinkRequestUserModel>>()
     val searchUserLiveData: LiveData<ModelState<LinkRequestUserModel>> = _searchUserLiveData
     private var searchUserJob: Job? = null
 
-    private val _requestLinkLiveData = MutableLiveData<ModelState<Unit?>>()
-    val requestLinkLiveData: LiveData<ModelState<Unit?>> = _requestLinkLiveData
+    private val _requestLinkLiveData = MutableLiveData<ModelState<String>>()
+    val requestLinkLiveData: LiveData<ModelState<String>> = _requestLinkLiveData
     private val linkJobMap: HashMap<Int, Job> = HashMap()
 
     init {
@@ -81,14 +81,15 @@ class SearchViewModel @AssistedInject constructor(
     //연동 요청
     fun requestLink(accessToken: String, linkUserModel: LinkUserModel) {
         val userId = linkUserModel.userId
+        val nickName = linkUserModel.nickName
         if (linkJobMap[userId]?.isCompleted == false) return
         linkJobMap[userId] = viewModelScope.launch {
-            _requestLinkLiveData.value = ModelState.Loading()
+            _requestLinkLiveData.value = ModelState.Loading(data = nickName)
             familyRepository.requestLinkRequest(
                 accessToken = accessToken,
                 targetId = userId
             ).onSuccess {
-                _requestLinkLiveData.value = ModelState.Success(data = it)
+                _requestLinkLiveData.value = ModelState.Success(data = nickName)
 
                 //보낸 목록 갱신
                 val requests = _requestSentLiveData.value?.data
@@ -114,14 +115,15 @@ class SearchViewModel @AssistedInject constructor(
     //연동 요청 취소
     fun requestCancelRequestLink(accessToken: String, linkUserModel: LinkUserModel) {
         val userId = linkUserModel.userId
+        val nickName = linkUserModel.nickName
         if (cancelLinkJobMap[userId]?.isCompleted == false) return
         cancelLinkJobMap[userId] = viewModelScope.launch {
-            _cancelLinkLiveData.value = ModelState.Loading()
+            _cancelLinkLiveData.value = ModelState.Loading(data = nickName)
             familyRepository.requestCancelLinkRequest(
                 accessToken = accessToken,
                 targetId = userId
             ).onSuccess {
-                _cancelLinkLiveData.value = ModelState.Success(it)
+                _cancelLinkLiveData.value = ModelState.Success(data = nickName)
 
                 //보낸 목록 갱신
                 val requests = _requestSentLiveData.value?.data ?: return@onSuccess
