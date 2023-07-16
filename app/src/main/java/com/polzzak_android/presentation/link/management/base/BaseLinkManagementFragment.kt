@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.link.management.base
 
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.polzzak_android.R
@@ -21,7 +22,6 @@ import com.polzzak_android.presentation.link.management.model.LinkManagementMain
 import com.polzzak_android.presentation.link.model.LinkMemberType
 import com.polzzak_android.presentation.link.model.LinkUserModel
 
-//TODO 헤더 백버튼 리스너 추가
 abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementBinding>(),
     LinkMainClickListener {
     override val layoutResId: Int = R.layout.fragment_link_management
@@ -39,7 +39,9 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
     override fun initView() {
         super.initView()
         with(binding) {
-
+            ivBtnBack.setOnClickListener {
+                findNavController().popBackStack()
+            }
         }
         initHomeView()
     }

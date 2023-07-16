@@ -8,6 +8,41 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivBtnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_navigation_previous"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/gray_700"
+                tools:tint="@color/gray_700" />
+
+            <TextView
+                android:id="@+id/tvTitle"
+                style="@style/subtitle.18.600"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/link_management_title"
+                android:textColor="@color/gray_800"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <EditText
             android:id="@+id/etSearch"
             android:layout_width="0dp"
@@ -23,7 +58,7 @@
             android:textColorHint="@color/gray_500"
             app:layout_constraintEnd_toStartOf="@id/tvBtnCancel"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/clHeader"
             tools:hint="아이 닉네임 검색" />
 
         <ImageView
