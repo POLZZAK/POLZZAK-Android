@@ -120,6 +120,10 @@ class LinkManagementViewModel @AssistedInject constructor(
                 }.onError { exception, _ ->
                     //TODO 에러처리
                 }
+        }.apply {
+            invokeOnCompletion {
+                deleteLinkJobMap.remove(userId)
+            }
         }
     }
 
@@ -148,6 +152,10 @@ class LinkManagementViewModel @AssistedInject constructor(
                 }.onError { exception, _ ->
                     //TODO 에러처리
                 }
+        }.apply {
+            invokeOnCompletion {
+                approveRequestJobMap.remove(userId)
+            }
         }
     }
 
@@ -172,6 +180,10 @@ class LinkManagementViewModel @AssistedInject constructor(
                 }.onError { exception, _ ->
                     //TODO 에러처리
                 }
+        }.apply {
+            invokeOnCompletion {
+                rejectRequestJobMap.remove(userId)
+            }
         }
     }
 
