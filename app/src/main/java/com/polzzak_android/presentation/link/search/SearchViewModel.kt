@@ -36,9 +36,9 @@ class SearchViewModel @AssistedInject constructor(
     val requestSentLiveData: LiveData<ModelState<List<LinkUserModel>>> = _requestSentLiveData
     private var sentRequestJob: Job? = null
 
-    private val _cancelLinkLiveData = MutableLiveData<ModelState<String>>()
-    val cancelLinkLiveData: LiveData<ModelState<String>> = _cancelLinkLiveData
-    private val cancelLinkJobMap: HashMap<Int, Job> = HashMap()
+    private val _cancelRequestLiveData = MutableLiveData<ModelState<String>>()
+    val cancelLinkLiveData: LiveData<ModelState<String>> = _cancelRequestLiveData
+    private val cancelRequestJobMap: HashMap<Int, Job> = HashMap()
 
     private val _searchUserLiveData = MutableLiveData<ModelState<LinkRequestUserModel>>()
     val searchUserLiveData: LiveData<ModelState<LinkRequestUserModel>> = _searchUserLiveData
@@ -116,14 +116,14 @@ class SearchViewModel @AssistedInject constructor(
     fun requestCancelRequestLink(accessToken: String, linkUserModel: LinkUserModel) {
         val userId = linkUserModel.userId
         val nickName = linkUserModel.nickName
-        if (cancelLinkJobMap[userId]?.isCompleted == false) return
-        cancelLinkJobMap[userId] = viewModelScope.launch {
-            _cancelLinkLiveData.value = ModelState.Loading(data = nickName)
+        if (cancelRequestJobMap[userId]?.isCompleted == false) return
+        cancelRequestJobMap[userId] = viewModelScope.launch {
+            _cancelRequestLiveData.value = ModelState.Loading(data = nickName)
             familyRepository.requestCancelLinkRequest(
                 accessToken = accessToken,
                 targetId = userId
             ).onSuccess {
-                _cancelLinkLiveData.value = ModelState.Success(data = nickName)
+                _cancelRequestLiveData.value = ModelState.Success(data = nickName)
 
                 //보낸 목록 갱신
                 val requests = _requestSentLiveData.value?.data ?: return@onSuccess
@@ -141,7 +141,7 @@ class SearchViewModel @AssistedInject constructor(
             }
         }.apply {
             invokeOnCompletion {
-                cancelLinkJobMap.remove(userId)
+                cancelRequestJobMap.remove(userId)
             }
         }
     }
