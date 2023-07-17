@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.coupon.detail
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -40,6 +41,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.compose.Blue200
+import com.polzzak_android.presentation.common.compose.Blue500
 import com.polzzak_android.presentation.common.compose.Blue600
 import com.polzzak_android.presentation.common.compose.Gray200
 import com.polzzak_android.presentation.common.compose.Gray400
@@ -47,8 +49,69 @@ import com.polzzak_android.presentation.common.compose.Gray500
 import com.polzzak_android.presentation.common.compose.Gray700
 import com.polzzak_android.presentation.common.compose.Gray800
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
+import com.polzzak_android.presentation.feature.coupon.model.CouponDetailModel
+import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
+@Composable
+fun CouponTicketImage(
+    data: CouponDetailModel
+) = Column(
+    horizontalAlignment = Alignment.CenterHorizontally,
+    modifier = Modifier
+        .background(color = Blue500)
+        .padding(horizontal = 26.dp)
+        .padding(top = 40.dp, bottom = 30.dp)
+) {
+    CouponTicket(
+        header = {
+            CouponHeaderContent(title = data.rewardTitle)
+        },
+        body = {
+            CouponBodyContent(
+                giverName = data.giverName,
+                giverProfileUrl = data.giverProfileUrl,
+                receiverName = data.receiverName,
+                receiverProfileUrl = data.receiverProfileUrl,
+                completedMissionCount = data.missions.size,
+                stampCount = data.stampCount,
+                dateCount = Duration.between(
+                    data.startDate.atStartOfDay(),
+                    data.endDate.atStartOfDay()
+                ).toDays().toInt(),
+                onMissionClick = {}
+            )
+        },
+        footer = {
+            CouponFooterContent(startDate = data.startDate, endDate = data.endDate)
+        }
+    )
+    Spacer(modifier = Modifier.height(30.dp))
+    Image(
+        painter = painterResource(id = R.drawable.img_logo_polzzak_text),
+        contentDescription = "Polzzak"
+    )
+}
+
+@Preview
+@Composable
+fun CouponTicketImagePreview() {
+    CouponTicketImage(
+        CouponDetailModel(
+            couponId = 0,
+            rewardTitle = "쿠폰 샘플",
+            giverName = "홍길동",
+            giverProfileUrl = "",
+            receiverName = "김철수",
+            receiverProfileUrl = "",
+            missions = listOf("1", "2", "3"),
+            stampCount = 16,
+            startDate = LocalDate.now().minusDays(7),
+            endDate = LocalDate.now()
+        )
+    )
+}
 
 @Composable
 fun DeliveryDayText(date: LocalDate) = Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -214,10 +277,10 @@ fun CouponHeaderContent(
  */
 @Composable
 fun CouponBodyContent(
-    giverProfileUrl: String,
     giverName: String,
-    receiverProfileUrl: String,
+    giverProfileUrl: String,
     receiverName: String,
+    receiverProfileUrl: String,
     completedMissionCount: Int,
     stampCount: Int,
     dateCount: Int,
