@@ -44,10 +44,55 @@ import com.polzzak_android.presentation.common.compose.Blue600
 import com.polzzak_android.presentation.common.compose.Gray200
 import com.polzzak_android.presentation.common.compose.Gray400
 import com.polzzak_android.presentation.common.compose.Gray500
+import com.polzzak_android.presentation.common.compose.Gray700
 import com.polzzak_android.presentation.common.compose.Gray800
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
+@Composable
+fun DeliveryDayText(date: LocalDate) = Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Row {
+        Text(
+            text = date.format(DateTimeFormatter.ofPattern("yyyy. MM. dd")),
+            style = PolzzakTheme.typography.semiBold14,
+            color = Color.White
+        )
+        Text(
+            text = " 까지",
+            style = PolzzakTheme.typography.semiBold14,
+            color = Gray700
+        )
+    }
+
+    Text(
+        text = "선물을 전달하기로 약속했어요!",
+        style = PolzzakTheme.typography.semiBold14,
+        color = Gray700
+    )
+}
+
+@Preview
+@Composable
+private fun DeliveryDayTextPreview() {
+    DeliveryDayText(date = LocalDate.now())
+}
+
+@Composable
+fun DeliveryCompletedText() = Text(
+    text = "선물 전달 완료",
+    style = PolzzakTheme.typography.semiBold14,
+    color = Color.White,
+    modifier = Modifier
+        .background(color = Blue600, shape = RoundedCornerShape(100.dp))
+        .padding(horizontal = 12.dp, vertical = 6.dp)
+)
+
+@Preview
+@Composable
+private fun DeliveryCompletedTextPreview() {
+    DeliveryCompletedText()
+}
 
 /**
  * 쿠폰 티켓 모양의 컴포저블.
