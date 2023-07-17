@@ -45,6 +45,10 @@ class LinkManagementViewModel @AssistedInject constructor(
     val approveRequestLiveData: LiveData<ModelState<String>> = _approveRequestLiveData
     private val approveRequestJobMap: HashMap<Int, Job> = HashMap()
 
+    private val _rejectRequestLiveData = MutableLiveData<ModelState<String>>()
+    val rejectRequestLiveData: LiveData<ModelState<String>> = _rejectRequestLiveData
+    private val rejectRequestJobMap: HashMap<Int, Job> = HashMap()
+
     init {
         requestLinkedUsers(accessToken = initAccessToken)
         requestSentRequest(accessToken = initAccessToken)
@@ -139,6 +143,30 @@ class LinkManagementViewModel @AssistedInject constructor(
 
                     _linkedUsersLiveData.value =
                         _linkedUsersLiveData.value?.copyWithData(updatedLinkedUsers)
+                    _receivedRequestLiveData.value =
+                        _receivedRequestLiveData.value?.copyWithData(updatedReceivedRequests)
+                }.onError { exception, _ ->
+                    //TODO 에러처리
+                }
+        }
+    }
+
+    //요청 거절
+    fun requestRejectLinkRequest(accessToken: String, linkUserModel: LinkUserModel) {
+        val userId = linkUserModel.userId
+        if (rejectRequestJobMap[userId]?.isCompleted == false) return
+        rejectRequestJobMap[userId] = viewModelScope.launch {
+            _rejectRequestLiveData.value = ModelState.Loading(data = linkUserModel.nickName)
+            familyRepository.requestRejectLinkRequest(accessToken = accessToken, targetId = userId)
+                .onSuccess {
+                    _rejectRequestLiveData.value =
+                        ModelState.Success(data = linkUserModel.nickName)
+
+                    val receivedRequests = _receivedRequestLiveData.value?.data ?: return@onSuccess
+                    val updatedReceivedRequests = receivedRequests.toMutableList().apply {
+                        removeIf { user -> user.userId == userId }
+                    }
+
                     _receivedRequestLiveData.value =
                         _receivedRequestLiveData.value?.copyWithData(updatedReceivedRequests)
                 }.onError { exception, _ ->

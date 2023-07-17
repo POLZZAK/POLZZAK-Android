@@ -52,7 +52,7 @@
             android:background="@drawable/shape_rectangle_error_500_r8"
             android:paddingHorizontal="16dp"
             android:paddingVertical="4dp"
-            android:text="@string/common_decline"
+            android:text="@string/common_reject"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

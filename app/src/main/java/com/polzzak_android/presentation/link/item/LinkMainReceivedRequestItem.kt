@@ -28,7 +28,7 @@ class LinkMainReceivedRequestItem(
                 clickListener.displayApproveRequestDialog(linkUserModel = model)
             }
             tvBtnDecline.setOnClickListener {
-                //TODO 연동 요청 거절
+                clickListener.displayRejectRequestDialog(linkUserModel = model)
             }
         }
     }

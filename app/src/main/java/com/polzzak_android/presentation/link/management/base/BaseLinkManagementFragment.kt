@@ -118,6 +118,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
             liveData = linkManagementViewModel.approveRequestLiveData,
             contentStringRes = R.string.link_dialog_approve_request_content
         )
+        observeDialogResult(
+            liveData = linkManagementViewModel.rejectRequestLiveData,
+            contentStringRes = R.string.link_dialog_reject_request_content
+        )
     }
 
     private fun observeHomeTabType() {
@@ -313,6 +317,23 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                     )
                 })
         showDialog(newDialog = approveRequestDialog)
+    }
+
+    override fun displayRejectRequestDialog(linkUserModel: LinkUserModel) {
+        val context = binding.root.context
+        val rejectRequestDialog =
+            dialogFactory.createLinkDialog(
+                context = context,
+                nickName = linkUserModel.nickName,
+                content = context.getString(R.string.link_dialog_reject_request_content),
+                negativeButtonStringRes = R.string.link_dialog_btn_negative,
+                positiveButtonStringRes = R.string.link_dialog_btn_positive_reject_request,
+                onPositiveButtonClickListener = {
+                    linkManagementViewModel.requestRejectLinkRequest(
+                        accessToken = getAccessTokenOrNull() ?: "", linkUserModel = linkUserModel
+                    )
+                })
+        showDialog(newDialog = rejectRequestDialog)
     }
 
     private fun showDialog(newDialog: DialogFragment) {
