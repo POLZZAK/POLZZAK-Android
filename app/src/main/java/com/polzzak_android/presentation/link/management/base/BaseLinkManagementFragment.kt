@@ -122,6 +122,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
             liveData = linkManagementViewModel.rejectRequestLiveData,
             contentStringRes = R.string.link_dialog_reject_request_content
         )
+        observeDialogResult(
+            liveData = linkManagementViewModel.cancelRequestLiveData,
+            contentStringRes = R.string.link_dialog_cancel_request_content
+        )
     }
 
     private fun observeHomeTabType() {
@@ -280,7 +284,20 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
     }
 
     override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {
-
+        val context = binding.root.context
+        val cancelRequestDialog =
+            dialogFactory.createLinkDialog(
+                context = context,
+                nickName = linkUserModel.nickName,
+                content = context.getString(R.string.link_dialog_cancel_request_content),
+                negativeButtonStringRes = R.string.link_dialog_btn_negative,
+                positiveButtonStringRes = R.string.link_dialog_btn_positive_cancel_request,
+                onPositiveButtonClickListener = {
+                    linkManagementViewModel.requestCancelLinkRequest(
+                        accessToken = getAccessTokenOrNull() ?: "", linkUserModel = linkUserModel
+                    )
+                })
+        showDialog(newDialog = cancelRequestDialog)
     }
 
     override fun displayRequestLinkDialog(linkUserModel: LinkUserModel) {}

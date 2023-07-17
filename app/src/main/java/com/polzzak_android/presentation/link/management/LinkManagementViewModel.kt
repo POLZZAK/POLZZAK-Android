@@ -49,6 +49,10 @@ class LinkManagementViewModel @AssistedInject constructor(
     val rejectRequestLiveData: LiveData<ModelState<String>> = _rejectRequestLiveData
     private val rejectRequestJobMap: HashMap<Int, Job> = HashMap()
 
+    private val _cancelRequestLiveData = MutableLiveData<ModelState<String>>()
+    val cancelRequestLiveData: LiveData<ModelState<String>> = _rejectRequestLiveData
+    private val cancelRequestJobMap: HashMap<Int, Job> = HashMap()
+
     init {
         requestLinkedUsers(accessToken = initAccessToken)
         requestSentRequest(accessToken = initAccessToken)
@@ -183,6 +187,34 @@ class LinkManagementViewModel @AssistedInject constructor(
         }.apply {
             invokeOnCompletion {
                 rejectRequestJobMap.remove(userId)
+            }
+        }
+    }
+
+    //보낸 요청 취소
+    fun requestCancelLinkRequest(accessToken: String, linkUserModel: LinkUserModel) {
+        val userId = linkUserModel.userId
+        if (cancelRequestJobMap[userId]?.isCompleted == false) return
+        cancelRequestJobMap[userId] = viewModelScope.launch {
+            _cancelRequestLiveData.value = ModelState.Loading(data = linkUserModel.nickName)
+            familyRepository.requestCancelLinkRequest(accessToken = accessToken, targetId = userId)
+                .onSuccess {
+                    _cancelRequestLiveData.value =
+                        ModelState.Success(data = linkUserModel.nickName)
+
+                    val sentRequests = _sentRequestLiveData.value?.data ?: return@onSuccess
+                    val updatedSentRequests = sentRequests.toMutableList().apply {
+                        removeIf { user -> user.userId == userId }
+                    }
+
+                    _sentRequestLiveData.value =
+                        _sentRequestLiveData.value?.copyWithData(updatedSentRequests)
+                }.onError { exception, _ ->
+                    //TODO 에러처리
+                }
+        }.apply {
+            invokeOnCompletion {
+                cancelRequestJobMap.remove(userId)
             }
         }
     }
