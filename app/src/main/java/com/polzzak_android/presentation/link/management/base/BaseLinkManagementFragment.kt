@@ -1,5 +1,9 @@
 package com.polzzak_android.presentation.link.management.base
 
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
@@ -18,6 +22,7 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.LinkClickListener
 import com.polzzak_android.presentation.link.item.LinkMainLinkedUserItem
@@ -28,6 +33,7 @@ import com.polzzak_android.presentation.link.management.LinkManagementViewModel
 import com.polzzak_android.presentation.link.management.item.LinkManagementMainEmptyItem
 import com.polzzak_android.presentation.link.management.model.LinkManagementMainTabTypeModel
 import com.polzzak_android.presentation.link.model.LinkMemberType
+import com.polzzak_android.presentation.link.model.LinkPageTypeModel
 import com.polzzak_android.presentation.link.model.LinkUserModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -46,6 +52,8 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         LinkManagementViewModel.provideFactory(
             linkManagementViewModelAssistedFactory = linkManagementViewModelAssistedFactory,
             initAccessToken = getAccessTokenOrNull() ?: "",
+            linkMemberType = linkMemberType,
+            targetLinkMemberType = targetLinkMemberType
         )
     }
 
@@ -59,12 +67,66 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
 
     override fun initView() {
         super.initView()
+        initCommonView()
+        initHomeView()
+    }
+
+    private fun initCommonView() {
         with(binding) {
             ivBtnBack.setOnClickListener {
                 findNavController().popBackStack()
             }
+            ivBtnClearText.setOnClickListener {
+                etSearch.setText("")
+            }
+            tvBtnCancel.setOnClickListener {
+                linkManagementViewModel.setPage(LinkPageTypeModel.MAIN)
+            }
+            root.setOnTouchListener { view, _ ->
+                hideKeyboardAndClearFocus()
+                view.performClick()
+                false
+            }
+            initSearchEditTextView()
         }
-        initHomeView()
+    }
+
+    private fun initSearchEditTextView() {
+        with(binding.etSearch) {
+            setText(linkManagementViewModel.searchQueryLiveData.value ?: "")
+            setOnFocusChangeListener { _, isFocused ->
+                if (isFocused) linkManagementViewModel.setPage(page = LinkPageTypeModel.REQUEST)
+            }
+            addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+                override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+                override fun afterTextChanged(p0: Editable?) {
+                    linkManagementViewModel.setSearchQuery(query = p0?.toString() ?: "")
+                }
+            })
+            imeOptions = EditorInfo.IME_ACTION_SEARCH
+            setOnEditorActionListener(object : TextView.OnEditorActionListener {
+                override fun onEditorAction(
+                    v: TextView?,
+                    actionId: Int,
+                    event: KeyEvent?
+                ): Boolean {
+                    if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                        hideKeyboardAndClearFocus()
+                        linkManagementViewModel.requestSearchUserWithNickName(
+                            accessToken = getAccessTokenOrNull() ?: ""
+                        )
+                        return true
+                    }
+                    return false
+                }
+            })
+        }
+    }
+
+    private fun hideKeyboardAndClearFocus() {
+        hideKeyboard()
+        binding.etSearch.clearFocus()
     }
 
     private fun initHomeView() {
@@ -106,6 +168,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
 
     override fun initObserver() {
         super.initObserver()
+        observeSearch()
         observeHomeTabType()
         observeLinkedUsers()
         observeReceivedRequest()
@@ -126,6 +189,33 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
             liveData = linkManagementViewModel.cancelRequestLiveData,
             contentStringRes = R.string.link_dialog_cancel_request_content
         )
+    }
+
+    private fun observeSearch() {
+        linkManagementViewModel.pageLiveData.observe(viewLifecycleOwner) {
+            with(binding) {
+                if (it == LinkPageTypeModel.MAIN) hideKeyboardAndClearFocus()
+                inMain.root.isVisible = (it == LinkPageTypeModel.MAIN)
+                inRequest.root.isVisible = (it == LinkPageTypeModel.REQUEST)
+                tvBtnCancel.isVisible = (it == LinkPageTypeModel.REQUEST)
+                etSearch.setText("")
+                etSearch.hint = when (it) {
+                    LinkPageTypeModel.MAIN -> getString(
+                        R.string.link_management_main_hint,
+                        targetLinkTypeStringOrEmpty
+                    )
+
+                    LinkPageTypeModel.REQUEST -> getString(R.string.link_management_request_hint)
+                    else -> ""
+                }
+                ivIconSearch.isVisible = (it == LinkPageTypeModel.MAIN)
+            }
+        }
+        linkManagementViewModel.searchQueryLiveData.observe(viewLifecycleOwner) {
+            with(binding) {
+                ivBtnClearText.isVisible = it.isNotEmpty()
+            }
+        }
     }
 
     private fun observeHomeTabType() {

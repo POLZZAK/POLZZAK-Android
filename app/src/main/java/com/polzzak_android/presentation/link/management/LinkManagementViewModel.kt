@@ -9,7 +9,11 @@ import com.polzzak_android.data.repository.FamilyRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.model.copyWithData
 import com.polzzak_android.presentation.link.management.model.LinkManagementMainTabTypeModel
+import com.polzzak_android.presentation.link.model.LinkMemberType
+import com.polzzak_android.presentation.link.model.LinkPageTypeModel
+import com.polzzak_android.presentation.link.model.LinkRequestUserModel
 import com.polzzak_android.presentation.link.model.LinkUserModel
+import com.polzzak_android.presentation.link.model.toLinkRequestUserModel
 import com.polzzak_android.presentation.link.model.toLinkUserModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -17,10 +21,23 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+//TODO Search와 ViewModel 공유 가능한지
 class LinkManagementViewModel @AssistedInject constructor(
     private val familyRepository: FamilyRepository,
-    @Assisted private val initAccessToken: String
+    @Assisted private val initAccessToken: String,
+    @Assisted("userType") private val linkMemberType: LinkMemberType,
+    @Assisted("targetType") private val targetLinkMemberType: LinkMemberType
 ) : ViewModel() {
+    private val _pageLiveData = MutableLiveData<LinkPageTypeModel>(LinkPageTypeModel.MAIN)
+    val pageLiveData: LiveData<LinkPageTypeModel> = _pageLiveData
+
+    private val _searchQueryLiveData = MutableLiveData<String>("")
+    val searchQueryLiveData: LiveData<String> = _searchQueryLiveData
+
+    private val _searchUserLiveData = MutableLiveData<ModelState<LinkRequestUserModel>>()
+    val searchUserLiveData: LiveData<ModelState<LinkRequestUserModel>> = _searchUserLiveData
+    private var searchUserJob: Job? = null
+
     private val _mainTabTypeLiveData = MutableLiveData(LinkManagementMainTabTypeModel.LINKED)
     val mainTabTypeLiveData: LiveData<LinkManagementMainTabTypeModel> = _mainTabTypeLiveData
 
@@ -59,9 +76,39 @@ class LinkManagementViewModel @AssistedInject constructor(
         requestReceivedRequest(accessToken = initAccessToken)
     }
 
+    fun setPage(page: LinkPageTypeModel) {
+        if (page == pageLiveData.value) return
+        _pageLiveData.value = page
+    }
+
+    fun setSearchQuery(query: String) {
+        _searchQueryLiveData.value = query
+    }
+
     fun setMainTabType(tabType: LinkManagementMainTabTypeModel) {
         if (tabType == mainTabTypeLiveData.value) return
         _mainTabTypeLiveData.value = tabType
+    }
+
+    //유저검색
+    fun requestSearchUserWithNickName(accessToken: String) {
+        searchUserJob?.cancel()
+        searchUserJob = viewModelScope.launch {
+            _searchUserLiveData.value = ModelState.Loading()
+            val query = searchQueryLiveData.value ?: ""
+            familyRepository.requestUserWithNickName(accessToken = accessToken, nickName = query)
+                .onSuccess { userInfoDto ->
+                    val linkRequestUserModel =
+                        userInfoDto.toLinkRequestUserModel(
+                            nickName = query,
+                            linkMemberType = linkMemberType
+                        )
+                    _searchUserLiveData.value =
+                        ModelState.Success(data = linkRequestUserModel)
+                }.onError { exception, _ ->
+                    _searchUserLiveData.value = ModelState.Error(exception = exception)
+                }
+        }
     }
 
     //링크된 유저
@@ -223,6 +270,8 @@ class LinkManagementViewModel @AssistedInject constructor(
     interface LinkManagementViewModelAssistedFactory {
         fun create(
             initAccessToken: String,
+            @Assisted("userType") linkMemberType: LinkMemberType,
+            @Assisted("targetType") targetLinkMemberType: LinkMemberType
         ): LinkManagementViewModel
     }
 
@@ -230,11 +279,15 @@ class LinkManagementViewModel @AssistedInject constructor(
         fun provideFactory(
             linkManagementViewModelAssistedFactory: LinkManagementViewModelAssistedFactory,
             initAccessToken: String,
+            linkMemberType: LinkMemberType,
+            targetLinkMemberType: LinkMemberType
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return linkManagementViewModelAssistedFactory.create(
-                    initAccessToken = initAccessToken
+                    initAccessToken = initAccessToken,
+                    linkMemberType = linkMemberType,
+                    targetLinkMemberType = targetLinkMemberType
                 ) as T
             }
         }
