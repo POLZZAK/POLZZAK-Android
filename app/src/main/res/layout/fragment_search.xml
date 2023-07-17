@@ -23,6 +23,7 @@
 
         <EditText
             android:id="@+id/etSearch"
+            style="@style/body.14.500"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -33,6 +34,7 @@
             android:paddingVertical="12dp"
             android:paddingStart="16dp"
             android:paddingEnd="36dp"
+            android:textColor="@color/gray_800"
             android:textColorHint="@color/gray_500"
             app:layout_constraintEnd_toStartOf="@id/tvBtnCancel"
             app:layout_constraintStart_toStartOf="parent"
