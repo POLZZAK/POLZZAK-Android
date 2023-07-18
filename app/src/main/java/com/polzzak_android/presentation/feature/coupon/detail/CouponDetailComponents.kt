@@ -49,6 +49,7 @@ import com.polzzak_android.presentation.common.compose.Gray500
 import com.polzzak_android.presentation.common.compose.Gray700
 import com.polzzak_android.presentation.common.compose.Gray800
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
+import com.polzzak_android.presentation.coupon.model.CouponState
 import com.polzzak_android.presentation.feature.coupon.model.CouponDetailModel
 import java.time.Duration
 import java.time.LocalDate
@@ -100,6 +101,7 @@ fun CouponTicketImagePreview() {
     CouponTicketImage(
         CouponDetailModel(
             couponId = 0,
+            state = CouponState.ISSUED,
             rewardTitle = "쿠폰 샘플",
             giverName = "홍길동",
             giverProfileUrl = "",
