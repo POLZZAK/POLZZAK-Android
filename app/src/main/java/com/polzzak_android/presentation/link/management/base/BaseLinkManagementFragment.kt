@@ -3,6 +3,7 @@ package com.polzzak_android.presentation.link.management.base
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.KeyEvent
+import android.view.MotionEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.TextView
@@ -12,6 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.LiveData
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.polzzak_android.R
@@ -23,17 +25,22 @@ import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
-import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.LinkClickListener
+import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.item.LinkMainLinkedUserItem
 import com.polzzak_android.presentation.link.item.LinkMainReceivedRequestItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
+import com.polzzak_android.presentation.link.item.LinkRequestEmptyItem
+import com.polzzak_android.presentation.link.item.LinkRequestGuideItem
+import com.polzzak_android.presentation.link.item.LinkRequestLoadingItem
+import com.polzzak_android.presentation.link.item.LinkRequestSuccessItem
 import com.polzzak_android.presentation.link.management.LinkManagementMainItemDecoration
 import com.polzzak_android.presentation.link.management.LinkManagementViewModel
 import com.polzzak_android.presentation.link.management.item.LinkManagementMainEmptyItem
 import com.polzzak_android.presentation.link.management.model.LinkManagementMainTabTypeModel
 import com.polzzak_android.presentation.link.model.LinkMemberType
 import com.polzzak_android.presentation.link.model.LinkPageTypeModel
+import com.polzzak_android.presentation.link.model.LinkRequestUserModel
 import com.polzzak_android.presentation.link.model.LinkUserModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -68,7 +75,8 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
     override fun initView() {
         super.initView()
         initCommonView()
-        initHomeView()
+        initMainPageView()
+        initRequestPageView()
     }
 
     private fun initCommonView() {
@@ -129,7 +137,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         binding.etSearch.clearFocus()
     }
 
-    private fun initHomeView() {
+    private fun initMainPageView() {
         with(binding.inMain) {
             val tabs = LinkManagementMainTabTypeModel.values()
 
@@ -166,6 +174,26 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         }
     }
 
+    private fun initRequestPageView() {
+        with(binding.inRequest) {
+            rvSearchResult.adapter = BindableItemAdapter()
+            rvSearchResult.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    hideKeyboardAndClearFocus()
+                    return false
+                }
+
+                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {
+                    //do nothing
+                }
+
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+                    //do nothing
+                }
+            })
+        }
+    }
+
     override fun initObserver() {
         super.initObserver()
         observeSearch()
@@ -188,6 +216,11 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         observeDialogResult(
             liveData = linkManagementViewModel.cancelRequestLiveData,
             contentStringRes = R.string.link_dialog_cancel_request_content
+        )
+        observeRequest()
+        observeDialogResult(
+            liveData = linkManagementViewModel.requestLinkLiveData,
+            contentStringRes = R.string.link_dialog_request_content
         )
     }
 
@@ -373,6 +406,51 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         }
     }
 
+    private fun observeRequest() {
+        linkManagementViewModel.searchUserLiveData.observe(viewLifecycleOwner) {
+            val adapter =
+                (binding.inRequest.rvSearchResult.adapter as? BindableItemAdapter) ?: return@observe
+            val items = mutableListOf<BindableItem<*>>()
+            when (it) {
+                is ModelState.Loading -> {
+                    val nickName = linkManagementViewModel.searchQueryLiveData.value ?: ""
+                    items.add(
+                        LinkRequestLoadingItem(
+                            nickName = nickName,
+                            clickListener = this@BaseLinkManagementFragment
+                        )
+                    )
+                }
+
+                is ModelState.Success -> {
+                    val item = createRequestUserItem(model = it.data)
+                    items.add(item)
+                }
+
+                is ModelState.Error -> {
+                    //TODO 에러케이스 적용
+                }
+            }
+            adapter.updateItem(items)
+        }
+    }
+
+    private fun createRequestUserItem(model: LinkRequestUserModel): BindableItem<*> = when (model) {
+        is LinkRequestUserModel.Empty -> LinkRequestEmptyItem(model = model)
+        is LinkRequestUserModel.Guide -> LinkRequestGuideItem(model = model)
+        is LinkRequestUserModel.Normal -> LinkRequestSuccessItem.newInstance(
+            userModel = model,
+            clickListener = this@BaseLinkManagementFragment
+        )
+
+        is LinkRequestUserModel.Sent -> LinkRequestSuccessItem.newInstance(
+            userModel = model,
+            clickListener = this@BaseLinkManagementFragment
+        )
+
+        is LinkRequestUserModel.Linked -> LinkRequestSuccessItem.newInstance(userModel = model)
+    }
+
     override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {
         val context = binding.root.context
         val cancelRequestDialog =
@@ -390,7 +468,23 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         showDialog(newDialog = cancelRequestDialog)
     }
 
-    override fun displayRequestLinkDialog(linkUserModel: LinkUserModel) {}
+    override fun displayRequestLinkDialog(linkUserModel: LinkUserModel) {
+        val context = binding.root.context
+        val requestLinkDialog =
+            dialogFactory.createLinkDialog(
+                context = context,
+                nickName = linkUserModel.nickName,
+                content = context.getString(R.string.link_dialog_request_content),
+                negativeButtonStringRes = R.string.link_dialog_btn_negative,
+                positiveButtonStringRes = R.string.link_dialog_btn_positive_request_link,
+                onPositiveButtonClickListener = {
+                    linkManagementViewModel.requestLink(
+                        accessToken = getAccessTokenOrNull() ?: "",
+                        linkUserModel = linkUserModel
+                    )
+                })
+        showDialog(newDialog = requestLinkDialog)
+    }
 
     override fun displayDeleteLinkDialog(linkUserModel: LinkUserModel) {
         val context = binding.root.context
@@ -454,9 +548,16 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         dialog = null
     }
 
-    override fun cancelRequestLink(linkUserModel: LinkUserModel) {}
+    override fun cancelSearch() {
+        linkManagementViewModel.cancelSearchUserWithNickNameJob()
+    }
 
-    override fun cancelSearch() {}
+    override fun cancelRequestLink(linkUserModel: LinkUserModel) {
+        linkManagementViewModel.requestCancelLinkRequest(
+            accessToken = getAccessTokenOrNull() ?: "",
+            linkUserModel = linkUserModel
+        )
+    }
 
     companion object {
         private const val MAIN_ITEM_MARGIN_DP = 24

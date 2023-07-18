@@ -70,15 +70,21 @@ class LinkManagementViewModel @AssistedInject constructor(
     val cancelRequestLiveData: LiveData<ModelState<String>> = _rejectRequestLiveData
     private val cancelRequestJobMap: HashMap<Int, Job> = HashMap()
 
+    private val _requestLinkLiveData = MutableLiveData<ModelState<String>>()
+    val requestLinkLiveData: LiveData<ModelState<String>> = _requestLinkLiveData
+    private val linkJobMap: HashMap<Int, Job> = HashMap()
+
     init {
         requestLinkedUsers(accessToken = initAccessToken)
         requestSentRequest(accessToken = initAccessToken)
         requestReceivedRequest(accessToken = initAccessToken)
+        resetSearchUserResult()
     }
 
     fun setPage(page: LinkPageTypeModel) {
         if (page == pageLiveData.value) return
         _pageLiveData.value = page
+        if (page == LinkPageTypeModel.REQUEST) resetSearchUserResult()
     }
 
     fun setSearchQuery(query: String) {
@@ -256,6 +262,11 @@ class LinkManagementViewModel @AssistedInject constructor(
 
                     _sentRequestLiveData.value =
                         _sentRequestLiveData.value?.copyWithData(updatedSentRequests)
+
+                    //아이디가 같을 경우 유저 검색 결과 갱신
+                    val updatedLinkRequestUserModel =
+                        LinkRequestUserModel.Normal(user = linkUserModel)
+                    updateSearchUserResult(updatedLinkRequestUserModel = updatedLinkRequestUserModel)
                 }.onError { exception, _ ->
                     //TODO 에러처리
                 }
@@ -264,6 +275,59 @@ class LinkManagementViewModel @AssistedInject constructor(
                 cancelRequestJobMap.remove(userId)
             }
         }
+    }
+
+    //연동 요청
+    fun requestLink(accessToken: String, linkUserModel: LinkUserModel) {
+        val userId = linkUserModel.userId
+        val nickName = linkUserModel.nickName
+        if (linkJobMap[userId]?.isCompleted == false) return
+        linkJobMap[userId] = viewModelScope.launch {
+            _requestLinkLiveData.value = ModelState.Loading(data = nickName)
+            familyRepository.requestLinkRequest(
+                accessToken = accessToken,
+                targetId = userId
+            ).onSuccess {
+                _requestLinkLiveData.value = ModelState.Success(data = nickName)
+
+                //보낸 목록 갱신
+                val requests = _sentRequestLiveData.value?.data
+                if (requests?.any { user -> user.userId == userId } == false) {
+                    val updatedSentRequests = requests + listOf(linkUserModel)
+                    _sentRequestLiveData.value =
+                        _sentRequestLiveData.value?.copyWithData(newData = updatedSentRequests)
+                }
+
+                //아이디가 같을 경우 유저 검색 결과 갱신
+                val updatedLinkRequestUserModel =
+                    LinkRequestUserModel.Sent(user = linkUserModel)
+                updateSearchUserResult(updatedLinkRequestUserModel = updatedLinkRequestUserModel)
+
+            }.onError { exception, _ -> }
+        }.apply {
+            invokeOnCompletion {
+                linkJobMap.remove(userId)
+            }
+        }
+    }
+
+    private fun updateSearchUserResult(updatedLinkRequestUserModel: LinkRequestUserModel) {
+        val linkRequestUserModelState = searchUserLiveData.value
+        if (linkRequestUserModelState?.data?.user?.userId != updatedLinkRequestUserModel.user?.userId) return
+        if (searchUserJob?.isCompleted == false) return
+        _searchUserLiveData.value =
+            linkRequestUserModelState?.copyWithData(newData = updatedLinkRequestUserModel)
+    }
+
+    fun cancelSearchUserWithNickNameJob() {
+        searchUserJob?.cancel()
+        searchUserJob = null
+        resetSearchUserResult()
+    }
+
+    private fun resetSearchUserResult() {
+        _searchUserLiveData.value =
+            ModelState.Success(LinkRequestUserModel.Guide(targetLinkMemberType = targetLinkMemberType))
     }
 
     @AssistedFactory
