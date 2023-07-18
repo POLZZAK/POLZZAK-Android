@@ -325,7 +325,7 @@ class LinkManagementViewModel @AssistedInject constructor(
         resetSearchUserResult()
     }
 
-    private fun resetSearchUserResult() {
+    fun resetSearchUserResult() {
         _searchUserLiveData.value =
             ModelState.Success(LinkRequestUserModel.Guide(targetLinkMemberType = targetLinkMemberType))
     }

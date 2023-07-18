@@ -88,6 +88,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 etSearch.setText("")
             }
             tvBtnCancel.setOnClickListener {
+                linkManagementViewModel.resetSearchUserResult()
                 linkManagementViewModel.setPage(LinkPageTypeModel.MAIN)
             }
             root.setOnTouchListener { view, _ ->
@@ -227,9 +228,12 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
     private fun observeSearch() {
         linkManagementViewModel.pageLiveData.observe(viewLifecycleOwner) {
             with(binding) {
-                if (it == LinkPageTypeModel.MAIN) hideKeyboardAndClearFocus()
-                inMain.root.isVisible = (it == LinkPageTypeModel.MAIN)
-                inRequest.root.isVisible = (it == LinkPageTypeModel.REQUEST)
+                if (it == LinkPageTypeModel.MAIN) {
+                    hideKeyboardAndClearFocus()
+                    inMain.root.bringToFront()
+                } else {
+                    inRequest.root.bringToFront()
+                }
                 tvBtnCancel.isVisible = (it == LinkPageTypeModel.REQUEST)
                 etSearch.setText("")
                 etSearch.hint = when (it) {

@@ -87,6 +87,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 etSearch.setText("")
             }
             tvBtnCancel.setOnClickListener {
+                searchViewModel.resetSearchUserResult()
                 searchViewModel.setPage(LinkPageTypeModel.MAIN)
             }
             root.setOnTouchListener { view, _ ->
@@ -195,9 +196,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
     override fun initObserver() {
         searchViewModel.pageLiveData.observe(viewLifecycleOwner) {
             with(binding) {
-                if (it == LinkPageTypeModel.MAIN) hideKeyboardAndClearFocus()
-                inMain.root.isVisible = (it == LinkPageTypeModel.MAIN)
-                inRequest.root.isVisible = (it == LinkPageTypeModel.REQUEST)
+                if (it == LinkPageTypeModel.MAIN) {
+                    hideKeyboardAndClearFocus()
+                    inMain.root.bringToFront()
+                } else {
+                    inRequest.root.bringToFront()
+                }
                 tvBtnCancel.isVisible = (it == LinkPageTypeModel.REQUEST)
                 etSearch.setText("")
                 ivIconSearch.isVisible = (it == LinkPageTypeModel.MAIN)
