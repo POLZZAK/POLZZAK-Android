@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.link.management
+package com.polzzak_android.presentation.link
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -21,8 +21,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-//TODO Search와 ViewModel 공유 가능한지
-class LinkManagementViewModel @AssistedInject constructor(
+class LinkViewModel @AssistedInject constructor(
     private val familyRepository: FamilyRepository,
     @Assisted private val initAccessToken: String,
     @Assisted("userType") private val linkMemberType: LinkMemberType,
@@ -331,24 +330,24 @@ class LinkManagementViewModel @AssistedInject constructor(
     }
 
     @AssistedFactory
-    interface LinkManagementViewModelAssistedFactory {
+    interface LinkViewModelAssistedFactory {
         fun create(
             initAccessToken: String,
             @Assisted("userType") linkMemberType: LinkMemberType,
             @Assisted("targetType") targetLinkMemberType: LinkMemberType
-        ): LinkManagementViewModel
+        ): LinkViewModel
     }
 
     companion object {
         fun provideFactory(
-            linkManagementViewModelAssistedFactory: LinkManagementViewModelAssistedFactory,
+            linkViewModelAssistedFactory: LinkViewModelAssistedFactory,
             initAccessToken: String,
             linkMemberType: LinkMemberType,
             targetLinkMemberType: LinkMemberType
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return linkManagementViewModelAssistedFactory.create(
+                return linkViewModelAssistedFactory.create(
                     initAccessToken = initAccessToken,
                     linkMemberType = linkMemberType,
                     targetLinkMemberType = targetLinkMemberType

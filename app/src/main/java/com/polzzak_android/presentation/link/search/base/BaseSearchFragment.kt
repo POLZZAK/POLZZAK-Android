@@ -24,9 +24,9 @@ import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.shotBackPressed
-import com.polzzak_android.presentation.link.LinkDialogFactory
 import com.polzzak_android.presentation.link.LinkClickListener
-import com.polzzak_android.presentation.link.search.item.SearchMainEmptyItem
+import com.polzzak_android.presentation.link.LinkDialogFactory
+import com.polzzak_android.presentation.link.LinkViewModel
 import com.polzzak_android.presentation.link.item.LinkMainHeaderItem
 import com.polzzak_android.presentation.link.item.LinkMainSentRequestItem
 import com.polzzak_android.presentation.link.item.LinkRequestEmptyItem
@@ -38,7 +38,7 @@ import com.polzzak_android.presentation.link.model.LinkPageTypeModel
 import com.polzzak_android.presentation.link.model.LinkRequestUserModel
 import com.polzzak_android.presentation.link.model.LinkUserModel
 import com.polzzak_android.presentation.link.search.SearchMainItemDecoration
-import com.polzzak_android.presentation.link.search.SearchViewModel
+import com.polzzak_android.presentation.link.search.item.SearchMainEmptyItem
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -53,11 +53,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
     protected abstract val actionMoveMainFragment: Int
 
     @Inject
-    lateinit var searchViewModelAssistedFactory: SearchViewModel.SearchViewModelAssistedFactory
+    lateinit var linkViewModelAssistedFactory: LinkViewModel.LinkViewModelAssistedFactory
 
-    private val searchViewModel by viewModels<SearchViewModel> {
-        SearchViewModel.provideFactory(
-            searchViewModelAssistedFactory = searchViewModelAssistedFactory,
+    private val linkViewModel by viewModels<LinkViewModel> {
+        LinkViewModel.provideFactory(
+            linkViewModelAssistedFactory = linkViewModelAssistedFactory,
             initAccessToken = getAccessTokenOrNull() ?: "",
             linkMemberType = linkMemberType,
             targetLinkMemberType = targetLinkMemberType
@@ -87,8 +87,8 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 etSearch.setText("")
             }
             tvBtnCancel.setOnClickListener {
-                searchViewModel.resetSearchUserResult()
-                searchViewModel.setPage(LinkPageTypeModel.MAIN)
+                linkViewModel.resetSearchUserResult()
+                linkViewModel.setPage(LinkPageTypeModel.MAIN)
             }
             root.setOnTouchListener { view, _ ->
                 hideKeyboardAndClearFocus()
@@ -102,15 +102,15 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
     private fun initSearchEditTextView() {
         with(binding.etSearch) {
             hint = context?.getString(R.string.search_main_hint, targetLinkTypeStringOrEmpty)
-            setText(searchViewModel.searchQueryLiveData.value ?: "")
+            setText(linkViewModel.searchQueryLiveData.value ?: "")
             setOnFocusChangeListener { _, isFocused ->
-                if (isFocused) searchViewModel.setPage(page = LinkPageTypeModel.REQUEST)
+                if (isFocused) linkViewModel.setPage(page = LinkPageTypeModel.REQUEST)
             }
             addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
                 override fun afterTextChanged(p0: Editable?) {
-                    searchViewModel.setSearchQuery(query = p0?.toString() ?: "")
+                    linkViewModel.setSearchQuery(query = p0?.toString() ?: "")
                 }
             })
             imeOptions = EditorInfo.IME_ACTION_SEARCH
@@ -122,7 +122,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 ): Boolean {
                     if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                         hideKeyboardAndClearFocus()
-                        searchViewModel.requestSearchUserWithNickName(
+                        linkViewModel.requestSearchUserWithNickName(
                             accessToken = getAccessTokenOrNull() ?: ""
                         )
                         return true
@@ -194,7 +194,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
     }
 
     override fun initObserver() {
-        searchViewModel.pageLiveData.observe(viewLifecycleOwner) {
+        linkViewModel.pageLiveData.observe(viewLifecycleOwner) {
             with(binding) {
                 if (it == LinkPageTypeModel.MAIN) {
                     hideKeyboardAndClearFocus()
@@ -208,12 +208,12 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
             }
         }
 
-        searchViewModel.searchQueryLiveData.observe(viewLifecycleOwner) {
+        linkViewModel.searchQueryLiveData.observe(viewLifecycleOwner) {
             with(binding) {
                 ivBtnClearText.isVisible = it.isNotEmpty()
             }
         }
-        searchViewModel.requestLinkLiveData.observe(viewLifecycleOwner) {
+        linkViewModel.requestLinkLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is ModelState.Loading -> {
                     val context = binding.root.context
@@ -232,7 +232,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 }
             }
         }
-        searchViewModel.cancelLinkLiveData.observe(viewLifecycleOwner) {
+        linkViewModel.cancelRequestLiveData.observe(viewLifecycleOwner) {
             when (it) {
                 is ModelState.Loading -> {
                     val context = binding.root.context
@@ -257,7 +257,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
     }
 
     private fun observeMain() {
-        searchViewModel.requestSentLiveData.observe(viewLifecycleOwner) {
+        linkViewModel.sentRequestLiveData.observe(viewLifecycleOwner) {
             val requestListRecyclerView = binding.inMain.rvRequestList
             val adapter =
                 (requestListRecyclerView.adapter as? BindableItemAdapter) ?: return@observe
@@ -289,13 +289,13 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
     }
 
     private fun observeRequest() {
-        searchViewModel.searchUserLiveData.observe(viewLifecycleOwner) {
+        linkViewModel.searchUserLiveData.observe(viewLifecycleOwner) {
             val adapter =
                 (binding.inRequest.rvSearchResult.adapter as? BindableItemAdapter) ?: return@observe
             val items = mutableListOf<BindableItem<*>>()
             when (it) {
                 is ModelState.Loading -> {
-                    val nickName = searchViewModel.searchQueryLiveData.value ?: ""
+                    val nickName = it.data?.user?.nickName ?: ""
                     items.add(
                         LinkRequestLoadingItem(
                             nickName = nickName,
@@ -358,7 +358,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 negativeButtonStringRes = R.string.link_dialog_btn_negative,
                 positiveButtonStringRes = R.string.link_dialog_btn_positive_request_link,
                 onPositiveButtonClickListener = {
-                    searchViewModel.requestLink(
+                    linkViewModel.requestLink(
                         accessToken = getAccessTokenOrNull() ?: "",
                         linkUserModel = linkUserModel
                     )
@@ -378,11 +378,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
     }
 
     override fun cancelSearch() {
-        searchViewModel.cancelSearchUserWithNickNameJob()
+        linkViewModel.cancelSearchUserWithNickNameJob()
     }
 
     override fun cancelRequestLink(linkUserModel: LinkUserModel) {
-        searchViewModel.requestCancelRequestLink(
+        linkViewModel.requestCancelLinkRequest(
             accessToken = getAccessTokenOrNull() ?: "",
             linkUserModel = linkUserModel
         )
