@@ -9,6 +9,7 @@ import com.polzzak_android.R
 import com.polzzak_android.common.util.loadCircleImageUrl
 import com.polzzak_android.databinding.ItemLinkRequestSuccessBinding
 import com.polzzak_android.presentation.common.util.BindableItem
+import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.link.model.LinkRequestUserModel
 import com.polzzak_android.presentation.link.LinkClickListener
 
@@ -26,15 +27,14 @@ abstract class LinkRequestSuccessItem(
         }
     }
 
-    private class NormalItem(
-        private val userModel: LinkRequestUserModel.Normal,
-        private val clickListener: LinkClickListener
+    private abstract class BaseNormalItem(
+        private val userModel: LinkRequestUserModel,
     ) : LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
-            other is NormalItem && this.userModel.user.userId == other.userModel.user.userId
+            other is BaseNormalItem && this.userModel.user?.userId == other.userModel.user?.userId
 
         override fun areContentsTheSame(other: BindableItem<*>): Boolean =
-            other is NormalItem && this.userModel == other.userModel
+            other is BaseNormalItem && this.userModel == other.userModel
 
         override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
             super.bind(binding, position)
@@ -42,15 +42,38 @@ abstract class LinkRequestSuccessItem(
             with(binding) {
                 tvBtnRequestCancel.isVisible = false
                 tvNickName.isVisible = true
-                tvNickName.text = userModel.user.nickName
+                tvNickName.text = userModel.user?.nickName ?: ""
                 val btnText = context.getString(R.string.common_request_link)
                 tvBtnRequest.text = btnText
                 tvBtnRequest.setOnClickListener {
-                    clickListener.displayRequestLinkDialog(linkUserModel = userModel.user)
+                    onBtnRequestClick(binding = binding)
                 }
                 tvBtnRequest.setTextColor(ContextCompat.getColor(context, R.color.white))
                 tvBtnRequest.setBackgroundResource(R.drawable.shape_rectangle_primary_r4)
             }
+        }
+
+        abstract fun onBtnRequestClick(binding: ItemLinkRequestSuccessBinding)
+
+        class NormalItem(
+            private val userModel: LinkRequestUserModel.Normal,
+            private val clickListener: LinkClickListener
+        ) : BaseNormalItem(userModel = userModel) {
+            override fun onBtnRequestClick(binding: ItemLinkRequestSuccessBinding) {
+                clickListener.displayRejectRequestDialog(linkUserModel = userModel.user)
+            }
+        }
+
+        class ReceivedItem(userModel: LinkRequestUserModel.Received) :
+            BaseNormalItem(userModel = userModel) {
+            override fun onBtnRequestClick(binding: ItemLinkRequestSuccessBinding) {
+                PolzzakSnackBar.make(
+                    binding.root,
+                    R.string.link_management_request_to_received,
+                    PolzzakSnackBar.Type.WARNING
+                ).show()
+            }
+
         }
     }
 
@@ -111,7 +134,11 @@ abstract class LinkRequestSuccessItem(
             userModel: LinkRequestUserModel.Normal,
             clickListener: LinkClickListener
         ): LinkRequestSuccessItem =
-            NormalItem(userModel = userModel, clickListener = clickListener)
+            BaseNormalItem.NormalItem(userModel = userModel, clickListener = clickListener)
+
+        fun newInstance(
+            userModel: LinkRequestUserModel.Received
+        ): LinkRequestSuccessItem = BaseNormalItem.ReceivedItem(userModel = userModel)
 
         fun newInstance(
             userModel: LinkRequestUserModel.Sent,

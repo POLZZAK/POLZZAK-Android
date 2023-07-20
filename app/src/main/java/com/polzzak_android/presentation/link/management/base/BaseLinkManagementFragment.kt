@@ -453,6 +453,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
         )
 
         is LinkRequestUserModel.Linked -> LinkRequestSuccessItem.newInstance(userModel = model)
+        is LinkRequestUserModel.Received -> LinkRequestSuccessItem.newInstance(userModel = model)
     }
 
     override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {
