@@ -276,7 +276,6 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Success -> {
-                    //TODO empty case
                     val linkedUserItems =
                         it.data.map { linkUserModel ->
                             LinkMainLinkedUserItem(
@@ -312,7 +311,6 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Success -> {
-                    //TODO empty case
                     val receivedRequestItems =
                         it.data.map { linkUserModel ->
                             LinkMainReceivedRequestItem(
@@ -350,7 +348,6 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Success -> {
-                    //TODO empty case
                     val sentRequestItems =
                         it.data.map { linkUserModel ->
                             LinkMainSentRequestItem(
