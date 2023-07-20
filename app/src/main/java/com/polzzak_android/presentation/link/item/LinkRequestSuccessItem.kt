@@ -3,6 +3,7 @@ package com.polzzak_android.presentation.link.item
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import androidx.annotation.CallSuper
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.polzzak_android.R
@@ -63,12 +64,14 @@ abstract class LinkRequestSuccessItem(
             }
         }
 
-        class ReceivedItem(userModel: LinkRequestUserModel.Received) :
-            BaseNormalItem(userModel = userModel) {
+        class ReceivedItem(
+            userModel: LinkRequestUserModel.Received,
+            @StringRes private val onClickMessageStringRes: Int
+        ) : BaseNormalItem(userModel = userModel) {
             override fun onBtnRequestClick(binding: ItemLinkRequestSuccessBinding) {
                 PolzzakSnackBar.make(
                     binding.root,
-                    R.string.link_management_request_to_received,
+                    onClickMessageStringRes,
                     PolzzakSnackBar.Type.WARNING
                 ).show()
             }
@@ -138,8 +141,12 @@ abstract class LinkRequestSuccessItem(
             BaseNormalItem.NormalItem(userModel = userModel, clickListener = clickListener)
 
         fun newInstance(
-            userModel: LinkRequestUserModel.Received
-        ): LinkRequestSuccessItem = BaseNormalItem.ReceivedItem(userModel = userModel)
+            userModel: LinkRequestUserModel.Received,
+            @StringRes onClickMessageStringRes: Int
+        ): LinkRequestSuccessItem = BaseNormalItem.ReceivedItem(
+            userModel = userModel,
+            onClickMessageStringRes = onClickMessageStringRes
+        )
 
         fun newInstance(
             userModel: LinkRequestUserModel.Sent,

@@ -331,7 +331,10 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
         )
 
         is LinkRequestUserModel.Linked -> LinkRequestSuccessItem.newInstance(userModel = model)
-        is LinkRequestUserModel.Received -> LinkRequestSuccessItem.newInstance(userModel = model)
+        is LinkRequestUserModel.Received -> LinkRequestSuccessItem.newInstance(
+            userModel = model,
+            onClickMessageStringRes = R.string.search_request_request_to_received
+        )
     }
 
     override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {

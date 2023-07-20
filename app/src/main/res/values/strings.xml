@@ -104,6 +104,7 @@
     <string name="search_request_loading_text">%s님을\n열심히 찾는 중이에요</string>
     <string name="search_request_btn_cancel_request">앗 실수, 요청 취소 할래요</string>
     <string name="search_request_request_complete">연동 요청 완료!</string>
+    <string name="search_request_request_to_received">현재 단계에서는 해당 회원에게 요청이 불가해요</string>
 
     <!-- LinkManagement-->
     <string name="link_management_title">연동 관리</string>
