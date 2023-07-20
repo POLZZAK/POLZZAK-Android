@@ -60,7 +60,7 @@ abstract class LinkRequestSuccessItem(
             private val clickListener: LinkClickListener
         ) : BaseNormalItem(userModel = userModel) {
             override fun onBtnRequestClick(binding: ItemLinkRequestSuccessBinding) {
-                clickListener.displayRejectRequestDialog(linkUserModel = userModel.user)
+                clickListener.displayRequestLinkDialog(linkUserModel = userModel.user)
             }
         }
 

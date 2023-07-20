@@ -17,6 +17,8 @@ sealed interface LinkRequestUserModel {
     data class Normal(override val user: LinkUserModel) : LinkRequestUserModel
     data class Sent(override val user: LinkUserModel) : LinkRequestUserModel
     data class Linked(override val user: LinkUserModel) : LinkRequestUserModel
+
+    data class Received(override val user: LinkUserModel) : LinkRequestUserModel
 }
 
 fun UserInfoDto?.toLinkRequestUserModel(
@@ -31,11 +33,8 @@ fun UserInfoDto?.toLinkRequestUserModel(
         (linkMemberType == searchRequestMemberType) -> LinkRequestUserModel.Empty(nickName = nickName)
         this.status == "SENT" -> LinkRequestUserModel.Sent(user = userModel)
         this.status == "APPROVE" -> LinkRequestUserModel.Linked(user = userModel)
-        listOf(
-            "NONE",
-            "RECEIVED"
-        ).contains(this.status) -> LinkRequestUserModel.Normal(user = userModel)
-
+        this.status == "NONE" -> LinkRequestUserModel.Normal(user = userModel)
+        this.status == "RECEIVED" -> LinkRequestUserModel.Received(user = userModel)
         else -> LinkRequestUserModel.Empty(nickName = nickName)
     }
 }
