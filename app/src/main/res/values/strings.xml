@@ -116,4 +116,5 @@
     <string name="link_management_main_hint">%s 찾기</string>
     <string name="link_management_request_hint">닉네임 검색</string>
     <string name="link_management_request_to_received">이미 해당 회원에게 연동 요청을 받았어요</string>
+    <string name="link_management_search_linked">이미 연동됐어요</string>
 </resources>

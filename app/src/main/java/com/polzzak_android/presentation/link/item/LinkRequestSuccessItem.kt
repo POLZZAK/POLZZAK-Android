@@ -41,7 +41,6 @@ abstract class LinkRequestSuccessItem(
             val context = binding.root.context
             with(binding) {
                 tvBtnRequestCancel.isVisible = false
-                tvNickName.isVisible = true
                 tvNickName.text = userModel.user?.nickName ?: ""
                 val btnText = context.getString(R.string.common_request_link)
                 tvBtnRequest.text = btnText
@@ -92,7 +91,6 @@ abstract class LinkRequestSuccessItem(
             with(binding) {
                 val context = root.context
                 tvBtnRequestCancel.isVisible = true
-                tvNickName.isVisible = true
                 tvNickName.text = userModel.user.nickName
                 tvBtnRequest.text = context.getString(R.string.search_request_request_complete)
                 tvBtnRequest.setTextColor(ContextCompat.getColor(context, R.color.primary))
@@ -110,7 +108,6 @@ abstract class LinkRequestSuccessItem(
         }
     }
 
-    //TODO 온보딩 후 찾기 페이지에선 없음(연동관리 페이지 에서 디자인 및 추가구현 필요)
     private class LinkedItem(private val userModel: LinkRequestUserModel.Linked) :
         LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
@@ -122,9 +119,13 @@ abstract class LinkRequestSuccessItem(
         override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
             super.bind(binding, position)
             with(binding) {
+                val context = root.context
                 tvBtnRequestCancel.isVisible = false
-                //TODO string resource, 버튼 background 적용
-                tvBtnRequest.text = "이미 링크된 유저"
+                tvNickName.text = userModel.user.nickName
+                val text = context.getString(R.string.link_management_search_linked)
+                tvBtnRequest.text = text
+                tvBtnRequest.setTextColor(ContextCompat.getColor(context, R.color.gray_400))
+                tvBtnRequest.setBackgroundResource(R.drawable.shape_rectangle_white_stroke_gray_400_r4)
             }
         }
     }
