@@ -4,6 +4,7 @@ import com.polzzak_android.data.remote.model.request.LinkRequest
 import com.polzzak_android.data.remote.model.response.EmptyDataResponse
 import com.polzzak_android.data.remote.model.response.UserResponse
 import com.polzzak_android.data.remote.model.response.FamiliesResponse
+import com.polzzak_android.data.remote.model.response.LinkRequestStatusResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -22,29 +23,36 @@ interface FamilyService {
         @Query("nickname") nickName: String
     ): Response<UserResponse>
 
-    //연동 신청
+    //연동 요청
     @POST("/api/v1/families")
-    suspend fun requestLink(
+    suspend fun requestLinkRequest(
         @Header("Authorization") authorization: String,
         @Body linkRequest: LinkRequest
     ): Response<EmptyDataResponse>
 
-    //연동 승인
+    //연동 요청 승인
     @PATCH("/api/v1/families/approve/{id}")
-    suspend fun requestApproveLink(
+    suspend fun requestApproveLinkRequest(
         @Header("Authorization") authorization: String,
         @Path("id") id: Int
     ): Response<EmptyDataResponse>
 
-    //연동 거절
+    //연동 요청 거절
     @DELETE("/api/v1/families/reject/{id}")
-    suspend fun requestRejectLink(
+    suspend fun requestRejectLinkRequest(
         @Header("Authorization") authorization: String,
         @Path("id") id: Int
     ): Response<EmptyDataResponse>
 
-    //연동 취소
+    //연동 요청 취소
     @DELETE("/api/v1/families/cancel/{id}")
+    suspend fun requestCancelLinkRequest(
+        @Header("Authorization") authorization: String,
+        @Path("id") id: Int
+    ): Response<EmptyDataResponse>
+
+    //연동 삭제
+    @DELETE("/api/v1/families/{id}")
     suspend fun requestDeleteLink(
         @Header("Authorization") authorization: String,
         @Path("id") id: Int
@@ -68,4 +76,9 @@ interface FamilyService {
         @Header("Authorization") authorization: String,
     ): Response<FamiliesResponse>
 
+    //새로운 요청 여부
+    @GET("/api/v1/families/new-request-mark")
+    suspend fun requestLinkRequestStatus(
+        @Header("Authorization") authorization: String
+    ): Response<LinkRequestStatusResponse>
 }

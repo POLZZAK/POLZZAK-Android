@@ -18,14 +18,31 @@ class BindableItemAdapter :
     RecyclerView.Adapter<BindableItemAdapter.BindableViewHolder<out ViewDataBinding>>() {
     private val asyncDiffer = AsyncListDiffer(this, DiffUtilCallback())
     val currentList: List<BindableItem<*>> get() = asyncDiffer.currentList
+    private var rv: RecyclerView? = null
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        rv = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        rv = null
+    }
 
     fun updateItem(item: List<BindableItem<*>>) {
-        asyncDiffer.submitList(item)
+        submitList(item)
     }
 
     fun addItem(items: List<BindableItem<*>>) {
         val newItems = currentList + items
-        asyncDiffer.submitList(newItems)
+        submitList(newItems)
+    }
+
+    private fun submitList(items: List<BindableItem<*>>) {
+        asyncDiffer.submitList(items){
+            rv?.invalidateItemDecorations()
+        }
     }
 
     override fun onCreateViewHolder(

@@ -3,14 +3,16 @@ package com.polzzak_android.presentation.link.item
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import androidx.annotation.CallSuper
+import androidx.annotation.StringRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import com.polzzak_android.R
 import com.polzzak_android.common.util.loadCircleImageUrl
 import com.polzzak_android.databinding.ItemLinkRequestSuccessBinding
 import com.polzzak_android.presentation.common.util.BindableItem
+import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.link.model.LinkRequestUserModel
-import com.polzzak_android.presentation.link.search.SearchClickListener
+import com.polzzak_android.presentation.link.LinkClickListener
 
 abstract class LinkRequestSuccessItem(
     private val userModel: LinkRequestUserModel,
@@ -26,37 +28,60 @@ abstract class LinkRequestSuccessItem(
         }
     }
 
-    private class NormalItem(
-        private val userModel: LinkRequestUserModel.Normal,
-        private val clickListener: SearchClickListener
+    private abstract class BaseNormalItem(
+        private val userModel: LinkRequestUserModel,
     ) : LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
-            other is NormalItem && this.userModel.user.userId == other.userModel.user.userId
+            other is BaseNormalItem && this.userModel.user?.userId == other.userModel.user?.userId
 
         override fun areContentsTheSame(other: BindableItem<*>): Boolean =
-            other is NormalItem && this.userModel == other.userModel
+            other is BaseNormalItem && this.userModel == other.userModel
 
         override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
             super.bind(binding, position)
             val context = binding.root.context
             with(binding) {
                 tvBtnRequestCancel.isVisible = false
-                tvNickName.isVisible = true
-                tvNickName.text = userModel.user.nickName
+                tvNickName.text = userModel.user?.nickName ?: ""
                 val btnText = context.getString(R.string.common_request_link)
                 tvBtnRequest.text = btnText
                 tvBtnRequest.setOnClickListener {
-                    clickListener.displayRequestLinkDialog(linkUserModel = userModel.user)
+                    onBtnRequestClick(binding = binding)
                 }
                 tvBtnRequest.setTextColor(ContextCompat.getColor(context, R.color.white))
                 tvBtnRequest.setBackgroundResource(R.drawable.shape_rectangle_primary_r4)
             }
         }
+
+        abstract fun onBtnRequestClick(binding: ItemLinkRequestSuccessBinding)
+
+        class NormalItem(
+            private val userModel: LinkRequestUserModel.Normal,
+            private val clickListener: LinkClickListener
+        ) : BaseNormalItem(userModel = userModel) {
+            override fun onBtnRequestClick(binding: ItemLinkRequestSuccessBinding) {
+                clickListener.displayRequestLinkDialog(linkUserModel = userModel.user)
+            }
+        }
+
+        class ReceivedItem(
+            userModel: LinkRequestUserModel.Received,
+            @StringRes private val onClickMessageStringRes: Int
+        ) : BaseNormalItem(userModel = userModel) {
+            override fun onBtnRequestClick(binding: ItemLinkRequestSuccessBinding) {
+                PolzzakSnackBar.make(
+                    binding.root,
+                    onClickMessageStringRes,
+                    PolzzakSnackBar.Type.WARNING
+                ).show()
+            }
+
+        }
     }
 
     private class SentItem(
         private val userModel: LinkRequestUserModel.Sent,
-        private val clickListener: SearchClickListener
+        private val clickListener: LinkClickListener
     ) : LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
             other is SentItem && this.userModel.user.userId == other.userModel.user.userId
@@ -69,7 +94,6 @@ abstract class LinkRequestSuccessItem(
             with(binding) {
                 val context = root.context
                 tvBtnRequestCancel.isVisible = true
-                tvNickName.isVisible = true
                 tvNickName.text = userModel.user.nickName
                 tvBtnRequest.text = context.getString(R.string.search_request_request_complete)
                 tvBtnRequest.setTextColor(ContextCompat.getColor(context, R.color.primary))
@@ -87,7 +111,6 @@ abstract class LinkRequestSuccessItem(
         }
     }
 
-    //TODO 온보딩 후 찾기 페이지에선 없음(연동관리 페이지 에서 디자인 및 추가구현 필요)
     private class LinkedItem(private val userModel: LinkRequestUserModel.Linked) :
         LinkRequestSuccessItem(userModel) {
         override fun areItemsTheSame(other: BindableItem<*>): Boolean =
@@ -99,9 +122,13 @@ abstract class LinkRequestSuccessItem(
         override fun bind(binding: ItemLinkRequestSuccessBinding, position: Int) {
             super.bind(binding, position)
             with(binding) {
+                val context = root.context
                 tvBtnRequestCancel.isVisible = false
-                //TODO string resource, 버튼 background 적용
-                tvBtnRequest.text = "이미 링크된 유저"
+                tvNickName.text = userModel.user.nickName
+                val text = context.getString(R.string.link_management_search_linked)
+                tvBtnRequest.text = text
+                tvBtnRequest.setTextColor(ContextCompat.getColor(context, R.color.gray_400))
+                tvBtnRequest.setBackgroundResource(R.drawable.shape_rectangle_white_stroke_gray_400_r4)
             }
         }
     }
@@ -109,13 +136,21 @@ abstract class LinkRequestSuccessItem(
     companion object {
         fun newInstance(
             userModel: LinkRequestUserModel.Normal,
-            clickListener: SearchClickListener
+            clickListener: LinkClickListener
         ): LinkRequestSuccessItem =
-            NormalItem(userModel = userModel, clickListener = clickListener)
+            BaseNormalItem.NormalItem(userModel = userModel, clickListener = clickListener)
+
+        fun newInstance(
+            userModel: LinkRequestUserModel.Received,
+            @StringRes onClickMessageStringRes: Int
+        ): LinkRequestSuccessItem = BaseNormalItem.ReceivedItem(
+            userModel = userModel,
+            onClickMessageStringRes = onClickMessageStringRes
+        )
 
         fun newInstance(
             userModel: LinkRequestUserModel.Sent,
-            clickListener: SearchClickListener
+            clickListener: LinkClickListener
         ): LinkRequestSuccessItem =
             SentItem(userModel = userModel, clickListener = clickListener)
 

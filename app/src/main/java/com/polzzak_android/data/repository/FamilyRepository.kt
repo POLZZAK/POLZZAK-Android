@@ -3,6 +3,7 @@ package com.polzzak_android.data.repository
 import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.request.LinkRequest
 import com.polzzak_android.data.remote.model.response.FamiliesDto
+import com.polzzak_android.data.remote.model.response.LinkRequestStatusResponse
 import com.polzzak_android.data.remote.model.response.UserInfoDto
 import com.polzzak_android.data.remote.service.FamilyService
 import com.polzzak_android.data.remote.util.createHeaderAuthorization
@@ -21,34 +22,45 @@ class FamilyRepository @Inject constructor(
         familyService.requestUserWithNickName(authorization = authorization, nickName = nickName)
     }
 
-    suspend fun requestLink(
+    suspend fun requestLinkRequest(
         accessToken: String,
         targetId: Int
     ): ApiResult<Unit> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
-        familyService.requestLink(
+        familyService.requestLinkRequest(
             authorization = authorization,
             linkRequest = LinkRequest(targetId = targetId)
         )
     }
 
-    suspend fun requestApproveLink(
+    suspend fun requestApproveLinkRequest(
         accessToken: String,
         targetId: Int
     ): ApiResult<Unit> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
-        familyService.requestApproveLink(
+        familyService.requestApproveLinkRequest(
             authorization = authorization,
             id = targetId
         )
     }
 
-    suspend fun requestRejectLink(
+    suspend fun requestRejectLinkRequest(
         accessToken: String,
         targetId: Int
     ): ApiResult<Unit> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
-        familyService.requestRejectLink(
+        familyService.requestRejectLinkRequest(
+            authorization = authorization,
+            id = targetId
+        )
+    }
+
+    suspend fun requestCancelLinkRequest(
+        accessToken: String,
+        targetId: Int
+    ): ApiResult<Unit> = requestCatching {
+        val authorization = createHeaderAuthorization(accessToken = accessToken)
+        familyService.requestCancelLinkRequest(
             authorization = authorization,
             id = targetId
         )
@@ -84,5 +96,12 @@ class FamilyRepository @Inject constructor(
     ): ApiResult<FamiliesDto> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         familyService.requestReceivedRequestLinks(authorization = authorization)
+    }
+
+    suspend fun requestLinkRequestStatus(
+        accessToken: String
+    ): ApiResult<LinkRequestStatusResponse.LinkRequestStatusDto> = requestCatching {
+        val authorization = createHeaderAuthorization(accessToken = accessToken)
+        familyService.requestLinkRequestStatus(authorization = authorization)
     }
 }
