@@ -63,12 +63,13 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         photoPicker = PhotoPicker(this)
         binding.ivBtnBack.setOnClickListener {
             hideKeyboardAndClearFocus()
-            signUpViewModel.movePrevPage()
+            if (signUpViewModel.pageLiveData.value == SignUpPage.TERMS_OF_SERVICE) activity?.onBackPressedDispatcher?.onBackPressed()
+            else signUpViewModel.movePrevPage()
         }
         binding.tvBtnNext.setOnClickListener {
             val pageData = signUpViewModel.pageLiveData.value ?: return@setOnClickListener
             when (pageData) {
-                SignUpPage.TERMS_OF_SERVICE -> signUpViewModel.requestSignUp()
+                SignUpPage.SET_PROFILE_IMAGE -> signUpViewModel.requestSignUp()
                 else -> signUpViewModel.moveNextPage()
             }
         }
@@ -84,6 +85,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         val backPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val backToPrevPageList = listOf(
+                    SignUpPage.SELECT_TYPE,
                     SignUpPage.SELECT_PARENT_TYPE,
                     SignUpPage.SET_NICKNAME,
                     SignUpPage.SET_PROFILE_IMAGE
@@ -301,8 +303,8 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 inSetNickName.root.isVisible = (it == SignUpPage.SET_NICKNAME)
                 inSelectProfileImage.root.isVisible = (it == SignUpPage.SET_PROFILE_IMAGE)
                 inTermsOfService.root.isVisible = (it == SignUpPage.TERMS_OF_SERVICE)
-                clHeader.isVisible = it.isHeaderVisible
-                cpvProgressView.checkedCount = it.progressCount
+                cpvProgressView.isVisible = it.progressCount != null
+                cpvProgressView.checkedCount = it.progressCount ?: 0
                 when (it) {
                     SignUpPage.SELECT_PARENT_TYPE -> {
                         val currentTypeId = signUpViewModel.memberTypeLiveData.value?.selectedTypeId
@@ -451,7 +453,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         val termsOfServiceData = signUpViewModel.termsOfServiceLiveData.value
         //TODO 프로필 사진 설정페이지, 약관페이지 추가
         val nextBtnStringRes = when (signUpViewModel.pageLiveData.value) {
-            SignUpPage.TERMS_OF_SERVICE -> R.string.signup_complete
+            SignUpPage.SET_PROFILE_IMAGE -> R.string.signup_complete
             else -> R.string.common_next
         }
         binding.tvBtnNext.text = getString(nextBtnStringRes)
