@@ -9,7 +9,7 @@
         app:startDestination="@id/kidMainFragment">
         <fragment
             android:id="@+id/kidMainFragment"
-            android:name="com.polzzak_android.presentation.main.kid.KidMainFragment"
+            android:name="com.polzzak_android.presentation.feature.stamp.main.kid.KidMainFragment"
             android:label="KidMainFragment">
             <action
                 android:id="@+id/action_to_stampBoardDetailFragment"
@@ -22,7 +22,7 @@
         </fragment>
         <fragment
             android:id="@+id/kidStampBoardDetailFragment"
-            android:name="com.polzzak_android.presentation.main.kid.KidStampBoardDetailFragment"
+            android:name="com.polzzak_android.presentation.feature.stamp.detail.kid.KidStampBoardDetailFragment"
             android:label="KidStampBoardDetailFragment" />
     </navigation>
 
@@ -31,7 +31,7 @@
         app:startDestination="@id/kidCouponFragment">
         <fragment
             android:id="@+id/kidCouponFragment"
-            android:name="com.polzzak_android.presentation.coupon.kid.KidCouponFragment"
+            android:name="com.polzzak_android.presentation.feature.coupon.main.kid.KidCouponFragment"
             android:label="KidCouponFragment" />
     </navigation>
 
@@ -40,7 +40,7 @@
         app:startDestination="@id/kidNotificationFragment">
         <fragment
             android:id="@+id/kidNotificationFragment"
-            android:name="com.polzzak_android.presentation.notification.kid.KidNotificationFragment"
+            android:name="com.polzzak_android.presentation.feature.notification.kid.KidNotificationFragment"
             android:label="KidNotificationFragment" />
     </navigation>
 
@@ -49,7 +49,7 @@
         app:startDestination="@id/kidMyPageFragment">
         <fragment
             android:id="@+id/kidMyPageFragment"
-            android:name="com.polzzak_android.presentation.myPage.kid.KidMyPageFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.kid.KidMyPageFragment"
             android:label="KidMyPageFragment" />
     </navigation>
 </navigation>

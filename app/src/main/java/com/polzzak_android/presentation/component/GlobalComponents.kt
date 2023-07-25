@@ -24,15 +24,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.polzzak_android.presentation.compose.Blue100
-import com.polzzak_android.presentation.compose.Blue200
-import com.polzzak_android.presentation.compose.Blue400
-import com.polzzak_android.presentation.compose.Blue500
-import com.polzzak_android.presentation.compose.Blue600
-import com.polzzak_android.presentation.compose.Blue700
-import com.polzzak_android.presentation.compose.PolzzakTheme
+import com.polzzak_android.presentation.common.compose.Blue100
+import com.polzzak_android.presentation.common.compose.Blue200
+import com.polzzak_android.presentation.common.compose.Blue400
+import com.polzzak_android.presentation.common.compose.Blue500
+import com.polzzak_android.presentation.common.compose.Blue600
+import com.polzzak_android.presentation.common.compose.Blue700
+import com.polzzak_android.presentation.common.compose.PolzzakTheme
 
 /**
  * 폴짝 앱 공통 버튼

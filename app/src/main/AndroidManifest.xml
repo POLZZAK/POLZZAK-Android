@@ -10,7 +10,7 @@
 
     <!-- fixme http 사용안 할 경우 usesCleartextTraffic 제거 -->
     <application
-        android:name=".common.PolzzakApplication"
+        android:name=".presentation.feature.root.PolzzakApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -22,7 +22,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name="com.polzzak_android.presentation.common.MainActivity"
+            android:name="com.polzzak_android.presentation.feature.root.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

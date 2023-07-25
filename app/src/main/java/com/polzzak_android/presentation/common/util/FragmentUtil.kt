@@ -3,8 +3,8 @@ package com.polzzak_android.presentation.common.util
 import android.content.Context
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import com.polzzak_android.presentation.auth.login.sociallogin.SocialLoginManager
-import com.polzzak_android.presentation.common.MainActivity
+import com.polzzak_android.presentation.feature.auth.login.sociallogin.SocialLoginManager
+import com.polzzak_android.presentation.feature.root.MainActivity
 
 fun Fragment.getSocialLoginManager(): SocialLoginManager? = activity as? SocialLoginManager
 

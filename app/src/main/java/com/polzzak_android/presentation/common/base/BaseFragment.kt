@@ -9,7 +9,7 @@ import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
-import com.polzzak_android.presentation.common.MainActivity
+import com.polzzak_android.presentation.feature.root.MainActivity
 
 abstract class BaseFragment<B : ViewDataBinding> : Fragment() {
     @get:LayoutRes

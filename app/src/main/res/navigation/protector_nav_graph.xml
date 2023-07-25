@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/protectorMainFragment"
-        android:name="com.polzzak_android.presentation.main.protector.ProtectorMainFragment"
+        android:name="com.polzzak_android.presentation.feature.stamp.main.protector.ProtectorMainFragment"
         android:label="ProtectorMainFragment"
         tools:layout="@layout/fragment_protector_main">
         <action
@@ -16,22 +16,22 @@
     </fragment>
     <fragment
         android:id="@+id/protectorCouponFragment"
-        android:name="com.polzzak_android.presentation.coupon.protector.ProtectorCouponFragment"
+        android:name="com.polzzak_android.presentation.feature.coupon.main.protector.ProtectorCouponFragment"
         android:label="ProtectorCouponFragment"
         tools:layout="@layout/fragment_protector_coupon"/>
     <fragment
         android:id="@+id/protectorNotificationFragment"
-        android:name="com.polzzak_android.presentation.notification.protector.ProtectorNotificationFragment"
+        android:name="com.polzzak_android.presentation.feature.notification.protector.ProtectorNotificationFragment"
         android:label="ProtectorNotificationFragment"
         tools:layout="@layout/fragment_protector_notification"/>
     <fragment
         android:id="@+id/protectorMyPageFragment"
-        android:name="com.polzzak_android.presentation.myPage.protector.ProtectorMyPageFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.protector.ProtectorMyPageFragment"
         android:label="ProtectorMyPageFragment"
         tools:layout="@layout/fragmentv_protector_my_page"/>
     <fragment
         android:id="@+id/makeStampFragment"
-        android:name="com.polzzak_android.presentation.makingStamp.MakeStampFragment"
+        android:name="com.polzzak_android.presentation.feature.stamp.make.MakeStampFragment"
         android:label="fragment_make_stamp"
         tools:layout="@layout/fragment_make_stamp" >
         <action
@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/exampleMissionFragment"
-        android:name="com.polzzak_android.presentation.makingStamp.exampleMission.ExampleMissionFragment"
+        android:name="com.polzzak_android.presentation.feature.stamp.make.exampleMission.ExampleMissionFragment"
         android:label="fragment_example_mission"
         tools:layout="@layout/fragment_example_mission" />
 </navigation>
