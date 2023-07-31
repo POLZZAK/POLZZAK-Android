@@ -14,6 +14,7 @@ import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel
 import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
+import com.polzzak_android.presentation.component.dialog.FullLoadingDialog
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 
 //TODO title spannable style 적용(style은 임시로, 현재 다이얼로그는 style이 적용안됨)
@@ -21,7 +22,7 @@ class LinkDialogFactory {
     fun createLinkDialog(
         context: Context,
         nickName: String,
-        content: String,
+        @StringRes contentStringRes: Int,
         @StringRes positiveButtonStringRes: Int,
         @StringRes negativeButtonStringRes: Int,
         onPositiveButtonClickListener: () -> Unit
@@ -33,7 +34,7 @@ class LinkDialogFactory {
                     title = createLinkDialogSpannableTitle(
                         context = context,
                         nickName = nickName,
-                        content = content
+                        content = context.getString(contentStringRes)
                     ).toString(),
                     body = null
                 ),
@@ -83,6 +84,8 @@ class LinkDialogFactory {
                 )
             )
         )
+
+    fun createFullLoadingDialog(): DialogFragment = FullLoadingDialog()
 
     private fun createLinkDialogSpannableTitle(
         context: Context,
