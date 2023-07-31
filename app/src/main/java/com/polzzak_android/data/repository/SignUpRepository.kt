@@ -4,7 +4,7 @@ import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.response.SignUpResponse
 import com.polzzak_android.data.remote.service.AuthService
 import com.polzzak_android.data.remote.util.requestCatching
-import com.polzzak_android.presentation.auth.model.SocialLoginType
+import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody

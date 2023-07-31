@@ -7,15 +7,15 @@
 
         <variable
             name="data"
-            type="com.polzzak_android.presentation.common.model.CommonDialogModel" />
+            type="com.polzzak_android.presentation.component.dialog.CommonDialogModel" />
 
         <variable
             name="type"
-            type="com.polzzak_android.presentation.common.model.DialogStyleType" />
+            type="com.polzzak_android.presentation.component.dialog.DialogStyleType" />
 
         <variable
             name="buttonCount"
-            type="com.polzzak_android.presentation.common.model.ButtonCount" />
+            type="com.polzzak_android.presentation.component.dialog.ButtonCount" />
 
     </data>
 

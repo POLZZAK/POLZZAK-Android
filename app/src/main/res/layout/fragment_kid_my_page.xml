@@ -4,7 +4,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".presentation.myPage.kid.KidMyPageFragment">
+        tools:context=".presentation.feature.myPage.kid.KidMyPageFragment">
 
         <!-- TODO: Update blank fragment layout -->
         <TextView

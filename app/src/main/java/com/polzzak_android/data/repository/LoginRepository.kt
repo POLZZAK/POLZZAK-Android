@@ -9,7 +9,7 @@ import com.polzzak_android.data.remote.model.response.LoginResponse
 import com.polzzak_android.data.remote.service.AuthService
 import com.polzzak_android.data.remote.service.GoogleOAuthService
 import com.polzzak_android.data.remote.util.requestCatching
-import com.polzzak_android.presentation.auth.model.SocialLoginType
+import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import javax.inject.Inject
 
 class LoginRepository @Inject constructor(

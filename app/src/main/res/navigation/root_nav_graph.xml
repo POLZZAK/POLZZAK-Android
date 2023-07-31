@@ -11,7 +11,7 @@
 
     <fragment
         android:id="@+id/splashFragment"
-        android:name="com.polzzak_android.presentation.splash.SplashFragment"
+        android:name="com.polzzak_android.presentation.feature.splash.SplashFragment"
         android:label="SplashFragment"
         tools:layout="@layout/fragment_splash">
         <action
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.polzzak_android.presentation.auth.login.LoginFragment"
+        android:name="com.polzzak_android.presentation.feature.auth.login.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login">
         <action
@@ -44,19 +44,19 @@
 
     <fragment
         android:id="@+id/protectorHostFragment"
-        android:name="com.polzzak_android.presentation.common.host.ProtectorHostFragment"
+        android:name="com.polzzak_android.presentation.feature.root.host.ProtectorHostFragment"
         android:label="fragment_protectort_host"
         tools:layout="@layout/fragment_protector_host" />
     <fragment
         android:id="@+id/kidHostFragment"
-        android:name="com.polzzak_android.presentation.common.host.KidHostFragment"
+        android:name="com.polzzak_android.presentation.feature.root.host.KidHostFragment"
         android:label="KidHostFragment"
         tools:layout="@layout/fragment_kid_host" />
 
     <!-- tODO 테스트용 임시 fragment 제거 -->
     <fragment
         android:id="@+id/protectorSearchFragment"
-        android:name="com.polzzak_android.presentation.link.search.protector.ProtectorSearchFragment"
+        android:name="com.polzzak_android.presentation.feature.link.search.protector.ProtectorSearchFragment"
         android:label="ProtectorSearchFragment"
         tools:layout="@layout/fragment_search">
         <action
