@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.polzzak_android.presentation.common.compose.Blue500
 import com.polzzak_android.presentation.common.compose.Blue600
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.getRemainingSeconds
 import com.polzzak_android.presentation.component.PolzzakButton
 import com.polzzak_android.presentation.component.PolzzakWhiteButton
 import com.polzzak_android.presentation.component.polzzakButtonColors
@@ -32,11 +33,12 @@ import com.polzzak_android.presentation.feature.coupon.model.CouponDetailModel
 import kotlinx.coroutines.flow.StateFlow
 import java.time.Duration
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Composable
 fun CouponDetailScreen_Protector(
     couponDetailData: StateFlow<ModelState<CouponDetailModel>>,
-    onMissionClick: () -> Unit
+    onMissionClick: (missions: List<String>) -> Unit,
 ) {
     val state by couponDetailData.collectAsState()
     
@@ -52,9 +54,9 @@ fun CouponDetailScreen_Protector(
 @Composable
 fun CouponDetailScreen_Kid(
     couponDetailData: StateFlow<ModelState<CouponDetailModel>>,
-    onMissionClick: () -> Unit,
-    onRewardRemindClick: () -> Unit,
-    onRewardDeliveredClick: () -> Unit
+    onMissionClick: (missions: List<String>) -> Unit,
+    onRewardRequestClick: (couponId: Int) -> Unit,
+    onRewardDeliveredClick: (couponId: Int) -> Unit
 ) {
     val state by couponDetailData.collectAsState()
 
@@ -65,17 +67,26 @@ fun CouponDetailScreen_Kid(
                 data = state.data!!,
                 onMissionClick = onMissionClick,
                 buttons = {
-                    // TODO: 선물 조르기 요청 상태에 따라 버튼 종류가 달라짐
-                    PolzzakButton(
-                        onClick = onRewardRemindClick,
-                        colors = ButtonDefaults.polzzakButtonColors(backgroundColor = Blue600),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text(text = "선물 조르기")
+                    // 조르기 시간이 없으면 조르기 버튼 표시
+                    // 조르기 시간이 있으면 카운트다운 표시
+                    if (state.data?.rewardRequestDate == null) {
+                        PolzzakButton(
+                            onClick = { onRewardRequestClick(state.data!!.couponId) },
+                            colors = ButtonDefaults.polzzakButtonColors(backgroundColor = Blue600),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(text = "선물 조르기")
+                        }
+                    } else {
+                        CountdownButton(
+                            remainingSeconds = state.data?.rewardRequestDate!!.getRemainingSeconds(),
+                            modifier = Modifier.weight(1f)
+                        )
                     }
+
                     Spacer(modifier = Modifier.width(7.dp))
                     PolzzakWhiteButton(
-                        onClick = onRewardDeliveredClick,
+                        onClick = { onRewardDeliveredClick(state.data!!.couponId) },
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(text = "선물 받기 완료")
@@ -92,7 +103,7 @@ fun CouponDetailScreen_Kid(
 @Composable
 private fun CouponDetailScreen(
     data: CouponDetailModel,
-    onMissionClick: () -> Unit,
+    onMissionClick: (missions: List<String>) -> Unit,
     buttons: @Composable (RowScope.() -> Unit)? = null
 ) = Surface(
     color = Blue500,
@@ -119,7 +130,7 @@ private fun CouponDetailScreen(
                         data.startDate.atStartOfDay(),
                         data.endDate.atStartOfDay()
                     ).toDays().toInt(),
-                    onMissionClick = onMissionClick
+                    onMissionClick = { onMissionClick(data.missions) }
                 )
             },
             footer = {
@@ -167,11 +178,15 @@ fun CouponDetailScreenPreview() {
             missions = listOf("1", "2", "3"),
             stampCount = 16,
             startDate = LocalDate.now().minusDays(7),
-            endDate = LocalDate.now()
+            endDate = LocalDate.now(),
+            rewardRequestDate = LocalDateTime.now().minusMinutes(30)
         ),
         onMissionClick = {},
         buttons = {
-            // TODO: 선물 조르기 요청 상태에 따라 버튼 종류가 달라짐
+            /*CountdownButton(
+                remainingSeconds = 2000,
+                modifier = Modifier.weight(1f)
+            )*/
             PolzzakButton(
                 onClick = {},
                 colors = ButtonDefaults.polzzakButtonColors(backgroundColor = Blue600),

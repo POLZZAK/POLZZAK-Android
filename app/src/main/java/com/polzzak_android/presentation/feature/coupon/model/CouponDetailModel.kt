@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.feature.coupon.model
 
 import com.polzzak_android.presentation.coupon.model.CouponState
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class CouponDetailModel(
     val couponId: Int,
@@ -15,7 +16,7 @@ data class CouponDetailModel(
     val stampCount: Int,
     val startDate: LocalDate,
     val endDate: LocalDate,
-    // TODO: 쿠폰 지급 기한 추가
+    val rewardRequestDate: LocalDateTime?
 )
 
 // TODO: Dto 변환 함수 작성

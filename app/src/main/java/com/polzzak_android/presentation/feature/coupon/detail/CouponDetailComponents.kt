@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.coupon.detail
 
+import androidx.annotation.IntRange
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,12 +20,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,11 +55,44 @@ import com.polzzak_android.presentation.common.compose.Gray500
 import com.polzzak_android.presentation.common.compose.Gray700
 import com.polzzak_android.presentation.common.compose.Gray800
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
+import com.polzzak_android.presentation.component.PolzzakOutlineButton
 import com.polzzak_android.presentation.coupon.model.CouponState
 import com.polzzak_android.presentation.feature.coupon.model.CouponDetailModel
+import kotlinx.coroutines.delay
 import java.time.Duration
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+
+@Composable
+fun CountdownButton(
+    @IntRange(1, 3600) remainingSeconds: Int,
+    modifier: Modifier = Modifier
+) = PolzzakOutlineButton(
+    onClick = { /*TODO*/ },
+    modifier = modifier
+) {
+    var ticks by remember(remainingSeconds) {
+        mutableStateOf(remainingSeconds)
+    }
+
+    LaunchedEffect(Unit) {
+        while (ticks > 0) {
+            delay(1000)
+            --ticks
+        }
+    }
+
+    val minute = String.format("%02d", ticks/60)
+    val seconds = String.format("%02d", ticks%60)
+
+    Text(text = "$minute:$seconds")
+}
+
+@Preview
+@Composable
+fun CountdownButtonPreview() {
+    CountdownButton(remainingSeconds = 2000)
+}
 
 @Composable
 fun CouponTicketImage(
@@ -110,7 +149,8 @@ fun CouponTicketImagePreview() {
             missions = listOf("1", "2", "3"),
             stampCount = 16,
             startDate = LocalDate.now().minusDays(7),
-            endDate = LocalDate.now()
+            endDate = LocalDate.now(),
+            rewardRequestDate = null
         )
     )
 }
