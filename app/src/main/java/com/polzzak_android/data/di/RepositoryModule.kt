@@ -9,7 +9,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class StampModule {
+abstract class RepositoryModule {
     @Binds
     abstract fun bindStampRepository(mockStampRepositoryImpl: MockStampRepositoryImpl): StampRepository
 }
