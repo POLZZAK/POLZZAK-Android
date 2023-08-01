@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.component.dialog
+package com.polzzak_android.presentation.common.model
 
 data class CommonButtonModel(
     val buttonCount: ButtonCount,

@@ -12,8 +12,8 @@ import com.polzzak_android.presentation.common.adapter.MakeStampCountAdapter
 import com.polzzak_android.presentation.common.adapter.MakeStampMissionAdapter
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
-import com.polzzak_android.presentation.component.dialog.ButtonCount
-import com.polzzak_android.presentation.component.dialog.CommonButtonModel
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel
 import com.polzzak_android.presentation.component.dialog.DialogStyleType

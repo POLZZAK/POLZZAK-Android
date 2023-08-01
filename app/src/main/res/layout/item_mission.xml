@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="47dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/bg_gray_stroke_white_bg_r8">
+        android:background="@drawable/selector_stroke_rectangle_r8_selected">
 
         <TextView
             android:id="@+id/item_ex_mission_text"

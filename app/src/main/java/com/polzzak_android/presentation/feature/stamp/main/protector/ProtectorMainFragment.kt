@@ -27,7 +27,7 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>() {
     }
 
     private fun tabListener() {
-        binding.tabContainer.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
+        binding.tabContainer.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 val position = tab!!.position
                 var selectedFragment: Fragment? = null

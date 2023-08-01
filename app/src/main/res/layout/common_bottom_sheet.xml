@@ -3,14 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="data"
+            type="com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel" />
+
+        <variable
+            name="buttonCount"
+            type="com.polzzak_android.presentation.common.model.ButtonCount" />
+
+        <variable
+            name="bottomSheet"
+            type="com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper" />
+    </data>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="680dp"
-        android:background="@color/white">
+        android:background="@color/white"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp">
 
         <View
-            android:id="@+id/modal_top"
+            android:id="@+id/bottom_sheet_handler"
             android:layout_width="100dp"
             android:layout_height="4dp"
             android:layout_marginTop="12dp"
@@ -21,63 +38,87 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/user_select_modal_title"
+            android:id="@+id/bottom_sheet_title"
             style="@style/subtitle.16.600"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
-            android:text="누구의 도장판을 볼까요?"
+            android:gravity="center"
+            android:text="@{data.title}"
             android:textColor="@color/black"
+            app:layout_constraintBottom_toTopOf="@id/bottom_sheet_subtitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/modal_top" />
+            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_handler"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="제목" />
+
+        <TextView
+            android:id="@+id/bottom_sheet_subtitle"
+            style="@style/body.13.500"
+            setVisibility="@{data.subTitle != null}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="@{data.subTitle}"
+            android:textColor="@color/gray_500"
+            app:layout_constraintBottom_toTopOf="@id/bottom_sheet_recycler_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_title"
+            tools:text="서브 제목" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/user_select_modal_rc"
+            android:id="@+id/bottom_sheet_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:layout_marginHorizontal="16dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:clipToPadding="false"
-            android:paddingBottom="20dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@id/bottom_sheet_button_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/user_select_modal_title"
-            tools:itemCount="6"
+            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_subtitle"
+            tools:itemCount="3"
             tools:listitem="@layout/item_select_user_filter" />
 
-        <View
-            android:id="@+id/gradient_view"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:background="@drawable/white_gradient"
-            app:layout_constraintBottom_toTopOf="@id/modal_button_container" />
-
         <LinearLayout
-            android:id="@+id/modal_button_container"
+            android:id="@+id/bottom_sheet_button_container"
+            setVisibility="@{data.button.buttonCount != buttonCount.ZERO}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_recycler_view">
 
             <Button
-                android:id="@+id/dialog_negative_button"
+                android:id="@+id/bottom_sheet_negative_button"
                 style="@style/subtitle.16.600.modal.btn"
+                setVisibility="@{data.button.buttonCount == buttonCount.TWO}"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="11dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_modal_negative"
+                android:onClick="@{() -> bottomSheet.onNegativeButtonClick()}"
+                android:text="@{data.button.negativeButtonText}"
                 tools:text="취소" />
 
+            <Space
+                setVisibility="@{data.button.buttonCount == buttonCount.TWO}"
+                android:layout_width="16dp"
+                android:layout_height="match_parent" />
+
             <Button
-                android:id="@+id/dialog_positive_button"
+                android:id="@+id/bottom_sheet_positive_button"
                 style="@style/subtitle.16.600.modal.btn"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@drawable/btn_modal_positive"
+                android:background="@drawable/selector_btn_rectangle_r8_enabled"
+                android:onClick="@{() -> bottomSheet.onPositiveButtonClick()}"
+                android:text="@{data.button.positiveButtonText}"
                 tools:text="확인" />
         </LinearLayout>
 

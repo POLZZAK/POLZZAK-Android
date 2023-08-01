@@ -8,8 +8,8 @@ import android.text.style.TextAppearanceSpan
 import androidx.annotation.StringRes
 import androidx.fragment.app.DialogFragment
 import com.polzzak_android.R
-import com.polzzak_android.presentation.component.dialog.ButtonCount
-import com.polzzak_android.presentation.component.dialog.CommonButtonModel
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel
 import com.polzzak_android.presentation.component.dialog.DialogStyleType

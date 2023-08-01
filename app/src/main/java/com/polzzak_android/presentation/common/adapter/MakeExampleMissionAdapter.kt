@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.polzzak_android.databinding.ItemExampleMissionBinding
+import com.polzzak_android.databinding.ItemMissionBinding
 import com.polzzak_android.presentation.feature.stamp.make.ExampleMissionHelper
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.ExampleMissionInteraction
 
@@ -20,7 +20,7 @@ class MakeExampleMissionAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding =
-            ItemExampleMissionBinding.inflate(inflater, parent, false)
+            ItemMissionBinding.inflate(inflater, parent, false)
         return ViewHolder(binding, interaction)
     }
 
@@ -29,7 +29,7 @@ class MakeExampleMissionAdapter(
     }
 
     inner class ViewHolder(
-        private val binding: ItemExampleMissionBinding,
+        private val binding: ItemMissionBinding,
         private val interaction: ExampleMissionInteraction
     ) :
         RecyclerView.ViewHolder(binding.root) {
