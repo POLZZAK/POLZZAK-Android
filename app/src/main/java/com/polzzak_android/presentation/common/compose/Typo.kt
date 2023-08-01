@@ -15,112 +15,117 @@ import com.polzzak_android.R
 @Immutable
 data class PolzzakTypography(
     /* ---------- Title ---------- */
-    val title1: TextStyle = TextStyle(
+    val semiBold24: TextStyle = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.SemiBold,
         fontSize = 24.sp
     ),
-    val title2: TextStyle = TextStyle(
+    val bold22: TextStyle = TextStyle(
+        fontFamily = PolzzakFont,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp
+    ),
+    val semiBold22: TextStyle = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.SemiBold,
         fontSize = 22.sp
     ),
-    val title3: TextStyle = TextStyle(
+    val bold20: TextStyle = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.Bold,
         fontSize = 20.sp
-    ),
-    val title4: TextStyle = TextStyle(
-        fontFamily = PolzzakFont,
-        fontWeight = FontWeight.Bold,
-        fontSize = 22.sp
     ),
     /* ---------- SubTitle ---------- */
-    val subTitle1: TextStyle = TextStyle(
+    val semiBold20: TextStyle  = TextStyle(
+        fontFamily = PolzzakFont,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp
+    ),
+    val regular20: TextStyle  = TextStyle(
+        fontFamily = PolzzakFont,
+        fontWeight = FontWeight.Normal,
+        fontSize = 20.sp
+    ),
+    val semiBold18: TextStyle = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.SemiBold,
         fontSize = 18.sp
     ),
-    val subTitle2: TextStyle  = TextStyle(
+    val regular18: TextStyle  = TextStyle(
+        fontFamily = PolzzakFont,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp
+    ),
+    val bold16: TextStyle  = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp
     ),
-    val subTitle3: TextStyle  = TextStyle(
+    val semiBold16: TextStyle  = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp
     ),
-    val subTitle4: TextStyle  = TextStyle(
+    /* ---------- Body ---------- */
+    val bold18: TextStyle = TextStyle(
         fontFamily = PolzzakFont,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 20.sp
-    ),
-    val subTitle5: TextStyle  = TextStyle(
-        fontFamily = PolzzakFont,
-        fontWeight = FontWeight.Normal,
-        fontSize = 20.sp
-    ),
-    val subTitle6: TextStyle  = TextStyle(
-        fontFamily = PolzzakFont,
-        fontWeight = FontWeight.Normal,
+        fontWeight = FontWeight.Bold,
         fontSize = 18.sp
     ),
-    /* ---------- Body ---------- */
-    val body1: TextStyle  = TextStyle(
+    val medium18: TextStyle = TextStyle(
+        fontFamily = PolzzakFont,
+        fontWeight = FontWeight.Medium,
+        fontSize = 18.sp
+    ),
+    val medium16: TextStyle = TextStyle(
+        fontFamily = PolzzakFont,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp
+    ),
+    val medium15: TextStyle  = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.Medium,
         fontSize = 15.sp
     ),
-    val body2: TextStyle  = TextStyle(
+    val bold14: TextStyle  = TextStyle(
+        fontFamily = PolzzakFont,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp
+    ),
+    val semiBold14: TextStyle  = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.SemiBold,
         fontSize = 14.sp
     ),
-    val body3: TextStyle  = TextStyle(
+    val medium14: TextStyle  = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp
     ),
-    val body4: TextStyle  = TextStyle(
+    val medium13: TextStyle  = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.Medium,
         fontSize = 13.sp
     ),
-    val body5: TextStyle  = TextStyle(
-        fontFamily = PolzzakFont,
-        fontWeight = FontWeight.Bold,
-        fontSize = 14.sp
-    ),
-    val body6: TextStyle = TextStyle(
-        fontFamily = PolzzakFont,
-        fontWeight = FontWeight.Bold,
-        fontSize = 18.sp
-    ),
-    val body7: TextStyle = TextStyle(
-        fontFamily = PolzzakFont,
-        fontWeight = FontWeight.Medium,
-        fontSize = 18.sp
-    ),
-    val body8: TextStyle = TextStyle(
-        fontFamily = PolzzakFont,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp
-    ),
     /* ---------- Caption ---------- */
-    val caption1: TextStyle = TextStyle(
+    val semiBold13: TextStyle = TextStyle(
+        fontFamily = PolzzakFont,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 13.sp
+    ),
+    val bold12: TextStyle = TextStyle(
+        fontFamily = PolzzakFont,
+        fontWeight = FontWeight.Bold,
+        fontSize = 12.sp
+    ),
+    val semiBold12: TextStyle = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.SemiBold,
         fontSize = 12.sp
     ),
-    val caption2: TextStyle = TextStyle(
+    val medium12: TextStyle = TextStyle(
         fontFamily = PolzzakFont,
         fontWeight = FontWeight.Medium,
-        fontSize = 12.sp
-    ),
-    val caption3: TextStyle = TextStyle(
-        fontFamily = PolzzakFont,
-        fontWeight = FontWeight.Bold,
         fontSize = 12.sp
     )
 )

@@ -117,20 +117,21 @@ private fun StampBoardDetailScreen_Kid(
 
             RewardInfoSheet(
                 rewardTitle = {
-                    Text(text = rewardTitle, style = PolzzakTheme.typography.subTitle1)
+                    Text(text = rewardTitle, style = PolzzakTheme.typography.semiBold18)
                 },
                 rewardButton = {
                     PolzzakButton(
-                        text = getCouponButtonText(stampBoardStatus),
                         onClick = onRewardButtonClick,
                         modifier = Modifier.fillMaxWidth(),
                         enabled = getCouponButtonEnable(stampBoardStatus)
-                    )
+                    ) {
+                        Text(text = getCouponButtonText(stampBoardStatus))
+                    }
                 },
                 rewardStateText = {
                     Text(
                         text = getCouponInfoText(stampBoardStatus),
-                        style = PolzzakTheme.typography.body4,
+                        style = PolzzakTheme.typography.medium13,
                         color = Gray500
                     )
                 }
