@@ -105,7 +105,7 @@ abstract class LinkRequestSuccessItem(
                 }
                 tvBtnRequestCancel.text = btnRequestCancelSpannable
                 tvBtnRequestCancel.setOnClickListener {
-                    clickListener.displayCancelRequestDialog(linkUserModel = userModel.user)
+                    clickListener.cancelRequestLink(linkUserModel = userModel.user)
                 }
             }
         }

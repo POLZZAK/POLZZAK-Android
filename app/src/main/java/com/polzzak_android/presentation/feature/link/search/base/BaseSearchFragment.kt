@@ -24,6 +24,7 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.common.util.toPx
+import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.feature.link.LinkClickListener
 import com.polzzak_android.presentation.feature.link.LinkDialogFactory
 import com.polzzak_android.presentation.feature.link.LinkViewModel
@@ -33,6 +34,7 @@ import com.polzzak_android.presentation.feature.link.item.LinkRequestEmptyItem
 import com.polzzak_android.presentation.feature.link.item.LinkRequestGuideItem
 import com.polzzak_android.presentation.feature.link.item.LinkRequestLoadingItem
 import com.polzzak_android.presentation.feature.link.item.LinkRequestSuccessItem
+import com.polzzak_android.presentation.feature.link.model.LinkEventType
 import com.polzzak_android.presentation.feature.link.model.LinkMemberType
 import com.polzzak_android.presentation.feature.link.model.LinkPageTypeModel
 import com.polzzak_android.presentation.feature.link.model.LinkRequestUserModel
@@ -207,47 +209,9 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 ivBtnClearText.isVisible = it.isNotEmpty()
             }
         }
-        linkViewModel.requestLinkLiveData.observe(viewLifecycleOwner) {
-            when (it) {
-                is ModelState.Loading -> {
-                    val context = binding.root.context
-                    val nickName = it.data ?: ""
-                    val loadingDialog = dialogFactory.createLoadingDialog(
-                        context = context,
-                        nickName = nickName,
-                        content = context.getString(R.string.link_dialog_request_content),
-                    )
-                    showDialog(newDialog = loadingDialog)
-                }
-
-                is ModelState.Success -> dismissDialog()
-                is ModelState.Error -> {
-                    //TODO 에러처리
-                }
-            }
-        }
-        linkViewModel.cancelRequestLiveData.observe(viewLifecycleOwner) {
-            when (it) {
-                is ModelState.Loading -> {
-                    val context = binding.root.context
-                    val nickName = it.data ?: ""
-                    val loadingDialog = dialogFactory.createLoadingDialog(
-                        context = context,
-                        nickName = nickName,
-                        content = context.getString(R.string.link_dialog_cancel_request_content),
-                    )
-                    showDialog(newDialog = loadingDialog)
-                }
-
-                is ModelState.Success -> dismissDialog()
-                is ModelState.Error -> {
-                    //TODO 에러처리
-                }
-            }
-
-        }
         observeMain()
         observeRequest()
+        observeLinkEvent()
     }
 
     private fun observeMain() {
@@ -331,37 +295,76 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
         )
     }
 
-    override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {
+    private fun observeLinkEvent() {
+        linkViewModel.linkEventLiveData.observe(viewLifecycleOwner) {
+            val linkEventType = it.data
+            when (it) {
+                is ModelState.Loading -> {
+                    val context = binding.root.context
+                    when (linkEventType) {
+                        is LinkEventType.DialogType -> {
+                            val loadingDialog = dialogFactory.createLoadingDialog(
+                                context = context,
+                                nickName = linkEventType.linkUserModel.nickName,
+                                content = context.getString(linkEventType.contentStrRes),
+                            )
+                            showDialog(newDialog = loadingDialog)
+                        }
+
+                        else -> {
+                            val fullLoadingDialog = dialogFactory.createFullLoadingDialog()
+                            showDialog(newDialog = fullLoadingDialog)
+                        }
+                    }
+                }
+
+                is ModelState.Success -> {
+                    when (linkEventType) {
+                        is LinkEventType.CancelRequest -> {
+                            PolzzakSnackBar.make(
+                                binding.root,
+                                R.string.link_cancel_request_success_message,
+                                PolzzakSnackBar.Type.SUCCESS
+                            ).show()
+                        }
+
+                        else -> {
+                            //do nothing
+                        }
+                    }
+                    dismissDialog()
+                }
+
+                is ModelState.Error -> {
+                    //TODO 에러처리
+                }
+            }
+        }
+    }
+
+    private fun displayLinkEventDialog(linkEventType: LinkEventType.DialogType) {
         val context = binding.root.context
-        val cancelLinkDialog =
-            dialogFactory.createLinkDialog(
-                context = context,
-                nickName = linkUserModel.nickName,
-                content = context.getString(R.string.link_dialog_cancel_request_content),
-                negativeButtonStringRes = R.string.link_dialog_btn_negative,
-                positiveButtonStringRes = R.string.link_dialog_btn_positive_cancel_request,
-                onPositiveButtonClickListener = {
-                    cancelRequestLink(linkUserModel = linkUserModel)
-                })
-        showDialog(newDialog = cancelLinkDialog)
+        val dialog = dialogFactory.createLinkDialog(context = context,
+            nickName = linkEventType.linkUserModel.nickName,
+            contentStringRes = linkEventType.contentStrRes,
+            negativeButtonStringRes = R.string.link_dialog_btn_negative,
+            positiveButtonStringRes = linkEventType.positiveBtnStrRes,
+            onPositiveButtonClickListener = {
+                linkViewModel.requestLinkEvent(
+                    accessToken = getAccessTokenOrNull() ?: "",
+                    linkEventType = linkEventType
+                )
+            })
+        showDialog(newDialog = dialog)
+    }
+
+    override fun displayCancelRequestDialog(linkUserModel: LinkUserModel) {
+        displayLinkEventDialog(linkEventType = LinkEventType.DialogType.CancelRequest(linkUserModel = linkUserModel))
     }
 
     override fun displayRequestLinkDialog(linkUserModel: LinkUserModel) {
-        val context = binding.root.context
-        val requestLinkDialog =
-            dialogFactory.createLinkDialog(
-                context = context,
-                nickName = linkUserModel.nickName,
-                content = context.getString(R.string.link_dialog_request_content),
-                negativeButtonStringRes = R.string.link_dialog_btn_negative,
-                positiveButtonStringRes = R.string.link_dialog_btn_positive_request_link,
-                onPositiveButtonClickListener = {
-                    linkViewModel.requestLink(
-                        accessToken = getAccessTokenOrNull() ?: "",
-                        linkUserModel = linkUserModel
-                    )
-                })
-        showDialog(newDialog = requestLinkDialog)
+        displayLinkEventDialog(linkEventType = LinkEventType.DialogType.RequestLink(linkUserModel = linkUserModel))
+
     }
 
     private fun showDialog(newDialog: DialogFragment) {
@@ -380,9 +383,9 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
     }
 
     override fun cancelRequestLink(linkUserModel: LinkUserModel) {
-        linkViewModel.requestCancelLinkRequest(
+        linkViewModel.requestLinkEvent(
             accessToken = getAccessTokenOrNull() ?: "",
-            linkUserModel = linkUserModel
+            linkEventType = LinkEventType.CancelRequest(linkUserModel = linkUserModel)
         )
     }
 
