@@ -24,7 +24,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/ic_navigation_previous"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/gray_700" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ScrollView

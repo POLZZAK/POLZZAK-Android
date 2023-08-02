@@ -26,8 +26,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/gray_700"
-                tools:tint="@color/gray_700" />
+                app:tint="@color/gray_700" />
 
             <TextView
                 android:id="@+id/tvTitle"

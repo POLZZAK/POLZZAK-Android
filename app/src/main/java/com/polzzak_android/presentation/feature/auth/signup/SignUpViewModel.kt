@@ -55,17 +55,18 @@ class SignUpViewModel @AssistedInject constructor(
 
     init {
         _pageLiveData.value =
-            safeLet(userName, userType) { _, _ -> SignUpPage.SELECT_TYPE } ?: SignUpPage.ERROR
+            safeLet(userName, userType) { _, _ -> SignUpPage.TERMS_OF_SERVICE } ?: SignUpPage.ERROR
     }
 
     fun moveNextPage() {
         when (pageLiveData.value) {
+            SignUpPage.TERMS_OF_SERVICE -> _pageLiveData.value = SignUpPage.SELECT_TYPE
             SignUpPage.SELECT_TYPE -> _pageLiveData.value =
                 if (memberTypeLiveData.value?.isKid() == true) SignUpPage.SET_NICKNAME else SignUpPage.SELECT_PARENT_TYPE
 
             SignUpPage.SELECT_PARENT_TYPE -> _pageLiveData.value = SignUpPage.SET_NICKNAME
             SignUpPage.SET_NICKNAME -> _pageLiveData.value = SignUpPage.SET_PROFILE_IMAGE
-            SignUpPage.SET_PROFILE_IMAGE -> _pageLiveData.value = SignUpPage.TERMS_OF_SERVICE
+//            SignUpPage.SET_PROFILE_IMAGE -> _pageLiveData.value = SignUpPage.TERMS_OF_SERVICE
             else -> {
                 //do nothing
             }
@@ -74,23 +75,12 @@ class SignUpViewModel @AssistedInject constructor(
 
     fun movePrevPage() {
         when (pageLiveData.value) {
-            SignUpPage.SELECT_PARENT_TYPE -> {
-                _pageLiveData.value = SignUpPage.SELECT_TYPE
-            }
+            SignUpPage.SELECT_TYPE -> _pageLiveData.value = SignUpPage.TERMS_OF_SERVICE
+            SignUpPage.SELECT_PARENT_TYPE -> _pageLiveData.value = SignUpPage.SELECT_TYPE
+            SignUpPage.SET_NICKNAME -> _pageLiveData.value =
+                if (memberTypeLiveData.value?.isParent() == true) SignUpPage.SELECT_PARENT_TYPE else SignUpPage.SELECT_TYPE
 
-            SignUpPage.SET_NICKNAME -> {
-                _pageLiveData.value =
-                    if (memberTypeLiveData.value?.isParent() == true) SignUpPage.SELECT_PARENT_TYPE else SignUpPage.SELECT_TYPE
-            }
-
-            SignUpPage.SET_PROFILE_IMAGE -> {
-                _pageLiveData.value = SignUpPage.SET_NICKNAME
-            }
-
-            SignUpPage.TERMS_OF_SERVICE -> {
-                _pageLiveData.value = SignUpPage.SET_PROFILE_IMAGE
-            }
-
+            SignUpPage.SET_PROFILE_IMAGE -> _pageLiveData.value = SignUpPage.SET_NICKNAME
             else -> {
                 //do nothing
             }

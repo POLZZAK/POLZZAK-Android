@@ -1,10 +1,10 @@
 package com.polzzak_android.presentation.feature.auth.signup.model
 
-enum class SignUpPage(val isHeaderVisible: Boolean, val progressCount: Int) {
-    ERROR(false, 0),
-    SELECT_TYPE(false, 0),
-    SELECT_PARENT_TYPE(true, 1),
-    SET_NICKNAME(true, 2),
-    SET_PROFILE_IMAGE(true, 3),
-    TERMS_OF_SERVICE(true, 4)
+enum class SignUpPage(val progressCount: Int?) {
+    ERROR(null),
+    TERMS_OF_SERVICE(null),
+    SELECT_TYPE(null),
+    SELECT_PARENT_TYPE(1),
+    SET_NICKNAME(2),
+    SET_PROFILE_IMAGE(3)
 }
