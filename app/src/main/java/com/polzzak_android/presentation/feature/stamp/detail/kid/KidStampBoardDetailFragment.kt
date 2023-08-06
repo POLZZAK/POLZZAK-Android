@@ -5,8 +5,8 @@ import androidx.fragment.app.viewModels
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentKidStampBoardDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.presentation.component.dialog.ButtonCount
-import com.polzzak_android.presentation.component.dialog.CommonButtonModel
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogMissionData
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel

@@ -14,7 +14,6 @@ import com.polzzak_android.databinding.FragmentProgressBinding
 import com.polzzak_android.presentation.common.adapter.MainStampAdapter
 import com.polzzak_android.presentation.common.adapter.MainStampPagerAdapter
 import com.polzzak_android.presentation.feature.stamp.main.protector.StampViewModel
-import com.polzzak_android.presentation.component.bottomsheet.SelectUserFilterFragment
 import com.polzzak_android.presentation.component.SemiCircleProgressView
 import com.polzzak_android.presentation.feature.stamp.intercation.MainProgressInteraction
 import com.polzzak_android.presentation.feature.stamp.model.Partner
@@ -56,8 +55,7 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         // Todo: 선택 바텀 시트 의논 사항-> 네비게이션으로 관리할지, 인스턴스 새롭게 생성할지?
         binding.selectTxt.text = "전체"
         binding.selectContainer.setOnClickListener {
-            val sheet = SelectUserFilterFragment.newInstance()
-            sheet.show(childFragmentManager, "selectUserSheet")
+        // todo: 바텀시트 연결
         }
 
         binding.stampListRefresh.setOnRefreshListener {

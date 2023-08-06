@@ -3,7 +3,7 @@ package com.polzzak_android.presentation.feature.stamp.make
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.polzzak_android.R
-import com.polzzak_android.databinding.ItemExampleMissionBinding
+import com.polzzak_android.databinding.ItemMissionBinding
 
 class ExampleMissionHelper {
 
@@ -76,7 +76,7 @@ class ExampleMissionHelper {
         )
     }
 
-    fun onMissionClicked(viewBinding: ItemExampleMissionBinding, value: String) {
+    fun onMissionClicked(viewBinding: ItemMissionBinding, value: String) {
         val isSelected = checkSelectedMission(value)
         updateSelectedMissionList(isSelected, value)
         setSelectedMissionView(viewBinding, !isSelected)
@@ -94,7 +94,7 @@ class ExampleMissionHelper {
         }
     }
 
-    fun setSelectedMissionView(binding: ItemExampleMissionBinding, isSelected: Boolean) {
+    fun setSelectedMissionView(binding: ItemMissionBinding, isSelected: Boolean) {
         val context = binding.root.context
 
         val background = if (isSelected) {

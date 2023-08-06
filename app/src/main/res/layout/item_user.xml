@@ -5,10 +5,12 @@
 
     <data>
 
-        <import type="android.view.View" />
+        <variable
+            name="userType"
+            type="String" />
 
         <variable
-            name="data"
+            name="userName"
             type="String" />
     </data>
 
@@ -16,10 +18,28 @@
         android:layout_width="match_parent"
         android:layout_height="47dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/bg_gray_stroke_white_bg_r8">
+        android:background="@drawable/selector_stroke_rectangle_r8_selected">
 
         <TextView
-            android:id="@+id/item_ex_mission_text"
+            android:id="@+id/item_user_type_badge"
+            style="@style/body.13.500"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/bg_black_r4"
+            android:paddingHorizontal="7dp"
+            android:paddingVertical="4dp"
+            android:text="@{userType}"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/item_user_nickname"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="엄마" />
+
+        <TextView
+            android:id="@+id/item_user_nickname"
             style="@style/body.14.500"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -27,17 +47,17 @@
             android:gravity="center_vertical"
             android:maxLines="1"
             android:paddingHorizontal="16dp"
-            android:text="@{data}"
+            android:text="@{userName}"
             android:textColor="@color/black"
             android:textColorHint="@color/gray_400"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/item_ex_mission_check"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/item_user_check"
+            app:layout_constraintStart_toEndOf="@id/item_user_type_badge"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="미션 입력" />
+            tools:text="닉네임" />
 
         <ImageButton
-            android:id="@+id/item_ex_mission_check"
+            android:id="@+id/item_user_check"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
