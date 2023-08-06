@@ -9,9 +9,12 @@ import com.polzzak_android.databinding.CommonBottomSheetBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.component.bottomsheet.bindable.BottomSheetMissionListClickInteraction
+import com.polzzak_android.presentation.component.bottomsheet.bindable.BottomSheetUserInfoImageListClickInteraction
 import com.polzzak_android.presentation.component.bottomsheet.bindable.BottomSheetUserInfoListClickInteraction
 import com.polzzak_android.presentation.component.bottomsheet.bindable.MissionListItem
+import com.polzzak_android.presentation.component.bottomsheet.bindable.UserInfoImageListItem
 import com.polzzak_android.presentation.component.bottomsheet.bindable.UserInfoListItem
+import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserMakeBoardModelModel
 import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserStampBoardModel
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
@@ -20,7 +23,7 @@ class CommonBottomSheetHelper(
     private val data: CommonBottomSheetModel,
     private val onClickListener: (() -> OnButtonClickListener)? = null,
 ) : BottomSheetDialogFragment(), BottomSheetMissionListClickInteraction,
-    BottomSheetUserInfoListClickInteraction {
+    BottomSheetUserInfoListClickInteraction, BottomSheetUserInfoImageListClickInteraction {
 
     private var _binding: CommonBottomSheetBinding? = null
     private val binding get() = _binding!!
@@ -33,9 +36,9 @@ class CommonBottomSheetHelper(
     companion object {
         fun getInstance(
             data: CommonBottomSheetModel,
-            onPositiveButtonListener: (() -> OnButtonClickListener)? = null
+            onClickListener: (() -> OnButtonClickListener)? = null
         ): CommonBottomSheetHelper {
-            return CommonBottomSheetHelper(data, onPositiveButtonListener)
+            return CommonBottomSheetHelper(data, onClickListener)
         }
     }
 
@@ -78,7 +81,12 @@ class CommonBottomSheetHelper(
             }
 
             BottomSheetType.PROFILE_IMAGE -> {
-
+                items.addAll(data.contentList.map { model ->
+                    UserInfoImageListItem(
+                        model = model as SelectUserMakeBoardModelModel,
+                        interaction = this
+                    )
+                })
             }
 
             BottomSheetType.SELECT_STAMP_BOARD -> {
@@ -114,38 +122,59 @@ class CommonBottomSheetHelper(
         _binding = null
     }
 
+    private fun selectItem(items: List<BindableItem<*>>, modelId: Int): BindableItem<*>? {
+        var selectedItem: BindableItem<*>? = null
+        items.forEach { item ->
+            when (item) {
+                is MissionListItem -> {
+                    item.isSelected = item.model.id == modelId
+                    if (item.isSelected) selectedItem = item
+                }
+                is UserInfoImageListItem -> {
+                    item.isSelected = item.model.userId == modelId
+                    if (item.isSelected) selectedItem = item
+                }
+                is UserInfoListItem -> {
+                    item.isSelected = item.model.userId == modelId
+                    if (item.isSelected) selectedItem = item
+                }
+            }
+        }
+        return selectedItem
+    }
+
     /**
      * 미션 : BottomSheetType.MISSION
      */
     override fun onMissionClick(model: MissionModel) {
-        items.forEach { item ->
-            if (item is MissionListItem) {
-                item.isSelected = item.model.id == model.id
-            }
+        selectItem(items, model.id)?.let {
+            adapter.notifyDataSetChanged()
+            this.returnValue = model
+            binding.bottomSheetPositiveButton.isEnabled = true
         }
+    }
 
-        adapter.notifyDataSetChanged()
-        this.returnValue = model
-
-        binding.bottomSheetPositiveButton.isEnabled = true
+    /**
+     * 프로필 조회 : BottomSheetType.PROFILE_IMAGE
+     */
+    override fun onUserProfileClick(model: SelectUserMakeBoardModelModel) {
+        selectItem(items, model.userId)?.let {
+            adapter.notifyDataSetChanged()
+            this.returnValue = model
+            binding.bottomSheetPositiveButton.isEnabled = true
+        }
     }
 
     /**
      * 도장판 조회 : BottomSheetType.SELECT_STAMP_BOARD
      */
     override fun onUserClick(model: SelectUserStampBoardModel) {
-        items.forEach { item ->
-            if (item is UserInfoListItem) {
-                item.isSelected = item.model.userId == model.userId
-            }
+        selectItem(items, model.userId)?.let {
+            adapter.notifyDataSetChanged()
+            this.returnValue = model
+            binding.bottomSheetPositiveButton.isEnabled = true
+            businessBottomSheet()
         }
-
-        adapter.notifyDataSetChanged()
-        this.returnValue = model
-
-        binding.bottomSheetPositiveButton.isEnabled = true
-
-        businessBottomSheet()
     }
 
 }
