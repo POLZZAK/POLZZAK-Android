@@ -9,14 +9,18 @@ import com.polzzak_android.databinding.CommonBottomSheetBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.component.bottomsheet.bindable.BottomSheetMissionListClickInteraction
+import com.polzzak_android.presentation.component.bottomsheet.bindable.BottomSheetUserInfoListClickInteraction
 import com.polzzak_android.presentation.component.bottomsheet.bindable.MissionListItem
+import com.polzzak_android.presentation.component.bottomsheet.bindable.UserInfoListItem
+import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserStampBoardModel
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
 class CommonBottomSheetHelper(
     private val data: CommonBottomSheetModel,
-    private val onPositiveButtonListener: (() -> OnButtonClickListener)? = null,
-) : BottomSheetDialogFragment(), BottomSheetMissionListClickInteraction {
+    private val onClickListener: (() -> OnButtonClickListener)? = null,
+) : BottomSheetDialogFragment(), BottomSheetMissionListClickInteraction,
+    BottomSheetUserInfoListClickInteraction {
 
     private var _binding: CommonBottomSheetBinding? = null
     private val binding get() = _binding!!
@@ -77,20 +81,25 @@ class CommonBottomSheetHelper(
 
             }
 
-            BottomSheetType.PROFILE_LIST -> {
-
+            BottomSheetType.SELECT_STAMP_BOARD -> {
+                items.addAll(data.contentList.map { model ->
+                    UserInfoListItem(
+                        model = model as SelectUserStampBoardModel,
+                        interaction = this
+                    )
+                })
             }
         }
 
         this.adapter.updateItem(item = items)
     }
 
-    fun onNegativeButtonClick() {
+    fun closeBottomSheet() {
         dismiss()
     }
 
-    fun onPositiveButtonClick() {
-        onPositiveButtonListener?.let {
+    fun businessBottomSheet() {
+        onClickListener?.let {
             with(it.invoke()) {
                 setBusinessLogic()
                 returnValue?.let { value -> getReturnValue(value) }
@@ -105,6 +114,9 @@ class CommonBottomSheetHelper(
         _binding = null
     }
 
+    /**
+     * 미션 : BottomSheetType.MISSION
+     */
     override fun onMissionClick(model: MissionModel) {
         items.forEach { item ->
             if (item is MissionListItem) {
@@ -116,6 +128,24 @@ class CommonBottomSheetHelper(
         this.returnValue = model
 
         binding.bottomSheetPositiveButton.isEnabled = true
+    }
+
+    /**
+     * 도장판 조회 : BottomSheetType.SELECT_STAMP_BOARD
+     */
+    override fun onUserClick(model: SelectUserStampBoardModel) {
+        items.forEach { item ->
+            if (item is UserInfoListItem) {
+                item.isSelected = item.model.userId == model.userId
+            }
+        }
+
+        adapter.notifyDataSetChanged()
+        this.returnValue = model
+
+        binding.bottomSheetPositiveButton.isEnabled = true
+
+        businessBottomSheet()
     }
 
 }

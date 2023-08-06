@@ -101,7 +101,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/btn_modal_negative"
-                android:onClick="@{() -> bottomSheet.onNegativeButtonClick()}"
+                android:onClick="@{() -> bottomSheet.closeBottomSheet()}"
                 android:text="@{data.button.negativeButtonText}"
                 tools:text="취소" />
 
@@ -117,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@drawable/selector_btn_rectangle_r8_enabled"
-                android:onClick="@{() -> bottomSheet.onPositiveButtonClick()}"
+                android:onClick="@{() -> bottomSheet.businessBottomSheet()}"
                 android:text="@{data.button.positiveButtonText}"
                 tools:text="확인" />
         </LinearLayout>
