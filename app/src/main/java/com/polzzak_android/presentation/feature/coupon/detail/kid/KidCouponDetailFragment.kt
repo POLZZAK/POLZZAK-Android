@@ -1,10 +1,13 @@
 package com.polzzak_android.presentation.feature.coupon.detail.kid
 
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.fragment.app.viewModels
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentCouponDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
+import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailScreen_Kid
+import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -12,11 +15,15 @@ import timber.log.Timber
 class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>() {
     override val layoutResId: Int = R.layout.fragment_coupon_detail
 
+    private val viewModel: CouponDetailViewModel by viewModels()
+
     override fun initView() {
         super.initView()
 
         val couponId = arguments?.getInt("couponId", -1) ?: -1
         Timber.d(">> couponId = $couponId")
+
+        viewModel.fetchCouponDetailData(token = "", couponId = couponId)
 
         binding.composeView.apply {
             setContent {
@@ -25,7 +32,12 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>() {
                 )
 
                 PolzzakAppTheme {
-                    // TODO: [CouponDetailScreen_Kid] 호출하기
+                    CouponDetailScreen_Kid(
+                        couponDetailData = viewModel.couponDetailData,
+                        onMissionClick = this@KidCouponDetailFragment::openMissionsDialog,
+                        onRewardRequestClick = viewModel::requestReward,
+                        onRewardDeliveredClick = viewModel::receiveReward
+                    )
                 }
             }
         }
