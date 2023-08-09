@@ -7,7 +7,7 @@
 
         <variable
             name="fragment"
-            type="com.polzzak_android.presentation.feature.myPage.kid.KidMyPageFragment" />
+            type="com.polzzak_android.presentation.feature.myPage.protector.ProtectorMyPageFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,6 +54,19 @@
 
                     <!-- 사용자 타입, 닉네임 -->
                     <TextView
+                        android:id="@+id/profile_user_type"
+                        style="@style/body.14.600"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:textColor="@color/gray_700"
+                        app:layout_constraintBottom_toTopOf="@id/profile_link_icon"
+                        app:layout_constraintEnd_toStartOf="@id/profile_nickname"
+                        app:layout_constraintStart_toEndOf="@id/profile_image"
+                        app:layout_constraintTop_toTopOf="@id/profile_image"
+                        tools:text="엄마" />
+
+                    <TextView
                         android:id="@+id/profile_nickname"
                         style="@style/subtitle.16.600"
                         android:layout_width="0dp"
@@ -62,7 +75,7 @@
                         android:textColor="@color/gray_800"
                         app:layout_constraintBottom_toTopOf="@id/profile_link_icon"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/profile_image"
+                        app:layout_constraintStart_toEndOf="@id/profile_user_type"
                         app:layout_constraintTop_toTopOf="@id/profile_image"
                         tools:text="닉네임" />
 
@@ -90,7 +103,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/profile_link_icon"
                         app:layout_constraintTop_toTopOf="@id/profile_link_icon"
-                        tools:text="연동된 보호자 7명" />
+                        tools:text="연동된 아이 7명" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
