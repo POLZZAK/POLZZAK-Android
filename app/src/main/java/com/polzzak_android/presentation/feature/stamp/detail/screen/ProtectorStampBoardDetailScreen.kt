@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,9 +24,41 @@ import com.polzzak_android.presentation.component.NoticeBar
 import com.polzzak_android.presentation.component.PolzzakButton
 import com.polzzak_android.presentation.common.compose.Gray500
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
+import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
+import com.polzzak_android.presentation.feature.stamp.model.MissionRequestModel
+import com.polzzak_android.presentation.feature.stamp.model.StampBoardDetailModel
 import com.polzzak_android.presentation.feature.stamp.model.StampBoardStatus
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
+import kotlinx.coroutines.flow.StateFlow
+
+@Composable
+fun StampBoardDetailScreen_Protector(
+    stampBoardData: StateFlow<ModelState<StampBoardDetailModel>>,
+    onStampRequestClick: (List<MissionRequestModel>) -> Unit,
+    onStampClick: (StampModel) -> Unit,
+    onEmptyStampClick: () -> Unit,
+    onRewardButtonClick: () -> Unit,
+    onBoardDeleteClick: () -> Unit
+) {
+    val state by stampBoardData.collectAsState()
+
+    StampBoardDetailScreen_Protector(
+        stampBoardStatus = state.data?.stampBoardStatus ?: StampBoardStatus.PROGRESS,
+        boardTitle = state.data?.boardTitle ?: "",
+        dateCount = state.data?.dateCount ?: 0,
+        isStampRequested = state.data?.missionRequestList.isNullOrEmpty().not(),
+        onStampRequestClick = { onStampRequestClick(state.data?.missionRequestList ?: emptyList()) },
+        totalStampCount = state.data?.totalStampCount ?: 16,
+        stampList = state.data?.stampList ?: emptyList(),
+        onStampClick = onStampClick,
+        onEmptyStampClick = onEmptyStampClick,
+        missionList = state.data?.missionList ?: emptyList(),
+        rewardTitle = state.data?.rewardTitle ?: "",
+        onRewardButtonClick = onRewardButtonClick,
+        onBoardDeleteClick = onBoardDeleteClick
+    )
+}
 
 /**
  * 부모 도장판 상세 화면
@@ -44,11 +77,12 @@ import com.polzzak_android.presentation.feature.stamp.model.StampModel
  * @param onBoardDeleteClick 도장판 삭제 눌렀을 때
  */
 @Composable
-fun StampBoardDetailScreen_Protector(
+private fun StampBoardDetailScreen_Protector(
     stampBoardStatus: StampBoardStatus,     // 도장판 상태
     boardTitle: String,                     // 도장판 이름
     dateCount: Int,                         // 날짜 카운트
     isStampRequested: Boolean,            // 도장 요청 있는지
+    onStampRequestClick: () -> Unit,
     totalStampCount: Int,                   // 도장 전체 개수
     stampList: List<StampModel>,            // 도장 리스트
     onStampClick: (StampModel) -> Unit,     // 찍힌 도장 눌렀을 때
@@ -71,7 +105,10 @@ fun StampBoardDetailScreen_Protector(
 
             if (isStampRequested) {
                 Box(modifier = Modifier.padding(16.dp)) {
-                    NoticeBar(text = "도장 요청이 있어요!")
+                    NoticeBar(
+                        text = "도장 요청이 있어요!",
+                        onClick = onStampRequestClick
+                    )
                 }
             } else {
                 Spacer(modifier = Modifier.height(20.dp))
@@ -166,6 +203,7 @@ fun StampBoardDetailScreen_ProtectorPreview() {
         boardTitle = "도장판 이름",
         dateCount = 4,
         isStampRequested = true,
+        onStampRequestClick = {},
         totalStampCount = 40,
         stampList = listOf(StampModel(), StampModel()),
         onStampClick = {},
