@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.feature.coupon.detail
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -17,6 +18,9 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -69,21 +73,27 @@ fun CouponDetailScreen_Kid(
                 buttons = {
                     // 조르기 시간이 없으면 조르기 버튼 표시
                     // 조르기 시간이 있으면 카운트다운 표시
-                    if (state.data?.rewardRequestDate == null) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        var countdownVisibility by remember {
+                            mutableStateOf(state.data?.rewardRequestDate != null)
+                        }
+
                         PolzzakButton(
                             onClick = { onRewardRequestClick(state.data!!.couponId) },
                             colors = ButtonDefaults.polzzakButtonColors(backgroundColor = Blue600),
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.fillMaxWidth()
                         ) {
                             Text(text = "선물 조르기")
                         }
-                    } else {
-                        CountdownButton(
-                            remainingSeconds = state.data?.rewardRequestDate!!.getRemainingSeconds(),
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
 
+                        if (countdownVisibility) {
+                            CountdownButton(
+                                remainingSeconds = state.data?.rewardRequestDate!!.getRemainingSeconds(),
+                                modifier = Modifier.fillMaxWidth(),
+                                onCountEnd = { countdownVisibility = false }
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.width(7.dp))
                     PolzzakWhiteButton(
                         onClick = { onRewardDeliveredClick(state.data!!.couponId) },
@@ -183,16 +193,26 @@ fun CouponDetailScreenPreview() {
         ),
         onMissionClick = {},
         buttons = {
-            /*CountdownButton(
-                remainingSeconds = 2000,
-                modifier = Modifier.weight(1f)
-            )*/
-            PolzzakButton(
-                onClick = {},
-                colors = ButtonDefaults.polzzakButtonColors(backgroundColor = Blue600),
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(text = "선물 조르기")
+            Box(modifier = Modifier.weight(1f)) {
+                var countdownVisibility by remember {
+                    mutableStateOf(true)
+                }
+
+                PolzzakButton(
+                    onClick = {},
+                    colors = ButtonDefaults.polzzakButtonColors(backgroundColor = Blue600),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "선물 조르기")
+                }
+
+                if (countdownVisibility) {
+                    CountdownButton(
+                        remainingSeconds = 5,
+                        modifier = Modifier.fillMaxWidth(),
+                        onCountEnd = { countdownVisibility = false }
+                    )
+                }
             }
             Spacer(modifier = Modifier.width(7.dp))
             PolzzakWhiteButton(
