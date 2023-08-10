@@ -3,6 +3,7 @@ package com.polzzak_android.presentation.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -184,13 +185,21 @@ private fun BlueChipPreview() {
  * 알림 바
  */
 @Composable
-fun NoticeBar(text: String) = Row(
+fun NoticeBar(
+    text: String,
+    onClick: () -> Unit
+) = Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
         .fillMaxWidth()
         .background(color = Blue100, shape = RoundedCornerShape(8.dp))
         .border(width = 1.dp, color = Blue700.copy(alpha = 0.16f), shape = RoundedCornerShape(8.dp))
         .padding(horizontal = 16.dp, vertical = 12.dp)
+        .clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onClick
+        )
 ) {
     Icon(
         imageVector = Icons.Default.Notifications,
@@ -210,5 +219,5 @@ fun NoticeBar(text: String) = Row(
 @Preview
 @Composable
 private fun NoticeBarPreview() {
-    NoticeBar(text = "도장 요청이 있어요!")
+    NoticeBar(text = "도장 요청이 있어요!", onClick = {})
 }
