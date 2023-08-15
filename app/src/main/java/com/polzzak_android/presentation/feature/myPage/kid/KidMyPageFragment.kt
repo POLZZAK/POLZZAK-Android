@@ -10,17 +10,19 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_kid_my_page
 
+    private lateinit var toolbarHelper: ToolbarHelper
+
     override fun setToolbar() {
         super.setToolbar()
 
-        ToolbarHelper(
+        toolbarHelper = ToolbarHelper(
             data = ToolbarData(
                 iconImageId = R.drawable.ic_setting,
                 iconInteraction = this
             ),
-            titleView = binding.toolbar.toolbarTitle,
-            imageIconView = binding.toolbar.toolbarImageIcon,
-        ).set()
+            toolbar = binding.toolbar
+        )
+        toolbarHelper.set()
     }
 
     override fun initView() {
