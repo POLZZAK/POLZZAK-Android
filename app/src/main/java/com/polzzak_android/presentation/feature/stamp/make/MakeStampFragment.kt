@@ -37,21 +37,25 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
 
     private val makeStampViewModel: MakeStampViewModel by activityViewModels()
 
+    private lateinit var toolbarHelper: ToolbarHelper
 
     override fun setToolbar() {
         super.setToolbar()
 
-        ToolbarHelper(
+        toolbarHelper = ToolbarHelper(
             data = ToolbarData(
                 popStack = findNavController(),
                 titleText = "도장판 생성",
                 iconText = "등록",
                 iconInteraction = this
             ),
-            backButtonView = binding.toolbar.toolbarBackButton,
-            titleView = binding.toolbar.toolbarTitle,
-            textIconView = binding.toolbar.toolbarTextIcon,
-        ).set()
+            toolbar = binding.toolbar
+        )
+
+        toolbarHelper.set()
+        toolbarHelper.updateToolbarBackgroundColor(R.color.black)
+        toolbarHelper.updateTextIconColor(R.color.error_500)
+        toolbarHelper.updateImageIconColor(R.color.white)
     }
 
     private val requestStampDialog = CommonDialogHelper.getInstance(
