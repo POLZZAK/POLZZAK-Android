@@ -59,8 +59,13 @@ class ToolbarHelper(
     }
 
     fun updateBackButtonColor(colorResource: Int) {
-        backButtonView.imageTintList = AppCompatResources.getColorStateList(imageIconView.context, colorResource)
+        backButtonView.imageTintList = AppCompatResources.getColorStateList(backButtonView.context, colorResource)
     }
+
+    fun updateTitleColor(colorResource: Int) {
+        titleView.setTextColor(titleView.context.getColor(colorResource))
+    }
+
 
     fun updateTextIconColor(colorResource: Int) {
         textIconView.setTextColor(textIconView.context.getColor(colorResource))
