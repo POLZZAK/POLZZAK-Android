@@ -30,18 +30,19 @@ class BindableItemAdapter :
         rv = null
     }
 
-    fun updateItem(item: List<BindableItem<*>>) {
-        submitList(item)
+    fun updateItem(item: List<BindableItem<*>>, commitCallback: (() -> Unit)? = null) {
+        submitList(item, commitCallback)
     }
 
-    fun addItem(items: List<BindableItem<*>>) {
+    fun addItem(items: List<BindableItem<*>>, commitCallback: (() -> Unit)? = null) {
         val newItems = currentList + items
-        submitList(newItems)
+        submitList(newItems, commitCallback)
     }
 
-    private fun submitList(items: List<BindableItem<*>>) {
-        asyncDiffer.submitList(items){
+    private fun submitList(items: List<BindableItem<*>>, commitCallback: (() -> Unit)? = null) {
+        asyncDiffer.submitList(items) {
             rv?.invalidateItemDecorations()
+            commitCallback?.invoke()
         }
     }
 
