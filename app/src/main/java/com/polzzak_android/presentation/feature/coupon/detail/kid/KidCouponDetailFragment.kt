@@ -2,17 +2,21 @@ package com.polzzak_android.presentation.feature.coupon.detail.kid
 
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentCouponDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
+import com.polzzak_android.presentation.component.toolbar.ToolbarData
+import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
+import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailScreen_Kid
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
 @AndroidEntryPoint
-class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>() {
+class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_coupon_detail
 
     private val viewModel: CouponDetailViewModel by viewModels()
@@ -41,6 +45,27 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>() {
                 }
             }
         }
+    }
+
+    override fun setToolbar() {
+        super.setToolbar()
+
+        val toolbarHelper = ToolbarHelper(
+            data = ToolbarData(
+                popStack = findNavController(),
+                titleText = "",
+                iconImageId = R.drawable.ic_picture,
+                iconInteraction = this@KidCouponDetailFragment
+            ),
+            toolbar = binding.toolbar
+        ).apply { set() }
+
+        toolbarHelper.updateToolbarBackgroundColor(R.color.primary)
+        toolbarHelper.updateBackButtonColor(R.color.white)
+    }
+
+    override fun onToolbarIconClicked() {
+        // TODO: 사진 저장
     }
 
     private fun openMissionsDialog(missions: List<String>) {
