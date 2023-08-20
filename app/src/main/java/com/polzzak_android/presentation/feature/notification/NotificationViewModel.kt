@@ -78,7 +78,8 @@ class NotificationViewModel @Inject constructor() : ViewModel() {
 
     //TODO test용 delay를 위해 suspend 붙여줌(제거 필요)
     private suspend fun requestNotifications() {
-        val prevData = notificationLiveData.value?.data ?: NotificationsModel()
+        val prevData =
+            notificationLiveData.value?.data.takeIf { !isRefreshed } ?: NotificationsModel()
         //TODO api 연동(현재 mock data)
         //onSuccess
         delay(2000)
@@ -106,7 +107,7 @@ class NotificationViewModel @Inject constructor() : ViewModel() {
 
 private fun getMockData(nextOffset: Int, pageSize: Int): NotificationsModel {
     return NotificationsModel(
-        hasNextPage = nextOffset + pageSize >= mockNotification.size,
+        hasNextPage = nextOffset + pageSize < mockNotification.size,
         nextOffset = nextOffset + pageSize,
         items = mockNotification.subList(
             nextOffset,
@@ -118,6 +119,7 @@ private fun getMockData(nextOffset: Int, pageSize: Int): NotificationsModel {
 private val mockNotification = List(187) {
     when (it % 4) {
         0 -> NotificationModel.CompleteLink(
+            id = it,
             date = "${it}일 전",
             content = SpannableString("연동 완료"),
             nickName = "닉네임${it}",
@@ -125,16 +127,19 @@ private val mockNotification = List(187) {
         )
 
         1 -> NotificationModel.LevelDown(
+            id = it,
             date = "${it}일 전",
             content = SpannableString("레벨 감소"),
         )
 
         2 -> NotificationModel.LevelUp(
+            id = it,
             date = "${it}일 전",
             content = SpannableString("레벨 업")
         )
 
         else -> NotificationModel.RequestLink(
+            id = it,
             date = "${it}일 전",
             content = SpannableString("연동 요청"),
             nickName = "닉네임${it}",

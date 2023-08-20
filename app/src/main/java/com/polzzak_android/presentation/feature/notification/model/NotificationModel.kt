@@ -6,6 +6,8 @@ import com.polzzak_android.R
 
 //TODO api response 확인 후 알림타입추가
 sealed interface NotificationModel {
+    val id: Int
+
     @get:StringRes
     val emojiStringRes: Int
 
@@ -22,6 +24,7 @@ sealed interface NotificationModel {
     )
 
     class RequestLink(
+        override val id: Int,
         override val date: String,
         override val content: Spannable,
         nickName: String,
@@ -35,6 +38,7 @@ sealed interface NotificationModel {
     }
 
     class CompleteLink(
+        override val id: Int,
         override val date: String,
         override val content: Spannable,
         nickName: String,
@@ -48,6 +52,7 @@ sealed interface NotificationModel {
     }
 
     class LevelUp(
+        override val id: Int,
         override val date: String,
         override val content: Spannable
     ) : NotificationModel {
@@ -58,6 +63,7 @@ sealed interface NotificationModel {
     }
 
     class LevelDown(
+        override val id: Int,
         override val date: String,
         override val content: Spannable
     ) : NotificationModel {

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentNotificationBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.item.LoadMoreLoadingSpinnerItem
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
@@ -53,8 +54,7 @@ abstract class BaseNotificationFragment : BaseFragment<FragmentNotificationBindi
             val betweenMarginPx = NOTIFICATIONS_BETWEEN_MARGIN_DP.toPx(context)
             val itemDecoration = NotificationItemDecoration(
                 paddingPx = paddingPx,
-                betweenMarginPx = betweenMarginPx,
-                offset = 1
+                betweenMarginPx = betweenMarginPx
             )
             addItemDecoration(itemDecoration)
             adapter = BindableItemAdapter()
@@ -116,21 +116,18 @@ abstract class BaseNotificationFragment : BaseFragment<FragmentNotificationBindi
                 is ModelState.Loading -> {
                     if (it.data?.items == null) {
                         items.addAll(createSkeletonLoadingItems())
-                    } else if (it.data?.items?.isEmpty() == true) {
-                        items.add(NotificationEmptyItem())
-                    } else items.addAll(
-                        createNotificationItems(
-                            data = it.data?.items ?: emptyList()
+                    } else {
+                        items.addAll(createNotificationItems(data = it.data?.items))
+                        if (!notificationViewModel.isRefreshed) items.add(
+                            LoadMoreLoadingSpinnerItem(
+                                marginTopDp = 8
+                            )
                         )
-                    )
+                    }
                 }
 
                 is ModelState.Success -> {
-                    if (it.data.items.isNullOrEmpty()) {
-                        items.add(NotificationEmptyItem())
-                    } else {
-                        items.addAll(createNotificationItems(data = it.data.items))
-                    }
+                    items.addAll(createNotificationItems(data = it.data.items))
                     if (notificationViewModel.isRefreshed) {
                         updateCallback = {
                             layoutManager.scrollToPositionWithOffset(1, 0)
@@ -151,8 +148,12 @@ abstract class BaseNotificationFragment : BaseFragment<FragmentNotificationBindi
         NotificationSkeletonLoadingItem()
     }
 
-    private fun createNotificationItems(data: List<NotificationModel>): List<NotificationItem> {
-        return data.map { NotificationItem(model = it) }
+    private fun createNotificationItems(data: List<NotificationModel>?): List<BindableItem<*>> {
+        return if (data.isNullOrEmpty()) listOf(NotificationEmptyItem()) else data.map {
+            NotificationItem(
+                model = it
+            )
+        }
     }
 
     companion object {

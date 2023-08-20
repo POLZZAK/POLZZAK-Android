@@ -10,7 +10,8 @@ import com.polzzak_android.presentation.feature.notification.model.NotificationM
 class NotificationItem(private val model: NotificationModel) :
     BindableItem<ItemNotificationBinding>() {
     override val layoutRes: Int = R.layout.item_notification
-    override fun areItemsTheSame(other: BindableItem<*>): Boolean = other is NotificationItem
+    override fun areItemsTheSame(other: BindableItem<*>): Boolean =
+        other is NotificationItem && this.model.id == other.model.id
 
     override fun areContentsTheSame(other: BindableItem<*>): Boolean =
         other is NotificationItem && this.model == other.model
