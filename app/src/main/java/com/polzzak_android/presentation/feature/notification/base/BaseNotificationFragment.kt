@@ -1,7 +1,9 @@
 package com.polzzak_android.presentation.feature.notification.base
 
+import android.util.DisplayMetrics
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentNotificationBinding
@@ -13,17 +15,30 @@ import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.feature.notification.NotificationItemDecoration
 import com.polzzak_android.presentation.feature.notification.NotificationViewModel
 import com.polzzak_android.presentation.feature.notification.item.NotificationItem
+import com.polzzak_android.presentation.feature.notification.item.NotificationRefreshItem
 import com.polzzak_android.presentation.feature.notification.item.NotificationSkeletonLoadingItem
 import com.polzzak_android.presentation.feature.notification.model.NotificationModel
+import com.polzzak_android.presentation.feature.notification.model.NotificationRefreshStatusType
+
 
 abstract class BaseNotificationFragment : BaseFragment<FragmentNotificationBinding>() {
     override val layoutResId: Int = R.layout.fragment_notification
     private val notificationViewModel by viewModels<NotificationViewModel>()
+    private val smoothScroller by lazy {
+        object : LinearSmoothScroller(context) {
+            override fun getVerticalSnapPreference(): Int {
+                return SNAP_TO_START
+            }
+
+            override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics?): Float {
+                return super.calculateSpeedPerPixel(displayMetrics) * 4f
+            }
+        }
+    }
 
     override fun initView() {
         super.initView()
         initRecyclerView()
-        //TODO refresh
         binding.ivBtnSetting.setOnClickListener {
             //TODO move to setting page
         }
@@ -31,46 +46,102 @@ abstract class BaseNotificationFragment : BaseFragment<FragmentNotificationBindi
 
     private fun initRecyclerView() {
         with(binding.rvNotifications) {
-            layoutManager = LinearLayoutManager(context)
+            val layoutManager = LinearLayoutManager(context)
+            this.layoutManager = layoutManager
             val paddingPx = NOTIFICATIONS_PADDING_DP.toPx(context)
             val betweenMarginPx = NOTIFICATIONS_BETWEEN_MARGIN_DP.toPx(context)
             val itemDecoration = NotificationItemDecoration(
                 paddingPx = paddingPx,
-                betweenMarginPx = betweenMarginPx
+                betweenMarginPx = betweenMarginPx,
+                offset = 1
             )
             addItemDecoration(itemDecoration)
             adapter = BindableItemAdapter()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    //TODO 무한스크롤
+                    if (!recyclerView.canScrollVertically(1)) notificationViewModel.requestMoreNotifications()
+                }
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    when (notificationViewModel.notificationLiveData.value?.data?.refreshStatusType) {
+                        NotificationRefreshStatusType.Normal -> onScrollStateChangedRefreshNormal(
+                            recyclerView = recyclerView,
+                            newState = newState
+                        )
+
+                        else -> {
+                            //do nothing
+                        }
+                    }
                 }
             })
         }
     }
 
+    private fun onScrollStateChangedRefreshNormal(recyclerView: RecyclerView, newState: Int) {
+        val layoutManager = (recyclerView.layoutManager as? LinearLayoutManager) ?: return
+        val firstCompletelyVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition()
+        if (firstCompletelyVisibleItem == 0) {
+            notificationViewModel.refreshNotifications()
+            return
+        }
+        val firstVisibleItem =
+            layoutManager.findFirstVisibleItemPosition().takeIf { it >= 0 } ?: return
+        if (firstVisibleItem < 1 && newState != RecyclerView.SCROLL_STATE_DRAGGING) {
+            smoothScroller.targetPosition = 1
+            layoutManager.startSmoothScroll(smoothScroller)
+        }
+    }
+
     override fun initObserver() {
         super.initObserver()
+        initNotificationObserver()
+    }
+
+    private fun initNotificationObserver() {
         notificationViewModel.notificationLiveData.observe(viewLifecycleOwner) {
-            val items = mutableListOf<BindableItem<*>>()
+            val layoutManager =
+                (binding.rvNotifications.layoutManager as? LinearLayoutManager) ?: return@observe
             val adapter =
                 (binding.rvNotifications.adapter as? BindableItemAdapter) ?: return@observe
+            val refreshStatusType =
+                it.data?.refreshStatusType ?: NotificationRefreshStatusType.Disable
+            val items =
+                mutableListOf<BindableItem<*>>(NotificationRefreshItem(statusType = refreshStatusType))
+            var updateCallback: (() -> Unit)? = null
             when (it) {
                 is ModelState.Loading -> {
-                    if (it.data?.items.isNullOrEmpty()) items.addAll(createSkeletonLoadingItems())
-                    else items.addAll(createNotificationItems(data = it.data?.items ?: emptyList()))
+                    if (it.data?.items.isNullOrEmpty()) {
+                        items.addAll(createSkeletonLoadingItems())
+                    } else items.addAll(
+                        createNotificationItems(
+                            data = it.data?.items ?: emptyList()
+                        )
+                    )
                 }
 
                 is ModelState.Success -> {
-                    //TODO 비어있는경우 대응
-                    items.addAll(createNotificationItems(data = it.data.items))
+                    if (it.data.items.isEmpty()) {
+                        //TODO 비어있는경우 대응
+                    } else {
+                        items.addAll(createNotificationItems(data = it.data.items))
+                    }
+                    if (notificationViewModel.isRefreshed) {
+                        updateCallback = {
+                            notificationViewModel.setIsRefreshedFalse()
+                            layoutManager.scrollToPositionWithOffset(1, 0)
+                        }
+                    }
                 }
 
                 is ModelState.Error -> {
 
                 }
             }
-            adapter.updateItem(item = items)
+
+            adapter.updateItem(item = items, commitCallback = updateCallback)
         }
     }
 
