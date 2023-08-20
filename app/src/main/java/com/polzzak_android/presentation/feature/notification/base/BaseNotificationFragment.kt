@@ -14,6 +14,7 @@ import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.feature.notification.NotificationItemDecoration
 import com.polzzak_android.presentation.feature.notification.NotificationViewModel
+import com.polzzak_android.presentation.feature.notification.item.NotificationEmptyItem
 import com.polzzak_android.presentation.feature.notification.item.NotificationItem
 import com.polzzak_android.presentation.feature.notification.item.NotificationRefreshItem
 import com.polzzak_android.presentation.feature.notification.item.NotificationSkeletonLoadingItem
@@ -113,8 +114,10 @@ abstract class BaseNotificationFragment : BaseFragment<FragmentNotificationBindi
             var updateCallback: (() -> Unit)? = null
             when (it) {
                 is ModelState.Loading -> {
-                    if (it.data?.items.isNullOrEmpty()) {
+                    if (it.data?.items == null) {
                         items.addAll(createSkeletonLoadingItems())
+                    } else if (it.data?.items?.isEmpty() == true) {
+                        items.add(NotificationEmptyItem())
                     } else items.addAll(
                         createNotificationItems(
                             data = it.data?.items ?: emptyList()
@@ -123,21 +126,20 @@ abstract class BaseNotificationFragment : BaseFragment<FragmentNotificationBindi
                 }
 
                 is ModelState.Success -> {
-                    if (it.data.items.isEmpty()) {
-                        //TODO 비어있는경우 대응
+                    if (it.data.items.isNullOrEmpty()) {
+                        items.add(NotificationEmptyItem())
                     } else {
                         items.addAll(createNotificationItems(data = it.data.items))
                     }
                     if (notificationViewModel.isRefreshed) {
                         updateCallback = {
-                            notificationViewModel.setIsRefreshedFalse()
                             layoutManager.scrollToPositionWithOffset(1, 0)
                         }
                     }
                 }
 
                 is ModelState.Error -> {
-
+                    //TODO 에러처리
                 }
             }
 

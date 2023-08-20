@@ -134,5 +134,6 @@
     <string name="notification_level_down_emoji">🚨</string>
     <string name="notification_level_down_title">레벨 DOWN</string>
     <string name="notification_level_down_content">조심! %s으로 내려왔어요</string>
+    <string name="notification_empty_content">알림이 없어요</string>
 
 </resources>

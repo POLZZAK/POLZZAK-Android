@@ -36,8 +36,8 @@ class NotificationViewModel @Inject constructor() : ViewModel() {
         requestNotificationJobData = NotificationJobData(
             priority = priority,
             job = viewModelScope.launch {
-                _notificationLiveData.value = ModelState.Loading(NotificationsModel())
                 isRefreshed = true
+                _notificationLiveData.value = ModelState.Loading(NotificationsModel())
                 requestNotifications()
             },
         )
@@ -50,22 +50,24 @@ class NotificationViewModel @Inject constructor() : ViewModel() {
         requestNotificationJobData = NotificationJobData(
             priority = priority,
             job = viewModelScope.launch {
+                isRefreshed = true
                 val prevData = notificationLiveData.value?.data ?: NotificationsModel()
                 _notificationLiveData.value =
                     ModelState.Loading(prevData.copy(refreshStatusType = NotificationRefreshStatusType.Loading))
-                isRefreshed = true
                 requestNotifications()
             },
         )
     }
 
     fun requestMoreNotifications() {
+        if (notificationLiveData.value?.data?.hasNextPage == false) return
         val priority = MORE_NOTIFICATIONS_PRIORITY
         if (requestNotificationJobData.getPriorityOrZero() <= priority) requestNotificationJobData?.job?.cancel()
         else if (requestNotificationJobData?.job?.isCompleted == false) return
         requestNotificationJobData = NotificationJobData(
             priority = priority,
             job = viewModelScope.launch {
+                isRefreshed = false
                 val prevData = notificationLiveData.value?.data ?: NotificationsModel()
                 _notificationLiveData.value =
                     ModelState.Loading(prevData.copy(refreshStatusType = NotificationRefreshStatusType.Normal))
@@ -84,14 +86,10 @@ class NotificationViewModel @Inject constructor() : ViewModel() {
         _notificationLiveData.value =
             ModelState.Success(
                 nextData.copy(
-                    items = prevData.items + nextData.items,
+                    items = (prevData.items ?: emptyList()) + (nextData.items ?: emptyList()),
                     refreshStatusType = NotificationRefreshStatusType.Normal
                 )
             )
-    }
-
-    fun setIsRefreshedFalse() {
-        isRefreshed = false
     }
 
     private data class NotificationJobData(val priority: Int, val job: Job)

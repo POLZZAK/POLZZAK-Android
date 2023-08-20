@@ -4,6 +4,6 @@ package com.polzzak_android.presentation.feature.notification.model
 data class NotificationsModel(
     val hasNextPage: Boolean = true,
     val nextOffset: Int = 0,
-    val items: List<NotificationModel> = emptyList(),
+    val items: List<NotificationModel>? = null,
     val refreshStatusType: NotificationRefreshStatusType = NotificationRefreshStatusType.Disable
 )
