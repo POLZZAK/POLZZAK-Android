@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
@@ -119,6 +120,20 @@ class CommonDialogHelper(
                 view.visibility = View.VISIBLE
             } else {
                 view.visibility = View.GONE
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("setContainerVisibility")
+        fun ConstraintLayout.setDialogContainerVisibility(type: DialogStyleType) {
+            when (type) {
+                DialogStyleType.ALERT, DialogStyleType.LOADING -> {
+                    this.visibility = View.GONE
+                }
+
+                DialogStyleType.MISSION, DialogStyleType.CALENDAR -> {
+                    this.visibility = View.VISIBLE
+                }
             }
         }
     }
