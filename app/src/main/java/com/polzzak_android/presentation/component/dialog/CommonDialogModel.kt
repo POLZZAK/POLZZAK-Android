@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.component.dialog
 
+import android.text.Spannable
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import java.util.Calendar
 
@@ -32,8 +33,8 @@ data class CommonDialogModel(
 }
 
 data class CommonDialogContent(
-    val title: String,
-    val body: String? = null,
+    val title: Spannable,
+    val body: Spannable? = null,
     val calendar: Calendar? = null,
     val mission: CommonDialogMissionData? = null
 )

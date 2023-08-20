@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
@@ -62,7 +63,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         content = CommonDialogModel(
             type = DialogStyleType.ALERT,
             content = CommonDialogContent(
-                title = "도장판을 등록하시겠어요?",
+                title = "도장판을 등록하시겠어요?".toSpannable(),
             ),
             button = CommonButtonModel(
                 buttonCount = ButtonCount.TWO,
@@ -86,7 +87,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         content = CommonDialogModel(
             type = DialogStyleType.LOADING,
             content = CommonDialogContent(
-                title = "도장판이 곧 완성돼요"
+                title = "도장판이 곧 완성돼요".toSpannable()
             ),
             button = CommonButtonModel(
                 buttonCount = ButtonCount.ZERO,
