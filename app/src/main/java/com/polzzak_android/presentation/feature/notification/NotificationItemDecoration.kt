@@ -28,8 +28,6 @@ class NotificationItemDecoration(
         val nextItem = adapter.currentList.getOrNull(position + 1)
         outRect.top =
             if (isContentItem(prevItem)) 0 else paddingPx
-        outRect.left = paddingPx
-        outRect.right = paddingPx
         outRect.bottom =
             if (isContentItem(nextItem)) betweenMarginPx else paddingPx
     }

@@ -151,7 +151,8 @@ abstract class BaseNotificationFragment : BaseFragment<FragmentNotificationBindi
     private fun createNotificationItems(data: List<NotificationModel>?): List<BindableItem<*>> {
         return if (data.isNullOrEmpty()) listOf(NotificationEmptyItem()) else data.map {
             NotificationItem(
-                model = it
+                model = it,
+                itemStateController = notificationViewModel
             )
         }
     }

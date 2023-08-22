@@ -17,13 +17,15 @@ import javax.inject.Inject
 
 //TODO pull to refresh, 더 불러오기 동시에 일어나면?
 @HiltViewModel
-class NotificationViewModel @Inject constructor() : ViewModel() {
+class NotificationViewModel @Inject constructor() : ViewModel(), NotificationItemStateController {
     private val _notificationLiveData = MutableLiveData<ModelState<NotificationsModel>>()
     val notificationLiveData: LiveData<ModelState<NotificationsModel>> = _notificationLiveData
     private var requestNotificationJobData: NotificationJobData? = null
 
     var isRefreshed = false
         private set
+
+    private val notificationHorizontalScrollPositionMap = HashMap<Int, Int>()
 
     init {
         initNotifications()
@@ -84,6 +86,7 @@ class NotificationViewModel @Inject constructor() : ViewModel() {
         //onSuccess
         delay(2000)
         val nextData = getMockData(prevData.nextOffset, NOTIFICATION_PAGE_SIZE)
+        if (isRefreshed) notificationHorizontalScrollPositionMap.clear()
         _notificationLiveData.value =
             ModelState.Success(
                 nextData.copy(
@@ -93,9 +96,23 @@ class NotificationViewModel @Inject constructor() : ViewModel() {
             )
     }
 
+    fun deleteNotification() {
+        //TODO 알림 삭제 문의 중
+    }
+
     private data class NotificationJobData(val priority: Int, val job: Job)
 
     private fun NotificationJobData?.getPriorityOrZero() = this?.priority ?: 0
+
+    override fun setHorizontalScrollPosition(id: Int, position: Int) {
+        notificationHorizontalScrollPositionMap[id] = position
+    }
+
+    override fun getHorizontalScrollPosition(id: Int): Int =
+        notificationHorizontalScrollPositionMap[id] ?: 0
+
+    override fun getIsRefreshedSuccess(): Boolean =
+        isRefreshed && notificationLiveData.value is ModelState.Success
 
     companion object {
         const val NOTIFICATION_PAGE_SIZE = 10
