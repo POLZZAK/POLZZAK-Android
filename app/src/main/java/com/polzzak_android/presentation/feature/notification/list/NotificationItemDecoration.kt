@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.notification
+package com.polzzak_android.presentation.feature.notification.list
 
 import android.graphics.Rect
 import android.view.View
@@ -6,8 +6,8 @@ import androidx.annotation.Px
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
-import com.polzzak_android.presentation.feature.notification.item.NotificationItem
-import com.polzzak_android.presentation.feature.notification.item.NotificationSkeletonLoadingItem
+import com.polzzak_android.presentation.feature.notification.list.item.NotificationItem
+import com.polzzak_android.presentation.feature.notification.list.item.NotificationSkeletonLoadingItem
 
 class NotificationItemDecoration(
     @Px private val paddingPx: Int,

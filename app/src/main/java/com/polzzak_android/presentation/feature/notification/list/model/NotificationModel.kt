@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.notification.model
+package com.polzzak_android.presentation.feature.notification.list.model
 
 import android.text.Spannable
 import androidx.annotation.StringRes

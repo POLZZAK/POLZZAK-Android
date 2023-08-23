@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.notification.item
+package com.polzzak_android.presentation.feature.notification.list.item
 
 import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemNotificationLoadingSkeletonBinding

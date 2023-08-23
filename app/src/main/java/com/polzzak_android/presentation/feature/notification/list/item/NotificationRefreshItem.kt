@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.notification.item
+package com.polzzak_android.presentation.feature.notification.list.item
 
 import android.view.animation.Animation
 import android.view.animation.LinearInterpolator
@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemNotificationRefreshBinding
 import com.polzzak_android.presentation.common.util.BindableItem
-import com.polzzak_android.presentation.feature.notification.model.NotificationRefreshStatusType
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
 
 class NotificationRefreshItem(private val statusType: NotificationRefreshStatusType) :
     BindableItem<ItemNotificationRefreshBinding>() {

@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.notification.item
+package com.polzzak_android.presentation.feature.notification.list.item
 
 import android.view.View
 import androidx.core.view.doOnPreDraw
@@ -9,8 +9,8 @@ import com.polzzak_android.databinding.ItemNotificationBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.loadCircleImageUrl
 import com.polzzak_android.presentation.common.util.toPx
-import com.polzzak_android.presentation.feature.notification.NotificationItemStateController
-import com.polzzak_android.presentation.feature.notification.model.NotificationModel
+import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 
 //TODO 버튼 클릭 상태 적용
 class NotificationItem(

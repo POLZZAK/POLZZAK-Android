@@ -40,7 +40,7 @@
         app:startDestination="@id/kidNotificationFragment">
         <fragment
             android:id="@+id/kidNotificationFragment"
-            android:name="com.polzzak_android.presentation.feature.notification.kid.KidNotificationFragment"
+            android:name="com.polzzak_android.presentation.feature.notification.list.kid.KidNotificationListFragment"
             android:label="KidNotificationFragment" />
     </navigation>
 

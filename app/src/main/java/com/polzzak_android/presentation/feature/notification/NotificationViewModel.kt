@@ -6,9 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.presentation.common.model.ModelState
-import com.polzzak_android.presentation.feature.notification.model.NotificationModel
-import com.polzzak_android.presentation.feature.notification.model.NotificationRefreshStatusType
-import com.polzzak_android.presentation.feature.notification.model.NotificationsModel
+import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationsModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay

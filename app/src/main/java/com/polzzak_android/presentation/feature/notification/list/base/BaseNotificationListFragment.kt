@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.notification.base
+package com.polzzak_android.presentation.feature.notification.list.base
 
 import android.util.DisplayMetrics
 import androidx.fragment.app.viewModels
@@ -6,25 +6,25 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.R
-import com.polzzak_android.databinding.FragmentNotificationBinding
+import com.polzzak_android.databinding.FragmentNotificationListBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.item.LoadMoreLoadingSpinnerItem
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.toPx
-import com.polzzak_android.presentation.feature.notification.NotificationItemDecoration
 import com.polzzak_android.presentation.feature.notification.NotificationViewModel
-import com.polzzak_android.presentation.feature.notification.item.NotificationEmptyItem
-import com.polzzak_android.presentation.feature.notification.item.NotificationItem
-import com.polzzak_android.presentation.feature.notification.item.NotificationRefreshItem
-import com.polzzak_android.presentation.feature.notification.item.NotificationSkeletonLoadingItem
-import com.polzzak_android.presentation.feature.notification.model.NotificationModel
-import com.polzzak_android.presentation.feature.notification.model.NotificationRefreshStatusType
+import com.polzzak_android.presentation.feature.notification.list.NotificationItemDecoration
+import com.polzzak_android.presentation.feature.notification.list.item.NotificationEmptyItem
+import com.polzzak_android.presentation.feature.notification.list.item.NotificationItem
+import com.polzzak_android.presentation.feature.notification.list.item.NotificationRefreshItem
+import com.polzzak_android.presentation.feature.notification.list.item.NotificationSkeletonLoadingItem
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
 
 
-abstract class BaseNotificationFragment : BaseFragment<FragmentNotificationBinding>() {
-    override val layoutResId: Int = R.layout.fragment_notification
+abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationListBinding>() {
+    override val layoutResId: Int = R.layout.fragment_notification_list
     private val notificationViewModel by viewModels<NotificationViewModel>()
     private val smoothScroller by lazy {
         object : LinearSmoothScroller(context) {

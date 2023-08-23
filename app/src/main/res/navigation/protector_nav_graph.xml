@@ -21,7 +21,7 @@
         tools:layout="@layout/fragment_protector_coupon"/>
     <fragment
         android:id="@+id/protectorNotificationFragment"
-        android:name="com.polzzak_android.presentation.feature.notification.protector.ProtectorNotificationFragment"
+        android:name="com.polzzak_android.presentation.feature.notification.list.protector.ProtectorNotificationListFragment"
         android:label="ProtectorNotificationFragment"
         tools:layout="@layout/fragment_protector_notification"/>
     <fragment

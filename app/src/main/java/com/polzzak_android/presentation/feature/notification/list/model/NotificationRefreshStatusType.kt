@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.notification.model
+package com.polzzak_android.presentation.feature.notification.list.model
 
 import androidx.annotation.DrawableRes
 import com.polzzak_android.R
