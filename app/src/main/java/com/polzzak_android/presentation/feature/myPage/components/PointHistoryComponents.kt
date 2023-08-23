@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.myPage.point.history
+package com.polzzak_android.presentation.feature.myPage.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
