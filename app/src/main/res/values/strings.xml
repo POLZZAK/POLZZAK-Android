@@ -199,4 +199,24 @@
 
     <!-- Coupon Detail -->
     <string name="coupon_detail_request_reward_success">조르기 완료! 1시간 후에 다시 조를 수 있어요.</string>
+
+    <!-- Point rules -->
+    <string-array name="point_rules_protector_positive">
+        <item>아이 1명과 연동한 경우 20P</item>
+        <item>도장판 1개 생성 5P</item>
+        <item>도장 1개 찍어주기 10P</item>
+        <item>쿠폰에 대한 선물을 완료한 경우 30P</item>
+        <item>회원가입 50P</item>
+    </string-array>
+    <string-array name="point_rules_protector_negative">
+        <item>도장판을 삭제한 경우 -20P</item>
+        <item>선물 약속 날짜 안에 선물을 지급하지 않은 경우 -100P</item>
+    </string-array>
+    <string-array name="point_rules_kid_positive">
+        <item>보호자 1명과 연동한 경우 20P</item>
+        <item>도장 1개 받기 10P</item>
+        <item>선물 쿠폰 받은 경우 30P</item>
+        <item>\'선물 받기 완료\' 버튼을 눌러준 경우 10P</item>
+        <item>회원가입 90P</item>
+    </string-array>
 </resources>
