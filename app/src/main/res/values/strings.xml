@@ -135,5 +135,28 @@
     <string name="notification_level_down_title">레벨 DOWN</string>
     <string name="notification_level_down_content">조심! %s으로 내려왔어요</string>
     <string name="notification_empty_content">알림이 없어요</string>
+    <string name="notification_setting_header_title">알림 설정</string>
+    <string name="notification_setting_all_title">모든 알림</string>
+    <string name="notification_setting_link_title">연동 알림</string>
+    <string name="notification_setting_link_content">연동 요청이 들어오거나 연동에 성공한 경우 알림을 받을래요</string>
+    <string name="notification_setting_level_title">레벨 알림</string>
+    <string name="notification_setting_level_content">레벨 변동에 대한 알림을 받을래요</string>
+    <string name="notification_setting_request_stamp_title">도장요청 알림</string>
+    <string name="notification_setting_request_stamp_content">아이의 도장 요청 알림을 받을래요</string>
+    <string name="notification_setting_request_gift_title">선물 조르기 알림</string>
+    <string name="notification_setting_request_gift_content">아이의 선물 조르기 알림을 받을래요</string>
+    <string name="notification_setting_complete_stamp_board_title">도장판 완성 알림</string>
+    <string name="notification_setting_complete_stamp_board_content">도장판이 모두 채워졌다는 알림을 받을래요</string>
+    <string name="notification_setting_receive_gift_title">선물 수령 알림</string>
+    <string name="notification_setting_receive_gift_content">아이가 선물을 받았다고 보내는 감사 인사를 받을래요</string>
+    <string name="notification_setting_break_promise_title">선물 약속 미이행 알림</string>
+    <string name="notification_setting_break_promise_content">선물 약속 날짜를 어겼다는 알림을 받을래요</string>
+    <string name="notification_setting_new_stamp_board_title">새로운 도장판 알림</string>
+    <string name="notification_setting_new_stamp_board_content">새로운 도장판이 만들어졌다는 알림을 받을래요</string>
+    <string name="notification_setting_payment_coupon_title">쿠폰 발급 알림</string>
+    <string name="notification_setting_payment_coupon_content">보호자가 선물 쿠폰을 발급해줬다는 알림을 받을래요</string>
+    <string name="notification_setting_check_delivery_gift_title">선물 전달 확인 알림</string>
+    <string name="notification_setting_check_delivery_gift_content">선물 전달이 완료되었는지 확인하는 알림을 받을래요</string>
+
 
 </resources>

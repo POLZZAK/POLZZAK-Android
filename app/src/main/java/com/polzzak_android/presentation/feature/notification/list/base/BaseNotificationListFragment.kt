@@ -1,7 +1,9 @@
 package com.polzzak_android.presentation.feature.notification.list.base
 
 import android.util.DisplayMetrics
+import androidx.annotation.IdRes
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +11,7 @@ import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentNotificationListBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.item.LoadMoreLoadingSpinnerItem
+import com.polzzak_android.presentation.common.model.MemberType
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
@@ -21,11 +24,18 @@ import com.polzzak_android.presentation.feature.notification.list.item.Notificat
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationSkeletonLoadingItem
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
+import dagger.hilt.android.AndroidEntryPoint
 
 
+//TODO 하단 네비게이션 바 만큼 marign 필요
+@AndroidEntryPoint
 abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationListBinding>() {
     override val layoutResId: Int = R.layout.fragment_notification_list
-    private val notificationViewModel by viewModels<NotificationViewModel>()
+
+    private val notificationViewModel by viewModels<NotificationViewModel>(ownerProducer = {
+        parentFragment ?: this@BaseNotificationListFragment
+    })
+
     private val smoothScroller by lazy {
         object : LinearSmoothScroller(context) {
             override fun getVerticalSnapPreference(): Int {
@@ -38,11 +48,15 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         }
     }
 
+    @get:IdRes
+    abstract val actionToSettingFragment: Int
+    abstract val memberType: MemberType
+
     override fun initView() {
         super.initView()
         initRecyclerView()
         binding.ivBtnSetting.setOnClickListener {
-            //TODO move to setting page
+            findNavController().navigate(actionToSettingFragment)
         }
     }
 

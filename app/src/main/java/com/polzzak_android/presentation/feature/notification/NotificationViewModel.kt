@@ -10,13 +10,14 @@ import com.polzzak_android.presentation.feature.notification.list.NotificationIt
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationsModel
+import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenuModel
+import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenuType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-//TODO pull to refresh, 더 불러오기 동시에 일어나면?
 @HiltViewModel
 class NotificationViewModel @Inject constructor() : ViewModel(), NotificationItemStateController {
     private val _notificationLiveData = MutableLiveData<ModelState<NotificationsModel>>()
@@ -27,6 +28,10 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
         private set
 
     private val notificationHorizontalScrollPositionMap = HashMap<Int, Int>()
+
+    private val _settingMenusLiveData = MutableLiveData<List<SettingMenuModel>>()
+    val settingMenusLiveData: LiveData<List<SettingMenuModel>> = _settingMenusLiveData
+    private var requestSettingMenusJob: Job? = null
 
     init {
         initNotifications()
@@ -101,6 +106,14 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
         //TODO 알림 삭제 문의 중
     }
 
+    fun requestSettingMenu() {
+        requestSettingMenusJob?.cancel()
+        requestSettingMenusJob = viewModelScope.launch {
+            //TOOD repository 구현
+            _settingMenusLiveData.value = mockSettingMenus
+        }
+    }
+
     private data class NotificationJobData(val priority: Int, val job: Job)
 
     private fun NotificationJobData?.getPriorityOrZero() = this?.priority ?: 0
@@ -165,3 +178,14 @@ private val mockNotification = List(187) {
         )
     }
 }
+
+private val mockSettingMenus = listOf(
+    SettingMenuModel(type = SettingMenuType.All, isChecked = false),
+    SettingMenuModel(type = SettingMenuType.Menu.Link, isChecked = false),
+    SettingMenuModel(type = SettingMenuType.Menu.Level, isChecked = false),
+    SettingMenuModel(type = SettingMenuType.Menu.RequestStamp, isChecked = false),
+    SettingMenuModel(type = SettingMenuType.Menu.RequestGift, isChecked = false),
+    SettingMenuModel(type = SettingMenuType.Menu.CompleteStampBoard, isChecked = false),
+    SettingMenuModel(type = SettingMenuType.Menu.ReceiveGift, isChecked = false),
+    SettingMenuModel(type = SettingMenuType.Menu.BreakPromise, isChecked = false)
+)
