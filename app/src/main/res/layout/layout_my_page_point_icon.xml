@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="text"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_hard_semi_background"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/icon_background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/bg_oval_light_blue"
+            app:layout_constraintBottom_toTopOf="@id/title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_point_rule"
+            app:layout_constraintBottom_toBottomOf="@id/icon_background"
+            app:layout_constraintEnd_toEndOf="@id/icon_background"
+            app:layout_constraintStart_toStartOf="@id/icon_background"
+            app:layout_constraintTop_toTopOf="@id/icon_background" />
+
+        <TextView
+            android:id="@+id/title"
+            style="@style/body.14.500"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:text="@{text}"
+            android:textColor="@color/gray_800"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/icon_background"
+            tools:text="텍스트" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

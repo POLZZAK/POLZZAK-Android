@@ -4,7 +4,7 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentExampleMissionBinding
-import com.polzzak_android.databinding.ItemExampleMissionBinding
+import com.polzzak_android.databinding.ItemMissionBinding
 import com.polzzak_android.presentation.common.adapter.MakeExampleMissionAdapter
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.feature.stamp.make.MakeStampViewModel
@@ -52,7 +52,7 @@ class ExampleMissionFragment : BaseFragment<FragmentExampleMissionBinding>(),
         currentMissionListSize = makeStampViewModel.getMissionListSize()
     }
 
-    override fun onExampleMissionClicked(viewBinding: ItemExampleMissionBinding, value: String) {
+    override fun onExampleMissionClicked(viewBinding: ItemMissionBinding, value: String) {
         if (currentMissionListSize.plus(1) > 50) {
             Toast.makeText(context, "미션은 총 50개까지 등록할 수 있어요", Toast.LENGTH_SHORT).show()
             return

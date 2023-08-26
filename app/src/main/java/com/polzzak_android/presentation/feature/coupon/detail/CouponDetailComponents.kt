@@ -66,7 +66,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun CountdownButton(
     @IntRange(1, 3600) remainingSeconds: Int,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onCountEnd: (() -> Unit)? = null
 ) = PolzzakOutlineButton(
     onClick = { /*TODO*/ },
     modifier = modifier
@@ -80,6 +81,8 @@ fun CountdownButton(
             delay(1000)
             --ticks
         }
+
+        onCountEnd?.invoke()
     }
 
     val minute = String.format("%02d", ticks/60)

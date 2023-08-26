@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.component.dialog
 
+import com.polzzak_android.presentation.common.model.CommonButtonModel
 import java.util.Calendar
 
 data class CommonDialogModel(

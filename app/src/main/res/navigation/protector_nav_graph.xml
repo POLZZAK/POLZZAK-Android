@@ -39,7 +39,7 @@
         android:id="@+id/protectorMyPageFragment"
         android:name="com.polzzak_android.presentation.feature.myPage.protector.ProtectorMyPageFragment"
         android:label="ProtectorMyPageFragment"
-        tools:layout="@layout/fragmentv_protector_my_page" />
+        tools:layout="@layout/fragment_protector_my_page"/>
     <fragment
         android:id="@+id/makeStampFragment"
         android:name="com.polzzak_android.presentation.feature.stamp.make.MakeStampFragment"

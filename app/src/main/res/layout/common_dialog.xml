@@ -15,7 +15,7 @@
 
         <variable
             name="buttonCount"
-            type="com.polzzak_android.presentation.component.dialog.ButtonCount" />
+            type="com.polzzak_android.presentation.common.model.ButtonCount" />
 
     </data>
 
