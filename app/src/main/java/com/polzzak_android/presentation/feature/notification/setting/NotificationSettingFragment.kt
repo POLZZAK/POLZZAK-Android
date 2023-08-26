@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.notification.setting.base
+package com.polzzak_android.presentation.feature.notification.setting
 
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -8,6 +8,7 @@ import com.polzzak_android.databinding.FragmentNotificationSettingBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.feature.notification.NotificationViewModel
 import com.polzzak_android.presentation.feature.notification.setting.item.NotificationSettingAllItem
 import com.polzzak_android.presentation.feature.notification.setting.item.NotificationSettingItem
@@ -35,9 +36,19 @@ class NotificationSettingFragment :
     }
 
     private fun initRecyclerView() {
+        val context = binding.root.context
         with(binding) {
-            rvSetting.layoutManager = LinearLayoutManager(requireContext())
+            rvSetting.layoutManager = LinearLayoutManager(context)
             rvSetting.adapter = BindableItemAdapter()
+            val dividerHeightPx = DIVIDER_HEIGHT_DP.toPx(context)
+            val allMenuDividerColor = context.getColor(R.color.gray_300)
+            val otherMenuDividerColor = context.getColor(R.color.gray_200)
+            val itemDecoration = NotificationSettingItemDecoration(
+                allMenuDividerColor = allMenuDividerColor,
+                otherMenuDividerColor = otherMenuDividerColor,
+                heightPx = dividerHeightPx
+            )
+            rvSetting.addItemDecoration(itemDecoration)
         }
     }
 
@@ -56,4 +67,8 @@ class NotificationSettingFragment :
                 is SettingMenuType.Menu -> NotificationSettingItem(model = it.type)
             }
         }
+
+    companion object {
+        private const val DIVIDER_HEIGHT_DP = 1
+    }
 }

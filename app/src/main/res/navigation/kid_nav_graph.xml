@@ -49,7 +49,7 @@
 
         <fragment
             android:id="@+id/notificationSettingFragment"
-            android:name="com.polzzak_android.presentation.feature.notification.setting.base.NotificationSettingFragment"
+            android:name="com.polzzak_android.presentation.feature.notification.setting.NotificationSettingFragment"
             android:label="NotificationSettingFragment" />
     </navigation>
 
