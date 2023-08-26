@@ -4,10 +4,12 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,17 +34,41 @@ import com.polzzak_android.presentation.common.compose.PolzzakTheme
 @Preview
 @Composable
 private fun RuleListBoxPreview() {
-    RuleBox(
-        title = "포인트 적립",
-        strings = stringArrayResource(id = R.array.point_rules_protector_positive),
-        itemContent = { ruleString ->
-            RuleItem(iconResId = R.drawable.ic_positive_circle, text = ruleString)
-        }
-    )
+    Column {
+        LevelUpGuide()
+        RuleBox(
+            title = "포인트 적립",
+            strings = stringArrayResource(id = R.array.point_rules_protector_positive),
+            itemContent = { ruleString ->
+                RuleItem(iconResId = R.drawable.ic_positive_circle, text = ruleString)
+            }
+        )
+    }
 }
 
 @Composable
-private fun RuleItem(
+fun LevelUpGuide() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp)
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_megaphone),
+            contentDescription = "계단 상승 규칙",
+            tint = Color.Unspecified
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = "100P를 모을 때마다 1계단을 올라가요!",
+            style = PolzzakTheme.typography.medium13
+        )
+    }
+}
+
+@Composable
+fun RuleItem(
     @DrawableRes iconResId: Int,
     text: String
 ) = Row(verticalAlignment = Alignment.CenterVertically) {
@@ -67,7 +93,7 @@ private fun RuleItem(
 }
 
 @Composable
-private fun RuleBox(
+fun RuleBox(
     title: String,
     strings: Array<String>,
     itemContent: @Composable LazyItemScope.(string: String) -> Unit
