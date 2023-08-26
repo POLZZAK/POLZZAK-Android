@@ -24,7 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.polzzak_android.R
@@ -79,16 +82,16 @@ fun RuleItem(
         modifier = Modifier.size(24.dp)
     )
     Spacer(modifier = Modifier.width(4.dp))
-
     Text(
-        text = text.substringBeforeLast(" "),
-        color = Color.Black,
-        style = PolzzakTheme.typography.medium14.copy(fontWeight = FontWeight.Normal)
-    )
-    Text(
-        text = " ${text.substringAfterLast(" ")}",
-        color = Color.Black,
-        style = PolzzakTheme.typography.bold14
+        style = PolzzakTheme.typography.medium14,
+        text = buildAnnotatedString {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Normal)) {
+                append(text.substringBeforeLast(" "))
+            }
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                append(" ${text.substringAfterLast(" ")}")
+            }
+        }
     )
 }
 
