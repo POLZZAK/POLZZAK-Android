@@ -18,6 +18,7 @@ import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.feature.notification.NotificationViewModel
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemDecoration
+import com.polzzak_android.presentation.feature.notification.list.NotificationListClickListener
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationEmptyItem
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationItem
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationRefreshItem
@@ -29,7 +30,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 //TODO 하단 네비게이션 바 만큼 marign 필요
 @AndroidEntryPoint
-abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationListBinding>() {
+abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationListBinding>(),
+    NotificationListClickListener {
     override val layoutResId: Int = R.layout.fragment_notification_list
 
     private val notificationViewModel by viewModels<NotificationViewModel>(ownerProducer = {
@@ -166,9 +168,14 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         return if (data.isNullOrEmpty()) listOf(NotificationEmptyItem()) else data.map {
             NotificationItem(
                 model = it,
-                itemStateController = notificationViewModel
+                itemStateController = notificationViewModel,
+                clickListener = this@BaseNotificationListFragment
             )
         }
+    }
+
+    override fun onClickDeleteNotification(id: Int) {
+        notificationViewModel.deleteNotification(id = id)
     }
 
     companion object {

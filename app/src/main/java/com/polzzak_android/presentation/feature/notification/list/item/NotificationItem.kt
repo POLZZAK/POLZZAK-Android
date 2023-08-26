@@ -10,12 +10,14 @@ import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.loadCircleImageUrl
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
+import com.polzzak_android.presentation.feature.notification.list.NotificationListClickListener
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 
 //TODO 버튼 클릭 상태 적용
 class NotificationItem(
     private val model: NotificationModel,
-    private val itemStateController: NotificationItemStateController
+    private val itemStateController: NotificationItemStateController,
+    private val clickListener: NotificationListClickListener
 ) : BindableItem<ItemNotificationBinding>() {
     override val layoutRes: Int = R.layout.item_notification
     override fun areItemsTheSame(other: BindableItem<*>): Boolean =
@@ -32,7 +34,7 @@ class NotificationItem(
             tvDate.text = model.date
             tvContent.text = model.content
             ivBtnRemoveNotification.setOnClickListener {
-
+                clickListener.onClickDeleteNotification(id = model.id)
             }
             bindBtnLayout(binding = binding)
             bindProfile(binding = binding)

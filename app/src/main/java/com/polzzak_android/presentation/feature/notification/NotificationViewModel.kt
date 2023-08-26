@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.model.copyWithData
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
@@ -16,6 +17,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +25,9 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
     private val _notificationLiveData = MutableLiveData<ModelState<NotificationsModel>>()
     val notificationLiveData: LiveData<ModelState<NotificationsModel>> = _notificationLiveData
     private var requestNotificationJobData: NotificationJobData? = null
+
+    //TODO 추가 삭제 등 알림목록 수정 이벤트
+    private var updateNotificationJobMap = HashMap<Int, Job?>()
 
     var isRefreshed = false
         private set
@@ -32,6 +37,8 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
     private val _settingMenusLiveData = MutableLiveData<List<SettingMenuModel>>()
     val settingMenusLiveData: LiveData<List<SettingMenuModel>> = _settingMenusLiveData
     private var requestSettingMenusJob: Job? = null
+
+    private val notificationMutex = Mutex()
 
     init {
         initNotifications()
@@ -43,9 +50,11 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
         else if (requestNotificationJobData?.job?.isCompleted == false) return
         requestNotificationJobData = NotificationJobData(
             priority = priority,
-            job = viewModelScope.launch {
+            job = createJobWithUnlockOnCompleted {
                 isRefreshed = true
+                notificationMutex.lock()
                 _notificationLiveData.value = ModelState.Loading(NotificationsModel())
+                notificationMutex.unlock()
                 requestNotifications()
             },
         )
@@ -57,11 +66,13 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
         else if (requestNotificationJobData?.job?.isCompleted == false) return
         requestNotificationJobData = NotificationJobData(
             priority = priority,
-            job = viewModelScope.launch {
+            job = createJobWithUnlockOnCompleted {
                 isRefreshed = true
+                notificationMutex.lock()
                 val prevData = notificationLiveData.value?.data ?: NotificationsModel()
                 _notificationLiveData.value =
                     ModelState.Loading(prevData.copy(refreshStatusType = NotificationRefreshStatusType.Loading))
+                notificationMutex.unlock()
                 requestNotifications()
             },
         )
@@ -74,11 +85,13 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
         else if (requestNotificationJobData?.job?.isCompleted == false) return
         requestNotificationJobData = NotificationJobData(
             priority = priority,
-            job = viewModelScope.launch {
+            job = createJobWithUnlockOnCompleted {
                 isRefreshed = false
+                notificationMutex.lock()
                 val prevData = notificationLiveData.value?.data ?: NotificationsModel()
                 _notificationLiveData.value =
                     ModelState.Loading(prevData.copy(refreshStatusType = NotificationRefreshStatusType.Normal))
+                notificationMutex.unlock()
                 requestNotifications()
             },
         )
@@ -86,12 +99,15 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
 
     //TODO test용 delay를 위해 suspend 붙여줌(제거 필요)
     private suspend fun requestNotifications() {
+        //TODO api 연동(현재 mock data)
+        val nextOffset = notificationLiveData.value?.data?.nextOffset.takeIf { !isRefreshed } ?: 0
+        delay(2000)
+        val nextData = getMockNotificationData(nextOffset, NOTIFICATION_PAGE_SIZE)
+
+        //onSuccess
+        notificationMutex.lock()
         val prevData =
             notificationLiveData.value?.data.takeIf { !isRefreshed } ?: NotificationsModel()
-        //TODO api 연동(현재 mock data)
-        //onSuccess
-        delay(2000)
-        val nextData = getMockData(prevData.nextOffset, NOTIFICATION_PAGE_SIZE)
         if (isRefreshed) notificationHorizontalScrollPositionMap.clear()
         _notificationLiveData.value =
             ModelState.Success(
@@ -100,10 +116,44 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
                     refreshStatusType = NotificationRefreshStatusType.Normal
                 )
             )
+        notificationMutex.unlock()
     }
 
-    fun deleteNotification() {
-        //TODO 알림 삭제 문의 중
+    fun deleteNotification(id: Int) {
+        if (updateNotificationJobMap[id]?.isCompleted == false) return
+        updateNotificationJobMap[id] = createJobWithUnlockOnCompleted {
+            //TODO api 적용
+            delay(1000)
+            deleteMockNotificationData(id = id)
+
+            //onSuccess
+            notificationMutex.lock()
+            val updatedList = notificationLiveData.value?.data?.items?.toMutableList()?.apply {
+                removeIf { it.id == id }
+            }
+            val updatedData =
+                notificationLiveData.value?.data?.copy(items = updatedList) ?: NotificationsModel()
+            _notificationLiveData.value =
+                _notificationLiveData.value?.copyWithData(newData = updatedData)
+            notificationMutex.unlock()
+            //TODO onError 이벤트 추가(Livedata, eventWrapper 등 필요할 수도 있음)
+        }
+    }
+
+    fun addNotification(model: NotificationModel) {
+        if (updateNotificationJobMap[model.id]?.isCompleted == false) return
+        updateNotificationJobMap[model.id] = createJobWithUnlockOnCompleted {
+            //TODO 푸쉬알림으로 인한 알림 목록 추가
+
+        }
+    }
+
+    private fun createJobWithUnlockOnCompleted(action: suspend () -> Unit) = viewModelScope.launch {
+        action.invoke()
+    }.apply {
+        invokeOnCompletion {
+            if (notificationMutex.isLocked) notificationMutex.unlock()
+        }
     }
 
     fun requestSettingMenu() {
@@ -136,7 +186,7 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
     }
 }
 
-private fun getMockData(nextOffset: Int, pageSize: Int): NotificationsModel {
+private fun getMockNotificationData(nextOffset: Int, pageSize: Int): NotificationsModel {
     return NotificationsModel(
         hasNextPage = nextOffset + pageSize < mockNotification.size,
         nextOffset = nextOffset + pageSize,
@@ -147,7 +197,11 @@ private fun getMockData(nextOffset: Int, pageSize: Int): NotificationsModel {
     )
 }
 
-private val mockNotification = List(187) {
+private fun deleteMockNotificationData(id: Int) {
+    mockNotification.removeIf { it.id == id }
+}
+
+private val mockNotification = MutableList(187) {
     when (it % 4) {
         0 -> NotificationModel.CompleteLink(
             id = it,
@@ -179,7 +233,7 @@ private val mockNotification = List(187) {
     }
 }
 
-private val mockSettingMenus = listOf(
+private val mockSettingMenus = mutableListOf(
     SettingMenuModel(type = SettingMenuType.All, isChecked = false),
     SettingMenuModel(type = SettingMenuType.Menu.Link, isChecked = false),
     SettingMenuModel(type = SettingMenuType.Menu.Level, isChecked = false),
