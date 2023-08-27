@@ -7,26 +7,9 @@
         android:layout_height="match_parent"
         android:background="@color/gray_100">
 
-        <!-- TODO 공용 헤더 적용 -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/clHeader"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingVertical="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/ivBtnBack"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ic_navigation_previous"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/gray_700" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <include
+            android:id="@+id/inToolbar"
+            layout="@layout/layout_toolbar" />
 
         <WebView
             android:id="@+id/wbContent"
@@ -35,7 +18,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/clHeader" />
+            app:layout_constraintTop_toBottomOf="@id/inToolbar" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>
