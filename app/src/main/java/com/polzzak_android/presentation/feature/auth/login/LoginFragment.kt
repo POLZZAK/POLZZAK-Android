@@ -6,6 +6,7 @@ import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import androidx.core.content.ContextCompat
 import androidx.activity.addCallback
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -32,6 +33,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     private val mainViewModel by viewModels<MainViewModel>(ownerProducer = { requireActivity() })
     private val loginViewModel by viewModels<LoginViewModel>()
+    private val lastSocialLoginViewModel by viewModels<LastSocialLoginViewModel>()
 
     private val googleLoginSuccessCallback: (GoogleSignInAccount) -> Unit = { googleSignInAccount ->
         googleSignInAccount.serverAuthCode?.let { authCode ->
@@ -83,6 +85,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             )
             signUp(model = mockSignUpModel)
         }
+        lastSocialLoginViewModel.loadLastSocialLoginType()
     }
 
     private fun createContentSpannable(): Spannable {
@@ -135,6 +138,12 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 }
             }
         })
+        lastSocialLoginViewModel.lastSocialLoginTypeLiveData.observe(viewLifecycleOwner) {
+            with(binding) {
+                tvLastLoginGoogle.isVisible = (it == SocialLoginType.GOOGLE)
+                tvLastLoginKakao.isVisible = (it == SocialLoginType.KAKAO)
+            }
+        }
     }
 
     private fun signUp(model: LoginInfoUiModel.SignUp) {
@@ -158,6 +167,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
 
     private fun login(model: LoginInfoUiModel.Login) {
         mainViewModel.accessToken = model.accessToken
+        lastSocialLoginViewModel.saveLastSocialLoginType(model.socialType)
         val navAction = when (model.memberType) {
             is MemberType.Kid -> R.id.action_loginFragment_to_kidHostFragment
             is MemberType.Parent -> R.id.action_loginFragment_to_protectorHostFragment
