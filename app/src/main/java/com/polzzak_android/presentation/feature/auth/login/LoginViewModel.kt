@@ -10,13 +10,13 @@ import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.MemberTypeRepository
 import com.polzzak_android.data.repository.UserRepository
+import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.model.asMemberTypeOrNull
 import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoUiModel
 import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.model.asMemberTypeDetail
 import com.polzzak_android.presentation.feature.auth.model.asSocialLoginTypeOrNull
-import com.polzzak_android.presentation.common.model.ModelState
-import com.polzzak_android.presentation.common.model.asMemberTypeOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async

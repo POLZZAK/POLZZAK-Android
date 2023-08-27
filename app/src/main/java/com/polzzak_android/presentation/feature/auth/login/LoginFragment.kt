@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import androidx.core.content.ContextCompat
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -14,16 +14,16 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.polzzak_android.R
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentLoginBinding
-import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoUiModel
-import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail
-import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
-import com.polzzak_android.presentation.feature.auth.signup.SignUpFragment
-import com.polzzak_android.presentation.feature.root.MainViewModel
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.MemberType
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.getSocialLoginManager
 import com.polzzak_android.presentation.common.util.shotBackPressed
+import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoUiModel
+import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail
+import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
+import com.polzzak_android.presentation.feature.auth.signup.SignUpFragment
+import com.polzzak_android.presentation.feature.root.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 //TODO google login release keystore 추가(현재 debug keystore만 사용 중)
@@ -122,19 +122,19 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         super.initObserver()
         loginViewModel.loginInfoLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
             when (it) {
-                is ModelState.Loading -> {
-                    //TODO 로그인 인디케이터?
-                }
-
+                is ModelState.Loading -> binding.clLoading.isVisible = true
                 is ModelState.Success -> {
                     when (it.data) {
                         is LoginInfoUiModel.SignUp -> signUp(model = it.data)
                         is LoginInfoUiModel.Login -> login(model = it.data)
                     }
+                    binding.clLoading.isVisible = false
+
                 }
 
                 is ModelState.Error -> {
                     //TODO 에러처리
+                    binding.clLoading.isVisible = false
                 }
             }
         })
