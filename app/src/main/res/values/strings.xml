@@ -55,6 +55,8 @@
     <string name="signup_terms_of_service_agree_all">모두 동의</string>
     <string name="signup_terms_of_service_agree_service">서비스 이용약관에 동의합니다.</string>
     <string name="signup_terms_of_service_agree_privacy">개인정보처리방침에 동의합니다.</string>
+    <string name="signup_terms_of_service_detail_service_title">이용약관</string>
+    <string name="signup_terms_of_service_detail_privacy_title">개인정보처리방침</string>
 
     <!-- OnBoarding -->
     <string name="on_boarding_kid_first_title">폴짝!\n회원이 되신 것을 환영해요</string>
