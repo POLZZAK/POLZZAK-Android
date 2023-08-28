@@ -24,6 +24,8 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.component.PolzzakSnackBar
+import com.polzzak_android.presentation.component.toolbar.ToolbarData
+import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.feature.link.LinkClickListener
 import com.polzzak_android.presentation.feature.link.LinkDialogFactory
 import com.polzzak_android.presentation.feature.link.LinkViewModel
@@ -81,9 +83,9 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
 
     private fun initCommonView() {
         with(binding) {
-            ivBtnBack.setOnClickListener {
-                findNavController().popBackStack()
-            }
+            val titleText = getString(R.string.link_management_title)
+            val toolbarData = ToolbarData(popStack = findNavController(), titleText = titleText)
+            ToolbarHelper(data = toolbarData, toolbar = inToolbar).set()
             ivBtnClearText.setOnClickListener {
                 etSearch.setText("")
             }
