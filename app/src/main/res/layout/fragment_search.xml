@@ -8,18 +8,9 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            style="@style/body.18.500"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingVertical="10dp"
-            android:textColor="@color/gray_800"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="아이 찾기" />
+        <include
+            android:id="@+id/inToolbar"
+            layout="@layout/layout_toolbar" />
 
         <EditText
             android:id="@+id/etSearch"
@@ -38,7 +29,7 @@
             android:textColorHint="@color/gray_500"
             app:layout_constraintEnd_toStartOf="@id/tvBtnCancel"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/inToolbar"
             tools:hint="아이 닉네임 검색" />
 
         <ImageView
