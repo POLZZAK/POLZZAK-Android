@@ -18,12 +18,23 @@
         android:id="@+id/protectorCouponFragment"
         android:name="com.polzzak_android.presentation.feature.coupon.main.protector.ProtectorCouponFragment"
         android:label="ProtectorCouponFragment"
-        tools:layout="@layout/fragment_protector_coupon"/>
+        tools:layout="@layout/fragment_protector_coupon" />
     <fragment
         android:id="@+id/protectorNotificationFragment"
-        android:name="com.polzzak_android.presentation.feature.notification.protector.ProtectorNotificationFragment"
+        android:name="com.polzzak_android.presentation.feature.notification.list.protector.ProtectorNotificationListFragment"
         android:label="ProtectorNotificationFragment"
-        tools:layout="@layout/fragment_protector_notification"/>
+        tools:layout="@layout/fragment_protector_notification">
+
+
+        <action
+            android:id="@+id/action_protectorNotificationFragment_to_notificationSettingFragment"
+            app:destination="@id/notificationSettingFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/notificationSettingFragment"
+        android:name="com.polzzak_android.presentation.feature.notification.setting.NotificationSettingFragment"
+        android:label="NotificationFragment" />
     <fragment
         android:id="@+id/protectorMyPageFragment"
         android:name="com.polzzak_android.presentation.feature.myPage.protector.ProtectorMyPageFragment"
@@ -33,7 +44,7 @@
         android:id="@+id/makeStampFragment"
         android:name="com.polzzak_android.presentation.feature.stamp.make.MakeStampFragment"
         android:label="fragment_make_stamp"
-        tools:layout="@layout/fragment_make_stamp" >
+        tools:layout="@layout/fragment_make_stamp">
         <action
             android:id="@+id/action_makeStampFragment_to_exampleMissionFragment"
             app:destination="@id/exampleMissionFragment" />
