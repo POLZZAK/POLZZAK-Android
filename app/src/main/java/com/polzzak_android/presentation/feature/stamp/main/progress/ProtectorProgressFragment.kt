@@ -52,27 +52,31 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         super.initView()
 
         binding.lifecycleOwner = this
-        binding.stampViewModel = stampViewModel
 
         setAdapter()
 
-        // Todo: 선택 바텀 시트 의논 사항-> 네비게이션으로 관리할지, 인스턴스 새롭게 생성할지?
-        binding.selectTxt.text = "전체"
-        binding.selectContainer.setOnClickListener {
-        // todo: 바텀시트 연결
-        }
-
-        binding.stampListRefresh.setOnRefreshListener {
-            rvAdapter.notifyDataSetChanged()
-            binding.stampListRefresh.isRefreshing = false
-        }
-
         stampViewModel.checkHasLinkedUser(accessToken = getAccessTokenOrNull() ?: "")
-        stampViewModel.getStampBoardList(
-            accessToken = getAccessTokenOrNull() ?: "",
-            linkedMemberId = null,
-            stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
-        )
+        val hasLinkedUser = stampViewModel.hasLinkedUser.value?.data
+        if (hasLinkedUser == true) {
+            // 도장판 조회
+            stampViewModel.getStampBoardList(
+                accessToken = getAccessTokenOrNull() ?: "",
+                linkedMemberId = null,
+                stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
+            )
+
+            // 바텀시트
+            binding.selectTxt.text = "전체"
+            binding.selectContainer.setOnClickListener {
+                // todo: 바텀시트 연결
+            }
+
+            // 당겨서 리프레시
+            binding.stampListRefresh.setOnRefreshListener {
+                rvAdapter.notifyDataSetChanged()
+                binding.stampListRefresh.isRefreshing = false
+            }
+        }
     }
 
     override fun initObserver() {
