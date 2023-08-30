@@ -13,7 +13,7 @@ import retrofit2.http.Query
 interface StampBoardService {
     @GET("/api/v1/stamps/stamp-boards")
     suspend fun getMainStampBoards(
-        @Header("Authorization") token: String,
+        @Header("Authorization") authorization: String,
         @Query("partnerMemberId") linkedMemberId: String?,     // 조회할 member ID
         @Query("stampBoardGroup") stampBoardGroup: String           // 진행 중인 도장판 여부(in_progress, ended)
     ) : Response<MainStampBoardListResponse>

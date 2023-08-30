@@ -67,6 +67,7 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
             binding.stampListRefresh.isRefreshing = false
         }
 
+        stampViewModel.checkHasLinkedUser(accessToken = getAccessTokenOrNull() ?: "")
         stampViewModel.getStampBoardList(
             accessToken = getAccessTokenOrNull() ?: "",
             linkedMemberId = null,
@@ -76,6 +77,25 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
 
     override fun initObserver() {
         super.initObserver()
+        // 연동된 사용자 있는지 확인
+        stampViewModel.hasLinkedUser.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is ModelState.Success -> {
+                    val hasLinkedUser = state.data
+                    binding.hasLinkedUser = hasLinkedUser
+                }
+
+                is ModelState.Error -> {
+                    // todo: 에러 페이지
+                }
+
+                is ModelState.Loading -> {
+                    // todo: 스켈레톤
+                }
+            }
+        }
+
+        // 도장판 목록 조회
         stampViewModel.stampBoardList.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ModelState.Success -> {
