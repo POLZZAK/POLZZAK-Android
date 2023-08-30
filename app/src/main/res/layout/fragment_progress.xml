@@ -7,10 +7,6 @@
         <variable
             name="hasLinkedUser"
             type="Boolean" />
-
-        <variable
-            name="stampViewModel"
-            type="com.polzzak_android.presentation.feature.stamp.main.protector.StampViewModel" />
     </data>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -19,7 +15,6 @@
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/selectContainer">
-
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
