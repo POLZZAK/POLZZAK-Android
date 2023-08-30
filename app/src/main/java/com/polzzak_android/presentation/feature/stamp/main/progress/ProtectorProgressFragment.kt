@@ -125,13 +125,12 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
     }
 
     override fun setViewPager(view: ViewPager2, curInd: TextView, totalInd: TextView, stampList: List<StampBoardSummaryModel>?) {
-        // adapter
+        // todo: adapter 임시
         vpAdapter = MainStampPagerAdapter(stampList, this)
         view.adapter = vpAdapter
 
         // indicator
-        // Todo: 임시
-        curInd.text = "1"
+        curInd.text = "1"   // todo: 임시
         totalInd.text = resources.getString(R.string.viewpager_indicator, stampList?.size)
         view.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -143,10 +142,6 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
     }
 
     override fun onStampPagerClicked(stampBoardItem: StampBoardSummaryModel) {
-        // Todo: 임시
-        Toast.makeText(context, "${stampBoardItem.name} 클릭", Toast.LENGTH_SHORT).show()
-
-        // TODO: 부모 nav_graph.xml에도 같은 action 추가 필요
         findNavController().navigate(
             R.id.action_to_stampBoardDetailFragment,
             Bundle().apply { putInt("boardId", stampBoardItem.stampBoardId) }

@@ -3,44 +3,68 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/protector_nav_graph"
-    app:startDestination="@id/protectorMainFragment">
+    app:startDestination="@id/protector_main_nav_graph">
 
-    <fragment
-        android:id="@+id/protectorMainFragment"
-        android:name="com.polzzak_android.presentation.feature.stamp.main.protector.ProtectorMainFragment"
-        android:label="ProtectorMainFragment"
-        tools:layout="@layout/fragment_protector_main">
-        <action
-            android:id="@+id/action_protectorMainFragment_to_makeStampFragment"
-            app:destination="@id/makeStampFragment" />
-    </fragment>
+    <!-- 메인 도장판 -->
+    <navigation
+        android:id="@+id/protector_main_nav_graph"
+        app:startDestination="@id/protectorMainFragment">
+        <fragment
+            android:id="@+id/protectorMainFragment"
+            android:name="com.polzzak_android.presentation.feature.stamp.main.protector.ProtectorMainFragment"
+            android:label="ProtectorMainFragment"
+            tools:layout="@layout/fragment_protector_main">
+            <action
+                android:id="@+id/action_protectorMainFragment_to_makeStampFragment"
+                app:destination="@id/makeStampFragment" />
+            <action
+                android:id="@+id/action_to_stampBoardDetailFragment"
+                app:destination="@id/protectorStampBoardDetailFragment">
+                <argument
+                    android:name="boardId"
+                    android:defaultValue="-1"
+                    app:argType="integer" />
+            </action>
+        </fragment>
+        <fragment
+            android:id="@+id/makeStampFragment"
+            android:name="com.polzzak_android.presentation.feature.stamp.make.MakeStampFragment"
+            android:label="fragment_make_stamp"
+            tools:layout="@layout/fragment_make_stamp">
+            <action
+                android:id="@+id/action_makeStampFragment_to_exampleMissionFragment"
+                app:destination="@id/exampleMissionFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/exampleMissionFragment"
+            android:name="com.polzzak_android.presentation.feature.stamp.make.exampleMission.ExampleMissionFragment"
+            android:label="fragment_example_mission"
+            tools:layout="@layout/fragment_example_mission" />
+        <fragment
+            android:id="@+id/protectorStampBoardDetailFragment"
+            android:name="com.polzzak_android.presentation.feature.stamp.detail.protector.ProtectorStampBoardDetailFragment"
+            android:label="ProtectorStampBoardDetailFragment"
+            tools:layout="@layout/fragment_kid_stamp_board_detail" />
+    </navigation>
+
+    <!-- 쿠폰 -->
     <fragment
         android:id="@+id/protectorCouponFragment"
         android:name="com.polzzak_android.presentation.feature.coupon.main.protector.ProtectorCouponFragment"
         android:label="ProtectorCouponFragment"
-        tools:layout="@layout/fragment_protector_coupon"/>
+        tools:layout="@layout/fragment_protector_coupon" />
+
+    <!-- 알림 -->
     <fragment
         android:id="@+id/protectorNotificationFragment"
         android:name="com.polzzak_android.presentation.feature.notification.protector.ProtectorNotificationFragment"
         android:label="ProtectorNotificationFragment"
-        tools:layout="@layout/fragment_protector_notification"/>
+        tools:layout="@layout/fragment_protector_notification" />
+
+    <!-- 마이페이지 -->
     <fragment
         android:id="@+id/protectorMyPageFragment"
         android:name="com.polzzak_android.presentation.feature.myPage.protector.ProtectorMyPageFragment"
         android:label="ProtectorMyPageFragment"
-        tools:layout="@layout/fragment_protector_my_page"/>
-    <fragment
-        android:id="@+id/makeStampFragment"
-        android:name="com.polzzak_android.presentation.feature.stamp.make.MakeStampFragment"
-        android:label="fragment_make_stamp"
-        tools:layout="@layout/fragment_make_stamp" >
-        <action
-            android:id="@+id/action_makeStampFragment_to_exampleMissionFragment"
-            app:destination="@id/exampleMissionFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/exampleMissionFragment"
-        android:name="com.polzzak_android.presentation.feature.stamp.make.exampleMission.ExampleMissionFragment"
-        android:label="fragment_example_mission"
-        tools:layout="@layout/fragment_example_mission" />
+        tools:layout="@layout/fragment_protector_my_page" />
 </navigation>
