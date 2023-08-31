@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampProgressBinding
 import com.polzzak_android.presentation.feature.stamp.intercation.MainProgressInteraction
-import com.polzzak_android.presentation.feature.stamp.model.StampBoardSummary
+import com.polzzak_android.presentation.feature.stamp.model.StampBoardSummaryModel
 
 class MainStampPagerAdapter(
-    private val dummy: List<StampBoardSummary>,
+    private val dummy: List<StampBoardSummaryModel>?,
     private val interaction: MainProgressInteraction
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -23,16 +23,18 @@ class MainStampPagerAdapter(
     }
 
     override fun getItemCount(): Int {
-        return stampList.size
+        return stampList?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val curItem = stampList[position]
+        val curItem = stampList?.get(position)
 
-        (holder as ViewHolder).bind(curItem)
+        if (curItem != null) {
+            (holder as ViewHolder).bind(curItem)
+        }
     }
 
-    fun setStampList(newList: List<StampBoardSummary>) {
+    fun setStampList(newList: List<StampBoardSummaryModel>) {
         stampList = newList
         notifyDataSetChanged()
     }
@@ -47,7 +49,7 @@ class MainStampPagerAdapter(
         private val totalCnt = binding.stampTotalCnt
         private val reward = binding.rawardContent
 
-        fun bind(item: StampBoardSummary) {
+        fun bind(item: StampBoardSummaryModel) {
             userHeaderTxt.text = item.name
             curCnt.text = item.currentStampCount.toString()
             totalCnt.text = item.goalStampCount.toString()

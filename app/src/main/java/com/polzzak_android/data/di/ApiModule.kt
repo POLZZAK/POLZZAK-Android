@@ -9,6 +9,7 @@ import com.polzzak_android.data.repository.LastSocialLoginRepository
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.SignUpRepository
 import com.polzzak_android.data.repository.StampBoardRepository
+import com.polzzak_android.data.repository.StampBoardRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -86,7 +87,7 @@ object ApiModule {
     @Provides
     fun provideStampBoardRepository(
         stampBoardService: StampBoardService
-    ): StampBoardRepository = StampBoardRepository(stampBoardService = stampBoardService)
+    ): StampBoardRepository = StampBoardRepositoryImpl(stampBoardService = stampBoardService)
 
     @Singleton
     @Provides

@@ -54,6 +54,10 @@ class ToolbarHelper(
         }
     }
 
+    fun hideBackButton() {
+        backButtonView.visibility = View.GONE
+    }
+
     fun updateToolbarBackgroundColor(colorResource: Int) {
         toolbar.root.setBackgroundResource(colorResource)
     }

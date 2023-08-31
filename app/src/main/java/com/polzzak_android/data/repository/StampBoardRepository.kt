@@ -2,26 +2,43 @@ package com.polzzak_android.data.repository
 
 import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
-import com.polzzak_android.data.remote.model.response.StampBoardListResponse
+import com.polzzak_android.data.remote.model.response.MainStampBoardListResponse
 import com.polzzak_android.data.remote.service.StampBoardService
+import com.polzzak_android.data.remote.util.createHeaderAuthorization
 import com.polzzak_android.data.remote.util.requestCatching
-import retrofit2.Response
 import javax.inject.Inject
 
-class StampBoardRepository @Inject constructor(
-    private val stampBoardService: StampBoardService
-) {
-
-    suspend fun getStampBoard(
+interface StampBoardRepository {
+    suspend fun getStampBoardList(
+        accessToken: String,
+        linkedMemberId: String?,
         stampBoardGroup: String
-    ): Response<StampBoardListResponse> {
-        return stampBoardService.getMainStampBoards(stampBoardGroup = stampBoardGroup)
+    ): ApiResult<MainStampBoardListResponse.Data>
+}
+
+class StampBoardRepositoryImpl @Inject constructor(
+    private val stampBoardService: StampBoardService
+): StampBoardRepository {
+    /**
+     * 도장판 목록 조회
+     */
+    override suspend fun getStampBoardList(
+        accessToken: String,
+        linkedMemberId: String?,
+        stampBoardGroup: String
+    ): ApiResult<MainStampBoardListResponse.Data> = requestCatching {
+        val authorization = createHeaderAuthorization(accessToken = accessToken)
+        stampBoardService.getMainStampBoards(authorization = authorization, linkedMemberId, stampBoardGroup)
     }
 
+    /**
+     * 도장판 생성
+     */
     suspend fun makeStampBoard(
-        token: String,
+        accessToken: String,
         newStampBoard: MakeStampBoardRequest
     ) : ApiResult<Nothing?> = requestCatching {
-        stampBoardService.makeStampBoard(token = token, stampBoardRequest = newStampBoard)
+        val authorization = createHeaderAuthorization(accessToken = accessToken)
+        stampBoardService.makeStampBoard(token = authorization, stampBoardRequest = newStampBoard)
     }
 }

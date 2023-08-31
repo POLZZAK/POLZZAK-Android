@@ -7,24 +7,28 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
+import com.kakao.sdk.common.util.Utility
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.util.stampProgressCalculator
 import com.polzzak_android.databinding.FragmentProgressBinding
 import com.polzzak_android.presentation.common.adapter.MainStampAdapter
 import com.polzzak_android.presentation.common.adapter.MainStampPagerAdapter
+import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.feature.stamp.main.protector.StampViewModel
 import com.polzzak_android.presentation.component.SemiCircleProgressView
 import com.polzzak_android.presentation.feature.stamp.intercation.MainProgressInteraction
-import com.polzzak_android.presentation.feature.stamp.model.Partner
-import com.polzzak_android.presentation.feature.stamp.model.StampBoard
-import com.polzzak_android.presentation.feature.stamp.model.StampBoardSummary
+import com.polzzak_android.presentation.feature.stamp.model.PartnerModel
+import com.polzzak_android.presentation.feature.stamp.model.StampBoardModel
+import com.polzzak_android.presentation.feature.stamp.model.StampBoardSummaryModel
+import timber.log.Timber
 
 class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainProgressInteraction {
 
     override val layoutResId: Int = R.layout.fragment_progress
 
-    private lateinit var rvAdapter: MainStampAdapter
+    private var rvAdapter: MainStampAdapter = MainStampAdapter(emptyList(), this)
     private lateinit var vpAdapter: MainStampPagerAdapter
     private val stampViewModel: StampViewModel by activityViewModels()
 
@@ -48,97 +52,86 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         super.initView()
 
         binding.lifecycleOwner = this
-        binding.stampViewModel = stampViewModel
 
         setAdapter()
 
-        // Todo: 선택 바텀 시트 의논 사항-> 네비게이션으로 관리할지, 인스턴스 새롭게 생성할지?
-        binding.selectTxt.text = "전체"
-        binding.selectContainer.setOnClickListener {
-        // todo: 바텀시트 연결
+        stampViewModel.checkHasLinkedUser(accessToken = getAccessTokenOrNull() ?: "")
+        val hasLinkedUser = stampViewModel.hasLinkedUser.value?.data
+        if (hasLinkedUser == true) {
+            // 도장판 조회
+            stampViewModel.getStampBoardList(
+                accessToken = getAccessTokenOrNull() ?: "",
+                linkedMemberId = null,
+                stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
+            )
+
+            // 바텀시트
+            binding.selectTxt.text = "전체"
+            binding.selectContainer.setOnClickListener {
+                // todo: 바텀시트 연결
+            }
+
+            // 당겨서 리프레시
+            binding.stampListRefresh.setOnRefreshListener {
+                rvAdapter.notifyDataSetChanged()
+                binding.stampListRefresh.isRefreshing = false
+            }
+        }
+    }
+
+    override fun initObserver() {
+        super.initObserver()
+        // 연동된 사용자 있는지 확인
+        stampViewModel.hasLinkedUser.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is ModelState.Success -> {
+                    val hasLinkedUser = state.data
+                    binding.hasLinkedUser = hasLinkedUser
+                }
+
+                is ModelState.Error -> {
+                    // todo: 에러 페이지
+                }
+
+                is ModelState.Loading -> {
+                    // todo: 스켈레톤
+                }
+            }
         }
 
-        binding.stampListRefresh.setOnRefreshListener {
-            rvAdapter.notifyDataSetChanged()
-            binding.stampListRefresh.isRefreshing = false
+        // 도장판 목록 조회
+        stampViewModel.stampBoardList.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is ModelState.Success -> {
+                    val data = state.data
+                    rvAdapter = MainStampAdapter(listOf(data), this)
+                    rvAdapter.setStampList(listOf(data))
+                }
+
+                is ModelState.Error -> {
+                    // todo: 에러
+                }
+
+                is ModelState.Loading -> {
+                    // todo: 로딩 스켈레톤
+                }
+            }
         }
     }
 
     private fun setAdapter() {
-        // Todo: dummy data 변경
-        val dummy = listOf<StampBoard>(
-            StampBoard(
-                type = 2,
-                Partner(
-                    kid = false,
-                    memberId = 2,
-                    memberType = "ECT",
-                    nickname = " 연동o도장판o",
-                    profileUrl = ""
-                ),
-                listOf<StampBoardSummary>(
-                    StampBoardSummary(
-                        currentStampCount = 10,
-                        goalStampCount = 20,
-                        isRewarded = false,
-                        missionCompleteCount = 3,
-                        name = "도장판 이름1",
-                        reward = "보상1",
-                        stampBoardId = 1
-                    ),
-                    StampBoardSummary(
-                        currentStampCount = 10,
-                        goalStampCount = 20,
-                        isRewarded = false,
-                        missionCompleteCount = 3,
-                        name = "도장판 이름2",
-                        reward = "보상2",
-                        stampBoardId = 2
-                    ),
-                ),
-            ),
-            StampBoard(
-                type = 1,
-                Partner(
-                    kid = false,
-                    memberId = 1,
-                    memberType = "ECT",
-                    nickname = "연동o도장판x11",
-                    profileUrl = ""
-                ),
-                listOf<StampBoardSummary>(
-
-                ),
-            ),
-            StampBoard(
-                type = 1,
-                Partner(
-                    kid = false,
-                    memberId = 3,
-                    memberType = "ECT",
-                    nickname = "연동o도장판x22",
-                    profileUrl = ""
-                ),
-                listOf<StampBoardSummary>(
-
-                ),
-            )
-        )
-
-        rvAdapter = MainStampAdapter(dummy, this)
         binding.stampListRc.adapter = rvAdapter
         binding.stampListRc.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
-    override fun setViewPager(view: ViewPager2, curInd: TextView, totalInd: TextView, stampList: List<StampBoardSummary>) {
-        // adapter
+    override fun setViewPager(view: ViewPager2, curInd: TextView, totalInd: TextView, stampList: List<StampBoardSummaryModel>?) {
+        // todo: adapter 임시
         vpAdapter = MainStampPagerAdapter(stampList, this)
         view.adapter = vpAdapter
 
         // indicator
-        // Todo: 임시
-        curInd.text = "1"
-        totalInd.text = resources.getString(R.string.viewpager_indicator, stampList.size)
+        curInd.text = "1"   // todo: 임시
+        totalInd.text = resources.getString(R.string.viewpager_indicator, stampList?.size)
         view.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -148,11 +141,7 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         })
     }
 
-    override fun onStampPagerClicked(stampBoardItem: StampBoardSummary) {
-        // Todo: 임시
-        Toast.makeText(context, "${stampBoardItem.name} 클릭", Toast.LENGTH_SHORT).show()
-
-        // TODO: 부모 nav_graph.xml에도 같은 action 추가 필요
+    override fun onStampPagerClicked(stampBoardItem: StampBoardSummaryModel) {
         findNavController().navigate(
             R.id.action_to_stampBoardDetailFragment,
             Bundle().apply { putInt("boardId", stampBoardItem.stampBoardId) }
