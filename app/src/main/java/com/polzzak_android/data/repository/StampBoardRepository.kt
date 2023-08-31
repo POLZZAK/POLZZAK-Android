@@ -13,7 +13,7 @@ interface StampBoardRepository {
         accessToken: String,
         linkedMemberId: String?,
         stampBoardGroup: String
-    ): ApiResult<MainStampBoardListResponse.Data>
+    ): ApiResult<List<MainStampBoardListResponse.Data>>
 }
 
 class StampBoardRepositoryImpl @Inject constructor(
@@ -26,7 +26,7 @@ class StampBoardRepositoryImpl @Inject constructor(
         accessToken: String,
         linkedMemberId: String?,
         stampBoardGroup: String
-    ): ApiResult<MainStampBoardListResponse.Data> = requestCatching {
+    ): ApiResult<List<MainStampBoardListResponse.Data>> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         stampBoardService.getMainStampBoards(authorization = authorization, linkedMemberId, stampBoardGroup)
     }

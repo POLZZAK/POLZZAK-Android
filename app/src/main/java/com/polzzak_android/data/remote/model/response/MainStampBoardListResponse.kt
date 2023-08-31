@@ -7,8 +7,8 @@ import com.polzzak_android.presentation.feature.stamp.model.StampBoardSummaryMod
 data class MainStampBoardListResponse(
     override val code: Int?,
     override val messages: List<String>?,
-    override val data: Data?
-): BaseResponse<MainStampBoardListResponse.Data> {
+    override val data: List<Data>?
+): BaseResponse<List<MainStampBoardListResponse.Data>> {
     data class Data(
         val partner: PartnerDto?,                                // 연동된 사용자 정보
         val stampBoardSummaries: List<StampBoardSummaryDto>?     // 연동된 사용자와 공유하는 도장판 리스트
@@ -16,7 +16,7 @@ data class MainStampBoardListResponse(
 }
 
 fun MainStampBoardListResponse.Data.toStampBoardModel() = StampBoardModel(
-    type = if (stampBoardSummaries == null) 1 else 2,   // 도장판 없으면 1 있으면 2
+    type = if (stampBoardSummaries.isNullOrEmpty()) 1 else 2,   // 도장판 없으면 1 있으면 2
     partner = partner?.toPartner(),
     stampBoardSummaries = stampBoardSummaries?.map {
         it.toStampBoardSummaryModel()

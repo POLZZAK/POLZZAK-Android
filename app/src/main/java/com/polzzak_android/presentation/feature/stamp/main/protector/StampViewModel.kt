@@ -21,7 +21,7 @@ class StampViewModel @Inject constructor(
     private val _hasLinkedUser: MutableLiveData<ModelState<Boolean>> = MutableLiveData()
     val hasLinkedUser get() = _hasLinkedUser
 
-    private val _stampBoardList: MutableLiveData<ModelState<StampBoardModel>> = MutableLiveData()
+    private val _stampBoardList: MutableLiveData<ModelState<List<StampBoardModel>>> = MutableLiveData()
     val stampBoardList get() = _stampBoardList
     
     fun checkHasLinkedUser(accessToken: String) {
@@ -39,7 +39,9 @@ class StampViewModel @Inject constructor(
         viewModelScope.launch {
             _stampBoardList.value = ModelState.Loading()
             stampBoardRepository.getStampBoardList(accessToken, linkedMemberId, stampBoardGroup).onSuccess { data ->
-                val stampBoardList = data?.toStampBoardModel()
+                val stampBoardList = data?.map {
+                    it.toStampBoardModel()
+                }
                 _stampBoardList.value = ModelState.Success(stampBoardList!!)
             }.onError { exception, data ->
                 _stampBoardList.value = ModelState.Error(exception)
