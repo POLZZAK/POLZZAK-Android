@@ -1,9 +1,11 @@
 package com.polzzak_android.data.di
 
+import android.content.Context
 import com.polzzak_android.BuildConfig
-import com.polzzak_android.data.remote.service.GoogleOAuthService
 import com.polzzak_android.data.remote.service.AuthService
+import com.polzzak_android.data.remote.service.GoogleOAuthService
 import com.polzzak_android.data.remote.service.StampBoardService
+import com.polzzak_android.data.repository.LastSocialLoginRepository
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.SignUpRepository
 import com.polzzak_android.data.repository.StampBoardRepository
@@ -11,6 +13,7 @@ import com.polzzak_android.data.repository.StampBoardRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -68,6 +71,11 @@ object ApiModule {
         googleTokenService: GoogleOAuthService
     ): LoginRepository =
         LoginRepository(authService = authService, googleTokenService = googleTokenService)
+
+    @Singleton
+    @Provides
+    fun provideLastSocialLoginRepository(@ApplicationContext context: Context): LastSocialLoginRepository =
+        LastSocialLoginRepository(context)
 
     @Singleton
     @Provides
