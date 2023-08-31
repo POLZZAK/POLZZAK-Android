@@ -87,6 +87,15 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
                 is ModelState.Success -> {
                     val hasLinkedUser = state.data
                     binding.hasLinkedUser = hasLinkedUser
+
+                    if (hasLinkedUser) {
+                        // 도장판 조회
+                        stampViewModel.getStampBoardList(
+                            accessToken = getAccessTokenOrNull() ?: "",
+                            linkedMemberId = null,
+                            stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
+                        )
+                    }
                 }
 
                 is ModelState.Error -> {
@@ -104,8 +113,9 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
             when (state) {
                 is ModelState.Success -> {
                     val data = state.data
-                    rvAdapter = MainStampAdapter(listOf(data), this)
-                    rvAdapter.setStampList(listOf(data))
+                    // todo: 바인더블 어댑터로 변경
+                    rvAdapter = MainStampAdapter(data, this)
+                    binding.stampListRc.adapter = rvAdapter
                 }
 
                 is ModelState.Error -> {
