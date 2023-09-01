@@ -3,6 +3,7 @@ package com.polzzak_android.presentation.feature.stamp.detail.kid
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.text.toSpannable
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentKidStampBoardDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -15,6 +16,9 @@ import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.component.toolbar.ToolbarData
+import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
+import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
@@ -27,6 +31,20 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
     override val layoutResId: Int = R.layout.fragment_kid_stamp_board_detail
 
     private val viewModel: StampBoardDetailViewModel by viewModels()
+
+    private lateinit var toolbarHelper: ToolbarHelper
+
+    override fun setToolbar() {
+        super.setToolbar()
+
+        toolbarHelper = ToolbarHelper(
+            data = ToolbarData(popStack = findNavController()),
+            toolbar = binding.toolbar
+        ).apply {
+            set()
+            updateToolbarBackgroundColor(R.color.gray_100)
+        }
+    }
 
     override fun initView() {
         super.initView()
