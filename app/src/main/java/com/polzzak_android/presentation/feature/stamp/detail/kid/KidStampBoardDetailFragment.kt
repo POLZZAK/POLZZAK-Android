@@ -14,6 +14,7 @@ import com.polzzak_android.presentation.component.dialog.CommonDialogModel
 import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
@@ -33,7 +34,10 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
         val boardId = arguments?.getInt("boardId", -1) ?: -1
         Timber.d(">> boardId = $boardId")
 
-        viewModel.fetchStampBoardDetailData(stampBoardId = boardId)
+        viewModel.fetchStampBoardDetailData(
+            accessToken = getAccessTokenOrNull() ?: "",
+            stampBoardId = boardId
+        )
 
         binding.composeView.apply {
             setContent {

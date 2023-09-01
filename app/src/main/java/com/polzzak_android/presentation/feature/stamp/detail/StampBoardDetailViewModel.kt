@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.feature.stamp.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.polzzak_android.data.repository.StampBoardRepository
 import com.polzzak_android.data.repository.StampRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.feature.stamp.model.StampBoardDetailModel
@@ -17,15 +18,21 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StampBoardDetailViewModel @Inject constructor(
-    private val stampRepository: StampRepository
+    private val stampRepository: StampBoardRepository
 ) : ViewModel() {
     private val _stampBoardData = MutableStateFlow<ModelState<StampBoardDetailModel>>(ModelState.Loading())
     val stampBoardData
         get() = _stampBoardData.asStateFlow()
 
-    fun fetchStampBoardDetailData(stampBoardId: Int) = viewModelScope.launch(Dispatchers.IO) {
+    fun fetchStampBoardDetailData(
+        accessToken: String,
+        stampBoardId: Int
+    ) = viewModelScope.launch(Dispatchers.IO) {
         stampRepository
-            .getStampBoardDetail(stampBoardId = stampBoardId)
+            .getStampBoardDetailData(
+                accessToken = accessToken,
+                stampBoardId = stampBoardId
+            )
             .onSuccess { data ->
                 data ?: return@onSuccess
 
@@ -41,6 +48,4 @@ class StampBoardDetailViewModel @Inject constructor(
                 }
             }
     }
-
-
 }

@@ -7,7 +7,8 @@ import java.time.LocalDateTime
 import java.time.Period
 import java.time.format.DateTimeFormatter
 
-const val SERVER_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"
+//const val SERVER_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"
+const val SERVER_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss"
 
 fun String?.toLocalDate(): LocalDate? = kotlin.runCatching {
     LocalDate.parse(this, DateTimeFormatter.ofPattern(SERVER_DATE_FORMAT))

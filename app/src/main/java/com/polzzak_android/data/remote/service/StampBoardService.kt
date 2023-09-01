@@ -3,11 +3,13 @@ package com.polzzak_android.data.remote.service
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
 import com.polzzak_android.data.remote.model.response.MainStampBoardListResponse
 import com.polzzak_android.data.remote.model.response.MakeStampBoardResponse
+import com.polzzak_android.data.remote.model.response.StampBoardDetailResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface StampBoardService {
@@ -23,4 +25,10 @@ interface StampBoardService {
         @Header("Authorization") token: String,
         @Body stampBoardRequest: MakeStampBoardRequest
     ) : Response<MakeStampBoardResponse>
+
+    @GET("/api/v1/stamps/stamp-boards/{stampBoardId}")
+    suspend fun getStampBoardDetailData(
+        @Header("Authorization") token: String,
+        @Path("stampBoardId") stampBoardId: Int
+    ): Response<StampBoardDetailResponse>
 }
