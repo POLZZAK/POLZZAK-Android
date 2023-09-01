@@ -207,13 +207,17 @@ fun RewardInfoSheet(
             // TODO: 글자 넘침??
             rewardStateText()
 
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(100.dp)
-            ) {
-                deleteTextButton?.invoke()
+            if (deleteTextButton != null) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(100.dp)
+                ) {
+                    deleteTextButton.invoke()
+                }
+            } else {
+                Spacer(modifier = Modifier.height(44.dp))
             }
         }
     }
