@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -72,15 +73,17 @@ fun StampBoardHeader(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(top = 20.dp)
+            .padding(top = 10.dp)
             .padding(horizontal = 16.dp)
     ) {
         Text(
             text = title,
             style = PolzzakTheme.typography.semiBold24,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2,
             modifier = Modifier.weight(1f)
         )
-
+        Spacer(modifier = Modifier.width(25.dp))
         BlueChip(text = chipText)
     }
 }
@@ -88,7 +91,7 @@ fun StampBoardHeader(
 @Preview
 @Composable
 private fun StampBoardHeaderPreview() {
-    StampBoardHeader(title = "도장판 상세", chipText = "D+9")
+    StampBoardHeader(title = "도장판 상세상세상세상세상세상세상세상세상세상세상", chipText = "D+9")
 }
 
 

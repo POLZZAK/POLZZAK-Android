@@ -153,7 +153,7 @@ private fun getCouponButtonEnable(stampBoardStatus: StampBoardStatus): Boolean {
 
 private fun getCouponInfoText(stampBoardStatus: StampBoardStatus): String {
     return when (stampBoardStatus) {
-        StampBoardStatus.PROGRESS -> "도장판을 다 채우 쿠폰을 받을 수 있어요."
+        StampBoardStatus.PROGRESS -> "도장판을 다 채우면 쿠폰을 받을 수 있어요."
         StampBoardStatus.COMPLETED -> "보호자가 쿠폰을 발급해줄 때까지 잠시만 기다려주세요."
         StampBoardStatus.ISSUED_COUPON -> "선물 쿠폰이 도착했어요!"
         StampBoardStatus.REWARDED -> "내 쿠폰함에서 확인하세요."
