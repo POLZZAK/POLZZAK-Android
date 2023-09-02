@@ -29,7 +29,7 @@ import com.polzzak_android.presentation.feature.coupon.model.CouponModel
 import com.polzzak_android.presentation.feature.coupon.model.CouponPartner
 import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
 
-class CouponContentFragment(private val state: String) : BaseFragment<FragmentCouponContentBinding>(), CouponContainerInteraction {
+class CouponContentFragment : BaseFragment<FragmentCouponContentBinding>(), CouponContainerInteraction {
     override val layoutResId: Int = R.layout.fragment_coupon_content
 
     private lateinit var rvAdapter: MainCouponAdapter
@@ -38,14 +38,23 @@ class CouponContentFragment(private val state: String) : BaseFragment<FragmentCo
     private val linkedUserViewModel: StampLinkedUserViewModel by activityViewModels()
     private val couponViewModel: CouponViewModel by activityViewModels()
 
+    private lateinit var state: String
+
     companion object {
+        private const val ARG_STATE = "state"
+
         @JvmStatic
         fun getInstance(state: String): CouponContentFragment {
-            return CouponContentFragment(state)
+            val fragment = CouponContentFragment()
+            val args = Bundle()
+            args.putString(ARG_STATE, state)
+            fragment.arguments = args
+            return fragment
         }
     }
 
     override fun initView() {
+        state = arguments?.getString(ARG_STATE).toString()
         super.initView()
 
         binding.fragment = this
