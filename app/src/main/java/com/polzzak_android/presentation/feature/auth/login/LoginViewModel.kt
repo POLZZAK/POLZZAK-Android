@@ -10,13 +10,13 @@ import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.MemberTypeRepository
 import com.polzzak_android.data.repository.UserRepository
+import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.model.asMemberTypeOrNull
 import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoUiModel
 import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.model.asMemberTypeDetail
 import com.polzzak_android.presentation.feature.auth.model.asSocialLoginTypeOrNull
-import com.polzzak_android.presentation.common.model.ModelState
-import com.polzzak_android.presentation.common.model.asMemberTypeOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -62,7 +62,7 @@ class LoginViewModel @Inject constructor(
         setLoginResultLoading()
         loginRepository.requestLogin(accessToken = accessToken, loginType = loginType)
             .onSuccess {
-                requestUserInfo(accessToken = it?.accessToken ?: "")
+                requestUserInfo(accessToken = it?.accessToken ?: "", socialType = loginType)
             }.onError { exception, loginResponseData ->
                 when (exception) {
                     is ApiException.RequiredRegister -> {
@@ -83,7 +83,7 @@ class LoginViewModel @Inject constructor(
             }
     }
 
-    private suspend fun requestUserInfo(accessToken: String) {
+    private suspend fun requestUserInfo(accessToken: String, socialType: SocialLoginType) {
         userRepository.requestUser(accessToken = accessToken).onSuccess {
             val memberType = it?.memberType?.let { memberTypeResponseData ->
                 asMemberTypeOrNull(memberTypeResponseData)
@@ -92,7 +92,11 @@ class LoginViewModel @Inject constructor(
                 return@onSuccess
             }
             val loginInfoUiModel =
-                LoginInfoUiModel.Login(accessToken = accessToken, memberType = memberType)
+                LoginInfoUiModel.Login(
+                    accessToken = accessToken,
+                    memberType = memberType,
+                    socialType = socialType
+                )
             setLoginResultSuccess(data = loginInfoUiModel)
         }.onError { exception, _ ->
             setLoginResultError(exception = exception)
