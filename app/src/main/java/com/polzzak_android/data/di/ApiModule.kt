@@ -8,7 +8,6 @@ import com.polzzak_android.data.remote.service.StampBoardService
 import com.polzzak_android.data.repository.CouponRepository
 import com.polzzak_android.data.repository.CouponRepositoryImpl
 import com.polzzak_android.data.remote.service.GoogleOAuthService
-import com.polzzak_android.data.remote.service.StampBoardService
 import com.polzzak_android.data.repository.LastSocialLoginRepository
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.SignUpRepository

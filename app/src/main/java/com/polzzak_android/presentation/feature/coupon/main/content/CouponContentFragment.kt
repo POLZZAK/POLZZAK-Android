@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.feature.coupon.main.content
 
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
@@ -12,12 +13,21 @@ import com.polzzak_android.databinding.FragmentCouponContentBinding
 import com.polzzak_android.presentation.common.adapter.MainCouponAdapter
 import com.polzzak_android.presentation.common.adapter.MainCouponPagerAdapter
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
+import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
+import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
+import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserStampBoardModel
+import com.polzzak_android.presentation.component.bottomsheet.model.toSelectUserStampBoardModel
+import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.feature.coupon.main.protector.CouponViewModel
 import com.polzzak_android.presentation.feature.coupon.model.Coupon
 import com.polzzak_android.presentation.feature.coupon.model.CouponModel
 import com.polzzak_android.presentation.feature.coupon.model.CouponPartner
+import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
 
 class CouponContentFragment(private val state: String) : BaseFragment<FragmentCouponContentBinding>(), CouponContainerInteraction {
     override val layoutResId: Int = R.layout.fragment_coupon_content
@@ -25,6 +35,7 @@ class CouponContentFragment(private val state: String) : BaseFragment<FragmentCo
     private lateinit var rvAdapter: MainCouponAdapter
     private lateinit var vpAdapter: MainCouponPagerAdapter
 
+    private val linkedUserViewModel: StampLinkedUserViewModel by activityViewModels()
     private val couponViewModel: CouponViewModel by activityViewModels()
 
     companion object {
@@ -36,14 +47,11 @@ class CouponContentFragment(private val state: String) : BaseFragment<FragmentCo
 
     override fun initView() {
         super.initView()
-
+        
+        binding.fragment = this
         setAdapter()
 
-        couponViewModel.requestCouponList(
-            token = getAccessTokenOrNull() ?: "",
-            couponState = state,
-            memberId = null
-        )
+        linkedUserViewModel.requestLinkedUserList(accessToken = getAccessTokenOrNull() ?: "")
     }
 
     private fun setAdapter() {
@@ -52,6 +60,34 @@ class CouponContentFragment(private val state: String) : BaseFragment<FragmentCo
 
     override fun initObserver() {
         super.initObserver()
+        // 연동된 사용자 있는지 확인
+        linkedUserViewModel.linkedUserList.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is ModelState.Success -> {
+                    val hasLinkedUser = linkedUserViewModel.hasLinkedUser
+                    binding.hasLinkedUser = hasLinkedUser
+
+                    if (hasLinkedUser) {
+                        // 쿠폰 조회
+                        couponViewModel.requestCouponList(
+                            token = getAccessTokenOrNull() ?: "",
+                            couponState = this.state,
+                            memberId = null
+                        )
+                    }
+                }
+
+                is ModelState.Error -> {
+                    // todo: 에러 페이지
+                }
+
+                is ModelState.Loading -> {
+                    // todo: 스켈레톤
+                }
+            }
+        }
+
+        // 쿠폰 조회
         couponViewModel.couponList.observe(viewLifecycleOwner) { state ->
             when(state) {
                 is ModelState.Success -> {
@@ -68,6 +104,40 @@ class CouponContentFragment(private val state: String) : BaseFragment<FragmentCo
                     // todo: 로딩
                 }
             }
+        }
+    }
+
+    fun clickUserFilter() {
+        val userList = linkedUserViewModel.getLinkedUserList()
+
+        if (userList != null) {
+            CommonBottomSheetHelper.getInstance(
+                data = CommonBottomSheetModel(
+                    type = BottomSheetType.SELECT_STAMP_BOARD,
+                    title = "누구에게 선물한 쿠폰을 볼까요?",
+                    contentList = userList.map { it.toSelectUserStampBoardModel() },
+                    button = CommonButtonModel(
+                        buttonCount = ButtonCount.ZERO
+                    )
+                ),
+                onClickListener = {
+                    object : OnButtonClickListener {
+                        override fun setBusinessLogic() {}
+
+                        override fun getReturnValue(value: Any) {
+                            val selectedUserInfo = (value as SelectUserStampBoardModel)
+                            binding.selectContainer.visibility = View.GONE
+
+                            couponViewModel.requestCouponList(
+                                token = getAccessTokenOrNull() ?: "",
+                                couponState = state,
+                                memberId = selectedUserInfo.userId
+                            )
+                        }
+
+                    }
+                }
+            ).show(childFragmentManager, null)
         }
     }
 

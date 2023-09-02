@@ -23,37 +23,6 @@
             android:layout_height="match_parent"
             android:background="@color/gray_100"
             android:visibility="gone">
-
-            <!-- Shimmer Effect for Skeleton Loading -->
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                app:shimmer_auto_start="true"
-                app:shimmer_duration="1000"
-                app:shimmer_repeat_mode="restart">
-
-                <!-- Skeleton Loading Items -->
-                <View
-                    android:layout_width="150dp"
-                    android:layout_height="70dp"
-                    android:background="@color/gray_300" />
-
-                <View
-                    android:layout_width="300dp"
-                    android:layout_height="30dp"
-                    android:layout_marginTop="100dp"
-                    android:background="@color/gray_300" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_marginTop="150dp"
-                    android:background="@color/gray_300" />
-
-                <!-- You can add more skeleton loading items here as needed -->
-
-            </com.facebook.shimmer.ShimmerFrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
