@@ -1,5 +1,7 @@
 package com.polzzak_android.presentation.feature.stamp.detail.screen
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -34,29 +36,36 @@ fun StampBoardDetailScreen_Kid(
 ) {
     val state by stampBoardData.collectAsState()
 
-    when (state) {
-        is ModelState.Loading -> {
-            // 스켈레톤
-            StampBoardDetailSkeleton()
-        }
-        is ModelState.Success -> {
-            StampBoardDetailScreen_Kid(
-                stampBoardStatus = state.data?.stampBoardStatus ?: StampBoardStatus.PROGRESS,
-                boardTitle = state.data?.boardTitle ?: "",
-                dateCount = state.data?.dateCount ?: 0,
-                totalStampCount = state.data?.totalStampCount ?: 16,
-                stampList = state.data?.stampList ?: emptyList(),
-                onStampClick = onStampClick,
-                onEmptyStampClick = onEmptyStampClick,
-                missionList = state.data?.missionList ?: emptyList(),
-                rewardTitle = state.data?.rewardTitle ?: "",
-                onRewardButtonClick = onRewardButtonClick
-            )
-        }
-        is ModelState.Error -> {
-            // ?
+    Crossfade(
+        targetState = state,
+        animationSpec = tween(400),
+        label = "StampBoardDetailScreen change animation"
+    ) { currentState ->
+        when (currentState) {
+            is ModelState.Loading -> {
+                // 스켈레톤
+                StampBoardDetailSkeleton()
+            }
+            is ModelState.Success -> {
+                StampBoardDetailScreen_Kid(
+                    stampBoardStatus = currentState.data.stampBoardStatus,
+                    boardTitle = currentState.data.boardTitle,
+                    dateCount = currentState.data.dateCount,
+                    totalStampCount = currentState.data.totalStampCount,
+                    stampList = currentState.data.stampList,
+                    onStampClick = onStampClick,
+                    onEmptyStampClick = onEmptyStampClick,
+                    missionList = currentState.data.missionList,
+                    rewardTitle = currentState.data.rewardTitle,
+                    onRewardButtonClick = onRewardButtonClick
+                )
+            }
+            is ModelState.Error -> {
+                // ?
+            }
         }
     }
+
 }
 
 /**
