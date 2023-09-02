@@ -237,9 +237,10 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                         SignUpTermDetailFragment.ARGUMENT_TITLE_KEY,
                         getString(R.string.signup_terms_of_service_detail_service_title)
                     )
+                    //TODO 약관 url 추가
                     putString(
-                        SignUpTermDetailFragment.ARGUMENT_CONTENT_KEY,
-                        getString(R.string.signup_terms_of_service_detail_service_content)
+                        SignUpTermDetailFragment.ARGUMENT_URL_KEY,
+                        "http://google.co.kr"
                     )
                 }
                 findNavController().navigate(
@@ -253,9 +254,10 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                         SignUpTermDetailFragment.ARGUMENT_TITLE_KEY,
                         getString(R.string.signup_terms_of_service_detail_privacy_title)
                     )
+                    //TODO 약관 url 추가
                     putString(
-                        SignUpTermDetailFragment.ARGUMENT_CONTENT_KEY,
-                        getString(R.string.signup_terms_of_service_detail_privacy_content)
+                        SignUpTermDetailFragment.ARGUMENT_URL_KEY,
+                        "http://naver.com"
                     )
                 }
                 findNavController().navigate(

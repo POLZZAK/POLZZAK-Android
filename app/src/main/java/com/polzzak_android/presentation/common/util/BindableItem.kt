@@ -1,6 +1,5 @@
 package com.polzzak_android.presentation.common.util
 
-import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.databinding.ViewDataBinding
 
@@ -11,11 +10,7 @@ import androidx.databinding.ViewDataBinding
 abstract class BindableItem<B : ViewDataBinding> {
     @get:LayoutRes
     abstract val layoutRes: Int
-
-    open fun onCreateViewHolder(parent: ViewGroup, position: Int) {}
-
     abstract fun bind(binding: B, position: Int)
-
     abstract fun areItemsTheSame(other: BindableItem<*>): Boolean
     abstract fun areContentsTheSame(other: BindableItem<*>): Boolean
 }
