@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -48,9 +49,19 @@ import com.polzzak_android.presentation.common.compose.Blue400
 import com.polzzak_android.presentation.common.compose.Blue500
 import com.polzzak_android.presentation.common.compose.Blue600
 import com.polzzak_android.presentation.common.compose.Blue700
+import com.polzzak_android.presentation.common.compose.Gray200
 import com.polzzak_android.presentation.common.compose.Gray400
 import com.polzzak_android.presentation.common.compose.NoRippleTheme
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
+
+@Composable
+fun SkeletonView(
+    modifier: Modifier = Modifier
+) = Box(
+    modifier = Modifier
+        .then(modifier)
+        .background(color = Gray200, shape = RoundedCornerShape(8.dp))
+)
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

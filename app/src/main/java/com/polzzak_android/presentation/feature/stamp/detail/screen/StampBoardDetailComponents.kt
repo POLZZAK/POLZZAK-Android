@@ -71,7 +71,7 @@ fun StampBoardHeader(
     chipText: String
 ) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
         modifier = Modifier
             .padding(top = 10.dp)
             .padding(horizontal = 16.dp)

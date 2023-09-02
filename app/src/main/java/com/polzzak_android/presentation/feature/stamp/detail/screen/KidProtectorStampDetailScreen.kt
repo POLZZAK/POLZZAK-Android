@@ -34,18 +34,29 @@ fun StampBoardDetailScreen_Kid(
 ) {
     val state by stampBoardData.collectAsState()
 
-    StampBoardDetailScreen_Kid(
-        stampBoardStatus = state.data?.stampBoardStatus ?: StampBoardStatus.PROGRESS,
-        boardTitle = state.data?.boardTitle ?: "",
-        dateCount = state.data?.dateCount ?: 0,
-        totalStampCount = state.data?.totalStampCount ?: 16,
-        stampList = state.data?.stampList ?: emptyList(),
-        onStampClick = onStampClick,
-        onEmptyStampClick = onEmptyStampClick,
-        missionList = state.data?.missionList ?: emptyList(),
-        rewardTitle = state.data?.rewardTitle ?: "",
-        onRewardButtonClick = onRewardButtonClick
-    )
+    when (state) {
+        is ModelState.Loading -> {
+            // 스켈레톤
+            StampBoardDetailSkeleton()
+        }
+        is ModelState.Success -> {
+            StampBoardDetailScreen_Kid(
+                stampBoardStatus = state.data?.stampBoardStatus ?: StampBoardStatus.PROGRESS,
+                boardTitle = state.data?.boardTitle ?: "",
+                dateCount = state.data?.dateCount ?: 0,
+                totalStampCount = state.data?.totalStampCount ?: 16,
+                stampList = state.data?.stampList ?: emptyList(),
+                onStampClick = onStampClick,
+                onEmptyStampClick = onEmptyStampClick,
+                missionList = state.data?.missionList ?: emptyList(),
+                rewardTitle = state.data?.rewardTitle ?: "",
+                onRewardButtonClick = onRewardButtonClick
+            )
+        }
+        is ModelState.Error -> {
+            // ?
+        }
+    }
 }
 
 /**
