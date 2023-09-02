@@ -47,7 +47,7 @@ class CouponContentFragment(private val state: String) : BaseFragment<FragmentCo
 
     override fun initView() {
         super.initView()
-        
+
         binding.fragment = this
         setAdapter()
 
