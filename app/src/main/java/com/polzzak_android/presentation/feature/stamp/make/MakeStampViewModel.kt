@@ -103,19 +103,19 @@ class MakeStampViewModel @Inject constructor(
             missionList = missionListModel.missionList
         )
 
-        viewModelScope.launch {
-            _makeStampBoardState.postValue(ModelState.Loading())
-            val response = repository.makeStampBoard(
-                // todo: 임시 토큰
-                token = "",
-                newStampBoard = request
-            )
-            response.onSuccess {
-                _makeStampBoardState.postValue(ModelState.Success("도장판 생성 성공"))
-            }.onError { exception, nothing ->
-                _makeStampBoardState.postValue(ModelState.Error(exception))
-            }
-        }
+//        viewModelScope.launch {
+//            _makeStampBoardState.postValue(ModelState.Loading())
+//            val response = repository.makeStampBoard(
+//                // todo: 임시 토큰
+//                token = "",
+//                newStampBoard = request
+//            )
+//            response.onSuccess {
+//                _makeStampBoardState.postValue(ModelState.Success("도장판 생성 성공"))
+//            }.onError { exception, nothing ->
+//                _makeStampBoardState.postValue(ModelState.Error(exception))
+//            }
+//        }
     }
 
     /**

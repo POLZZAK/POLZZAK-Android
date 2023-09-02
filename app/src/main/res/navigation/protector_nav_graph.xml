@@ -59,7 +59,7 @@
         android:id="@+id/protectorNotificationFragment"
         android:name="com.polzzak_android.presentation.feature.notification.list.protector.ProtectorNotificationListFragment"
         android:label="ProtectorNotificationFragment"
-        tools:layout="@layout/fragment_protector_notification" />
+        tools:layout="@layout/fragment_protector_notification">
         <action
             android:id="@+id/action_protectorNotificationFragment_to_notificationSettingFragment"
             app:destination="@id/notificationSettingFragment" />
@@ -76,18 +76,4 @@
         android:name="com.polzzak_android.presentation.feature.myPage.protector.ProtectorMyPageFragment"
         android:label="ProtectorMyPageFragment"
         tools:layout="@layout/fragment_protector_my_page"/>
-    <fragment
-        android:id="@+id/makeStampFragment"
-        android:name="com.polzzak_android.presentation.feature.stamp.make.MakeStampFragment"
-        android:label="fragment_make_stamp"
-        tools:layout="@layout/fragment_make_stamp">
-        <action
-            android:id="@+id/action_makeStampFragment_to_exampleMissionFragment"
-            app:destination="@id/exampleMissionFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/exampleMissionFragment"
-        android:name="com.polzzak_android.presentation.feature.stamp.make.exampleMission.ExampleMissionFragment"
-        android:label="fragment_example_mission"
-        tools:layout="@layout/fragment_example_mission" />
 </navigation>
