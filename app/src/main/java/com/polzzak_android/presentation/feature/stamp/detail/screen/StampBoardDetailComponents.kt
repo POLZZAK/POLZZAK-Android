@@ -37,6 +37,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,11 +54,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.polzzak_android.presentation.common.compose.Blue100
 import com.polzzak_android.presentation.component.PolzzakButton
 import com.polzzak_android.presentation.common.compose.Blue150
 import com.polzzak_android.presentation.common.compose.Blue200
+import com.polzzak_android.presentation.common.compose.Blue400
 import com.polzzak_android.presentation.common.compose.Blue500
 import com.polzzak_android.presentation.common.compose.Blue600
+import com.polzzak_android.presentation.common.compose.Blue700
 import com.polzzak_android.presentation.common.compose.Gray200
 import com.polzzak_android.presentation.common.compose.Gray300
 import com.polzzak_android.presentation.common.compose.Gray400
@@ -109,6 +113,46 @@ private fun StampBoardHeaderPreview() {
     StampBoardHeader(title = "엄청 엄청 엄청 엄청 엄청 엄청 기이이이인 도장판 이름", chipText = "D+9")
 }
 
+/**
+ * 알림 바
+ */
+@Composable
+fun NoticeBar(
+    text: String,
+    onClick: () -> Unit
+) = Row(
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = Modifier
+        .fillMaxWidth()
+        .background(color = Blue100, shape = RoundedCornerShape(8.dp))
+        .border(width = 1.dp, color = Blue700.copy(alpha = 0.16f), shape = RoundedCornerShape(8.dp))
+        .padding(horizontal = 16.dp, vertical = 12.dp)
+        .clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = onClick
+        )
+) {
+    Icon(
+        imageVector = Icons.Default.Notifications,
+        contentDescription = text,
+        tint = Blue400
+    )
+    Spacer(modifier = Modifier.width(8.dp))
+    Text(
+        text = text,
+        style = PolzzakTheme.typography.semiBold14,
+        color = Blue600,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis
+    )
+}
+
+@Preview
+@Composable
+private fun NoticeBarPreview() {
+    NoticeBar(text = "도장 요청이 있어요!", onClick = {})
+}
 
 fun LazyListScope.expandMissionList(
     missions: List<MissionModel>,
