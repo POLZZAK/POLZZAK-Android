@@ -10,6 +10,8 @@ android {
     namespace 'com.polzzak_android'
     compileSdk 33
 
+    task prepareKotlinBuildScriptModel(){}
+
     defaultConfig {
         applicationId "com.polzzak_android"
         minSdk 26
@@ -110,6 +112,9 @@ dependencies {
 
     //RxJava
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
+
+    //shimmer for skeleton
+    implementation "com.facebook.shimmer:shimmer:0.5.0"
 }
 
 kapt {

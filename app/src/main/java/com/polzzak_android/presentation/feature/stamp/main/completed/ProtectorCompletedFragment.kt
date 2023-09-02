@@ -30,19 +30,19 @@ class ProtectorCompletedFragment : BaseFragment<FragmentCompletedBinding>() {
         }
     }
 
-    override fun initView() {
-        super.initView()
-        binding.lifecycleOwner = this
+//    override fun initView() {
+//        super.initView()
+//        binding.lifecycleOwner = this
 
-        stampViewModel.checkHasLinkedUser(accessToken = getAccessTokenOrNull() ?: "")
-        val hasLinkedUser = stampViewModel.hasLinkedUser.value?.data
-        if (hasLinkedUser == true) {
-            // 도장판 조회
-            stampViewModel.getStampBoardList(
-                accessToken = getAccessTokenOrNull() ?: "",
-                linkedMemberId = null,
-                stampBoardGroup = "complete"     // 진행 중 todo: enum class
-            )
+//        stampViewModel.checkHasLinkedUser(accessToken = getAccessTokenOrNull() ?: "")
+//        val hasLinkedUser = stampViewModel.hasLinkedUser.value?.data
+//        if (hasLinkedUser == true) {
+//            // 도장판 조회
+//            stampViewModel.getStampBoardList(
+//                accessToken = getAccessTokenOrNull() ?: "",
+//                linkedMemberId = null,
+//                stampBoardGroup = "complete"     // 진행 중 todo: enum class
+//            )
 
 //            // 바텀시트
 //            binding.selectTxt.text = "전체"
@@ -55,46 +55,46 @@ class ProtectorCompletedFragment : BaseFragment<FragmentCompletedBinding>() {
 //                rvAdapter.notifyDataSetChanged()
 //                binding.stampListRefresh.isRefreshing = false
 //            }
-        }
-    }
+//        }
+//    }
 
-    override fun initObserver() {
-        super.initObserver()
-        // 연동된 사용자 있는지 확인
-        stampViewModel.hasLinkedUser.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is ModelState.Success -> {
-                    val hasLinkedUser = state.data
-                    binding.hasLinkedUser = hasLinkedUser
-                }
-
-                is ModelState.Error -> {
-                    // todo: 에러 페이지
-                }
-
-                is ModelState.Loading -> {
-                    // todo: 스켈레톤
-                }
-            }
-        }
-
-        // 도장판 목록 조회
-        stampViewModel.stampBoardList.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is ModelState.Success -> {
-                    val data = state.data
-//                    rvAdapter = MainStampAdapter(listOf(data), this)
-//                    rvAdapter.setStampList(listOf(data))
-                }
-
-                is ModelState.Error -> {
-                    // todo: 에러
-                }
-
-                is ModelState.Loading -> {
-                    // todo: 로딩 스켈레톤
-                }
-            }
-        }
-    }
+//    override fun initObserver() {
+//        super.initObserver()
+//        // 연동된 사용자 있는지 확인
+//        stampViewModel.hasLinkedUser.observe(viewLifecycleOwner) { state ->
+//            when (state) {
+//                is ModelState.Success -> {
+//                    val hasLinkedUser = state.data
+//                    binding.hasLinkedUser = hasLinkedUser
+//                }
+//
+//                is ModelState.Error -> {
+//                    // todo: 에러 페이지
+//                }
+//
+//                is ModelState.Loading -> {
+//                    // todo: 스켈레톤
+//                }
+//            }
+//        }
+//
+//        // 도장판 목록 조회
+//        stampViewModel.stampBoardList.observe(viewLifecycleOwner) { state ->
+//            when (state) {
+//                is ModelState.Success -> {
+//                    val data = state.data
+////                    rvAdapter = MainStampAdapter(listOf(data), this)
+////                    rvAdapter.setStampList(listOf(data))
+//                }
+//
+//                is ModelState.Error -> {
+//                    // todo: 에러
+//                }
+//
+//                is ModelState.Loading -> {
+//                    // todo: 로딩 스켈레톤
+//                }
+//            }
+//        }
+//    }
 }

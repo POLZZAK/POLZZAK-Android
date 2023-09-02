@@ -48,12 +48,14 @@ class MainStampPagerAdapter(
         private val curCnt = binding.stampCurCnt
         private val totalCnt = binding.stampTotalCnt
         private val reward = binding.rawardContent
+        private val stampReq = binding.stampReqTimes
 
         fun bind(item: StampBoardSummaryModel) {
             userHeaderTxt.text = item.name
             curCnt.text = item.currentStampCount.toString()
             totalCnt.text = item.goalStampCount.toString()
             reward.text = item.reward
+            stampReq.text = item.missionRequestCount.toString()
 
             interaction.setProgressAnim(
                 curCnt = item.currentStampCount,

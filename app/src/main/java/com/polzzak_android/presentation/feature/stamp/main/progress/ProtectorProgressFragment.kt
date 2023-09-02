@@ -1,28 +1,35 @@
 package com.polzzak_android.presentation.feature.stamp.main.progress
 
 import android.os.Bundle
+import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import androidx.viewpager2.widget.ViewPager2
-import com.kakao.sdk.common.util.Utility
 import com.polzzak_android.R
-import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.presentation.common.util.stampProgressCalculator
 import com.polzzak_android.databinding.FragmentProgressBinding
 import com.polzzak_android.presentation.common.adapter.MainStampAdapter
 import com.polzzak_android.presentation.common.adapter.MainStampPagerAdapter
+import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
-import com.polzzak_android.presentation.feature.stamp.main.protector.StampViewModel
+import com.polzzak_android.presentation.common.util.stampProgressCalculator
 import com.polzzak_android.presentation.component.SemiCircleProgressView
+import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
+import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
+import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
+import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserStampBoardModel
+import com.polzzak_android.presentation.component.bottomsheet.model.toSelectUserStampBoardModel
+import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.feature.stamp.intercation.MainProgressInteraction
-import com.polzzak_android.presentation.feature.stamp.model.PartnerModel
-import com.polzzak_android.presentation.feature.stamp.model.StampBoardModel
+import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
+import com.polzzak_android.presentation.feature.stamp.main.protector.StampViewModel
 import com.polzzak_android.presentation.feature.stamp.model.StampBoardSummaryModel
-import timber.log.Timber
+
 
 class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainProgressInteraction {
 
@@ -30,6 +37,8 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
 
     private var rvAdapter: MainStampAdapter = MainStampAdapter(emptyList(), this)
     private lateinit var vpAdapter: MainStampPagerAdapter
+
+    private val linkedUserViewModel: StampLinkedUserViewModel by activityViewModels()
     private val stampViewModel: StampViewModel by activityViewModels()
 
     companion object {
@@ -52,29 +61,27 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         super.initView()
 
         binding.lifecycleOwner = this
+        binding.fragment = this
 
         setAdapter()
 
-        stampViewModel.checkHasLinkedUser(accessToken = getAccessTokenOrNull() ?: "")
-        val hasLinkedUser = stampViewModel.hasLinkedUser.value?.data
-        if (hasLinkedUser == true) {
+        linkedUserViewModel.requestLinkedUserList(accessToken = getAccessTokenOrNull() ?: "")
+        val hasLinkedUser = linkedUserViewModel.hasLinkedUser
+        if (hasLinkedUser) {
             // 도장판 조회
-            stampViewModel.getStampBoardList(
+            stampViewModel.requestStampBoardList(
                 accessToken = getAccessTokenOrNull() ?: "",
                 linkedMemberId = null,
                 stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
             )
 
-            // 바텀시트
-            binding.selectTxt.text = "전체"
-            binding.selectContainer.setOnClickListener {
-                // todo: 바텀시트 연결
-            }
-
             // 당겨서 리프레시
             binding.stampListRefresh.setOnRefreshListener {
-                rvAdapter.notifyDataSetChanged()
-                binding.stampListRefresh.isRefreshing = false
+                stampViewModel.requestStampBoardList(
+                    accessToken = getAccessTokenOrNull() ?: "",
+                    linkedMemberId = null,
+                    stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
+                )
             }
         }
     }
@@ -82,15 +89,15 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
     override fun initObserver() {
         super.initObserver()
         // 연동된 사용자 있는지 확인
-        stampViewModel.hasLinkedUser.observe(viewLifecycleOwner) { state ->
+        linkedUserViewModel.linkedUserList.observe(viewLifecycleOwner) { state ->
             when (state) {
                 is ModelState.Success -> {
-                    val hasLinkedUser = state.data
+                    val hasLinkedUser = linkedUserViewModel.hasLinkedUser
                     binding.hasLinkedUser = hasLinkedUser
 
                     if (hasLinkedUser) {
                         // 도장판 조회
-                        stampViewModel.getStampBoardList(
+                        stampViewModel.requestStampBoardList(
                             accessToken = getAccessTokenOrNull() ?: "",
                             linkedMemberId = null,
                             stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
@@ -116,14 +123,18 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
                     // todo: 바인더블 어댑터로 변경
                     rvAdapter = MainStampAdapter(data, this)
                     binding.stampListRc.adapter = rvAdapter
+
+                    binding.skeletonLoadingView.visibility = View.GONE
                 }
 
                 is ModelState.Error -> {
                     // todo: 에러
+                    binding.skeletonLoadingView.visibility = View.GONE
                 }
 
                 is ModelState.Loading -> {
                     // todo: 로딩 스켈레톤
+                    binding.skeletonLoadingView.visibility = View.VISIBLE
                 }
             }
         }
@@ -131,10 +142,50 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
 
     private fun setAdapter() {
         binding.stampListRc.adapter = rvAdapter
-        binding.stampListRc.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.stampListRc.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
-    override fun setViewPager(view: ViewPager2, curInd: TextView, totalInd: TextView, stampList: List<StampBoardSummaryModel>?) {
+    fun clickUserFilter() {
+        val userList = linkedUserViewModel.getLinkedUserList()
+
+        if (userList != null) {
+            CommonBottomSheetHelper.getInstance(
+                data = CommonBottomSheetModel(
+                    type = BottomSheetType.SELECT_STAMP_BOARD,
+                    title = "누구의 도장판을 볼까요?",
+                    contentList = userList.map { it.toSelectUserStampBoardModel() },
+                    button = CommonButtonModel(
+                        buttonCount = ButtonCount.ZERO
+                    )
+                ),
+                onClickListener = {
+                    object : OnButtonClickListener {
+                        override fun setBusinessLogic() {}
+
+                        override fun getReturnValue(value: Any) {
+                            val selectedUserInfo = (value as SelectUserStampBoardModel)
+                            binding.selectContainer.visibility = View.GONE
+
+                            stampViewModel.requestStampBoardList(
+                                accessToken = getAccessTokenOrNull() ?: "",
+                                linkedMemberId = selectedUserInfo.userId.toString(),
+                                stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
+                            )
+                        }
+
+                    }
+                }
+            ).show(childFragmentManager, null)
+        }
+    }
+
+    override fun setViewPager(
+        view: ViewPager2,
+        curInd: TextView,
+        totalInd: TextView,
+        stampList: List<StampBoardSummaryModel>?
+    ) {
         // todo: adapter 임시
         vpAdapter = MainStampPagerAdapter(stampList, this)
         view.adapter = vpAdapter
