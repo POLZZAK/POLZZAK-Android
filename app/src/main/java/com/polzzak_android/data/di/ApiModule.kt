@@ -3,7 +3,10 @@ package com.polzzak_android.data.di
 import com.polzzak_android.BuildConfig
 import com.polzzak_android.data.remote.service.GoogleOAuthService
 import com.polzzak_android.data.remote.service.AuthService
+import com.polzzak_android.data.remote.service.CouponService
 import com.polzzak_android.data.remote.service.StampBoardService
+import com.polzzak_android.data.repository.CouponRepository
+import com.polzzak_android.data.repository.CouponRepositoryImpl
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.SignUpRepository
 import com.polzzak_android.data.repository.StampBoardRepository
@@ -84,4 +87,15 @@ object ApiModule {
     @Provides
     fun provideStampBoardService(@Named("Polzzak") retrofit: Retrofit): StampBoardService =
         retrofit.create(StampBoardService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideCouponRepository(
+        couponService: CouponService
+    ): CouponRepository = CouponRepositoryImpl(couponService = couponService)
+
+    @Singleton
+    @Provides
+    fun provideCouponService(@Named("Polzzak") retrofit: Retrofit): CouponService =
+        retrofit.create(CouponService::class.java)
 }

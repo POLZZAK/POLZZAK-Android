@@ -3,6 +3,7 @@ package com.polzzak_android.presentation.feature.coupon.main.content
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -11,6 +12,9 @@ import com.polzzak_android.databinding.FragmentCouponContentBinding
 import com.polzzak_android.presentation.common.adapter.MainCouponAdapter
 import com.polzzak_android.presentation.common.adapter.MainCouponPagerAdapter
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.feature.coupon.main.protector.CouponViewModel
 import com.polzzak_android.presentation.feature.coupon.model.Coupon
 import com.polzzak_android.presentation.feature.coupon.model.CouponModel
 import com.polzzak_android.presentation.feature.coupon.model.CouponPartner
@@ -20,6 +24,8 @@ class CouponContentFragment(private val state: String) : BaseFragment<FragmentCo
 
     private lateinit var rvAdapter: MainCouponAdapter
     private lateinit var vpAdapter: MainCouponPagerAdapter
+
+    private val couponViewModel: CouponViewModel by activityViewModels()
 
     companion object {
         @JvmStatic
@@ -32,54 +38,37 @@ class CouponContentFragment(private val state: String) : BaseFragment<FragmentCo
         super.initView()
 
         setAdapter()
+
+        couponViewModel.requestCouponList(
+            token = getAccessTokenOrNull() ?: "",
+            couponState = state,
+            memberId = null
+        )
     }
 
     private fun setAdapter() {
-        val dummy = listOf<Coupon>(
-            Coupon(
-                type = 2,
-                CouponPartner(
-                    isKid = false,
-                    memberId = 2,
-                    memberType = "ECT",
-                    nickname = " 연동o도장판o",
-                ),
-                listOf<CouponModel>(
-                    CouponModel(
-                        id = 10,
-                        name = "도장판 이름1",
-                        dDay = "보상1",
-                        deadLine = "test"
-                    ),
-                    CouponModel(
-                        id = 10,
-                        name = "도장판 이름2",
-                        dDay = "보상2",
-                        deadLine = "test"
-                    ),
-                ),
-            ),
-            Coupon(
-                type = 1,
-                CouponPartner(
-                    isKid = false,
-                    memberId = 1,
-                    memberType = "ECT",
-                    nickname = "연동o도장판x11",
-                ),
-                listOf<CouponModel>(
-
-                ),
-            )
-        )
-
-        rvAdapter = MainCouponAdapter(dummy, this)
-        binding.couponListRc.adapter = rvAdapter
         binding.couponListRc.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
     override fun initObserver() {
         super.initObserver()
+        couponViewModel.couponList.observe(viewLifecycleOwner) { state ->
+            when(state) {
+                is ModelState.Success -> {
+                    val data = state.data
+                    rvAdapter = MainCouponAdapter(data, this)
+                    binding.couponListRc.adapter = rvAdapter
+                }
+
+                is ModelState.Error -> {
+                    // todo: 에러
+                }
+
+                is ModelState.Loading -> {
+                    // todo: 로딩
+                }
+            }
+        }
     }
 
     override fun setViewPager(

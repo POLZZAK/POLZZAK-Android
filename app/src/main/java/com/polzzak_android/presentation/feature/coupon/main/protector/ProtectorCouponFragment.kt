@@ -12,8 +12,8 @@ import com.polzzak_android.presentation.feature.stamp.main.progress.ProtectorPro
 class ProtectorCouponFragment : BaseFragment<FragmentProtectorCouponBinding>() {
     override val layoutResId: Int = R.layout.fragment_protector_coupon
 
-    private val previousCouponFragment = CouponContentFragment.getInstance("previous")      // todo
-    private val receivedCouponFragment = CouponContentFragment.getInstance("received")      // todo
+    private val previousCouponFragment = CouponContentFragment.getInstance("issued")      // todo
+    private val receivedCouponFragment = CouponContentFragment.getInstance("rewarded")      // todo
 
     override fun initView() {
         super.initView()

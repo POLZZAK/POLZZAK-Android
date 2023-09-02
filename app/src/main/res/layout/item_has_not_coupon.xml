@@ -69,8 +69,8 @@
                 android:gravity="center"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="4dp"
-                android:textColor="@color/black"
-                tools:text="쿠폰이 없어요" />
+                android:text="쿠폰이 없어요"
+                android:textColor="@color/black" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
