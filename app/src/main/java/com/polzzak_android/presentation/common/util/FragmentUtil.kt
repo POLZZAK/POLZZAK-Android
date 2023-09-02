@@ -25,3 +25,5 @@ fun Fragment.hideKeyboard() {
         }
     }
 }
+
+fun Fragment.getPermissionManagerOrNull() = (activity as? MainActivity)?.permissionManager
