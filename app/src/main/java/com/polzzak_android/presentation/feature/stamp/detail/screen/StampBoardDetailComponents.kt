@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -52,10 +53,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.polzzak_android.presentation.component.BlueChip
 import com.polzzak_android.presentation.component.PolzzakButton
 import com.polzzak_android.presentation.common.compose.Blue150
 import com.polzzak_android.presentation.common.compose.Blue200
+import com.polzzak_android.presentation.common.compose.Blue500
 import com.polzzak_android.presentation.common.compose.Blue600
 import com.polzzak_android.presentation.common.compose.Gray200
 import com.polzzak_android.presentation.common.compose.Gray300
@@ -84,14 +85,28 @@ fun StampBoardHeader(
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(25.dp))
-        BlueChip(text = chipText)
+        Column {
+            Spacer(modifier = Modifier.height(2.dp))
+            BlueChip(text = chipText)
+        }
     }
 }
+
+@Composable
+fun BlueChip(text: String) = Text(
+    text = text,
+    color = Color.White,
+    style = PolzzakTheme.typography.semiBold16,
+    modifier = Modifier
+        .clip(RoundedCornerShape(corner = CornerSize(6.dp)))
+        .background(color = Blue500)
+        .padding(horizontal = 8.dp, vertical = 4.dp)
+)
 
 @Preview
 @Composable
 private fun StampBoardHeaderPreview() {
-    StampBoardHeader(title = "도장판 상세상세상세상세상세상세상세상세상세상세상", chipText = "D+9")
+    StampBoardHeader(title = "엄청 엄청 엄청 엄청 엄청 엄청 기이이이인 도장판 이름", chipText = "D+9")
 }
 
 

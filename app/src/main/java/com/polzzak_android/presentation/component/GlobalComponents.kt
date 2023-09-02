@@ -173,26 +173,6 @@ fun ButtonPreview() {
 }
 
 /**
- * 폴짝 앱 공통 Chip
- */
-@Composable
-fun BlueChip(text: String) = Text(
-    text = text,
-    color = Color.White,
-    style = PolzzakTheme.typography.semiBold16,
-    modifier = Modifier
-        .clip(RoundedCornerShape(corner = CornerSize(6.dp)))
-        .background(color = Blue500)
-        .padding(horizontal = 8.dp, vertical = 4.dp)
-)
-
-@Preview
-@Composable
-private fun BlueChipPreview() {
-    BlueChip(text = "D+9")
-}
-
-/**
  * 알림 바
  */
 @Composable
