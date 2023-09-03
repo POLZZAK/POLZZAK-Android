@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.myPage.notice
 
+import android.os.Bundle
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,10 +18,11 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.feature.myPage.notice.item.MyNoticeEmptyItem
 import com.polzzak_android.presentation.feature.myPage.notice.item.MyNoticeItem
+import com.polzzak_android.presentation.feature.myPage.notice.model.MyNoticeModel
 import com.polzzak_android.presentation.feature.myPage.notice.model.MyNoticesModel
 
 //TODO 바텀네비 invisible
-class MyNoticeFragment : BaseFragment<FragmentMyNoticeBinding>() {
+class MyNoticeFragment : BaseFragment<FragmentMyNoticeBinding>(), MyNoticeClickListener {
     override val layoutResId: Int = R.layout.fragment_my_notice
 
     private val noticeViewModel by viewModels<MyNoticeViewModel>()
@@ -81,8 +83,15 @@ class MyNoticeFragment : BaseFragment<FragmentMyNoticeBinding>() {
     }
 
     private fun createNoticeItem(model: MyNoticesModel) = model.notices.map {
-        MyNoticeItem(model = it)
+        MyNoticeItem(model = it, clickListener = this)
     }.ifEmpty { listOf(MyNoticeEmptyItem()) }
+
+    override fun onClickNotice(model: MyNoticeModel) {
+        val bundle = Bundle().apply {
+            putParcelable(MyNoticeDetailFragment.ARGUMENT_NOTICE_KEY, model)
+        }
+        findNavController().navigate(R.id.action_myNoticeFragment_to_myNoticeDetailFragment, bundle)
+    }
 
     companion object {
         private const val ITEM_MARGIN_DP = 16

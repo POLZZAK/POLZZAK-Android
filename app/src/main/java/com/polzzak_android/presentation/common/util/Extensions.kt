@@ -39,7 +39,7 @@ fun LocalDateTime.getRemainingSeconds(): Int {
  * 3개월 이상 1년 미만의 공지: O개월 전 (ex. 3개월 전 ~ 11개월 전)
  * 1년 이상이 지난 공지: 1년 단위로 카운팅(ex. 1년 전, 2년 전)
  */
-fun LocalDate.toDateString(): String {
+fun LocalDate.toPublishedDateString(): String {
     val nowDate = LocalDate.now()
     val diff = Period.between(this, nowDate)
     val getDateStr = { date: Int -> String.format("%02d", date) }

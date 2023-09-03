@@ -86,5 +86,16 @@
         android:id="@+id/myNoticeFragment"
         android:name="com.polzzak_android.presentation.feature.myPage.notice.MyNoticeFragment"
         android:label="MyNoticeFragment"
-        tools:layout="@layout/fragment_my_notice" />
+        tools:layout="@layout/fragment_my_notice">
+
+        <action
+            android:id="@+id/action_myNoticeFragment_to_myNoticeDetailFragment"
+            app:destination="@id/myNoticeDetailFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/myNoticeDetailFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.notice.MyNoticeDetailFragment"
+        android:label="MyNoticeDetailFragment"
+        tools:layout="@layout/fragment_my_notice_detail"/>
 </navigation>
