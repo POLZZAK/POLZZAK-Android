@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@drawable/shape_rectangle_white_stroke_gray_200_r8"
         android:padding="16dp">
 
         <TextView

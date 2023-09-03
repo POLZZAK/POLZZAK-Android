@@ -50,7 +50,7 @@ class MyNoticeFragment : BaseFragment<FragmentMyNoticeBinding>(), MyNoticeClickL
         with(binding.rvNotices) {
             layoutManager = LinearLayoutManager(context)
             adapter = BindableItemAdapter()
-            val marginPx = ITEM_MARGIN_DP.toPx(context)
+            val marginPx = NOTICE_ITEM_MARGIN_DP.toPx(context)
             addItemDecoration(MyNoticeItemDecoration(marginPx = marginPx))
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -94,7 +94,7 @@ class MyNoticeFragment : BaseFragment<FragmentMyNoticeBinding>(), MyNoticeClickL
     }
 
     companion object {
-        private const val ITEM_MARGIN_DP = 16
+        private const val NOTICE_ITEM_MARGIN_DP = 8
     }
 
 }
