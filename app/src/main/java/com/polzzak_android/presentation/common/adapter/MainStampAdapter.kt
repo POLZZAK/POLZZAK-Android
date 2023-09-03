@@ -10,10 +10,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampNonBinding
 import com.polzzak_android.databinding.ItemStampYesBinding
 import com.polzzak_android.presentation.feature.stamp.intercation.MainProgressInteraction
-import com.polzzak_android.presentation.feature.stamp.model.StampBoard
+import com.polzzak_android.presentation.feature.stamp.model.StampBoardModel
 
-class MainStampAdapter(private val dummy: List<StampBoard>, private val interaction: MainProgressInteraction) :
-    ListAdapter<StampBoard, RecyclerView.ViewHolder>(DiffCallback) {
+class MainStampAdapter(private val dummy: List<StampBoardModel>, private val interaction: MainProgressInteraction) :
+    ListAdapter<StampBoardModel, RecyclerView.ViewHolder>(DiffCallback) {
 
     private var stampList = dummy
     //private var stampList: listOf<StampInfo>() = null
@@ -58,7 +58,7 @@ class MainStampAdapter(private val dummy: List<StampBoard>, private val interact
         return stampList[position].type
     }
 
-    fun setStampList(newList: List<StampBoard>) {
+    fun setStampList(newList: List<StampBoardModel>) {
         stampList = newList
         notifyDataSetChanged()
     }
@@ -66,11 +66,11 @@ class MainStampAdapter(private val dummy: List<StampBoard>, private val interact
     inner class NonViewHolder(private val binding: ItemStampNonBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: StampBoard) {
+        fun bind(item: StampBoardModel) {
             with(binding) {
                 // TODO: 멤버 타입 라벨 표시
-                userNickNameHeader.text = item.partner.nickname
-                userNickNameContent.text = item.partner.nickname
+                userNickNameHeader.text = item.partner?.nickname
+                userNickNameContent.text = item.partner?.nickname
             }
         }
     }
@@ -99,22 +99,22 @@ class MainStampAdapter(private val dummy: List<StampBoard>, private val interact
             }
         }
 
-        fun bind(item: StampBoard) {
+        fun bind(item: StampBoardModel) {
             with(binding) {
                 // TODO: 멤버타입 라벨 표시
-                userNickName.text = item.partner.nickname
+                userNickName.text = item.partner?.nickname
                 interaction.setViewPager(stampPager, curPage, totalPage, item.stampBoardSummaries)
             }
         }
     }
 
     companion object {
-        private val DiffCallback = object : DiffUtil.ItemCallback<StampBoard>() {
-            override fun areItemsTheSame(oldItem: StampBoard, newItem: StampBoard): Boolean {
-                return oldItem.partner.memberId == newItem.partner.memberId
+        private val DiffCallback = object : DiffUtil.ItemCallback<StampBoardModel>() {
+            override fun areItemsTheSame(oldItem: StampBoardModel, newItem: StampBoardModel): Boolean {
+                return oldItem.partner?.memberId == newItem.partner?.memberId
             }
 
-            override fun areContentsTheSame(oldItem: StampBoard, newItem: StampBoard): Boolean {
+            override fun areContentsTheSame(oldItem: StampBoardModel, newItem: StampBoardModel): Boolean {
                 return oldItem == newItem
             }
         }

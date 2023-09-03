@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.stamp.main.protector
 
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
@@ -14,14 +15,37 @@ import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel
 import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
+import com.polzzak_android.presentation.component.toolbar.ToolbarData
+import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
+import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.stamp.main.completed.ProtectorCompletedFragment
 import com.polzzak_android.presentation.feature.stamp.main.progress.ProtectorProgressFragment
 
-class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>() {
+class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_protector_main
 
     private val protectorProgressFragment = ProtectorProgressFragment.getInstance()
     private val protectorCompletedFragment = ProtectorCompletedFragment.getInstance()
+
+    private lateinit var toolbarHelper: ToolbarHelper
+
+    override fun setToolbar() {
+        super.setToolbar()
+
+        toolbarHelper = ToolbarHelper(
+            data = ToolbarData(
+                popStack = findNavController(),
+                iconImageId = R.drawable.ic_main_linked,
+                iconInteraction = this
+            ),
+            toolbar = binding.toolbar
+        )
+
+        with(toolbarHelper) {
+            set()
+            hideBackButton()
+        }
+    }
 
     override fun initView() {
         super.initView()
@@ -61,5 +85,10 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>() {
             }
 
         })
+    }
+
+    override fun onToolbarIconClicked() {
+        // todo: 연동 페이지 이동
+        Toast.makeText(requireContext(), "연동 페이지 이동", Toast.LENGTH_SHORT).show()
     }
 }

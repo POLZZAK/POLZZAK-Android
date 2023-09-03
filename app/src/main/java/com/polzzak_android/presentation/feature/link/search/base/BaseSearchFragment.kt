@@ -84,7 +84,8 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
 
     private fun initCommonView() {
         with(binding) {
-            tvTitle.text = context?.getString(R.string.search_title, targetLinkTypeStringOrEmpty)
+            val title = context?.getString(R.string.search_title, targetLinkTypeStringOrEmpty)
+            inToolbar.toolbarTitle.text = title
             ivBtnClearText.setOnClickListener {
                 etSearch.setText("")
             }

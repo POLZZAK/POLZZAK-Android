@@ -1,15 +1,22 @@
 package com.polzzak_android.data.di
 
+import android.content.Context
 import com.polzzak_android.BuildConfig
-import com.polzzak_android.data.remote.service.GoogleOAuthService
 import com.polzzak_android.data.remote.service.AuthService
+import com.polzzak_android.data.remote.service.CouponService
 import com.polzzak_android.data.remote.service.StampBoardService
+import com.polzzak_android.data.repository.CouponRepository
+import com.polzzak_android.data.repository.CouponRepositoryImpl
+import com.polzzak_android.data.remote.service.GoogleOAuthService
+import com.polzzak_android.data.repository.LastSocialLoginRepository
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.SignUpRepository
 import com.polzzak_android.data.repository.StampBoardRepository
+import com.polzzak_android.data.repository.StampBoardRepositoryImpl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -70,6 +77,11 @@ object ApiModule {
 
     @Singleton
     @Provides
+    fun provideLastSocialLoginRepository(@ApplicationContext context: Context): LastSocialLoginRepository =
+        LastSocialLoginRepository(context)
+
+    @Singleton
+    @Provides
     fun provideSignUpRepository(
         authService: AuthService
     ): SignUpRepository = SignUpRepository(authService = authService)
@@ -78,10 +90,21 @@ object ApiModule {
     @Provides
     fun provideStampBoardRepository(
         stampBoardService: StampBoardService
-    ): StampBoardRepository = StampBoardRepository(stampBoardService = stampBoardService)
+    ): StampBoardRepository = StampBoardRepositoryImpl(stampBoardService = stampBoardService)
 
     @Singleton
     @Provides
     fun provideStampBoardService(@Named("Polzzak") retrofit: Retrofit): StampBoardService =
         retrofit.create(StampBoardService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideCouponRepository(
+        couponService: CouponService
+    ): CouponRepository = CouponRepositoryImpl(couponService = couponService)
+
+    @Singleton
+    @Provides
+    fun provideCouponService(@Named("Polzzak") retrofit: Retrofit): CouponService =
+        retrofit.create(CouponService::class.java)
 }
