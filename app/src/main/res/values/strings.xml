@@ -26,6 +26,7 @@
     <string name="common_accept">수락</string>
     <string name="common_reject">거절</string>
     <string name="common_notification">알림</string>
+    <string name="common_notice">공지사항</string>
 
     <!-- Login -->
     <string name="login_title">참 잘 했어요 도장 쾅!</string>
@@ -162,5 +163,6 @@
     <string name="notification_setting_check_delivery_gift_title">선물 전달 확인 알림</string>
     <string name="notification_setting_check_delivery_gift_content">선물 전달이 완료되었는지 확인하는 알림을 받을래요</string>
 
-
+    <!-- my notice -->
+    <string name="my_notice_empty">업데이트된 소식이 없어요</string>
 </resources>

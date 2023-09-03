@@ -59,6 +59,18 @@
         <fragment
             android:id="@+id/kidMyPageFragment"
             android:name="com.polzzak_android.presentation.feature.myPage.kid.KidMyPageFragment"
-            android:label="KidMyPageFragment" />
+            android:label="KidMyPageFragment">
+
+            <action
+                android:id="@+id/action_kidMyPageFragment_to_myNoticeFragment"
+                app:destination="@id/myNoticeFragment"/>
+        </fragment>
+
+        <fragment
+            android:id="@+id/myNoticeFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.notice.MyNoticeFragment"
+            android:label="MyNoticeFragment" />
     </navigation>
+
+
 </navigation>

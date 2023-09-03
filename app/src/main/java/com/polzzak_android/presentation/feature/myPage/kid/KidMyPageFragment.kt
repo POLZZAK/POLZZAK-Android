@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.myPage.kid
 
+import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.databinding.FragmentKidMyPageBinding
@@ -73,7 +74,7 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickNotice() {
-        // todo: 공지사항 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_myNoticeFragment)
     }
 
     fun onClickManageAccount() {

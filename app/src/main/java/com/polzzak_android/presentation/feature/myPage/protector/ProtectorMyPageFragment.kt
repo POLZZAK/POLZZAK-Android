@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.myPage.protector
 
+import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentProtectorMyPageBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -32,7 +33,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
         setUpPointView()
     }
 
-    private fun setUpPointView(){
+    private fun setUpPointView() {
         with(binding.pointRanking) {
             text = "폴짝 랭킹"
             icon.setImageResource(R.drawable.ic_point_rank)
@@ -74,7 +75,8 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickNotice() {
-        // todo: 공지사항 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_myNoticeFragment)
+
     }
 
     fun onClickManageAccount() {

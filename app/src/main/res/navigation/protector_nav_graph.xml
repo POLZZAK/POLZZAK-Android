@@ -75,5 +75,16 @@
         android:id="@+id/protectorMyPageFragment"
         android:name="com.polzzak_android.presentation.feature.myPage.protector.ProtectorMyPageFragment"
         android:label="ProtectorMyPageFragment"
-        tools:layout="@layout/fragment_protector_my_page"/>
+        tools:layout="@layout/fragment_protector_my_page">
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_myNoticeFragment"
+            app:destination="@id/myNoticeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/myNoticeFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.notice.MyNoticeFragment"
+        android:label="MyNoticeFragment"
+        tools:layout="@layout/fragment_my_notice" />
 </navigation>
