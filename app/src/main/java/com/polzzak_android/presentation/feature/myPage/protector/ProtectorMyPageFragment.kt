@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.myPage.protector
 
+import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentProtectorMyPageBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -70,7 +71,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickCustomerService() {
-        // todo: 고객센터 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_protectorCSFragment)
     }
 
     fun onClickNotice() {
