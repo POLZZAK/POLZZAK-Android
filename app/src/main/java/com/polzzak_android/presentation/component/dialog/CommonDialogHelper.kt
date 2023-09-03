@@ -8,8 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.polzzak_android.R
@@ -18,6 +16,7 @@ import com.polzzak_android.databinding.CommonDialogBinding
 import com.polzzak_android.databinding.ItemDialogMissionListBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.common.util.getCurrentDate
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
 /**
@@ -32,6 +31,8 @@ class CommonDialogHelper(
     private var onCancelListener: (() -> OnButtonClickListener)? = null,
     private var onConfirmListener: (() -> OnButtonClickListener)? = null,
 ) : DialogFragment() {
+
+    private var selectedDate: SelectedDateModel = getCurrentDate()
 
     companion object {
         fun getInstance(
@@ -76,6 +77,10 @@ class CommonDialogHelper(
         binding.data = content
         binding.dialogMission.missionData = content.content.mission
 
+        if (content.type == DialogStyleType.CALENDAR) {
+            setCalendarDateListener()
+        }
+
         if (content.type == DialogStyleType.STAMP) {
             binding.dialogStamp.setImageResource(content.content.stampImg!!)
         }
@@ -99,12 +104,10 @@ class CommonDialogHelper(
         }
     }
 
-    private fun getCalendarDate(): String {
-        // todo: api 확정 후 변경
+    private fun setCalendarDateListener() {
         binding.dialogCalendar.dialogCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            selectedDate = selectedDate.copy(year = year, month = month, day = dayOfMonth)
         }
-
-        return "로직 테스트"
     }
 
     class MissionListItem(
@@ -135,9 +138,9 @@ class CommonDialogHelper(
 
         binding.dialogPositiveButton.setOnClickListener {
             onConfirmListener?.invoke()?.setBusinessLogic()
+
             if (content.type == DialogStyleType.CALENDAR) {
-                val result = getCalendarDate()
-                onConfirmListener?.invoke()?.getReturnValue(result)
+                onConfirmListener?.invoke()?.getReturnValue(selectedDate)
             }
             dismiss()
         }
