@@ -71,6 +71,10 @@ class CommonDialogHelper(
     private fun setData() {
         binding.data = content
         binding.dialogMission.missionData = content.content.mission
+
+        if (content.type == DialogStyleType.STAMP) {
+            binding.dialogStamp.setImageResource(content.content.stampImg!!)
+        }
     }
 
     private fun getCalendarDate(): String {
@@ -110,31 +114,5 @@ class CommonDialogHelper(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    object SetVisibility {
-        @JvmStatic
-        @BindingAdapter("setVisibility")
-        fun setVisibility(view: View, isVisible: Boolean) {
-            if (isVisible) {
-                view.visibility = View.VISIBLE
-            } else {
-                view.visibility = View.GONE
-            }
-        }
-
-        @JvmStatic
-        @BindingAdapter("setContainerVisibility")
-        fun ConstraintLayout.setDialogContainerVisibility(type: DialogStyleType) {
-            when (type) {
-                DialogStyleType.ALERT, DialogStyleType.LOADING -> {
-                    this.visibility = View.GONE
-                }
-
-                DialogStyleType.MISSION, DialogStyleType.CALENDAR -> {
-                    this.visibility = View.VISIBLE
-                }
-            }
-        }
     }
 }
