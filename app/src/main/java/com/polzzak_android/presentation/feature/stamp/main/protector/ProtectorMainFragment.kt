@@ -7,6 +7,14 @@ import com.google.android.material.tabs.TabLayout
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentProtectorMainBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.util.createStyledSpannable
+import com.polzzak_android.presentation.component.dialog.CommonDialogContent
+import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
+import com.polzzak_android.presentation.component.dialog.CommonDialogModel
+import com.polzzak_android.presentation.component.dialog.DialogStyleType
+import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction

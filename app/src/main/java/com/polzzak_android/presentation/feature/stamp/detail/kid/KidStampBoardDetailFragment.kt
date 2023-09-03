@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.feature.stamp.detail.kid
 
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.text.toSpannable
 import androidx.fragment.app.viewModels
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentKidStampBoardDetailBinding
@@ -60,7 +61,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
             content = CommonDialogModel(
                 type = DialogStyleType.MISSION,
                 content = CommonDialogContent(
-                    title = "미션 완료",
+                    title = "미션 완료".toSpannable(),
                     mission = CommonDialogMissionData(
                         img = "",
                         missionTitle = stamp.missionContent,

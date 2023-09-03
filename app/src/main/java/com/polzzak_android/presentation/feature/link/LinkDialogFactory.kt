@@ -35,7 +35,7 @@ class LinkDialogFactory {
                         context = context,
                         nickName = nickName,
                         content = context.getString(contentStringRes)
-                    ).toString(),
+                    ),
                     body = null
                 ),
                 button = CommonButtonModel(
@@ -77,7 +77,7 @@ class LinkDialogFactory {
                         context = context,
                         nickName = nickName,
                         content = content
-                    ).toString(),
+                    ),
                 ),
                 button = CommonButtonModel(
                     buttonCount = ButtonCount.ZERO,
