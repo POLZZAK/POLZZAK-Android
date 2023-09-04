@@ -31,13 +31,7 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
     override fun initView() {
         super.initView()
 
-        val boardId = arguments?.getInt("boardId", -1) ?: -1
-        Timber.d(">> boardId = $boardId")
-
-        viewModel.fetchStampBoardDetailData(
-            accessToken = getAccessTokenOrNull() ?: "",
-            stampBoardId = boardId
-        )
+        arguments?.putString("token", getAccessTokenOrNull())
 
         binding.composeView.apply {
             setContent {

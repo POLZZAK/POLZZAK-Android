@@ -29,6 +29,7 @@ import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.feature.stamp.intercation.MainProgressInteraction
 import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
 import com.polzzak_android.presentation.feature.stamp.main.protector.StampViewModel
+import com.polzzak_android.presentation.feature.stamp.model.PartnerModel
 import com.polzzak_android.presentation.feature.stamp.model.StampBoardSummaryModel
 
 
@@ -185,10 +186,11 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         view: ViewPager2,
         curInd: TextView,
         totalInd: TextView,
-        stampList: List<StampBoardSummaryModel>?
+        stampList: List<StampBoardSummaryModel>?,
+        partner: PartnerModel
     ) {
         // todo: adapter 임시
-        vpAdapter = MainStampPagerAdapter(stampList, this)
+        vpAdapter = MainStampPagerAdapter(dummy = stampList, interaction = this, partner = partner)
         view.adapter = vpAdapter
 
         // indicator
@@ -203,10 +205,14 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         })
     }
 
-    override fun onStampPagerClicked(stampBoardItem: StampBoardSummaryModel) {
+    override fun onStampPagerClicked(stampBoardItem: StampBoardSummaryModel, partner: PartnerModel) {
         findNavController().navigate(
-            R.id.action_to_stampBoardDetailFragment,
-            Bundle().apply { putInt("boardId", stampBoardItem.stampBoardId) }
+            resId = R.id.action_to_stampBoardDetailFragment,
+            args = Bundle().apply {
+                putInt("boardId", stampBoardItem.stampBoardId)
+                putInt("partnerId", partner.memberId)
+                putString("partnerType", partner.memberType)
+            }
         )
     }
 

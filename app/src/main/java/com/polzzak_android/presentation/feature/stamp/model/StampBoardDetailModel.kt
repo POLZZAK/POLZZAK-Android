@@ -6,6 +6,7 @@ import java.time.Duration
 import java.time.LocalDate
 
 data class StampBoardDetailModel(
+    val stampBoardId: Int,
     val stampBoardStatus: StampBoardStatus,
     val boardTitle: String,
     val dateCount: Int,
@@ -17,6 +18,7 @@ data class StampBoardDetailModel(
 )
 
 fun StampBoardDetailDto.toModel(): StampBoardDetailModel = StampBoardDetailModel(
+    stampBoardId = this.stampBoardId,
     stampBoardStatus = StampBoardStatus.getStatus(this.status) ?: StampBoardStatus.PROGRESS,
     boardTitle = this.name,
     dateCount = Duration.between(

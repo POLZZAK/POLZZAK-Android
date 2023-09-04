@@ -7,11 +7,11 @@ data class StampBoardModel(
 )
 
 data class PartnerModel(
-    val isKid: Boolean,
-    val memberId: Int,
-    val memberType: String,
-    val nickname: String,
-    val profileUrl: String
+    val isKid: Boolean = false,
+    val memberId: Int = -1,
+    val memberType: String = "",
+    val nickname: String = "",
+    val profileUrl: String = ""
 )
 
 data class StampBoardSummaryModel(

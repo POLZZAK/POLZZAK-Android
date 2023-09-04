@@ -1,6 +1,8 @@
 package com.polzzak_android.data.remote.service
 
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
+import com.polzzak_android.data.remote.model.request.StampRequest
+import com.polzzak_android.data.remote.model.response.EmptyDataResponse
 import com.polzzak_android.data.remote.model.response.MainStampBoardListResponse
 import com.polzzak_android.data.remote.model.response.MakeStampBoardResponse
 import com.polzzak_android.data.remote.model.response.StampBoardDetailResponse
@@ -31,4 +33,13 @@ interface StampBoardService {
         @Header("Authorization") token: String,
         @Path("stampBoardId") stampBoardId: Int
     ): Response<StampBoardDetailResponse>
+
+    /**
+     * 보호자에게 도장 요청 API
+     */
+    @POST("/api/v1/stamps/mission-requests")
+    suspend fun requestStampToProtector(
+        @Header("Authorization") token: String,
+        @Body stampRequest: StampRequest
+    ): Response<EmptyDataResponse>
 }

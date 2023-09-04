@@ -1,8 +1,10 @@
 package com.polzzak_android.presentation.feature.stamp.detail.kid
 
+import androidx.annotation.DrawableRes
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.text.toSpannable
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentKidStampBoardDetailBinding
@@ -15,14 +17,25 @@ import com.polzzak_android.presentation.component.dialog.CommonDialogModel
 import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
+import com.polzzak_android.presentation.common.util.createColoredSpannable
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
+import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
+import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
+import com.polzzak_android.presentation.component.dialog.FullLoadingDialog
+import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
-import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
+import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.format.DateTimeFormatter
 
@@ -33,6 +46,10 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
     private val viewModel: StampBoardDetailViewModel by viewModels()
 
     private lateinit var toolbarHelper: ToolbarHelper
+
+    private val loadingDialog: FullLoadingDialog by lazy {
+        FullLoadingDialog()
+    }
 
     override fun setToolbar() {
         super.setToolbar()
@@ -49,13 +66,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
     override fun initView() {
         super.initView()
 
-        val boardId = arguments?.getInt("boardId", -1) ?: -1
-        Timber.d(">> boardId = $boardId")
-
-        viewModel.fetchStampBoardDetailData(
-            accessToken = getAccessTokenOrNull() ?: "",
-            stampBoardId = boardId
-        )
+        arguments?.putString("token", getAccessTokenOrNull())
 
         binding.composeView.apply {
             setContent {
@@ -77,6 +88,9 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
         }
     }
 
+    /**
+     * 도장 정보 표시하는 다이얼로그 표시.
+     */
     private fun openStampInfoDialog(stamp: StampModel) {
         // TODO: 도장 이미지 표시
         CommonDialogHelper.getInstance(
@@ -98,7 +112,98 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
         ).show(childFragmentManager, "Dialog")
     }
 
-    private fun openStampRequestDialog() {
-        // TODO: 도장 요청 모달 열기 동작 구현 -> 바텀시트 나오면
+    /**
+     * 도장 요청 다이얼로그 표시.
+     */
+    private fun openStampRequestDialog() = viewModel.stampBoardData.value.data?.also {
+        val missionList = it.missionList
+
+        val bottomSheet = CommonBottomSheetHelper.getInstance(
+            data = CommonBottomSheetModel(
+                type = BottomSheetType.MISSION,
+                title = "도장 요청 보내기",
+                subTitle = "어떤 미션을 완료했나요?",
+                contentList = missionList,
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.TWO,
+                    negativeButtonText = "요청 취소",
+                    positiveButtonText = "요청하기"
+                )
+            ),
+            onClickListener = {
+                object : OnButtonClickListener {
+                    override fun setBusinessLogic() {
+                    }
+
+                    override fun getReturnValue(value: Any) {
+                        // 파라미터로 선택된 MissionModel이 옴
+                        val missionId = (value as MissionModel).id
+                        requestStamp(missionId)
+                    }
+                }
+            }
+        )
+
+        bottomSheet.show(childFragmentManager, null)
+    }
+
+    /**
+     * 보호자에게 도장 요청. 요청의 결과 받을 때 까지 로딩 화면 표시.
+     */
+    private fun requestStamp(missionId: Int) {
+        viewModel.requestStampToProtector(
+            accessToken = getAccessTokenOrNull() ?: "",
+            missionId = missionId,
+            onStart = {
+                loadingDialog.message = "도장 요청 중"
+                loadingDialog.show(childFragmentManager, null)
+            },
+            onCompletion = { exception ->
+                loadingDialog.dismiss()
+
+                if (exception == null) {
+                    // 성공
+                    val who = "${viewModel.partnerType}에게"
+                    openSuccessDialog(
+                        text = "$who\n도장을 요청했어요!",
+                        highlightedText = who,
+                        stampImageId = null     // TODO: 이미지 넘기기
+                    )
+                } else {
+                    // 실패
+                    exception.printStackTrace()
+                    // TODO: 바텀시트에 미션 미리 선택할 수 있는 기능 추가되면 구현하기
+                }
+            }
+        )
+    }
+
+    /**
+     * 요청 성공 다이얼로그 표시
+     */
+    private fun openSuccessDialog(
+        text: String,
+        highlightedText: String,
+        @DrawableRes stampImageId: Int? = null
+    ) {
+        CommonDialogHelper.getInstance(
+            content = CommonDialogModel(
+                type = DialogStyleType.STAMP,
+                content = CommonDialogContent(
+                    title = createColoredSpannable(
+                        context = requireContext(),
+                        fullText = text,
+                        targetText = highlightedText,
+                        fullTextColor = R.color.black,
+                        targetTextColor = R.color.primary_600
+                    ),
+                    stampImg = stampImageId ?: R.drawable.ic_setting    // TODO: 임시 null 처리
+                ),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.ONE,
+                    positiveButtonText = "닫기"
+                )
+            )
+        ).show(childFragmentManager, null)
     }
 }
