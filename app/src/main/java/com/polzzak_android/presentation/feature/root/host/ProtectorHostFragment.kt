@@ -37,6 +37,6 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>(),
     }
 
     override fun backToTheLoginFragment() {
-        findNavController().popBackStack(R.id.loginFragment, true)
+        findNavController().popBackStack(R.id.loginFragment, false)
     }
 }
