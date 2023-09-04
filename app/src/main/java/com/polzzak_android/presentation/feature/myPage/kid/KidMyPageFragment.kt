@@ -78,7 +78,7 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickManageAccount() {
-        // todo: 계정관리 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_myAccountManagementFragment)
     }
 
     fun onClickUsingTerms() {

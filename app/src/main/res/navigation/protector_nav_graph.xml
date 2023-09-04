@@ -80,6 +80,10 @@
         <action
             android:id="@+id/action_protectorMyPageFragment_to_myNoticeFragment"
             app:destination="@id/myNoticeFragment" />
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_myAccountManagementFragment"
+            app:destination="@id/myAccountManagementFragment" />
     </fragment>
 
     <fragment
@@ -97,5 +101,11 @@
         android:id="@+id/myNoticeDetailFragment"
         android:name="com.polzzak_android.presentation.feature.myPage.notice.MyNoticeDetailFragment"
         android:label="MyNoticeDetailFragment"
-        tools:layout="@layout/fragment_my_notice_detail"/>
+        tools:layout="@layout/fragment_my_notice_detail" />
+    <fragment
+        android:id="@+id/myAccountManagementFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment"
+        android:label="MyAccountManagementFragment"
+        tools:layout="@layout/fragment_my_account_management">
+    </fragment>
 </navigation>

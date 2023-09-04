@@ -80,7 +80,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickManageAccount() {
-        // todo: 계정관리 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_myAccountManagementFragment)
     }
 
     fun onClickUsingTerms() {
