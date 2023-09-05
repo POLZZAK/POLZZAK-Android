@@ -17,6 +17,7 @@ import com.polzzak_android.presentation.component.dialog.CommonDialogModel
 import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
+import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.createColoredSpannable
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
@@ -163,12 +164,18 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
 
                 if (exception == null) {
                     // 성공
-                    val who = "${viewModel.partnerType}에게"
-                    openSuccessDialog(
-                        text = "$who\n도장을 요청했어요!",
-                        highlightedText = who,
-                        stampImageId = null     // TODO: 이미지 넘기기
-                    )
+                    openSuccessDialog(stampImageId = null) {
+                        span(
+                            text = "${viewModel.partnerType}에게\n",
+                            style = R.style.subtitle_18_600,
+                            textColor = R.color.primary_600
+                        )
+                        span(
+                            text = "도장을 요청했어요!",
+                            style = R.style.subtitle_16_600,
+                            textColor = R.color.gray_800
+                        )
+                    }
                 } else {
                     // 실패
                     exception.printStackTrace()
@@ -182,20 +189,16 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
      * 요청 성공 다이얼로그 표시
      */
     private fun openSuccessDialog(
-        text: String,
-        highlightedText: String,
-        @DrawableRes stampImageId: Int? = null
+        @DrawableRes stampImageId: Int? = null,
+        titleText: SpannableBuilder.() -> Unit
     ) {
         CommonDialogHelper.getInstance(
             content = CommonDialogModel(
                 type = DialogStyleType.STAMP,
                 content = CommonDialogContent(
-                    title = createColoredSpannable(
+                    title = SpannableBuilder.build(
                         context = requireContext(),
-                        fullText = text,
-                        targetText = highlightedText,
-                        fullTextColor = R.color.black,
-                        targetTextColor = R.color.primary_600
+                        block = titleText
                     ),
                     stampImg = stampImageId ?: R.drawable.ic_setting    // TODO: 임시 null 처리
                 ),
