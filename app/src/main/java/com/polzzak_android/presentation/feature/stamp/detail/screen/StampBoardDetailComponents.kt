@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.stamp.detail.screen
 
+import android.util.Log
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -47,13 +48,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.polzzak_android.presentation.common.compose.Blue100
 import com.polzzak_android.presentation.component.PolzzakButton
 import com.polzzak_android.presentation.common.compose.Blue150
@@ -67,6 +71,7 @@ import com.polzzak_android.presentation.common.compose.Gray300
 import com.polzzak_android.presentation.common.compose.Gray400
 import com.polzzak_android.presentation.common.compose.Gray500
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
+import com.polzzak_android.presentation.common.compose.fixedSp
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 
@@ -333,7 +338,7 @@ fun StampBoxGridList(
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(count = columnCount),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 20.dp),
+        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalArrangement = Arrangement.spacedBy(itemsHorizontalGap),
         userScrollEnabled = false,
@@ -373,7 +378,7 @@ fun StampBoxGridList(
     }
 }
 
-@Preview
+@Preview()
 @Composable
 private fun StampBoxGridListPreview() {
     StampBoxGridList(totalCount = 40) { index ->
@@ -381,7 +386,6 @@ private fun StampBoxGridListPreview() {
     }
 }
 
-// 화면 크기에 따라 일정 비율로 늘어나고 줄어드는 수식 만들기 전까지 임시 조치
 private fun getColumnCount(stampCount: Int): Int = when (stampCount) {
     10, 12, 16, 20 -> 4
     25, 30, 40 -> 5
@@ -389,12 +393,14 @@ private fun getColumnCount(stampCount: Int): Int = when (stampCount) {
     else -> -1
 }
 
-// 화면 크기에 따라 일정 비율로 늘어나고 줄어드는 수식 만들기 전까지 임시 조치
-private fun getHorizontalGap(columnCount: Int): Dp = when (columnCount) {
-    4 -> 16.dp
-    5 -> 13.dp
-    6 -> 11.dp
-    else -> 0.dp
+@Composable
+private fun getHorizontalGap(columnCount: Int): Dp {
+    val config = LocalConfiguration.current
+    val screenWidth = config.screenWidthDp
+
+    val gap = (screenWidth / 5.86) / columnCount
+
+    return gap.dp
 }
 
 /**
@@ -443,7 +449,7 @@ fun SeeMore(
 ) {
     Text(
         text = if (expandedProvider()) toggleText.first else toggleText.second,
-        style = PolzzakTheme.typography.medium13,
+        style = PolzzakTheme.typography.medium13.copy(fontSize = 13.fixedSp),
         color = Gray500
     )
     Spacer(modifier = Modifier.width(4.dp))
@@ -533,7 +539,7 @@ fun EnabledEmptyStamp(
 ) {
     Text(
         text = numberText,
-        style = PolzzakTheme.typography.semiBold22,
+        style = PolzzakTheme.typography.regular20.copy(fontSize = 24.fixedSp),
         color = Blue600
     )
 }
@@ -561,7 +567,7 @@ fun DisabledEmptyStamp(
 ) {
     Text(
         text = numberText,
-        style = PolzzakTheme.typography.semiBold22,
+        style = PolzzakTheme.typography.regular20.copy(fontSize = 24.fixedSp),
         color = Gray400
     )
 }
