@@ -41,13 +41,13 @@
                 android:drawablePadding="8dp"
                 android:text="@string/signup_terms_of_service_agree_all"
                 android:textColor="@color/selector_signup_terms_of_service_checklist"
-                app:drawableStartCompat="@drawable/selector_signup_terms_of_service_check"
+                app:drawableStartCompat="@drawable/selector_menu_checked"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:drawableStart="@drawable/selector_signup_terms_of_service_check" />
+                tools:drawableStart="@drawable/selector_menu_checked" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -59,12 +59,12 @@
             android:drawablePadding="8dp"
             android:text="@string/signup_terms_of_service_agree_service"
             android:textColor="@color/selector_signup_terms_of_service_checklist"
-            app:drawableStartCompat="@drawable/selector_signup_terms_of_service_check"
+            app:drawableStartCompat="@drawable/selector_menu_checked"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/clCheckAll"
-            tools:drawableStart="@drawable/selector_signup_terms_of_service_check" />
+            tools:drawableStart="@drawable/selector_menu_checked" />
 
         <ImageView
             android:id="@+id/ivBtnServiceDetail"
@@ -85,12 +85,12 @@
             android:drawablePadding="8dp"
             android:text="@string/signup_terms_of_service_agree_privacy"
             android:textColor="@color/selector_signup_terms_of_service_checklist"
-            app:drawableStartCompat="@drawable/selector_signup_terms_of_service_check"
+            app:drawableStartCompat="@drawable/selector_menu_checked"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvBtnCheckService"
-            tools:drawableStart="@drawable/selector_signup_terms_of_service_check" />
+            tools:drawableStart="@drawable/selector_menu_checked" />
 
         <ImageView
             android:id="@+id/ivBtnPrivacyDetail"

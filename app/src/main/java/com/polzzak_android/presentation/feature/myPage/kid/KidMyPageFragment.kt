@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.myPage.kid
 
+import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -7,6 +8,7 @@ import com.polzzak_android.databinding.FragmentKidMyPageBinding
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
+import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment.Companion.ARGUMENT_NICKNAME_KEY
 
 class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_kid_my_page
@@ -78,7 +80,14 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickManageAccount() {
-        findNavController().navigate(R.id.action_kidMyPageFragment_to_myAccountManagementFragment)
+        //TODO 닉네임 추가
+        val bundle = Bundle().apply {
+            putString(ARGUMENT_NICKNAME_KEY, "nickname")
+        }
+        findNavController().navigate(
+            R.id.action_kidMyPageFragment_to_myAccountManagementFragment,
+            bundle
+        )
     }
 
     fun onClickUsingTerms() {

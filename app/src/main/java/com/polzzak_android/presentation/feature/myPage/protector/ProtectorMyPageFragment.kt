@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.myPage.protector
 
+import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentProtectorMyPageBinding
@@ -7,6 +8,7 @@ import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
+import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment
 
 class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     ToolbarIconInteraction {
@@ -80,7 +82,14 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickManageAccount() {
-        findNavController().navigate(R.id.action_protectorMyPageFragment_to_myAccountManagementFragment)
+        //TODO 닉네임 추가
+        val bundle = Bundle().apply {
+            putString(MyAccountManagementFragment.ARGUMENT_NICKNAME_KEY, "nickname")
+        }
+        findNavController().navigate(
+            R.id.action_protectorMyPageFragment_to_myAccountManagementFragment,
+            bundle
+        )
     }
 
     fun onClickUsingTerms() {

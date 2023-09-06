@@ -170,5 +170,16 @@
     <string name="my_account_management_delete_account">회원탈퇴</string>
     <string name="my_account_management_logout_dialog_title">정말로 로그아웃 하시겠어요?</string>
     <string name="my_account_management_logout_dialog_btn_positive">로그아웃 할래요</string>
+    <string name="my_account_management_delete_title">%s 회원님\n폴짝을 떠나시나요?</string>
+    <string name="my_account_management_delete_menu_guide">다음 안내사항을 확인하고 동의해주세요</string>
+    <string name="my_account_management_delete_menu_delete_social_account_data">가입한 소셜 계정 정보가 삭제돼요.</string>
+    <string name="my_account_management_delete_menu_delete_link">연동 목록이 모두 삭제돼요. </string>
+    <string name="my_account_management_delete_menu_delete_stamp_and_coupon">도장판과 쿠폰들이 모두 사라져요.</string>
+    <string name="my_account_management_delete_menu_delete_point">열심히 모은 포인트가 모두 사라져요.</string>
+    <string name="my_account_management_delete_btn">탈퇴하기</string>
+    <string name="my_account_management_delete_dialog_title">정말로 탈퇴하시겠어요?</string>
+    <string name="my_account_management_delete_dialog_btn_negative">아니요</string>
+    <string name="my_account_management_delete_dialog_btn_positive">네,탈퇴할래요</string>
+
 
 </resources>

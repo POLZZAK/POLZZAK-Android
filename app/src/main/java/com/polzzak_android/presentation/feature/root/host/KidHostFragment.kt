@@ -12,7 +12,7 @@ import com.polzzak_android.databinding.FragmentKidHostBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class KidHostFragment : BaseFragment<FragmentKidHostBinding>(), RootNavigationController {
+class KidHostFragment : BaseFragment<FragmentKidHostBinding>(), RootNavigationOwner {
     override val layoutResId = R.layout.fragment_kid_host
 
     private lateinit var navController: NavController

@@ -93,7 +93,15 @@
             android:id="@+id/myAccountManagementFragment"
             android:name="com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment"
             android:label="MyAccountManagementFragment">
+            <action
+                android:id="@+id/action_myAccountManagementFragment_to_myAccountDeleteFragment"
+                app:destination="@id/myAccountDeleteFragment" />
         </fragment>
+
+        <fragment
+            android:id="@+id/myAccountDeleteFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountDeleteFragment"
+            android:label="MyAccountDeleteFragment" />
     </navigation>
 
 

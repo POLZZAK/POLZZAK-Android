@@ -1,5 +1,5 @@
 package com.polzzak_android.presentation.feature.root.host
 
-interface RootNavigationController {
+interface RootNavigationOwner {
     fun backToTheLoginFragment()
 }

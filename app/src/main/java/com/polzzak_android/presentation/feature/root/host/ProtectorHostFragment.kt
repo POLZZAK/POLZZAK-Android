@@ -10,7 +10,7 @@ import com.polzzak_android.databinding.FragmentProtectorHostBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 
 class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>(),
-    RootNavigationController {
+    RootNavigationOwner {
 
     override val layoutResId = R.layout.fragment_protector_host
     private lateinit var protectorNavController: NavController

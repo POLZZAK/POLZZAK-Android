@@ -1,10 +1,10 @@
 package com.polzzak_android.presentation.feature.myPage.accountmanagement
 
+import android.os.Bundle
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentMyAccountManagementBinding
-import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
@@ -14,10 +14,10 @@ import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
+import com.polzzak_android.presentation.feature.myPage.accountmanagement.base.BaseMyAccountFragment
 import com.polzzak_android.presentation.feature.root.MainViewModel
-import com.polzzak_android.presentation.feature.root.host.RootNavigationController
 
-class MyAccountManagementFragment : BaseFragment<FragmentMyAccountManagementBinding>() {
+class MyAccountManagementFragment : BaseMyAccountFragment<FragmentMyAccountManagementBinding>() {
     override val layoutResId: Int = R.layout.fragment_my_account_management
 
     private val mainViewModel by activityViewModels<MainViewModel>()
@@ -38,7 +38,7 @@ class MyAccountManagementFragment : BaseFragment<FragmentMyAccountManagementBind
                 onConfirmListener = {
                     object : OnButtonClickListener {
                         override fun setBusinessLogic() {
-                            findRootNavigationController()?.let {
+                            findRootNavigationOwner()?.let {
                                 mainViewModel.logout()
                                 it.backToTheLoginFragment()
                             }
@@ -52,7 +52,14 @@ class MyAccountManagementFragment : BaseFragment<FragmentMyAccountManagementBind
             ).show(childFragmentManager, null)
         }
         binding.tvBtnDeleteAccount.setOnClickListener {
-
+            val nickName = arguments?.getString(ARGUMENT_NICKNAME_KEY) ?: ""
+            val bundle = Bundle().apply {
+                putString(ARGUMENT_NICKNAME_KEY, nickName)
+            }
+            findNavController().navigate(
+                R.id.action_myAccountManagementFragment_to_myAccountDeleteFragment,
+                bundle
+            )
         }
     }
 
@@ -65,12 +72,7 @@ class MyAccountManagementFragment : BaseFragment<FragmentMyAccountManagementBind
         ).set()
     }
 
-    private fun findRootNavigationController(): RootNavigationController? {
-        var parentFragment = parentFragment
-        while (parentFragment != null) {
-            if (parentFragment is RootNavigationController) return parentFragment
-            parentFragment = parentFragment.parentFragment
-        }
-        return null
+    companion object {
+        const val ARGUMENT_NICKNAME_KEY = "argument_nickname_key"
     }
 }

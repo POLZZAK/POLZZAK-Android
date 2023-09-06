@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivBtnCheck"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/selector_menu_checked"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvContent"
+            style="@style/body.14.500"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:textColor="@color/gray_500"
+            app:layout_constraintBottom_toBottomOf="@id/ivBtnCheck"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivBtnCheck"
+            app:layout_constraintTop_toTopOf="@id/ivBtnCheck"
+            tools:text="연동 목록이 모두 삭제돼요." />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
