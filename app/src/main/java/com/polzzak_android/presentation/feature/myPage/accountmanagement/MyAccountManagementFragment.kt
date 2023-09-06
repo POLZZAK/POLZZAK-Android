@@ -7,6 +7,7 @@ import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentMyAccountManagementBinding
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel
@@ -26,10 +27,18 @@ class MyAccountManagementFragment : BaseMyAccountFragment<FragmentMyAccountManag
         super.initView()
         initToolbar()
         binding.tvBtnLogout.setOnClickListener {
+            val context = context ?: return@setOnClickListener
+            val dialogTitleSpannable = SpannableBuilder.build(context) {
+                span(
+                    getString(R.string.my_account_management_logout_dialog_title),
+                    style = R.style.subtitle_18_600,
+                    textColor = R.color.gray_700
+                )
+            }
             CommonDialogHelper.getInstance(
                 content = CommonDialogModel(
                     type = DialogStyleType.ALERT,
-                    content = CommonDialogContent(title = getString(R.string.my_account_management_logout_dialog_title)),
+                    content = CommonDialogContent(title = dialogTitleSpannable),
                     button = CommonButtonModel(
                         buttonCount = ButtonCount.TWO,
                         positiveButtonText = getString(R.string.my_account_management_logout_dialog_btn_positive)

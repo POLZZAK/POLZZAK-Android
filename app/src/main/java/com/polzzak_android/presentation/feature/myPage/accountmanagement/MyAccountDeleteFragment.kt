@@ -8,6 +8,7 @@ import com.polzzak_android.databinding.FragmentMyAccountDeleteBinding
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel
@@ -61,10 +62,18 @@ class MyAccountDeleteFragment : BaseMyAccountFragment<FragmentMyAccountDeleteBin
                 }
             }
             tvBtnDeleteAccount.setOnClickListener {
+                val context = context ?: return@setOnClickListener
+                val dialogTitleSpannable = SpannableBuilder.build(context) {
+                    span(
+                        text = getString(R.string.my_account_management_delete_dialog_title),
+                        style = R.style.subtitle_18_600,
+                        textColor = R.color.gray_700
+                    )
+                }
                 val dialog = CommonDialogHelper.getInstance(
                     content = CommonDialogModel(
                         type = DialogStyleType.ALERT,
-                        content = CommonDialogContent(title = getString(R.string.my_account_management_delete_dialog_title)),
+                        content = CommonDialogContent(title = dialogTitleSpannable),
                         button = CommonButtonModel(
                             buttonCount = ButtonCount.TWO,
                             positiveButtonText = getString(R.string.my_account_management_delete_dialog_btn_positive),
@@ -112,12 +121,20 @@ class MyAccountDeleteFragment : BaseMyAccountFragment<FragmentMyAccountDeleteBin
         }
 
         myAccountDeleteViewModel.deleteAccountLiveData.observe(viewLifecycleOwner) {
+            val context = context ?: return@observe
             when (it) {
                 is ModelState.Loading -> {
+                    val dialogTitleSpannable = SpannableBuilder.build(context) {
+                        span(
+                            text = getString(R.string.my_account_management_delete_dialog_title),
+                            style = R.style.subtitle_18_600,
+                            textColor = R.color.gray_700
+                        )
+                    }
                     val loadingDialog = CommonDialogHelper.getInstance(
                         content = CommonDialogModel(
                             type = DialogStyleType.LOADING,
-                            content = CommonDialogContent(title = getString(R.string.my_account_management_delete_dialog_title)),
+                            content = CommonDialogContent(title = dialogTitleSpannable),
                             button = CommonButtonModel(ButtonCount.ZERO)
                         )
                     )

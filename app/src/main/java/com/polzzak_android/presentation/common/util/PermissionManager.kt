@@ -59,11 +59,13 @@ class PermissionManager(private val activity: AppCompatActivity) {
                     permission
                 ) != PackageManager.PERMISSION_GRANTED
             }) return true
-
+        val dialogTitleSpannable = SpannableBuilder.build(activity) {
+            span(text = dialogTitle, textColor = R.color.gray_700, style = R.style.subtitle_18_600)
+        }
         CommonDialogHelper.getInstance(
             content = CommonDialogModel(
                 type = DialogStyleType.ALERT,
-                content = CommonDialogContent(title = dialogTitle),
+                content = CommonDialogContent(title = dialogTitleSpannable),
                 button = CommonButtonModel(
                     buttonCount = ButtonCount.TWO,
                     negativeButtonText = activity.getString(R.string.permission_manager_dialog_btn_negative_text),
