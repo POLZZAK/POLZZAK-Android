@@ -88,7 +88,16 @@
         <action
             android:id="@+id/action_protectorMyPageFragment_to_termDetailFragment"
             app:destination="@id/termDetailFragment" />
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_protectorCSFragment"
+            app:destination="@id/protectorCSFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/protectorCSFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.protector.cs.ProtectorCSFragment"
+        android:label="ProtectorCSFragment" />
 
     <fragment
         android:id="@+id/myNoticeFragment"

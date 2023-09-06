@@ -29,6 +29,8 @@ import com.polzzak_android.presentation.feature.auth.signup.model.SignUpTermsOfS
 import com.polzzak_android.presentation.feature.root.MainViewModel
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.PermissionManager
+import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.feature.term.TermDetailFragment
 import com.polzzak_android.presentation.feature.term.model.TermType
@@ -214,6 +216,11 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     private fun initSelectProfileImageView(binding: FragmentSignupBinding) {
         with(binding.inSelectProfileImage) {
             clBtnSelectPicture.setOnClickListener {
+                if (getPermissionManagerOrNull()?.checkPermissionAndMoveSettingIfDenied(
+                        PermissionManager.READ_MEDIA_PERMISSION,
+                        dialogTitle = getString(R.string.permission_manager_dialog_storage_title)
+                    ) != true
+                ) return@setOnClickListener
                 photoPicker?.invoke { uri ->
                     val path = getAbsPath(uri = uri)
                     signUpViewModel.setProfileImagePath(path = path)

@@ -75,7 +75,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickCustomerService() {
-        // todo: 고객센터 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_protectorCSFragment)
     }
 
     fun onClickNotice() {

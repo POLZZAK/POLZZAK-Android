@@ -32,6 +32,7 @@ class BindableItemAdapter :
 
     fun updateItem(item: List<BindableItem<*>>, commitCallback: (() -> Unit)? = null) {
         submitList(item, commitCallback)
+        notifyDataSetChanged()
     }
 
     fun addItem(items: List<BindableItem<*>>, commitCallback: (() -> Unit)? = null) {

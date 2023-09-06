@@ -8,17 +8,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.util.getDeviceSize
 import com.polzzak_android.databinding.CommonDialogBinding
+import com.polzzak_android.databinding.ItemDialogMissionListBinding
+import com.polzzak_android.presentation.common.util.BindableItem
+import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.common.util.getCurrentDate
+import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
 /**
  * 다이얼로그 공통 코드
  *
- * type의 DialogStypeType으로 바디 출력 형태 구분 (ALERT: 기본형, CALENDAR: 캘린더형, MISSION: 미션형, LOADING: 로딩형)
+ * type의 DialogStypeType으로 바디 출력 형태 구분 (ALERT: 기본형, CALENDAR: 캘린더형, MISSION: 미션형, LOADING: 로딩형, STAMP: 도장형, MISSION_LIST: 미션리스트형)
  *
  * @see CommonDialogModel
  */
@@ -27,6 +31,8 @@ class CommonDialogHelper(
     private var onCancelListener: (() -> OnButtonClickListener)? = null,
     private var onConfirmListener: (() -> OnButtonClickListener)? = null,
 ) : DialogFragment() {
+
+    private var selectedDate: SelectedDateModel = getCurrentDate()
 
     companion object {
         fun getInstance(
@@ -70,14 +76,58 @@ class CommonDialogHelper(
     private fun setData() {
         binding.data = content
         binding.dialogMission.missionData = content.content.mission
-    }
 
-    private fun getCalendarDate(): String {
-        // todo: api 확정 후 변경
-        binding.dialogCalendar.dialogCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+        if (content.type == DialogStyleType.CALENDAR) {
+            setCalendarDateListener()
         }
 
-        return "로직 테스트"
+        if (content.type == DialogStyleType.STAMP) {
+            binding.dialogStamp.setImageResource(content.content.stampImg!!)
+        }
+
+        if (content.type == DialogStyleType.MISSION_LIST) {
+            binding.dialogMissionListRc.adapter = BindableItemAdapter()
+
+            val missionList = content.content.missionList
+            val requestListRecyclerView = binding.dialogMissionListRc
+            val adapter = (requestListRecyclerView.adapter as? BindableItemAdapter) ?: return
+            val items = mutableListOf<BindableItem<*>>()
+
+            items.addAll(missionList!!.map { model ->
+                MissionListItem(
+                    isOneList = missionList.size == 1,
+                    model = model,
+                )
+            })
+
+            adapter.updateItem(item = items)
+        }
+    }
+
+    private fun setCalendarDateListener() {
+        binding.dialogCalendar.dialogCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
+            selectedDate = selectedDate.copy(year = year, month = month, day = dayOfMonth)
+        }
+    }
+
+    class MissionListItem(
+        private val isOneList: Boolean,
+        private val model: MissionModel,
+    ) :
+        BindableItem<ItemDialogMissionListBinding>() {
+        override val layoutRes = R.layout.item_dialog_mission_list
+        override fun bind(binding: ItemDialogMissionListBinding, position: Int) {
+            with(binding) {
+                isOneList = this@MissionListItem.isOneList
+                mission = model
+            }
+        }
+
+        override fun areItemsTheSame(other: BindableItem<*>): Boolean =
+            other is MissionListItem && other.model.id == this.model.id
+
+        override fun areContentsTheSame(other: BindableItem<*>): Boolean =
+            other is MissionListItem && other.model == this.model
     }
 
     private fun onClickListener() {
@@ -88,9 +138,9 @@ class CommonDialogHelper(
 
         binding.dialogPositiveButton.setOnClickListener {
             onConfirmListener?.invoke()?.setBusinessLogic()
+
             if (content.type == DialogStyleType.CALENDAR) {
-                val result = getCalendarDate()
-                onConfirmListener?.invoke()?.getReturnValue(result)
+                onConfirmListener?.invoke()?.getReturnValue(selectedDate)
             }
             dismiss()
         }
@@ -109,17 +159,5 @@ class CommonDialogHelper(
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    object SetVisibility {
-        @JvmStatic
-        @BindingAdapter("setVisibility")
-        fun setVisibility(view: View, isVisible: Boolean) {
-            if (isVisible) {
-                view.visibility = View.VISIBLE
-            } else {
-                view.visibility = View.GONE
-            }
-        }
     }
 }

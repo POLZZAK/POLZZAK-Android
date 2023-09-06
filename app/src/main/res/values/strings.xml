@@ -161,6 +161,12 @@
     <string name="notification_setting_check_delivery_gift_title">선물 전달 확인 알림</string>
     <string name="notification_setting_check_delivery_gift_content">선물 전달이 완료되었는지 확인하는 알림을 받을래요</string>
 
+    <!-- permission -->
+    <string name="permission_manager_dialog_btn_positive_text">설정하기</string>
+    <string name="permission_manager_dialog_btn_negative_text">취소</string>
+    <string name="permission_manager_dialog_storage_title">앱 설정에서 ‘저장소’ 권한을 허용해 주세요</string>
+    <string name="permission_manager_dialog_notification_title">앱 설정에서 알림 권한을 허용해주세요</string>
+
     <!-- MyPage -->
     <string name="my_notice_empty">업데이트된 소식이 없어요</string>
     <string name="my_account_management">계정관리</string>
