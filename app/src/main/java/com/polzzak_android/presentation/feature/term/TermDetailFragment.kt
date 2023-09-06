@@ -1,15 +1,21 @@
-package com.polzzak_android.presentation.feature.auth.signup
+package com.polzzak_android.presentation.feature.term
 
 import android.webkit.WebViewClient
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
-import com.polzzak_android.databinding.FragmentSignupTermDetailBinding
+import com.polzzak_android.databinding.FragmentTermDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.util.getParcelableOrNull
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
+import com.polzzak_android.presentation.feature.term.model.TermType
 
-class SignUpTermDetailFragment : BaseFragment<FragmentSignupTermDetailBinding>() {
-    override val layoutResId: Int = R.layout.fragment_signup_term_detail
+class TermDetailFragment : BaseFragment<FragmentTermDetailBinding>() {
+    override val layoutResId: Int = R.layout.fragment_term_detail
+
+    private val type by lazy {
+        arguments?.getParcelableOrNull(ARGUMENT_TYPE_KEY, TermType::class.java)
+    }
 
     override fun initView() {
         super.initView()
@@ -19,7 +25,7 @@ class SignUpTermDetailFragment : BaseFragment<FragmentSignupTermDetailBinding>()
 
     private fun initToolbar() {
         with(binding.inToolbar) {
-            val title = arguments?.getString(ARGUMENT_TITLE_KEY) ?: ""
+            val title = type?.let { getString(it.titleStrRes) } ?: ""
             val toolbarData =
                 ToolbarData(popStack = findNavController(), titleText = title)
             ToolbarHelper(data = toolbarData, toolbar = this).run {
@@ -31,7 +37,7 @@ class SignUpTermDetailFragment : BaseFragment<FragmentSignupTermDetailBinding>()
 
     private fun initWebView() {
         with(binding.wbContent) {
-            val url = arguments?.getString(ARGUMENT_URL_KEY) ?: ""
+            val url = type?.url ?: ""
             webViewClient = WebViewClient()
             settings.loadWithOverviewMode = true
             settings.useWideViewPort = true
@@ -40,7 +46,6 @@ class SignUpTermDetailFragment : BaseFragment<FragmentSignupTermDetailBinding>()
     }
 
     companion object {
-        const val ARGUMENT_TITLE_KEY = "argument_title_key"
-        const val ARGUMENT_URL_KEY = "argument_url_key"
+        const val ARGUMENT_TYPE_KEY = "argument_type_key"
     }
 }

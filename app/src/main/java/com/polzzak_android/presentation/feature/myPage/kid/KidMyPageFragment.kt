@@ -9,6 +9,8 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment.Companion.ARGUMENT_NICKNAME_KEY
+import com.polzzak_android.presentation.feature.term.TermDetailFragment
+import com.polzzak_android.presentation.feature.term.model.TermType
 
 class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_kid_my_page
@@ -91,11 +93,17 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickUsingTerms() {
-        // todo: 이용약관 클릭
+        val bundle = Bundle().apply {
+            putParcelable(TermDetailFragment.ARGUMENT_TYPE_KEY, TermType.SERVICE)
+        }
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_termDetailFragment, bundle)
     }
 
     fun onClickPrivacyPolicy() {
-        // todo: 개인정보처리방침 클릭
+        val bundle = Bundle().apply {
+            putParcelable(TermDetailFragment.ARGUMENT_TYPE_KEY, TermType.PRIVACY)
+        }
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_termDetailFragment, bundle)
     }
 
     override fun onToolbarIconClicked() {

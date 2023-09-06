@@ -84,6 +84,10 @@
         <action
             android:id="@+id/action_protectorMyPageFragment_to_myAccountManagementFragment"
             app:destination="@id/myAccountManagementFragment" />
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_termDetailFragment"
+            app:destination="@id/termDetailFragment" />
     </fragment>
 
     <fragment
@@ -117,4 +121,10 @@
         android:name="com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountDeleteFragment"
         android:label="MyAccountDeleteFragment"
         tools:layout="@layout/fragment_my_account_delete" />
+
+    <fragment
+        android:id="@+id/termDetailFragment"
+        android:name="com.polzzak_android.presentation.feature.term.TermDetailFragment"
+        android:label="TermDetailFragment"
+        tools:layout="@layout/fragment_term_detail" />
 </navigation>
