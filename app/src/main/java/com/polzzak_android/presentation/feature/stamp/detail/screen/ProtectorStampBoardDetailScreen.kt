@@ -1,5 +1,7 @@
 package com.polzzak_android.presentation.feature.stamp.detail.screen
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,21 +44,40 @@ fun StampBoardDetailScreen_Protector(
 ) {
     val state by stampBoardData.collectAsState()
 
-    StampBoardDetailScreen_Protector(
-        stampBoardStatus = state.data?.stampBoardStatus ?: StampBoardStatus.PROGRESS,
-        boardTitle = state.data?.boardTitle ?: "",
-        dateCount = state.data?.dateCount ?: 0,
-        isStampRequested = state.data?.missionRequestList.isNullOrEmpty().not(),
-        onStampRequestClick = { onStampRequestClick(state.data?.missionRequestList ?: emptyList()) },
-        totalStampCount = state.data?.totalStampCount ?: 16,
-        stampList = state.data?.stampList ?: emptyList(),
-        onStampClick = onStampClick,
-        onEmptyStampClick = onEmptyStampClick,
-        missionList = state.data?.missionList ?: emptyList(),
-        rewardTitle = state.data?.rewardTitle ?: "",
-        onRewardButtonClick = onRewardButtonClick,
-        onBoardDeleteClick = onBoardDeleteClick
-    )
+    Crossfade(
+        targetState = state,
+        animationSpec = tween(400),
+        label = "StampBoardDetailScreen change animation"
+    ) { currentState ->
+        when (currentState) {
+            is ModelState.Loading -> {
+                // 스켈레톤
+                StampBoardDetailSkeleton()
+            }
+            is ModelState.Success -> {
+                StampBoardDetailScreen_Protector(
+                    stampBoardStatus = currentState.data.stampBoardStatus,
+                    boardTitle = currentState.data.boardTitle,
+                    dateCount = currentState.data.dateCount,
+                    isStampRequested = currentState.data.missionRequestList.isNotEmpty(),
+                    onStampRequestClick = { onStampRequestClick(currentState.data.missionRequestList) },
+                    totalStampCount = currentState.data.totalStampCount,
+                    stampList = currentState.data.stampList,
+                    onStampClick = onStampClick,
+                    onEmptyStampClick = onEmptyStampClick,
+                    missionList = currentState.data.missionList,
+                    rewardTitle = currentState.data.rewardTitle,
+                    onRewardButtonClick = onRewardButtonClick,
+                    onBoardDeleteClick = onBoardDeleteClick
+                )
+            }
+            is ModelState.Error -> {
+                // ?
+            }
+        }
+    }
+
+
 }
 
 /**
