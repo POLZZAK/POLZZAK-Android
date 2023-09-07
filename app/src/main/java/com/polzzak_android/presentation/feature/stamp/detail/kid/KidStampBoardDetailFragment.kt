@@ -4,7 +4,6 @@ import androidx.annotation.DrawableRes
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.text.toSpannable
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentKidStampBoardDetailBinding
@@ -18,7 +17,6 @@ import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.common.util.SpannableBuilder
-import com.polzzak_android.presentation.common.util.createColoredSpannable
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
@@ -32,12 +30,6 @@ import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailVie
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
@@ -122,8 +114,8 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
         val bottomSheet = CommonBottomSheetHelper.getInstance(
             data = CommonBottomSheetModel(
                 type = BottomSheetType.MISSION,
-                title = "도장 요청 보내기",
-                subTitle = "어떤 미션을 완료했나요?",
+                title = "도장 요청 보내기".toSpannable(),
+                subTitle = "어떤 미션을 완료했나요?".toSpannable(),
                 contentList = missionList,
                 button = CommonButtonModel(
                     buttonCount = ButtonCount.TWO,
