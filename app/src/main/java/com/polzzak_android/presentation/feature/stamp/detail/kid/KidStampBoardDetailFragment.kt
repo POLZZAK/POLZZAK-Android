@@ -18,11 +18,13 @@ import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
 import com.polzzak_android.presentation.component.dialog.FullLoadingDialog
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
+import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
@@ -72,9 +74,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                         stampBoardData = viewModel.stampBoardData,
                         onStampClick = this@KidStampBoardDetailFragment::openStampInfoDialog,
                         onEmptyStampClick = this@KidStampBoardDetailFragment::openStampRequestDialog,
-                        onRewardButtonClick = {
-                            // TODO: api 나오면 구현
-                        }
+                        onRewardButtonClick = this@KidStampBoardDetailFragment::openRewardSheet
                     )
                 }
             }
@@ -172,6 +172,96 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                     // 실패
                     exception.printStackTrace()
                     // TODO: 바텀시트에 미션 미리 선택할 수 있는 기능 추가되면 구현하기
+                }
+            }
+        )
+    }
+
+    /**
+     * 보상(쿠폰) 받는 BottomSheet 표시
+     */
+    private fun openRewardSheet() {
+        CommonBottomSheetHelper.getInstance(
+            data = CommonBottomSheetModel(
+                type = BottomSheetType.COUPON,
+                title = SpannableBuilder.build(requireContext()) {
+                    span(
+                        text = viewModel.stampBoardData.value.data?.rewardTitle ?: "",
+                        style = R.style.subtitle_18_600,
+                        textColor = R.color.primary_600
+                    )
+                    span(
+                        text = "쿠폰을 선물 받았어요!",
+                        style = R.style.subtitle_16_600
+                    )
+                },
+                contentList = listOf(
+                        viewModel
+                            .stampBoardData
+                            .value
+                            .data
+                            ?.rewardDate
+                            ?.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")
+                    )
+                ),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.ONE,
+                    positiveButtonText = "쿠폰 받기"
+                )
+            ),
+            onClickListener = {
+                object : OnButtonClickListener {
+                    override fun setBusinessLogic() {
+                    }
+
+                    override fun getReturnValue(value: Any) {
+                        receiveCoupon()
+                    }
+                }
+            }
+        ).show(childFragmentManager, null)
+    }
+
+    /**
+     * 쿠폰 받기 API 호출
+     */
+    private fun receiveCoupon() {
+        viewModel.receiveCoupon(
+            accessToken = getAccessTokenOrNull() ?: "",
+            onStart = {
+                loadingDialog.message = "쿠폰 받는 중"
+                loadingDialog.show(childFragmentManager, null)
+            },
+            onCompletion = { exception ->
+                loadingDialog.dismiss()
+
+                if (exception == null) {
+                    // 성공
+                    openSuccessDialog(
+                        stampImageId = null,
+                        titleText = {
+                            span(
+                                text = "${viewModel.stampBoardData.value.data?.rewardTitle}\n",
+                                style = R.style.subtitle_18_600,
+                                textColor = R.color.primary_600
+                            )
+                            span(
+                                text = "쿠폰 받기 완료!",
+                                style = R.style.subtitle_16_600,
+                                textColor = R.color.gray_800
+                            )
+                        }
+                    )
+
+                    // TODO: 쿠폰 수령 후 데이터 새로 받아와서 쿠폰 받기 버튼 비활성화 되는지 테스트
+                    viewModel.fetchStampBoardDetailData(
+                        accessToken = getAccessTokenOrNull() ?: "",
+                        stampBoardId = viewModel.stampBoardId
+                    )
+                } else {
+                    // 실패
+                    PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
+                    openRewardSheet()
                 }
             }
         )

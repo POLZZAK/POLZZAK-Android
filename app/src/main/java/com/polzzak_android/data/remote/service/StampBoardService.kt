@@ -8,6 +8,7 @@ import com.polzzak_android.data.remote.model.response.MakeStampBoardResponse
 import com.polzzak_android.data.remote.model.response.StampBoardDetailResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -41,5 +42,14 @@ interface StampBoardService {
     suspend fun requestStampToProtector(
         @Header("Authorization") token: String,
         @Body stampRequest: StampRequest
+    ): Response<EmptyDataResponse>
+
+    /**
+     * 쿠폰 수령 API(아이)
+     */
+    @POST("/api/v1/coupons")
+    suspend fun receiveCoupon(
+        @Header("Authorization") token: String,
+        @Field("stampBoardId") stampBoardId: Int
     ): Response<EmptyDataResponse>
 }

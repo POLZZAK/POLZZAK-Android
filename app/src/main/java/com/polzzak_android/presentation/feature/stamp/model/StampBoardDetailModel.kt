@@ -15,6 +15,7 @@ data class StampBoardDetailModel(
     val missionList: List<MissionModel>,
     val missionRequestList: List<MissionRequestModel>,
     val rewardTitle: String,
+    val rewardDate: LocalDate?
 )
 
 fun StampBoardDetailDto.toModel(): StampBoardDetailModel = StampBoardDetailModel(
@@ -29,5 +30,6 @@ fun StampBoardDetailDto.toModel(): StampBoardDetailModel = StampBoardDetailModel
     stampList = this.stamps.map { it.toModel() },
     missionList = this.missions.map { it.toModel() },
     missionRequestList = this.missionRequestList.map { it.toModel() },
-    rewardTitle = this.reward
+    rewardTitle = this.reward,
+    rewardDate = this.rewardDate.toLocalDateOrNull()
 )

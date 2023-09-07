@@ -29,7 +29,7 @@ class StampBoardDetailViewModel @Inject constructor(
     private val partnerId: Int
     val partnerType: String
 
-    private val stampBoardId: Int
+    val stampBoardId: Int
         get() = stampBoardData.value.data?.stampBoardId ?: -1
 
     init {
@@ -89,6 +89,23 @@ class StampBoardDetailViewModel @Inject constructor(
                 missionId =  missionId,
                 guardianId = partnerId
             )
+            .onSuccess {
+                onCompletion(null)
+            }
+            .onError { exception, _ ->
+                onCompletion(exception)
+            }
+    }
+
+    fun receiveCoupon(
+        accessToken: String,
+        onStart: () -> Unit,
+        onCompletion: (cause: Throwable?) -> Unit
+    ) = viewModelScope.launch {
+        onStart()
+
+        stampRepository
+            .receiveCoupon(accessToken = accessToken, stampBoardId = stampBoardId)
             .onSuccess {
                 onCompletion(null)
             }

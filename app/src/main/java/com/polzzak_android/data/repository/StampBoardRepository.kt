@@ -40,6 +40,11 @@ interface StampBoardRepository {
         missionId: Int,
         guardianId: Int
     ): ApiResult<Unit>
+
+    suspend fun receiveCoupon(
+        accessToken: String,
+        stampBoardId: Int
+    ): ApiResult<Unit>
 }
 
 class StampBoardRepositoryImpl @Inject constructor(
@@ -90,5 +95,14 @@ class StampBoardRepositoryImpl @Inject constructor(
         )
 
         stampBoardService.requestStampToProtector(token = auth, stampRequest = requestData)
+    }
+
+    override suspend fun receiveCoupon(
+        accessToken: String,
+        stampBoardId: Int
+    ): ApiResult<Unit> = requestCatching {
+        val auth = createHeaderAuthorization(accessToken = accessToken)
+
+        stampBoardService.receiveCoupon(token = auth, stampBoardId = stampBoardId)
     }
 }
