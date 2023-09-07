@@ -17,15 +17,15 @@
             android:id="@+id/action_signUpFragment_to_protectorOnBoardingFragment"
             app:destination="@id/protectorOnBoardingFragment" />
         <action
-            android:id="@+id/action_signUpFragment_to_signUpTermDetailFragment"
-            app:destination="@id/signUpTermDetailFragment" />
+            android:id="@+id/action_signUpFragment_to_termDetailFragment"
+            app:destination="@id/termDetailFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/signUpTermDetailFragment"
-        android:name="com.polzzak_android.presentation.feature.auth.signup.SignUpTermDetailFragment"
-        android:label="SignUpTermDetailFragment"
-        tools:layout="@layout/fragment_signup_term_detail" />
+        android:id="@+id/termDetailFragment"
+        android:name="com.polzzak_android.presentation.feature.term.TermDetailFragment"
+        android:label="termDetailFragment"
+        tools:layout="@layout/fragment_term_detail" />
 
     <fragment
         android:id="@+id/kidOnBoardingFragment"

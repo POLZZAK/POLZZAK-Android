@@ -3,12 +3,14 @@ package com.polzzak_android.presentation.feature.root.host
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentProtectorHostBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 
-class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
+class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>(),
+    RootNavigationOwner {
 
     override val layoutResId = R.layout.fragment_protector_host
     private lateinit var protectorNavController: NavController
@@ -34,4 +36,7 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
         }
     }
 
+    override fun backToTheLoginFragment() {
+        findNavController().popBackStack(R.id.loginFragment, false)
+    }
 }

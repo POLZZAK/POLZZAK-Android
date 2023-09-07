@@ -32,6 +32,8 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
+import com.polzzak_android.presentation.feature.term.TermDetailFragment
+import com.polzzak_android.presentation.feature.term.model.TermType
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
@@ -240,35 +242,19 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             }
             ivBtnServiceDetail.setOnClickListener {
                 val detailDataBundle = Bundle().apply {
-                    putString(
-                        SignUpTermDetailFragment.ARGUMENT_TITLE_KEY,
-                        getString(R.string.signup_terms_of_service_detail_service_title)
-                    )
-                    //TODO 약관 url 추가
-                    putString(
-                        SignUpTermDetailFragment.ARGUMENT_URL_KEY,
-                        "http://google.co.kr"
-                    )
+                    putParcelable(TermDetailFragment.ARGUMENT_TYPE_KEY, TermType.SERVICE)
                 }
                 findNavController().navigate(
-                    R.id.action_signUpFragment_to_signUpTermDetailFragment,
+                    R.id.action_signUpFragment_to_termDetailFragment,
                     detailDataBundle
                 )
             }
             ivBtnPrivacyDetail.setOnClickListener {
                 val detailDataBundle = Bundle().apply {
-                    putString(
-                        SignUpTermDetailFragment.ARGUMENT_TITLE_KEY,
-                        getString(R.string.signup_terms_of_service_detail_privacy_title)
-                    )
-                    //TODO 약관 url 추가
-                    putString(
-                        SignUpTermDetailFragment.ARGUMENT_URL_KEY,
-                        "http://naver.com"
-                    )
+                    putParcelable(TermDetailFragment.ARGUMENT_TYPE_KEY, TermType.PRIVACY)
                 }
                 findNavController().navigate(
-                    R.id.action_signUpFragment_to_signUpTermDetailFragment,
+                    R.id.action_signUpFragment_to_termDetailFragment,
                     detailDataBundle
                 )
             }

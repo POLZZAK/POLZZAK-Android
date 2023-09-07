@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.myPage.protector
 
+import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentProtectorMyPageBinding
@@ -7,6 +8,9 @@ import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
+import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment
+import com.polzzak_android.presentation.feature.term.TermDetailFragment
+import com.polzzak_android.presentation.feature.term.model.TermType
 
 class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     ToolbarIconInteraction {
@@ -33,7 +37,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
         setUpPointView()
     }
 
-    private fun setUpPointView(){
+    private fun setUpPointView() {
         with(binding.pointRanking) {
             text = "폴짝 랭킹"
             icon.setImageResource(R.drawable.ic_point_rank)
@@ -75,19 +79,39 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickNotice() {
-        // todo: 공지사항 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_myNoticeFragment)
+
     }
 
     fun onClickManageAccount() {
-        // todo: 계정관리 클릭
+        //TODO 닉네임 추가
+        val bundle = Bundle().apply {
+            putString(MyAccountManagementFragment.ARGUMENT_NICKNAME_KEY, "nickname")
+        }
+        findNavController().navigate(
+            R.id.action_protectorMyPageFragment_to_myAccountManagementFragment,
+            bundle
+        )
     }
 
     fun onClickUsingTerms() {
-        // todo: 이용약관 클릭
+        val bundle = Bundle().apply {
+            putParcelable(TermDetailFragment.ARGUMENT_TYPE_KEY, TermType.SERVICE)
+        }
+        findNavController().navigate(
+            R.id.action_protectorMyPageFragment_to_termDetailFragment,
+            bundle
+        )
     }
 
     fun onClickPrivacyPolicy() {
-        // todo: 개인정보처리방침 클릭
+        val bundle = Bundle().apply {
+            putParcelable(TermDetailFragment.ARGUMENT_TYPE_KEY, TermType.PRIVACY)
+        }
+        findNavController().navigate(
+            R.id.action_protectorMyPageFragment_to_termDetailFragment,
+            bundle
+        )
     }
 
     override fun onToolbarIconClicked() {

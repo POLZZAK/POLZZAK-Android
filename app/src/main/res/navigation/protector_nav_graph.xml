@@ -76,12 +76,64 @@
         android:name="com.polzzak_android.presentation.feature.myPage.protector.ProtectorMyPageFragment"
         android:label="ProtectorMyPageFragment"
         tools:layout="@layout/fragment_protector_my_page">
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_myNoticeFragment"
+            app:destination="@id/myNoticeFragment" />
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_myAccountManagementFragment"
+            app:destination="@id/myAccountManagementFragment" />
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_termDetailFragment"
+            app:destination="@id/termDetailFragment" />
+
         <action
             android:id="@+id/action_protectorMyPageFragment_to_protectorCSFragment"
             app:destination="@id/protectorCSFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/protectorCSFragment"
         android:name="com.polzzak_android.presentation.feature.myPage.protector.cs.ProtectorCSFragment"
         android:label="ProtectorCSFragment" />
+
+    <fragment
+        android:id="@+id/myNoticeFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.notice.MyNoticeFragment"
+        android:label="MyNoticeFragment"
+        tools:layout="@layout/fragment_my_notice">
+
+        <action
+            android:id="@+id/action_myNoticeFragment_to_myNoticeDetailFragment"
+            app:destination="@id/myNoticeDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/myNoticeDetailFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.notice.MyNoticeDetailFragment"
+        android:label="MyNoticeDetailFragment"
+        tools:layout="@layout/fragment_my_notice_detail" />
+    <fragment
+        android:id="@+id/myAccountManagementFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment"
+        android:label="MyAccountManagementFragment"
+        tools:layout="@layout/fragment_my_account_management">
+        <action
+            android:id="@+id/action_myAccountManagementFragment_to_myAccountDeleteFragment"
+            app:destination="@id/myAccountDeleteFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/myAccountDeleteFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountDeleteFragment"
+        android:label="MyAccountDeleteFragment"
+        tools:layout="@layout/fragment_my_account_delete" />
+
+    <fragment
+        android:id="@+id/termDetailFragment"
+        android:name="com.polzzak_android.presentation.feature.term.TermDetailFragment"
+        android:label="TermDetailFragment"
+        tools:layout="@layout/fragment_term_detail" />
 </navigation>

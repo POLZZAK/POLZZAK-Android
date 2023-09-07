@@ -5,7 +5,8 @@
     app:startDestination="@id/kid_main_nav_graph">
 
     <!-- 메인 도장판 -->
-    <navigation android:id="@+id/kid_main_nav_graph"
+    <navigation
+        android:id="@+id/kid_main_nav_graph"
         app:startDestination="@id/kidMainFragment">
         <fragment
             android:id="@+id/kidMainFragment"
@@ -16,8 +17,8 @@
                 app:destination="@id/kidStampBoardDetailFragment">
                 <argument
                     android:name="boardId"
-                    app:argType="integer"
-                    android:defaultValue="-1"/>
+                    android:defaultValue="-1"
+                    app:argType="integer" />
             </action>
         </fragment>
         <fragment
@@ -27,7 +28,8 @@
     </navigation>
 
     <!-- 쿠폰 -->
-    <navigation android:id="@+id/kid_coupon_nav_graph"
+    <navigation
+        android:id="@+id/kid_coupon_nav_graph"
         app:startDestination="@id/kidCouponFragment">
         <fragment
             android:id="@+id/kidCouponFragment"
@@ -36,7 +38,8 @@
     </navigation>
 
     <!-- 알림 -->
-    <navigation android:id="@+id/kid_notification_nav_graph"
+    <navigation
+        android:id="@+id/kid_notification_nav_graph"
         app:startDestination="@id/kidNotificationFragment">
         <fragment
             android:id="@+id/kidNotificationFragment"
@@ -54,11 +57,61 @@
     </navigation>
 
     <!-- 마이페이지 -->
-    <navigation android:id="@+id/kid_myPage_nav_graph"
+    <navigation
+        android:id="@+id/kid_myPage_nav_graph"
         app:startDestination="@id/kidMyPageFragment">
         <fragment
             android:id="@+id/kidMyPageFragment"
             android:name="com.polzzak_android.presentation.feature.myPage.kid.KidMyPageFragment"
-            android:label="KidMyPageFragment" />
+            android:label="KidMyPageFragment">
+
+            <action
+                android:id="@+id/action_kidMyPageFragment_to_myNoticeFragment"
+                app:destination="@id/myNoticeFragment" />
+
+            <action
+                android:id="@+id/action_kidMyPageFragment_to_myAccountManagementFragment"
+                app:destination="@id/myAccountManagementFragment" />
+
+            <action
+                android:id="@+id/action_kidMyPageFragment_to_termDetailFragment"
+                app:destination="@id/termDetailFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/myNoticeFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.notice.MyNoticeFragment"
+            android:label="MyNoticeFragment">
+
+            <action
+                android:id="@+id/action_myNoticeFragment_to_myNoticeDetailFragment"
+                app:destination="@id/myNoticeDetailFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/myNoticeDetailFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.notice.MyNoticeDetailFragment"
+            android:label="MyNoticeDetailFragment" />
+
+        <fragment
+            android:id="@+id/myAccountManagementFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment"
+            android:label="MyAccountManagementFragment">
+            <action
+                android:id="@+id/action_myAccountManagementFragment_to_myAccountDeleteFragment"
+                app:destination="@id/myAccountDeleteFragment" />
+        </fragment>
+
+        <fragment
+            android:id="@+id/myAccountDeleteFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountDeleteFragment"
+            android:label="MyAccountDeleteFragment" />
+
+        <fragment
+            android:id="@+id/termDetailFragment"
+            android:name="com.polzzak_android.presentation.feature.term.TermDetailFragment"
+            android:label="TermDetailFragment" />
     </navigation>
+
+
 </navigation>

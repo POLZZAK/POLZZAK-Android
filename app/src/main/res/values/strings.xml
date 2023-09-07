@@ -26,6 +26,7 @@
     <string name="common_accept">수락</string>
     <string name="common_reject">거절</string>
     <string name="common_notification">알림</string>
+    <string name="common_notice">공지사항</string>
 
     <!-- Login -->
     <string name="login_title">참 잘 했어요 도장 쾅!</string>
@@ -58,8 +59,6 @@
     <string name="signup_terms_of_service_agree_all">모두 동의</string>
     <string name="signup_terms_of_service_agree_service">서비스 이용약관에 동의합니다.</string>
     <string name="signup_terms_of_service_agree_privacy">개인정보처리방침에 동의합니다.</string>
-    <string name="signup_terms_of_service_detail_service_title">이용약관</string>
-    <string name="signup_terms_of_service_detail_privacy_title">개인정보처리방침</string>
 
     <!-- OnBoarding -->
     <string name="on_boarding_kid_first_title">폴짝!\n회원이 되신 것을 환영해요</string>
@@ -167,4 +166,26 @@
     <string name="permission_manager_dialog_btn_negative_text">취소</string>
     <string name="permission_manager_dialog_storage_title">앱 설정에서 ‘저장소’ 권한을 허용해 주세요</string>
     <string name="permission_manager_dialog_notification_title">앱 설정에서 알림 권한을 허용해주세요</string>
+
+    <!-- MyPage -->
+    <string name="my_notice_empty">업데이트된 소식이 없어요</string>
+    <string name="my_account_management">계정관리</string>
+    <string name="my_account_management_logout">로그아웃</string>
+    <string name="my_account_management_delete_account">회원탈퇴</string>
+    <string name="my_account_management_logout_dialog_title">정말로 로그아웃 하시겠어요?</string>
+    <string name="my_account_management_logout_dialog_btn_positive">로그아웃 할래요</string>
+    <string name="my_account_management_delete_title">%s 회원님\n폴짝을 떠나시나요?</string>
+    <string name="my_account_management_delete_menu_guide">다음 안내사항을 확인하고 동의해주세요</string>
+    <string name="my_account_management_delete_menu_delete_social_account_data">가입한 소셜 계정 정보가 삭제돼요.</string>
+    <string name="my_account_management_delete_menu_delete_link">연동 목록이 모두 삭제돼요. </string>
+    <string name="my_account_management_delete_menu_delete_stamp_and_coupon">도장판과 쿠폰들이 모두 사라져요.</string>
+    <string name="my_account_management_delete_menu_delete_point">열심히 모은 포인트가 모두 사라져요.</string>
+    <string name="my_account_management_delete_btn">탈퇴하기</string>
+    <string name="my_account_management_delete_dialog_title">정말로 탈퇴하시겠어요?</string>
+    <string name="my_account_management_delete_dialog_btn_negative">아니요</string>
+    <string name="my_account_management_delete_dialog_btn_positive">네,탈퇴할래요</string>
+
+    <!-- Term -->
+    <string name="terms_of_service_detail_service_title">이용약관</string>
+    <string name="terms_of_service_detail_privacy_title">개인정보처리방침</string>
 </resources>
