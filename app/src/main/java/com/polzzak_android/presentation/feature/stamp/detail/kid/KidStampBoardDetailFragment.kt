@@ -6,6 +6,7 @@ import androidx.core.text.toSpannable
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
+import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.databinding.FragmentKidStampBoardDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ButtonCount
@@ -74,7 +75,8 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                         stampBoardData = viewModel.stampBoardData,
                         onStampClick = this@KidStampBoardDetailFragment::openStampInfoDialog,
                         onEmptyStampClick = this@KidStampBoardDetailFragment::openStampRequestDialog,
-                        onRewardButtonClick = this@KidStampBoardDetailFragment::openRewardSheet
+                        onRewardButtonClick = this@KidStampBoardDetailFragment::openRewardSheet,
+                        onError = this@KidStampBoardDetailFragment::handleErrorCase
                     )
                 }
             }
@@ -290,5 +292,28 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                 )
             )
         ).show(childFragmentManager, null)
+    }
+
+    /**
+     * Exception 종류에 따라 표시할 에러 화면 구분하여 표시
+     */
+    private fun handleErrorCase(exception: Exception) {
+        when (exception) {
+            is ApiException.TargetNotExist -> {
+                CommonDialogHelper.getInstance(
+                    content = CommonDialogModel(
+                        type = DialogStyleType.ALERT,
+                        content = CommonDialogContent(title = "도장판이 존재하지 않아요.".toSpannable()),
+                        button = CommonButtonModel(
+                            buttonCount = ButtonCount.ONE,
+                            positiveButtonText = "되돌아가기"
+                        )
+                    )
+                ).show(childFragmentManager, null)
+            }
+            else -> {
+                PolzzakSnackBar.errorOf(view = binding.root, exception = exception)
+            }
+        }
     }
 }

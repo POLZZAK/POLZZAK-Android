@@ -32,7 +32,8 @@ fun StampBoardDetailScreen_Kid(
     stampBoardData: StateFlow<ModelState<StampBoardDetailModel>>,
     onStampClick: (StampModel) -> Unit,
     onEmptyStampClick: () -> Unit,
-    onRewardButtonClick: () -> Unit
+    onRewardButtonClick: () -> Unit,
+    onError: (exception: Exception) -> Unit
 ) {
     val state by stampBoardData.collectAsState()
 
@@ -61,7 +62,7 @@ fun StampBoardDetailScreen_Kid(
                 )
             }
             is ModelState.Error -> {
-                // ?
+                onError(currentState.exception)
             }
         }
     }

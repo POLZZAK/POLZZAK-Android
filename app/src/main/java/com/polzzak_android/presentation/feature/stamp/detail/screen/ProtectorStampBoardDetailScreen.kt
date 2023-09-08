@@ -40,7 +40,8 @@ fun StampBoardDetailScreen_Protector(
     onStampClick: (StampModel) -> Unit,
     onEmptyStampClick: () -> Unit,
     onRewardButtonClick: () -> Unit,
-    onBoardDeleteClick: () -> Unit
+    onBoardDeleteClick: () -> Unit,
+    onError: (exception: Exception) -> Unit
 ) {
     val state by stampBoardData.collectAsState()
 
@@ -72,7 +73,7 @@ fun StampBoardDetailScreen_Protector(
                 )
             }
             is ModelState.Error -> {
-                // ?
+                onError(currentState.exception)
             }
         }
     }
