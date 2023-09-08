@@ -83,7 +83,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
          */
         compositeDisposable.add(publishSubject.debounce(100, TimeUnit.MICROSECONDS)
             .observeOn(AndroidSchedulers.mainThread()).doOnNext {
-                val message = getString(R.string.common_back_pressed_snackbar_message)
+                val message = getString(R.string.common_snackbar_back_pressed_message)
                 backPressedSnackBar = BackButtonPressedSnackBar(
                     binding.root,
                     message = message,

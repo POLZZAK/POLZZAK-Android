@@ -8,6 +8,7 @@ sealed class ApiException(override val message: String? = null) : Exception() {
     class RequestResourceNotValid : ApiException(message = "Request resource is invalid")
     class OauthAuthenticationFail : ApiException(message = "Social Login failed")
     class RequiredRegister : ApiException(message = "Register is required")
+    class TargetNotExist : ApiException(message = "Target is not exist")
     class AccessTokenInvalid : ApiException(message = "AccessToken is invalid")
     class RefreshTokenInvalid : ApiException(message = "RefreshToken is invalid")
     class AccessTokenExpired : ApiException(message = "Success token reissue")

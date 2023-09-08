@@ -20,7 +20,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/common_back_pressed_snackbar_message" />
+            tools:text="@string/common_snackbar_back_pressed_message" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

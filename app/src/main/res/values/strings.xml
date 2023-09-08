@@ -35,8 +35,10 @@
     <string name="login_last_login">마지막으로\n로그인한 계정이에요</string>
     <string name="login_loading_content">폴짝의 세계로!</string>
 
-    <!-- back btn snackbar message -->
-    <string name="common_back_pressed_snackbar_message">한 번 더 누르면 앱이 종료됩니다.</string>
+    <!-- snackbar message -->
+    <string name="common_snackbar_back_pressed_message">한 번 더 누르면 앱이 종료됩니다.</string>
+    <string name="common_snackbar_network_error">네트워크 상태 확인 후 다시 시도해주세요.</string>
+    <string name="common_snackbar_api_error">요청에 실패하였습니다. 잠시 후 다시 시도해주세요.</string>
 
     <!-- SignUp -->
     <string name="signup_select_type_guide_title">어떤 회원으로 활동하시겠어요?</string>
