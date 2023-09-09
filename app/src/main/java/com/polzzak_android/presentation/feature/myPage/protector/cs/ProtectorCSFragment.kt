@@ -23,7 +23,6 @@ class ProtectorCSFragment : BaseFragment<FragmentProtectorCSBinding>() {
     private lateinit var toolbarHelper: ToolbarHelper
 
     private lateinit var adapter: BindableItemAdapter
-    private val items = mutableListOf<BindableItem<*>>()
 
     override fun setToolbar() {
         super.setToolbar()
@@ -58,21 +57,17 @@ class ProtectorCSFragment : BaseFragment<FragmentProtectorCSBinding>() {
         initMenu()
         selectMenu(view)
 
-        items.clear()
         val faqList = getFAQListForProtector().filter {
             it.type == type
         }
-        items.addAll(faqList.map { model -> FAQItem(model = model) })
-        adapter.updateItem(item = items)
+        adapter.updateItem(item = faqList.map { model -> FAQItem(model = model) })
     }
 
     private fun updateAdapterWithSearchWord(word: String) {
-        items.clear()
         val faqList = getFAQListForProtector().filter {
             it.title.contains(word)
         }
-        items.addAll(faqList.map { model -> FAQItem(model = model) })
-        adapter.updateItem(item = items)
+        adapter.updateItem(item = faqList.map { model -> FAQItem(model = model) })
 
         binding.csFaqTitle.text = "검색 결과 ${faqList.size}"
         binding.hasSearchedResult = faqList.isNotEmpty()
