@@ -37,8 +37,6 @@ class MainStampCompletedPagerAdapter(
 
     inner class ViewHolder(binding: ItemStampCompletedBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private val container = binding.stampContainer
-
         private val userHeaderTxt = binding.stampNickName
         private val reward = binding.rewardContent
 
