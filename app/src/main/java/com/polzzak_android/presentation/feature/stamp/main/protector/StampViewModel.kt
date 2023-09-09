@@ -16,10 +16,18 @@ class StampViewModel @Inject constructor(
     private val stampBoardRepository: StampBoardRepository
 ) : ViewModel() {
 
+    // 도장판 리스트
     private val _stampBoardList: MutableLiveData<ModelState<List<StampBoardModel>>> =
         MutableLiveData()
     val stampBoardList get() = _stampBoardList
 
+    // 선택한 유저
+    private val _selectedUserId: MutableLiveData<String?> = MutableLiveData()
+    val selectedUserId get() = _selectedUserId
+
+    /**
+     * 도장판 조회
+     */
     fun requestStampBoardList(accessToken: String, linkedMemberId: String?, stampBoardGroup: String) {
         viewModelScope.launch {
             _stampBoardList.value = ModelState.Loading()
@@ -33,6 +41,10 @@ class StampViewModel @Inject constructor(
                 _stampBoardList.value = ModelState.Error(exception)
             }
         }
+    }
 
+    fun getSelectedUserId() = _selectedUserId.value
+    fun setSelectedUserId(userId: Int?) {
+        _selectedUserId.value = userId?.toString()
     }
 }

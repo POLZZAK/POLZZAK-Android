@@ -6,7 +6,6 @@ import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import androidx.viewpager2.widget.ViewPager2
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentProgressBinding
@@ -64,25 +63,18 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         binding.fragment = this
 
         setAdapter()
+        setRefreshListener()
 
         linkedUserViewModel.requestLinkedUserList(accessToken = getAccessTokenOrNull() ?: "")
-        val hasLinkedUser = linkedUserViewModel.hasLinkedUser
-        if (hasLinkedUser) {
-            // 도장판 조회
+    }
+
+    private fun setRefreshListener() {
+        binding.stampListRefresh.setOnRefreshListener {
             stampViewModel.requestStampBoardList(
                 accessToken = getAccessTokenOrNull() ?: "",
-                linkedMemberId = null,
+                linkedMemberId = stampViewModel.getSelectedUserId(),
                 stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
             )
-
-            // 당겨서 리프레시
-            binding.stampListRefresh.setOnRefreshListener {
-                stampViewModel.requestStampBoardList(
-                    accessToken = getAccessTokenOrNull() ?: "",
-                    linkedMemberId = null,
-                    stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
-                )
-            }
         }
     }
 
@@ -120,21 +112,31 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
             when (state) {
                 is ModelState.Success -> {
                     val data = state.data
-                    // todo: 바인더블 어댑터로 변경
-                    rvAdapter = MainStampAdapter(data, this)
+                    rvAdapter.setStampList(data)
                     binding.stampListRc.adapter = rvAdapter
 
-                    binding.skeletonLoadingView.visibility = View.GONE
+                    val selectedUser = if (data.size == 1) data.first().partner?.nickname else "전체"
+                    binding.selectTxt.text = selectedUser
+
+                    with(binding) {
+                        mainContainer.visibility = View.VISIBLE
+                        skeleton.visibility = View.GONE
+                        stampListRefresh.isRefreshing = false
+                    }
                 }
 
                 is ModelState.Error -> {
-                    // todo: 에러
-                    binding.skeletonLoadingView.visibility = View.GONE
+                    with(binding) {
+                        mainContainer.visibility = View.VISIBLE
+                        skeleton.visibility = View.GONE
+                    }
                 }
 
                 is ModelState.Loading -> {
-                    // todo: 로딩 스켈레톤
-                    binding.skeletonLoadingView.visibility = View.VISIBLE
+                    with(binding) {
+                        mainContainer.visibility = View.GONE
+                        skeleton.visibility = View.VISIBLE
+                    }
                 }
             }
         }
@@ -154,7 +156,7 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
                 data = CommonBottomSheetModel(
                     type = BottomSheetType.SELECT_STAMP_BOARD,
                     title = "누구의 도장판을 볼까요?",
-                    contentList = userList.map { it.toSelectUserStampBoardModel() },
+                    contentList = listOf(SelectUserStampBoardModel(userId = 0, nickName = "전체", userType = null)) + userList.map { it.toSelectUserStampBoardModel() },
                     button = CommonButtonModel(
                         buttonCount = ButtonCount.ZERO
                     )
@@ -164,13 +166,14 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
                         override fun setBusinessLogic() {}
 
                         override fun getReturnValue(value: Any) {
-                            val selectedUserInfo = (value as SelectUserStampBoardModel)
-                            binding.selectContainer.visibility = View.GONE
+                            val selectedUserInfo = value as SelectUserStampBoardModel
+                            val selectedUserId = if (selectedUserInfo.nickName == "전체") null else selectedUserInfo.userId
 
+                            stampViewModel.setSelectedUserId(userId = selectedUserId)
                             stampViewModel.requestStampBoardList(
                                 accessToken = getAccessTokenOrNull() ?: "",
-                                linkedMemberId = selectedUserInfo.userId.toString(),
-                                stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
+                                linkedMemberId = selectedUserId?.toString(),
+                                stampBoardGroup = "in_progress" // 진행 중 todo: enum class
                             )
                         }
 
@@ -186,7 +189,6 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         totalInd: TextView,
         stampList: List<StampBoardSummaryModel>?
     ) {
-        // todo: adapter 임시
         vpAdapter = MainStampPagerAdapter(stampList, this)
         view.adapter = vpAdapter
 
