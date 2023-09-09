@@ -68,6 +68,12 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         linkedUserViewModel.requestLinkedUserList(accessToken = getAccessTokenOrNull() ?: "")
     }
 
+    private fun setAdapter() {
+        binding.stampListRc.adapter = rvAdapter
+        binding.stampListRc.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+    }
+
     private fun setRefreshListener() {
         binding.stampListRefresh.setOnRefreshListener {
             stampViewModel.requestStampBoardList(
@@ -78,31 +84,56 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         }
     }
 
+    fun clickUserFilter() {
+        val userList = linkedUserViewModel.getLinkedUserList()
+
+        if (userList != null) {
+            CommonBottomSheetHelper.getInstance(
+                data = CommonBottomSheetModel(
+                    type = BottomSheetType.SELECT_STAMP_BOARD,
+                    title = "누구의 도장판을 볼까요?",
+                    contentList = listOf(SelectUserStampBoardModel(userId = 0, nickName = "전체", userType = null)) + userList.map { it.toSelectUserStampBoardModel() },
+                    button = CommonButtonModel(
+                        buttonCount = ButtonCount.ZERO
+                    )
+                ),
+                onClickListener = {
+                    object : OnButtonClickListener {
+                        override fun setBusinessLogic() {}
+
+                        override fun getReturnValue(value: Any) {
+                            val selectedUserInfo = value as SelectUserStampBoardModel
+                            val selectedUserId = if (selectedUserInfo.nickName == "전체") null else selectedUserInfo.userId
+
+                            stampViewModel.setSelectedUserId(userId = selectedUserId)
+                            stampViewModel.requestStampBoardList(
+                                accessToken = getAccessTokenOrNull() ?: "",
+                                linkedMemberId = selectedUserId?.toString(),
+                                stampBoardGroup = "in_progress" // 진행 중 todo: enum class
+                            )
+                        }
+
+                    }
+                }
+            ).show(childFragmentManager, null)
+        }
+    }
+
     override fun initObserver() {
         super.initObserver()
         // 연동된 사용자 있는지 확인
         linkedUserViewModel.linkedUserList.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is ModelState.Success -> {
-                    val hasLinkedUser = linkedUserViewModel.hasLinkedUser
-                    binding.hasLinkedUser = hasLinkedUser
+            if (state is ModelState.Success) {
+                val hasLinkedUser = linkedUserViewModel.hasLinkedUser
+                binding.hasLinkedUser = hasLinkedUser
 
-                    if (hasLinkedUser) {
-                        // 도장판 조회
-                        stampViewModel.requestStampBoardList(
-                            accessToken = getAccessTokenOrNull() ?: "",
-                            linkedMemberId = null,
-                            stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
-                        )
-                    }
-                }
-
-                is ModelState.Error -> {
-                    // todo: 에러 페이지
-                }
-
-                is ModelState.Loading -> {
-                    // todo: 스켈레톤
+                if (hasLinkedUser) {
+                    // 도장판 조회
+                    stampViewModel.requestStampBoardList(
+                        accessToken = getAccessTokenOrNull() ?: "",
+                        linkedMemberId = null,
+                        stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
+                    )
                 }
             }
         }
@@ -139,47 +170,6 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
                     }
                 }
             }
-        }
-    }
-
-    private fun setAdapter() {
-        binding.stampListRc.adapter = rvAdapter
-        binding.stampListRc.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-    }
-
-    fun clickUserFilter() {
-        val userList = linkedUserViewModel.getLinkedUserList()
-
-        if (userList != null) {
-            CommonBottomSheetHelper.getInstance(
-                data = CommonBottomSheetModel(
-                    type = BottomSheetType.SELECT_STAMP_BOARD,
-                    title = "누구의 도장판을 볼까요?",
-                    contentList = listOf(SelectUserStampBoardModel(userId = 0, nickName = "전체", userType = null)) + userList.map { it.toSelectUserStampBoardModel() },
-                    button = CommonButtonModel(
-                        buttonCount = ButtonCount.ZERO
-                    )
-                ),
-                onClickListener = {
-                    object : OnButtonClickListener {
-                        override fun setBusinessLogic() {}
-
-                        override fun getReturnValue(value: Any) {
-                            val selectedUserInfo = value as SelectUserStampBoardModel
-                            val selectedUserId = if (selectedUserInfo.nickName == "전체") null else selectedUserInfo.userId
-
-                            stampViewModel.setSelectedUserId(userId = selectedUserId)
-                            stampViewModel.requestStampBoardList(
-                                accessToken = getAccessTokenOrNull() ?: "",
-                                linkedMemberId = selectedUserId?.toString(),
-                                stampBoardGroup = "in_progress" // 진행 중 todo: enum class
-                            )
-                        }
-
-                    }
-                }
-            ).show(childFragmentManager, null)
         }
     }
 

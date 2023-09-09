@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/stampContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/round_stroke_background"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="24dp">
+
+            <!-- 도장판 헤더 -->
+            <TextView
+                android:id="@+id/stampNickName"
+                style="@style/title.20.700"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/gray_700"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="혜인이의 도장판" />
+
+            <!-- 하단 보상 -->
+            <TextView
+                android:id="@+id/rewardTitle"
+                style="@style/caption.12.600"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="9dp"
+                android:background="@drawable/round_semi_background"
+                android:backgroundTint="@color/primary_400"
+                android:text="보상"
+                android:textColor="@color/white"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/stampNickName" />
+
+            <TextView
+                android:id="@+id/rewardContent"
+                style="@style/body.14.600"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textColor="@color/gray_700"
+                app:layout_constraintBottom_toBottomOf="@id/rewardTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/rewardTitle"
+                app:layout_constraintTop_toTopOf="@id/rewardTitle"
+                tools:text="아이유 2023 콘서트 티켓" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.8"
+            android:background="@color/gray_500" />
+
+        <ImageView
+            android:layout_width="158dp"
+            android:layout_height="158dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="11dp"
+            android:src="@drawable/ic_coupon_completed"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
