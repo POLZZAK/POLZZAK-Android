@@ -19,10 +19,11 @@
     </data>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="680dp"
         android:background="@color/white"
+        android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingBottom="16dp">
 
@@ -30,12 +31,10 @@
             android:id="@+id/bottom_sheet_handler"
             android:layout_width="100dp"
             android:layout_height="4dp"
+            android:layout_gravity="center"
             android:layout_marginTop="12dp"
             android:background="@drawable/round_background"
-            android:backgroundTint="@color/gray_200"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:backgroundTint="@color/gray_200" />
 
         <TextView
             android:id="@+id/bottom_sheet_title"
@@ -46,11 +45,6 @@
             android:gravity="center"
             android:text="@{data.title}"
             android:textColor="@color/gray_800"
-            app:layout_constraintBottom_toTopOf="@id/bottom_sheet_subtitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_handler"
-            app:layout_constraintVertical_chainStyle="packed"
             tools:text="제목" />
 
         <TextView
@@ -63,23 +57,16 @@
             android:gravity="center"
             android:text="@{data.subTitle}"
             android:textColor="@color/gray_500"
-            app:layout_constraintBottom_toTopOf="@id/bottom_sheet_recycler_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_title"
             tools:text="서브 제목" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/bottom_sheet_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="16dp"
+            android:layout_weight="1"
             android:clipToPadding="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@id/bottom_sheet_button_container"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_subtitle"
             tools:itemCount="3"
             tools:listitem="@layout/item_select_user_filter" />
 
@@ -88,10 +75,7 @@
             setVisibility="@{data.button.buttonCount != buttonCount.ZERO}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_recycler_view">
+            android:layout_marginTop="12dp">
 
             <Button
                 android:id="@+id/bottom_sheet_negative_button"
@@ -122,6 +106,6 @@
                 tools:text="확인" />
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </layout>

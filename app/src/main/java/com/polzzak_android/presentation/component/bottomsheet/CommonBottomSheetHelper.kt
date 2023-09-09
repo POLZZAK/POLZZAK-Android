@@ -80,6 +80,16 @@ class CommonBottomSheetHelper(
                 })
             }
 
+            BottomSheetType.EXAMPLE_MISSION -> {
+                var id = 1000000
+                items.addAll(data.contentList.map { model ->
+                    MissionListItem(
+                        model = MissionModel(id = id++, content = model as String),
+                        interaction = this
+                    )
+                })
+            }
+
             BottomSheetType.PROFILE_IMAGE -> {
                 items.addAll(data.contentList.map { model ->
                     UserInfoImageListItem(

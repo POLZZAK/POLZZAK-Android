@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.stamp.make
 
+import android.graphics.Rect
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
@@ -7,6 +8,8 @@ import android.widget.Toast
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentMakeStampBinding
 import com.polzzak_android.presentation.common.adapter.MakeStampCountAdapter
@@ -19,12 +22,19 @@ import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel
 import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
+import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
+import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
+import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserStampBoardModel
+import com.polzzak_android.presentation.component.bottomsheet.model.toSelectUserStampBoardModel
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.MissionInteraction
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.StampCountInteraction
+import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -54,9 +64,8 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         )
 
         toolbarHelper.set()
-        toolbarHelper.updateToolbarBackgroundColor(R.color.black)
-        toolbarHelper.updateTextIconColor(R.color.error_500)
-        toolbarHelper.updateImageIconColor(R.color.white)
+        toolbarHelper.updateBackButtonImage(R.drawable.ic_close)
+        toolbarHelper.updateTextIconColor(R.color.primary)
     }
 
     private val requestStampDialog = CommonDialogHelper.getInstance(
@@ -110,7 +119,28 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         }
 
         binding.missionExButton.setOnClickListener {
-            findNavController().navigate(R.id.action_makeStampFragment_to_exampleMissionFragment)
+            val exampleList = ExampleMissionHelper().getList()
+            CommonBottomSheetHelper.getInstance(
+                data = CommonBottomSheetModel(
+                    type = BottomSheetType.EXAMPLE_MISSION,
+                    title = "마음에 드는 미션들을 추가해보세요!",
+                    contentList = exampleList,
+                    button = CommonButtonModel(
+                        buttonCount = ButtonCount.ONE,
+                        positiveButtonText = "추가하기"
+                    )
+                ),
+                onClickListener = {
+                    object : OnButtonClickListener {
+                        override fun setBusinessLogic() {}
+
+                        override fun getReturnValue(value: Any) {
+                            val selectedUserInfo = value as MissionModel
+                        }
+
+                    }
+                }
+            ).show(childFragmentManager, null)
         }
     }
 
@@ -119,6 +149,35 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         makeStampCountAdapter =
             MakeStampCountAdapter(binding.stampCountRc, this, stampCountSelectHelper)
         binding.stampCountRc.adapter = makeStampCountAdapter
+
+        val layoutManager = GridLayoutManager(context, 5)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return 1
+            }
+        }
+        binding.stampCountRc.layoutManager = layoutManager
+
+        binding.stampCountRc.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(
+                outRect: Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ) {
+                val position = parent.getChildAdapterPosition(view)
+                val itemCount = state.itemCount
+
+                outRect.top = 10
+                outRect.bottom = 10
+
+                if (position >= itemCount - 2) {
+                    outRect.right = 0
+                } else {
+                    outRect.right = 10
+                }
+            }
+        })
 
         // 미션
         stampMissionAdapter = MakeStampMissionAdapter(this)

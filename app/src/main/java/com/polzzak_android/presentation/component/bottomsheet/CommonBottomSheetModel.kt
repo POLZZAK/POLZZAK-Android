@@ -12,9 +12,10 @@ data class CommonBottomSheetModel(
 
 /**
  * MISSION : 미션
+ * EXAMPLE_MISSION : 예시 미션
  * PROFILE_IMAGE : 프로필 이미지형
  * SELECT_STAMP_BOARD : 도장판 조회
  */
 enum class BottomSheetType {
-    MISSION, PROFILE_IMAGE, SELECT_STAMP_BOARD
+    MISSION, EXAMPLE_MISSION, PROFILE_IMAGE, SELECT_STAMP_BOARD
 }
