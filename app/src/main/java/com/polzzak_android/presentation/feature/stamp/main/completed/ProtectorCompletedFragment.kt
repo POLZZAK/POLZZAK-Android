@@ -76,7 +76,7 @@ class ProtectorCompletedFragment : BaseFragment<FragmentCompletedBinding>(),
             stampViewModel.requestStampBoardList(
                 accessToken = getAccessTokenOrNull() ?: "",
                 linkedMemberId = stampViewModel.getSelectedUserId(),
-                stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
+                stampBoardGroup = "ended"     // 진행 중 todo: enum class
             )
         }
     }
@@ -106,7 +106,7 @@ class ProtectorCompletedFragment : BaseFragment<FragmentCompletedBinding>(),
                             stampViewModel.requestStampBoardList(
                                 accessToken = getAccessTokenOrNull() ?: "",
                                 linkedMemberId = selectedUserId?.toString(),
-                                stampBoardGroup = "in_progress" // 진행 중 todo: enum class
+                                stampBoardGroup = "ended" // 진행 중 todo: enum class
                             )
                         }
 
@@ -129,7 +129,7 @@ class ProtectorCompletedFragment : BaseFragment<FragmentCompletedBinding>(),
                     stampViewModel.requestStampBoardList(
                         accessToken = getAccessTokenOrNull() ?: "",
                         linkedMemberId = null,
-                        stampBoardGroup = "in_progress"     // 진행 중 todo: enum class
+                        stampBoardGroup = "ended"     // 진행 중 todo: enum class
                     )
                 }
             }
