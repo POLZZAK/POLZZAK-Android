@@ -14,6 +14,11 @@ interface StampBoardRepository {
         linkedMemberId: String?,
         stampBoardGroup: String
     ): ApiResult<List<MainStampBoardListResponse.Data>>
+
+    suspend fun makeStampBoard(
+        accessToken: String,
+        newStampBoard: MakeStampBoardRequest
+    ): ApiResult<Nothing?>
 }
 
 class StampBoardRepositoryImpl @Inject constructor(
@@ -34,7 +39,7 @@ class StampBoardRepositoryImpl @Inject constructor(
     /**
      * 도장판 생성
      */
-    suspend fun makeStampBoard(
+    override suspend fun makeStampBoard(
         accessToken: String,
         newStampBoard: MakeStampBoardRequest
     ) : ApiResult<Nothing?> = requestCatching {

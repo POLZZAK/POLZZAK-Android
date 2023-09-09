@@ -88,7 +88,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
                 override fun setBusinessLogic() {
                     makeStampViewModel.setStampBoardName(binding.stampBoardName.text.toString())
                     makeStampViewModel.setStampBoardReward(binding.stampBoardReward.text.toString())
-                    makeStampViewModel.validateInput()
+                    makeStampViewModel.validateInput(token = getAccessTokenOrNull() ?: "")
                 }
 
                 override fun getReturnValue(value: Any) {}
@@ -241,12 +241,11 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
 
                 is ModelState.Success -> {
                     loadingStampDialog.dismiss()
+                    findNavController().popBackStack()
                 }
 
                 is ModelState.Error -> {
-                    val message = modelState.exception
                     loadingStampDialog.dismiss()
-                    Toast.makeText(context, "실패: $message", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -331,6 +330,8 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
                                 .error(R.drawable.ic_launcher_background)
                                 .into(binding.selectedKidProfileImg)
                         }
+
+                        makeStampViewModel.setSelectedKidId(id = selectedKid.memberId)
                     }
 
                 }

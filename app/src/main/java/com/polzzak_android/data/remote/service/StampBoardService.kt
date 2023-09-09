@@ -18,7 +18,7 @@ interface StampBoardService {
         @Query("stampBoardGroup") stampBoardGroup: String           // 진행 중인 도장판 여부(in_progress, ended)
     ) : Response<MainStampBoardListResponse>
 
-    @POST("/api/v1/stamps/stamp-board")
+    @POST("/api/v1/stamps/stamp-boards")
     suspend fun makeStampBoard(
         @Header("Authorization") token: String,
         @Body stampBoardRequest: MakeStampBoardRequest

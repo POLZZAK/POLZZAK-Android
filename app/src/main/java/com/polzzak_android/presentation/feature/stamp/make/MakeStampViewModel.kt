@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
+import com.polzzak_android.data.remote.model.response.toStampBoardModel
 import com.polzzak_android.data.repository.StampBoardRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.feature.stamp.model.MakeStampCountModel
@@ -58,10 +59,14 @@ class MakeStampViewModel @Inject constructor(
         _missionListSize.value = _missionList.value!!.missionList.size
     }
 
-    fun validateInput() {
-        /**
-         * 유효성 체크
-         */
+    fun setSelectedKidId(id: Int) {
+        _selectedKidId = id
+    }
+
+    /**
+     * 유효성 체크
+     */
+    fun validateInput(token: String) {
         val checkName = validateInput(MakeStampBardInputType.NAME)
         val checkReward = validateInput(MakeStampBardInputType.REWARD)
         val checkCount = validateInput(MakeStampBardInputType.COUNT)
@@ -76,6 +81,7 @@ class MakeStampViewModel @Inject constructor(
                 _missionList.value
             ) { id, name, count, reward, missionList ->
                 makeStampBoard(
+                    token = token,
                     id = id,
                     nameModel = name,
                     countModel = count,
@@ -89,6 +95,7 @@ class MakeStampViewModel @Inject constructor(
     }
 
     private fun makeStampBoard(
+        token: String,
         id: Int,
         nameModel: MakeStampNameModel,
         countModel: MakeStampCountModel,
@@ -103,19 +110,18 @@ class MakeStampViewModel @Inject constructor(
             missionList = missionListModel.missionList
         )
 
-//        viewModelScope.launch {
-//            _makeStampBoardState.postValue(ModelState.Loading())
-//            val response = repository.makeStampBoard(
-//                // todo: 임시 토큰
-//                token = "",
-//                newStampBoard = request
-//            )
-//            response.onSuccess {
-//                _makeStampBoardState.postValue(ModelState.Success("도장판 생성 성공"))
-//            }.onError { exception, nothing ->
-//                _makeStampBoardState.postValue(ModelState.Error(exception))
-//            }
-//        }
+        viewModelScope.launch {
+            _makeStampBoardState.value = ModelState.Loading()
+            val response = repository.makeStampBoard(
+                accessToken = token,
+                newStampBoard = request
+            )
+            response.onSuccess {
+                _makeStampBoardState.value = ModelState.Success("도장판 생성 성공")
+            }.onError { exception, nothing ->
+                _makeStampBoardState.value = ModelState.Error(exception)
+            }
+        }
     }
 
     /**
@@ -170,18 +176,6 @@ class MakeStampViewModel @Inject constructor(
         _missionList.value = currentMissionList!!.copy(
             missionList = input
         )
-    }
-
-    fun addMissionList(newMissionList: List<String>) {
-        val currentMissionList = _missionList.value
-        val mutableMissionList = currentMissionList!!.missionList.toMutableList()
-
-        mutableMissionList.addAll(newMissionList)
-
-        _missionList.value = currentMissionList.copy(
-            missionList = mutableMissionList
-        )
-        _missionListSize.value = mutableMissionList.size
     }
 
     fun deleteMission(mission: String) {
