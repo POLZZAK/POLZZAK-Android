@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:text="@{missionData.missionTitle}"
-            android:textColor="@color/black"
+            android:textColor="@color/gray_800"
             app:layout_constraintBottom_toTopOf="@id/dialog_mission_time"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

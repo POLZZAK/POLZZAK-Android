@@ -65,7 +65,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:alpha="0.8"
-            android:background="@color/gray_500" />
+            android:background="@drawable/shape_rectangle_gray_500_r8" />
 
         <ImageView
             android:layout_width="158dp"
