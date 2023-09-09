@@ -4,39 +4,47 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".presentation.feature.stamp.make.MakeStampFragment">
 
-    <androidx.core.widget.NestedScrollView
+    <data>
+
+        <variable
+            name="fragment"
+            type="com.polzzak_android.presentation.feature.stamp.make.MakeStampFragment" />
+    </data>
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:background="@color/white"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/layout_toolbar" />
+
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <include
-                android:id="@+id/toolbar"
-                layout="@layout/layout_toolbar" />
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingHorizontal="16dp"
-                android:paddingBottom="100dp">
+                android:paddingBottom="30dp">
 
                 <!-- 아이 선택 -->
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="23dp">
 
                     <ImageView
                         android:id="@+id/selected_kid_profile_img"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         android:layout_marginTop="-20dp"
-                        android:background="@drawable/ic_launcher_background"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/kid_message" />
 
@@ -66,6 +74,7 @@
                         android:layout_width="16dp"
                         android:layout_height="16dp"
                         android:background="@drawable/ic_refresh"
+                        android:onClick="@{() -> fragment.clickKidSelector()}"
                         app:layout_constraintBottom_toBottomOf="@id/selected_kid_name"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/selected_kid_name"
@@ -248,8 +257,8 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
-    </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
 </layout>

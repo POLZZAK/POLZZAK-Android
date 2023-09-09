@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.polzzak_android.data.remote.model.response.UserInfoDto
 import com.polzzak_android.databinding.CommonBottomSheetBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
@@ -96,7 +97,7 @@ class CommonBottomSheetHelper(
             BottomSheetType.PROFILE_IMAGE -> {
                 items.addAll(data.contentList.map { model ->
                     UserInfoImageListItem(
-                        model = model as SelectUserMakeBoardModelModel,
+                        model = model as UserInfoDto,
                         interaction = this
                     )
                 })
@@ -145,7 +146,7 @@ class CommonBottomSheetHelper(
                 }
 
                 is UserInfoImageListItem -> {
-                    item.isSelected = item.model.userId == modelId
+                    item.isSelected = item.model.memberId == modelId
                     if (item.isSelected) selectedItem = item
                 }
 
@@ -187,8 +188,8 @@ class CommonBottomSheetHelper(
     /**
      * 프로필 조회 : BottomSheetType.PROFILE_IMAGE
      */
-    override fun onUserProfileClick(model: SelectUserMakeBoardModelModel) {
-        selectItem(items, model.userId)?.let {
+    override fun onUserProfileClick(model: UserInfoDto) {
+        selectItem(items, model.memberId)?.let {
             adapter.notifyDataSetChanged()
             this.returnValue = model
             binding.bottomSheetPositiveButton.isEnabled = true

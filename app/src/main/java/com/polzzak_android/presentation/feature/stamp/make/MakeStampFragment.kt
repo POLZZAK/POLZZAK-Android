@@ -10,7 +10,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.polzzak_android.R
+import com.polzzak_android.data.remote.model.response.UserInfoDto
 import com.polzzak_android.databinding.FragmentMakeStampBinding
 import com.polzzak_android.presentation.common.adapter.MakeStampCountAdapter
 import com.polzzak_android.presentation.common.adapter.MakeStampMissionAdapter
@@ -26,12 +28,12 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
-import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserStampBoardModel
-import com.polzzak_android.presentation.component.bottomsheet.model.toSelectUserStampBoardModel
+import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserMakeBoardModelModel
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
+import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.MissionInteraction
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.StampCountInteraction
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
@@ -47,6 +49,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
     private lateinit var stampMissionAdapter: MakeStampMissionAdapter
 
     private val makeStampViewModel: MakeStampViewModel by activityViewModels()
+    private val linkedUserViewModel: StampLinkedUserViewModel by activityViewModels()
 
     private lateinit var toolbarHelper: ToolbarHelper
 
@@ -87,6 +90,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
                     makeStampViewModel.setStampBoardReward(binding.stampBoardReward.text.toString())
                     makeStampViewModel.validateInput()
                 }
+
                 override fun getReturnValue(value: Any) {}
             }
         }
@@ -108,11 +112,12 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         super.initView()
         stampCountSelectHelper = StampCountSelectedHelper.getInstance()
 
+        binding.fragment = this
+
         setAdapter()
         initData()
 
-        // todo: 닉네임 임시
-        binding.selectedKidName.text = "임시닉네임"
+        linkedUserViewModel.requestLinkedUserList(accessToken = getAccessTokenOrNull() ?: "")
 
         binding.missionEnrollButton.setOnClickListener {
             makeStampViewModel.createMission()
@@ -189,6 +194,21 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         super.initObserver()
         observeValidateResult()
 
+        // 연동된 사용자 있는지 확인
+        linkedUserViewModel.linkedUserList.observe(viewLifecycleOwner) { state ->
+            if (state is ModelState.Success) {
+                val hasLinkedUser = linkedUserViewModel.hasLinkedUser
+                val firstUser = state.data.first()
+
+                if (hasLinkedUser) {
+                    binding.selectedKidName.text = firstUser.nickName
+                    Glide.with(requireContext()).load(firstUser.profileUrl)
+                        .error(R.drawable.ic_launcher_background)
+                        .into(binding.selectedKidProfileImg)
+                }
+            }
+        }
+
         // 미션 리스트
         makeStampViewModel.missionList.observe(this) { data ->
             stampMissionAdapter.submitList(data.missionList.toMutableList())
@@ -218,9 +238,11 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
                 is ModelState.Loading -> {
                     loadingStampDialog.show(childFragmentManager, null)
                 }
+
                 is ModelState.Success -> {
                     loadingStampDialog.dismiss()
                 }
+
                 is ModelState.Error -> {
                     val message = modelState.exception
                     loadingStampDialog.dismiss()
@@ -276,12 +298,44 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
 
     private fun initData() {
         // 도장판 개수
-        makeStampCountAdapter.submitList(listOf(10, 12, 16, 20, 25, 30, 36, 40, 48, 60))        // todo: 하드코딩 바꾸기?
+        makeStampCountAdapter.submitList(
+            listOf(10, 12, 16, 20, 25, 30, 36, 40, 48, 60)
+        )        // todo: 하드코딩 바꾸기?
         stampCountSelectHelper.stampCount = makeStampViewModel.getStampCountList()
         makeStampViewModel.setMissionListSize(makeStampViewModel.getMissionListSize())
 
         // 뷰모델 데이터 초기화 todo: 수정 진입 시 변경 예정
 //        makeStampViewModel.initData()
+    }
+
+    fun clickKidSelector() {
+        CommonBottomSheetHelper.getInstance(
+            data = CommonBottomSheetModel(
+                type = BottomSheetType.PROFILE_IMAGE,
+                title = "도장판을 누구에게 만들어줄까요?",
+                contentList = linkedUserViewModel.getLinkedUserList() ?: listOf(""),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.ONE,
+                    positiveButtonText = "선택 완료"
+                )
+            ),
+            onClickListener = {
+                object : OnButtonClickListener {
+                    override fun setBusinessLogic() {}
+
+                    override fun getReturnValue(value: Any) {
+                        val selectedKid = value as UserInfoDto
+                        with(binding) {
+                            binding.selectedKidName.text = selectedKid.nickName
+                            Glide.with(requireContext()).load(selectedKid.profileUrl)
+                                .error(R.drawable.ic_launcher_background)
+                                .into(binding.selectedKidProfileImg)
+                        }
+                    }
+
+                }
+            }
+        ).show(childFragmentManager, null)
     }
 
     override fun onStampCountClicked(view: TextView, value: Int) {
