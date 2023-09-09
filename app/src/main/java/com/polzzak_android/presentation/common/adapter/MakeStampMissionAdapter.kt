@@ -12,13 +12,14 @@ import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemStampMissionBinding
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.MissionInteraction
 import com.polzzak_android.presentation.feature.stamp.model.MakeStampMissionListModel
+import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
 class MakeStampMissionAdapter(
     private val interaction: MissionInteraction,
 ) :
     ListAdapter<String, MakeStampMissionAdapter.ViewHolder>(DiffCallback) {
 
-    private var missionList: List<String>? = null
+    private var missionList: MutableList<String>? = null
     private var missionListSize: Int = 0
     private var errorMessage: String? = null
     private var errorPosition: Int? = null
@@ -92,7 +93,7 @@ class MakeStampMissionAdapter(
         }
     }
 
-    override fun submitList(list: List<String>?) {
+    override fun submitList(list: MutableList<String>?) {
         super.submitList(list)
         missionList = list
         notifyDataSetChanged()
@@ -100,6 +101,11 @@ class MakeStampMissionAdapter(
 
     fun setMissionListSize(size: Int) {
         missionListSize = size
+        notifyDataSetChanged()
+    }
+
+    fun addMission(list: MutableList<MissionModel>) {
+        missionList?.addAll(list.map { data -> data.content })
         notifyDataSetChanged()
     }
 

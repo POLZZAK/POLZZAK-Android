@@ -135,7 +135,8 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
                         override fun setBusinessLogic() {}
 
                         override fun getReturnValue(value: Any) {
-                            val selectedUserInfo = value as MissionModel
+                            val missionList = value as List<MissionModel>
+                            stampMissionAdapter.addMission(missionList.toMutableList())
                         }
 
                     }
@@ -189,9 +190,9 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         observeValidateResult()
 
         // 미션 리스트
-        makeStampViewModel.missionList.observe(this) { missionList ->
-            stampMissionAdapter.submitList(missionList.missionList)
-            stampMissionAdapter.validate(missionList)
+        makeStampViewModel.missionList.observe(this) { data ->
+            stampMissionAdapter.submitList(data.missionList.toMutableList())
+            stampMissionAdapter.validate(data)
         }
 
         // 미션 리스트 카운트
