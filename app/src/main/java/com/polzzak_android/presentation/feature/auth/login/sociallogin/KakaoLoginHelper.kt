@@ -7,16 +7,24 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import timber.log.Timber
 
-//TODO 로그아웃 콜백 추가
 class KakaoLoginHelper(private val context: Context) {
     private var loginSuccessCallbacks: MutableList<(OAuthToken) -> Unit> = mutableListOf()
+    private var loginFailedCallbacks: MutableList<() -> Unit> = mutableListOf()
 
     fun registerLoginSuccessCallback(callback: (token: OAuthToken) -> Unit) {
         loginSuccessCallbacks.add(callback)
     }
 
+    fun registerLoginFailedCallback(callback: () -> Unit) {
+        loginFailedCallbacks.add(callback)
+    }
+
     fun unregisterLoginSuccessCallback(callback: (OAuthToken) -> Unit): Boolean {
         return loginSuccessCallbacks.removeIf { it == callback }
+    }
+
+    fun unregisterLoginFailedCallback(callback: () -> Unit): Boolean {
+        return loginFailedCallbacks.removeIf { it == callback }
     }
 
     fun requestLogin() {
@@ -25,8 +33,7 @@ class KakaoLoginHelper(private val context: Context) {
                 { token -> loginSuccessCallbacks.forEach { it.invoke(token) } }
             val kakaoLoginCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
                 if (error != null) {
-                    //TODO 카카오 로그인 실패 에러 핸들링
-                    Timber.e("카카오로 로그인 실패 $error")
+                    loginFailedCallbacks.forEach { it.invoke() }
                 } else if (token != null) kakaoLoginSuccessCallback(token)
             }
 
@@ -61,7 +68,7 @@ class KakaoLoginHelper(private val context: Context) {
     fun requestLogout() {
         with(UserApiClient.instance) {
             unlink {
-                //TODO 로그아웃 콜백 구현
+                //소셜로그인 로그아웃 콜백
                 it?.let {
                     Timber.e("로그아웃 에러 $it")
                 }
