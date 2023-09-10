@@ -39,18 +39,74 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSetting"
+        <include
+            android:id="@+id/inLoading"
+            layout="@layout/item_full_loading"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:background="@color/gray_100"
-            android:paddingHorizontal="16dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/clHeader" />
+
+        <ScrollView
+            android:id="@+id/svSettings"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:scrollbars="none"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/clHeader">
 
-        </androidx.recyclerview.widget.RecyclerView>
+            <LinearLayout
+                android:id="@+id/llSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/clAlLMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="16dp">
+
+                    <TextView
+                        android:id="@+id/tvAllMenuTitle"
+                        style="@style/subtitle.16.600"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/notification_setting_all_title"
+                        android:textColor="@color/gray_800"
+                        app:layout_constraintBottom_toBottomOf="@id/scALlMenuSwitch"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/scALlMenuSwitch" />
+
+                    <androidx.appcompat.widget.SwitchCompat
+                        android:id="@+id/scALlMenuSwitch"
+                        android:layout_width="52dp"
+                        android:layout_height="32dp"
+                        android:layout_marginVertical="24dp"
+                        android:background="@drawable/selector_bg_switch"
+                        android:padding="8dp"
+                        android:thumb="@drawable/ic_switch_thumb"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:track="@color/dimmed_00" />
+
+                    <View
+                        android:id="@+id/vDivider"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_300"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+        </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

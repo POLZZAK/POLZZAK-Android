@@ -61,14 +61,14 @@
         android:label="ProtectorNotificationFragment"
         tools:layout="@layout/fragment_protector_notification">
         <action
-            android:id="@+id/action_protectorNotificationFragment_to_notificationSettingFragment"
-            app:destination="@id/notificationSettingFragment" />
+            android:id="@+id/action_protectorNotificationFragment_to_protectorNotificationSettingFragment"
+            app:destination="@id/protectorNotificationSettingFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/notificationSettingFragment"
-        android:name="com.polzzak_android.presentation.feature.notification.setting.NotificationSettingFragment"
-        android:label="NotificationFragment" />
+        android:id="@+id/protectorNotificationSettingFragment"
+        android:name="com.polzzak_android.presentation.feature.notification.setting.protector.ProtectorNotificationSettingFragment"
+        android:label="ProtectorNotificationFragment" />
 
     <!-- 마이페이지 -->
     <fragment
