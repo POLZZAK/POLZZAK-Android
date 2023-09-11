@@ -74,7 +74,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                     StampBoardDetailScreen_Kid(
                         stampBoardData = viewModel.stampBoardData,
                         onStampClick = this@KidStampBoardDetailFragment::openStampInfoDialog,
-                        onEmptyStampClick = this@KidStampBoardDetailFragment::openStampRequestDialog,
+                        onEmptyStampClick = this@KidStampBoardDetailFragment::openStampRequestSheet,
                         onRewardButtonClick = this@KidStampBoardDetailFragment::openRewardSheet,
                         onError = this@KidStampBoardDetailFragment::handleErrorCase
                     )
@@ -110,7 +110,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
     /**
      * 도장 요청 다이얼로그 표시.
      */
-    private fun openStampRequestDialog() = viewModel.stampBoardData.value.data?.also {
+    private fun openStampRequestSheet() = viewModel.stampBoardData.value.data?.also {
         val missionList = it.missionList
 
         val bottomSheet = CommonBottomSheetHelper.getInstance(
@@ -173,7 +173,10 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                 } else {
                     // 실패
                     exception.printStackTrace()
-                    // TODO: 바텀시트에 미션 미리 선택할 수 있는 기능 추가되면 구현하기
+
+                    PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
+                    // TODO: 선택했던 미션 선택 처리 필요
+                    openStampRequestSheet()
                 }
             }
         )

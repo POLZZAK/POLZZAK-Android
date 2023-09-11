@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.presentation.common.model.ModelState
-import com.polzzak_android.presentation.common.util.toLocalDateTime
+import com.polzzak_android.presentation.common.util.toLocalDateTimeOrNull
 import com.polzzak_android.presentation.feature.myPage.notice.model.MyNoticeModel
 import com.polzzak_android.presentation.feature.myPage.notice.model.MyNoticesModel
 import kotlinx.coroutines.Job
@@ -72,7 +72,7 @@ private val mockNotices = List(27) {
     MyNoticeModel(
         id = it,
         title = "title$it".repeat((it % 12) + 1),
-        date = "2023-06-04T20:08:23.745393551".toLocalDateTime() ?: (LocalDateTime.now()),
+        date = "2023-06-04T20:08:23.745393551".toLocalDateTimeOrNull() ?: (LocalDateTime.now()),
         content = "content\n\n\ncontent1\n\ncontent\ncontent".repeat(7)
     )
 }
