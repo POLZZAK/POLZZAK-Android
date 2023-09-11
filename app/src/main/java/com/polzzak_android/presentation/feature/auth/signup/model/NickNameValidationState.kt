@@ -1,7 +1,8 @@
 package com.polzzak_android.presentation.feature.auth.signup.model
 
-enum class NickNameValidationState {
-    UNCHECKED,
-    VALID,
-    INVALID
+sealed class NickNameValidationState {
+    object Unchecked : NickNameValidationState()
+    object Valid : NickNameValidationState()
+    object Invalid : NickNameValidationState()
+    class Error(val exception: Exception) : NickNameValidationState()
 }

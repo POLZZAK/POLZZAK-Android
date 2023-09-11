@@ -122,17 +122,22 @@ class SignUpViewModel @AssistedInject constructor(
             signUpRepository.requestCheckNickNameValidation(nickName = nickName)
                 .onSuccess {
                     _nickNameLiveData.value =
-                        nickNameUiModel.copy(nickNameState = NickNameValidationState.VALID)
+                        nickNameUiModel.copy(nickNameState = NickNameValidationState.Valid)
                 }
                 .onError { exception, _ ->
                     when (exception) {
                         is ApiException.BadRequest -> {
                             _nickNameLiveData.value =
-                                nickNameUiModel.copy(nickNameState = NickNameValidationState.INVALID)
+                                nickNameUiModel.copy(nickNameState = NickNameValidationState.Invalid)
                         }
 
                         else -> {
-                            //TODO 닉네임 중복 체크 에러
+                            _nickNameLiveData.value =
+                                nickNameUiModel.copy(
+                                    nickNameState = NickNameValidationState.Error(
+                                        exception = exception
+                                    )
+                                )
                         }
                     }
                 }

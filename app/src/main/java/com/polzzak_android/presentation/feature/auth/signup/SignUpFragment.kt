@@ -201,6 +201,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             }
             tvBtnCheckValidation.setOnClickListener {
                 signUpViewModel.requestCheckNickNameValidation()
+                hideKeyboardAndClearFocus()
             }
             binding.root.setOnTouchListener { _, _ ->
                 hideKeyboardAndClearFocus()
@@ -345,10 +346,14 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 tvBtnCheckValidation.isEnabled =
                     validNickNameRegex.matches(it.nickName ?: "")
                 tvBtnCheckValidation.text =
-                    getString(if (it.nickNameState == NickNameValidationState.VALID) R.string.signup_nickname_check_validation_btn_complete else R.string.signup_nickname_check_validation_btn_check)
+                    getString(if (it.nickNameState is NickNameValidationState.Valid) R.string.signup_nickname_check_validation_btn_complete else R.string.signup_nickname_check_validation_btn_check)
                 setNickNameResultTextView(isFocused = etInput.isFocused, uiModel = it)
                 ivBtnClearText.isVisible = !it.nickName.isNullOrEmpty() && etInput.isFocused
                 refreshNextButton()
+                if (it.nickNameState is NickNameValidationState.Error) PolzzakSnackBar.errorOf(
+                    binding.root,
+                    it.nickNameState.exception
+                ).show()
             }
         }
     }
@@ -415,11 +420,11 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             )
             val textColor = ContextCompat.getColor(
                 binding.root.context,
-                if (uiModel.nickNameState == NickNameValidationState.VALID) R.color.primary else R.color.error_500
+                if (uiModel.nickNameState is NickNameValidationState.Valid) R.color.primary else R.color.error_500
             )
             tvCheckDuplicatedResult.setTextColor(textColor)
             val resultDrawableRes =
-                if (uiModel.nickNameState == NickNameValidationState.VALID) R.drawable.ic_signup_nickname_check_result_valid else 0
+                if (uiModel.nickNameState is NickNameValidationState.Valid) R.drawable.ic_signup_nickname_check_result_valid else 0
             tvCheckDuplicatedResult.setCompoundDrawablesWithIntrinsicBounds(
                 resultDrawableRes,
                 0,
@@ -438,8 +443,8 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     ): String {
         return when {
             !isSelected -> ""
-            uiModel.nickNameState == NickNameValidationState.INVALID -> getString(R.string.nickname_check_validation_duplicated_nickname)
-            uiModel.nickNameState == NickNameValidationState.VALID -> getString(R.string.nickname_check_validation_possible)
+            uiModel.nickNameState is NickNameValidationState.Invalid -> getString(R.string.nickname_check_validation_duplicated_nickname)
+            uiModel.nickNameState is NickNameValidationState.Valid -> getString(R.string.nickname_check_validation_possible)
             uiModel.nickName == null -> ""
             uiModel.nickName.isEmpty() -> if (isFocused) "" else getString(R.string.nickname_check_validation_under_minimum_length)
             uiModel.nickName.length < 2 -> getString(R.string.nickname_check_validation_under_minimum_length)
@@ -462,7 +467,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             when (signUpViewModel.pageLiveData.value) {
                 SignUpPage.SELECT_TYPE -> memberTypeData?.selectedType != null
                 SignUpPage.SELECT_PARENT_TYPE -> memberTypeData?.selectedTypeId != null
-                SignUpPage.SET_NICKNAME -> nickNameData?.nickNameState == NickNameValidationState.VALID
+                SignUpPage.SET_NICKNAME -> nickNameData?.nickNameState is NickNameValidationState.Valid
                 SignUpPage.SET_PROFILE_IMAGE -> true
                 SignUpPage.TERMS_OF_SERVICE -> {
                     termsOfServiceData?.run { isCheckedPrivacy && isCheckedService } ?: false
