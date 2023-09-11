@@ -311,11 +311,21 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                             buttonCount = ButtonCount.ONE,
                             positiveButtonText = "되돌아가기"
                         )
-                    )
+                    ),
+                    onConfirmListener = {
+                        object : OnButtonClickListener {
+                            override fun setBusinessLogic() {
+                                findNavController().popBackStack()
+                            }
+
+                            override fun getReturnValue(value: Any) {
+                            }
+                        }
+                    }
                 ).show(childFragmentManager, null)
             }
             else -> {
-                PolzzakSnackBar.errorOf(view = binding.root, exception = exception)
+                PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
             }
         }
     }
