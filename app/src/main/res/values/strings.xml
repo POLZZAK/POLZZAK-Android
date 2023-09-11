@@ -49,6 +49,7 @@
     <string name="signup_select_type_kid_card_content">칭찬 도장을 모아서\n선물을 받고 싶어요</string>
     <string name="signup_select_parent_type_guide_title">함께 활동할 아이와의\n가족관계를 알려주세요</string>
     <string name="signup_select_parent_type_guide_content">설정한 가족관계는 뱃지로 설정돼요\n나중에 변경이 불가하니 신중하게 선택해 주세요</string>
+    <string name="signup_select_parent_type_default">선택해주세요</string>
     <string name="signup_set_nickname_guide_title">닉네임을 설정해주세요</string>
     <string name="signup_set_nickname_guide_content">나중에 자유롭게 수정할 수 있어요</string>
     <string name="signup_set_nickname_pattern_guide">한글, 영문(대소문자 구별), 숫자 사용 가능 / 특수 문자, 공백 불가</string>
