@@ -15,6 +15,7 @@ import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
@@ -29,6 +30,7 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailScreen_Kid
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailViewModel
+import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -89,7 +91,26 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
     }
 
     private fun openMissionsDialog(missions: List<String>) {
-        TODO("미션 리스트 표시 다이얼로그 추가 시 구현 가능")
+        val missionList = missions.mapIndexed { index, s ->
+            MissionModel(id = index, content = s)
+        }
+
+        CommonDialogHelper.getInstance(
+            content = CommonDialogModel(
+                type = DialogStyleType.MISSION_LIST,
+                content = CommonDialogContent(
+                    title = SpannableBuilder.build(requireContext()) {
+                        span(text = "완료한 미션", textColor = R.color.gray_800)
+                        span(text = "${missionList.size}", textColor = R.color.primary_600)
+                    },
+                    missionList = missionList
+                ),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.ONE,
+                    positiveButtonText = "닫기"
+                )
+            )
+        ).show(childFragmentManager, null)
     }
 
     override fun initObserver() {
