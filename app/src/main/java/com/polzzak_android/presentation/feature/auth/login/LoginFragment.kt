@@ -23,7 +23,6 @@ import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoUiModel
-import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.signup.SignUpFragment
 import com.polzzak_android.presentation.feature.root.MainViewModel
@@ -82,16 +81,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             }
             tvContent.text = createContentSpannable()
 
-        }
-
-        //TODO 회원가입 이동 테스트
-        binding.tvTitle.setOnClickListener {
-            val mockSignUpModel = LoginInfoUiModel.SignUp(
-                userName = "t26",
-                socialType = SocialLoginType.GOOGLE,
-                parentTypes = List(17) { MemberTypeDetail.Parent(id = it + 2, label = "label:$it") }
-            )
-            signUp(model = mockSignUpModel)
         }
         lastSocialLoginViewModel.loadLastSocialLoginType()
     }
