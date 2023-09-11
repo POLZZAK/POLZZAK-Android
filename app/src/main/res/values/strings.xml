@@ -61,6 +61,7 @@
     <string name="signup_terms_of_service_agree_all">모두 동의</string>
     <string name="signup_terms_of_service_agree_service">서비스 이용약관에 동의합니다.</string>
     <string name="signup_terms_of_service_agree_privacy">개인정보처리방침에 동의합니다.</string>
+    <string name="signup_loading">회원가입 처리 중 ...</string>
     <string name="signup_nickname_check_validation_btn_check">중복 확인</string>
     <string name="signup_nickname_check_validation_btn_complete">확인 완료</string>
     <string name="nickname_check_validation_duplicated_nickname">이미 사용되고 있는 닉네임이에요</string>

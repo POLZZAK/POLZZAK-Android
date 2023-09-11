@@ -9,6 +9,7 @@ import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.data.repository.SignUpRepository
+import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail.Companion.KID_TYPE_ID
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.signup.model.MemberTypeUiModel
@@ -18,7 +19,6 @@ import com.polzzak_android.presentation.feature.auth.signup.model.ProfileImageUi
 import com.polzzak_android.presentation.feature.auth.signup.model.SignUpPage
 import com.polzzak_android.presentation.feature.auth.signup.model.SignUpResultUiModel
 import com.polzzak_android.presentation.feature.auth.signup.model.SignUpTermsOfServiceModel
-import com.polzzak_android.presentation.common.model.ModelState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -66,7 +66,6 @@ class SignUpViewModel @AssistedInject constructor(
 
             SignUpPage.SELECT_PARENT_TYPE -> _pageLiveData.value = SignUpPage.SET_NICKNAME
             SignUpPage.SET_NICKNAME -> _pageLiveData.value = SignUpPage.SET_PROFILE_IMAGE
-//            SignUpPage.SET_PROFILE_IMAGE -> _pageLiveData.value = SignUpPage.TERMS_OF_SERVICE
             else -> {
                 //do nothing
             }
@@ -168,7 +167,6 @@ class SignUpViewModel @AssistedInject constructor(
                     setSignUpResultError(exception = exception)
                 }
             }
-
         }
     }
 

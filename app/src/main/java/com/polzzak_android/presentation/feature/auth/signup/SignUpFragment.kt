@@ -32,6 +32,8 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
+import com.polzzak_android.presentation.component.PolzzakSnackBar
+import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.feature.term.TermDetailFragment
 import com.polzzak_android.presentation.feature.term.model.TermType
 import dagger.hilt.android.AndroidEntryPoint
@@ -376,9 +378,12 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
     private fun observeSignUpResultLiveData() {
         signUpViewModel.signUpResultLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
+            var btnNextEnabled = true
+            var btnTextRes = R.string.signup_complete
             when (it) {
                 is ModelState.Loading -> {
-                    //TODO 회원가입 로딩
+                    btnNextEnabled = false
+                    btnTextRes = R.string.signup_loading
                 }
 
                 is ModelState.Success -> {
@@ -391,8 +396,12 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 }
 
                 is ModelState.Error -> {
-                    //TODO 회원가입 에러 핸들링
+                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
                 }
+            }
+            binding.tvBtnNext.run {
+                text = getString(btnTextRes)
+                isEnabled = btnNextEnabled
             }
         })
     }
