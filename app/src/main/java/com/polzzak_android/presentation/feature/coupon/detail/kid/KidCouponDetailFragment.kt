@@ -1,26 +1,47 @@
 package com.polzzak_android.presentation.feature.coupon.detail.kid
 
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.core.text.toSpannable
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
+import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.databinding.FragmentCouponDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.component.PolzzakSnackBar
+import com.polzzak_android.presentation.component.dialog.CommonDialogContent
+import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
+import com.polzzak_android.presentation.component.dialog.CommonDialogModel
+import com.polzzak_android.presentation.component.dialog.DialogStyleType
+import com.polzzak_android.presentation.component.dialog.FullLoadingDialog
+import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
+import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailScreen_Kid
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.Exception
 
 @AndroidEntryPoint
 class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_coupon_detail
 
     private val viewModel: CouponDetailViewModel by viewModels()
+
+    private var loadingDialog: FullLoadingDialog? = FullLoadingDialog()
 
     override fun setToolbar() {
         super.setToolbar()
@@ -69,5 +90,68 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
 
     private fun openMissionsDialog(missions: List<String>) {
         TODO("미션 리스트 표시 다이얼로그 추가 시 구현 가능")
+    }
+
+    override fun initObserver() {
+        super.initObserver()
+
+        // Composable에서 로딩 다이얼로그를 조작할 수 없기 때문에
+        // Fragment에서 로딩과 에러 화면 처리를 합니다.
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel
+                    .couponDetailData
+                    .collect {
+                        showLoadingDialog(show = (it is ModelState.Loading))
+
+                        if (it is ModelState.Error) {
+                            handleErrorCase(exception = it.exception)
+                        }
+                    }
+            }
+        }
+    }
+
+    private fun showLoadingDialog(show: Boolean) {
+        if (show) {
+            if (loadingDialog == null) {
+                loadingDialog = FullLoadingDialog()
+            }
+
+            loadingDialog?.show(childFragmentManager, null)
+        } else {
+            loadingDialog?.dismiss()
+            loadingDialog = null
+        }
+    }
+
+    private fun handleErrorCase(exception: Exception) {
+        when (exception) {
+            is ApiException.TargetNotExist -> {
+                CommonDialogHelper.getInstance(
+                    content = CommonDialogModel(
+                        type = DialogStyleType.ALERT,
+                        content = CommonDialogContent(title = "쿠폰이 존재하지 않아요.".toSpannable()),
+                        button = CommonButtonModel(
+                            buttonCount = ButtonCount.ONE,
+                            positiveButtonText = "되돌아가기",
+                        )
+                    ),
+                    onConfirmListener = {
+                        object : OnButtonClickListener {
+                            override fun setBusinessLogic() {
+                                findNavController().popBackStack()
+                            }
+
+                            override fun getReturnValue(value: Any) {
+                            }
+                        }
+                    }
+                ).show(childFragmentManager, null)
+            }
+            else -> {
+                PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
+            }
+        }
     }
 }
