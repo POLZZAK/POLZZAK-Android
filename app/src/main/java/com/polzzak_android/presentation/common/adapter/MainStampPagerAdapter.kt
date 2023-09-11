@@ -5,11 +5,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampProgressBinding
 import com.polzzak_android.presentation.feature.stamp.intercation.MainProgressInteraction
+import com.polzzak_android.presentation.feature.stamp.model.PartnerModel
 import com.polzzak_android.presentation.feature.stamp.model.StampBoardSummaryModel
 
 class MainStampPagerAdapter(
     private val dummy: List<StampBoardSummaryModel>?,
-    private val interaction: MainProgressInteraction
+    private val interaction: MainProgressInteraction,
+    private val partner: PartnerModel
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -64,7 +66,7 @@ class MainStampPagerAdapter(
             )
 
             container.setOnClickListener {
-                interaction.onStampPagerClicked(item)
+                interaction.onStampPagerClicked(stampBoardItem = item, partner = partner)
             }
         }
     }

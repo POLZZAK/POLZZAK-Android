@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -48,9 +49,19 @@ import com.polzzak_android.presentation.common.compose.Blue400
 import com.polzzak_android.presentation.common.compose.Blue500
 import com.polzzak_android.presentation.common.compose.Blue600
 import com.polzzak_android.presentation.common.compose.Blue700
+import com.polzzak_android.presentation.common.compose.Gray200
 import com.polzzak_android.presentation.common.compose.Gray400
 import com.polzzak_android.presentation.common.compose.NoRippleTheme
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
+
+@Composable
+fun SkeletonView(
+    modifier: Modifier = Modifier
+) = Box(
+    modifier = Modifier
+        .then(modifier)
+        .background(color = Gray200, shape = RoundedCornerShape(8.dp))
+)
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -159,65 +170,4 @@ fun ButtonPreview() {
             Text(text = "확인")
         }
     }
-}
-
-/**
- * 폴짝 앱 공통 Chip
- */
-@Composable
-fun BlueChip(text: String) = Text(
-    text = text,
-    color = Color.White,
-    style = PolzzakTheme.typography.semiBold16,
-    modifier = Modifier
-        .clip(RoundedCornerShape(corner = CornerSize(6.dp)))
-        .background(color = Blue500)
-        .padding(horizontal = 8.dp, vertical = 4.dp)
-)
-
-@Preview
-@Composable
-private fun BlueChipPreview() {
-    BlueChip(text = "D+9")
-}
-
-/**
- * 알림 바
- */
-@Composable
-fun NoticeBar(
-    text: String,
-    onClick: () -> Unit
-) = Row(
-    verticalAlignment = Alignment.CenterVertically,
-    modifier = Modifier
-        .fillMaxWidth()
-        .background(color = Blue100, shape = RoundedCornerShape(8.dp))
-        .border(width = 1.dp, color = Blue700.copy(alpha = 0.16f), shape = RoundedCornerShape(8.dp))
-        .padding(horizontal = 16.dp, vertical = 12.dp)
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = onClick
-        )
-) {
-    Icon(
-        imageVector = Icons.Default.Notifications,
-        contentDescription = text,
-        tint = Blue400
-    )
-    Spacer(modifier = Modifier.width(8.dp))
-    Text(
-        text = text,
-        style = PolzzakTheme.typography.semiBold14,
-        color = Blue600,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-    )
-}
-
-@Preview
-@Composable
-private fun NoticeBarPreview() {
-    NoticeBar(text = "도장 요청이 있어요!", onClick = {})
 }

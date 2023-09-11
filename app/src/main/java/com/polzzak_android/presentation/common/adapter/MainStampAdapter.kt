@@ -10,9 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemStampNonBinding
 import com.polzzak_android.databinding.ItemStampYesBinding
 import com.polzzak_android.presentation.feature.stamp.intercation.MainProgressInteraction
+import com.polzzak_android.presentation.feature.stamp.model.PartnerModel
 import com.polzzak_android.presentation.feature.stamp.model.StampBoardModel
 
-class MainStampAdapter(private val dummy: List<StampBoardModel>, private val interaction: MainProgressInteraction) :
+class MainStampAdapter(
+    private val dummy: List<StampBoardModel>,
+    private val interaction: MainProgressInteraction
+) :
     ListAdapter<StampBoardModel, RecyclerView.ViewHolder>(DiffCallback) {
 
     private var stampList = dummy
@@ -103,7 +107,14 @@ class MainStampAdapter(private val dummy: List<StampBoardModel>, private val int
             with(binding) {
                 // TODO: 멤버타입 라벨 표시
                 userNickName.text = item.partner?.nickname
-                interaction.setViewPager(stampPager, curPage, totalPage, item.stampBoardSummaries)
+
+                interaction.setViewPager(
+                    view = stampPager,
+                    curInd = curPage,
+                    totalInd = totalPage,
+                    stampList = item.stampBoardSummaries,
+                    partner = item.partner ?: PartnerModel()
+                )
             }
         }
     }

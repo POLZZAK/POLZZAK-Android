@@ -7,14 +7,19 @@ import java.time.LocalDateTime
 import java.time.Period
 import java.time.format.DateTimeFormatter
 
-const val SERVER_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"
 
-fun String?.toLocalDate(): LocalDate? = kotlin.runCatching {
-    LocalDate.parse(this, DateTimeFormatter.ofPattern(SERVER_DATE_FORMAT))
+/**
+ * "yyyy-MM-dd'T'HH:mm:ss" 형태의 스트링을 [LocalDate]로 변환
+ */
+fun String?.toLocalDateOrNull(): LocalDate? = kotlin.runCatching {
+    LocalDateTime.parse(this).toLocalDate()
 }.getOrNull()
 
-fun String?.toLocalDateTime(): LocalDateTime? = kotlin.runCatching {
-    LocalDateTime.parse(this, DateTimeFormatter.ofPattern(SERVER_DATE_FORMAT))
+/**
+ * "yyyy-MM-dd'T'HH:mm:ss" 형태의 스트링을 [LocalDateTime]로 변환
+ */
+fun String?.toLocalDateTimeOrNull(): LocalDateTime? = kotlin.runCatching {
+    LocalDateTime.parse(this)
 }.getOrNull()
 
 fun Int.toPx(context: Context): Int {
