@@ -1,8 +1,8 @@
 package com.polzzak_android.presentation.feature.coupon.model
 
 import com.polzzak_android.data.remote.model.response.CouponDetailDto
-import com.polzzak_android.presentation.common.util.toLocalDate
-import com.polzzak_android.presentation.common.util.toLocalDateTime
+import com.polzzak_android.presentation.common.util.toLocalDateOrNull
+import com.polzzak_android.presentation.common.util.toLocalDateTimeOrNull
 import com.polzzak_android.presentation.coupon.model.CouponState
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,7 +32,7 @@ fun CouponDetailDto.toModel(): CouponDetailModel = CouponDetailModel(
     receiverProfileUrl = this.kid.profileUrl,
     missions = this.missionContents,
     stampCount = this.stampCount,
-    startDate = this.startDate.toLocalDate() ?: LocalDate.now(),
-    endDate =  this.endDate.toLocalDate() ?: LocalDate.now(),
-    rewardRequestDate = this.rewardRequestDate.toLocalDateTime()
+    startDate = this.startDate.toLocalDateOrNull() ?: LocalDate.now(),
+    endDate =  this.endDate.toLocalDateOrNull() ?: LocalDate.now(),
+    rewardRequestDate = this.rewardRequestDate.toLocalDateTimeOrNull()
 )
