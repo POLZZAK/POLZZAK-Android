@@ -7,6 +7,7 @@ import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentCouponDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
@@ -21,13 +22,32 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
 
     private val viewModel: CouponDetailViewModel by viewModels()
 
+    override fun setToolbar() {
+        super.setToolbar()
+
+        ToolbarHelper(
+            data = ToolbarData(
+                popStack = findNavController(),
+                titleText = "",
+                iconImageId = R.drawable.ic_picture,
+                iconInteraction = this@KidCouponDetailFragment
+            ),
+            toolbar = binding.toolbar
+        ).apply {
+            set()
+            updateBackButtonColor(R.color.white)
+            updateToolbarBackgroundColor(R.color.primary)
+        }
+    }
+
+    override fun onToolbarIconClicked() {
+        // TODO: 사진 저장
+    }
+
     override fun initView() {
         super.initView()
 
-        val couponId = arguments?.getInt("couponId", -1) ?: -1
-        Timber.d(">> couponId = $couponId")
-
-        viewModel.fetchCouponDetailData(token = "", couponId = couponId)
+        arguments?.putString("token", getAccessTokenOrNull())
 
         binding.composeView.apply {
             setContent {
@@ -45,27 +65,6 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
                 }
             }
         }
-    }
-
-    override fun setToolbar() {
-        super.setToolbar()
-
-        val toolbarHelper = ToolbarHelper(
-            data = ToolbarData(
-                popStack = findNavController(),
-                titleText = "",
-                iconImageId = R.drawable.ic_picture,
-                iconInteraction = this@KidCouponDetailFragment
-            ),
-            toolbar = binding.toolbar
-        ).apply { set() }
-
-        toolbarHelper.updateToolbarBackgroundColor(R.color.primary)
-        toolbarHelper.updateBackButtonColor(R.color.white)
-    }
-
-    override fun onToolbarIconClicked() {
-        // TODO: 사진 저장
     }
 
     private fun openMissionsDialog(missions: List<String>) {

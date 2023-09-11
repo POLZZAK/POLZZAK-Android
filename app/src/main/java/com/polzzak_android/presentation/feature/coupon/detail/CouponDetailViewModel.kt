@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.coupon.detail
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.data.repository.CouponRepository
@@ -16,18 +17,25 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CouponDetailViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val repository: CouponRepository
 ) : ViewModel() {
     private val _couponDetailData = MutableStateFlow<ModelState<CouponDetailModel>>(ModelState.Loading())
     val couponDetailData
         get() = _couponDetailData.asStateFlow()
 
+    init {
+        val token = savedStateHandle.get<String>("token") ?: ""
+        val couponId = savedStateHandle.get<Int>("couponId") ?: -1
+        fetchCouponDetailData(accessToken = token, couponId = couponId)
+    }
+
     fun fetchCouponDetailData(
-        token: String,
+        accessToken: String,
         couponId: Int
     ) = viewModelScope.launch {
         repository
-            .getCouponDetail(token = token, couponId = couponId)
+            .getCouponDetail(token = accessToken, couponId = couponId)
             .onSuccess { data ->
                 data ?: return@onSuccess
 
