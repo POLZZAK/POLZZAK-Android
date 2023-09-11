@@ -342,9 +342,8 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             with(binding.inSetNickName) {
                 tvBtnCheckValidation.isEnabled =
                     validNickNameRegex.matches(it.nickName ?: "")
-                //TODO string resource로 변경
                 tvBtnCheckValidation.text =
-                    if (it.nickNameState == NickNameValidationState.VALID) "확인 완료" else "중복 확인"
+                    getString(if (it.nickNameState == NickNameValidationState.VALID) R.string.signup_nickname_check_validation_btn_complete else R.string.signup_nickname_check_validation_btn_check)
                 setNickNameResultTextView(isFocused = etInput.isFocused, uiModel = it)
                 ivBtnClearText.isVisible = !it.nickName.isNullOrEmpty() && etInput.isFocused
                 refreshNextButton()
@@ -423,7 +422,6 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
     }
 
-    //TODO string resource로 변경
     private fun createDuplicatedResultText(
         isFocused: Boolean,
         isSelected: Boolean,
@@ -431,14 +429,14 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     ): String {
         return when {
             !isSelected -> ""
-            uiModel.nickNameState == NickNameValidationState.INVALID -> "이미 사용되고 있는 닉네임이에요"
-            uiModel.nickNameState == NickNameValidationState.VALID -> "사용 가능한 닉네임이에요"
+            uiModel.nickNameState == NickNameValidationState.INVALID -> getString(R.string.nickname_check_validation_duplicated_nickname)
+            uiModel.nickNameState == NickNameValidationState.VALID -> getString(R.string.nickname_check_validation_possible)
             uiModel.nickName == null -> ""
-            uiModel.nickName.isEmpty() -> if (isFocused) "" else "최소 2글자로 설정해주세요"
-            uiModel.nickName.length < 2 -> "최소 2글자로 설정해주세요"
-            uiModel.nickName.length > 10 -> "10자까지만 쓸 수 있어요"
+            uiModel.nickName.isEmpty() -> if (isFocused) "" else getString(R.string.nickname_check_validation_under_minimum_length)
+            uiModel.nickName.length < 2 -> getString(R.string.nickname_check_validation_under_minimum_length)
+            uiModel.nickName.length > 10 -> getString(R.string.nickname_check_validation_over_maximum_length)
             validNickNameRegex.matches(uiModel.nickName) -> ""
-            else -> "특수문자(공백)는 쓸 수 없어요"
+            else -> getString(R.string.nickname_check_validation_invalid_char)
         }
     }
 
@@ -446,7 +444,6 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         val memberTypeData = signUpViewModel.memberTypeLiveData.value
         val nickNameData = signUpViewModel.nickNameLiveData.value
         val termsOfServiceData = signUpViewModel.termsOfServiceLiveData.value
-        //TODO 프로필 사진 설정페이지, 약관페이지 추가
         val nextBtnStringRes = when (signUpViewModel.pageLiveData.value) {
             SignUpPage.SET_PROFILE_IMAGE -> R.string.signup_complete
             else -> R.string.common_next

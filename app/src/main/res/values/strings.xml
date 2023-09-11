@@ -61,6 +61,13 @@
     <string name="signup_terms_of_service_agree_all">모두 동의</string>
     <string name="signup_terms_of_service_agree_service">서비스 이용약관에 동의합니다.</string>
     <string name="signup_terms_of_service_agree_privacy">개인정보처리방침에 동의합니다.</string>
+    <string name="signup_nickname_check_validation_btn_check">중복 확인</string>
+    <string name="signup_nickname_check_validation_btn_complete">확인 완료</string>
+    <string name="nickname_check_validation_duplicated_nickname">이미 사용되고 있는 닉네임이에요</string>
+    <string name="nickname_check_validation_possible">사용 가능한 닉네임이에요</string>
+    <string name="nickname_check_validation_under_minimum_length">최소 2글자로 설정해주세요</string>
+    <string name="nickname_check_validation_over_maximum_length">10자까지만 쓸 수 있어요</string>
+    <string name="nickname_check_validation_invalid_char">특수문자(공백)는 쓸 수 없어요</string>
 
     <!-- OnBoarding -->
     <string name="on_boarding_kid_first_title">폴짝!\n회원이 되신 것을 환영해요</string>
