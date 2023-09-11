@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">POLZZAK_android</string>
 
     <!-- 바텀 네비게이션 메인 메뉴 -->
@@ -62,7 +62,7 @@
     <string name="signup_terms_of_service_agree_all">모두 동의</string>
     <string name="signup_terms_of_service_agree_service">서비스 이용약관에 동의합니다.</string>
     <string name="signup_terms_of_service_agree_privacy">개인정보처리방침에 동의합니다.</string>
-    <string name="signup_loading">회원가입 처리 중 ...</string>
+    <string name="signup_loading" tools:ignore="TypographyEllipsis">회원가입 처리 중 ...</string>
     <string name="signup_nickname_check_validation_btn_check">중복 확인</string>
     <string name="signup_nickname_check_validation_btn_complete">확인 완료</string>
     <string name="nickname_check_validation_duplicated_nickname">이미 사용되고 있는 닉네임이에요</string>
@@ -115,6 +115,7 @@
     <string name="search_main_header_text">요청 보낸 목록</string>
     <string name="search_main_empty_text">보낸 요청이 없어요</string>
     <string name="search_main_search_complete">%s 찾기 완료</string>
+    <string name="search_main_sent_request_error_content">목록을 불러오는 데에 실패했어요\n다시 시도해주세요!</string>
     <string name="search_request_guide_text">연동된 %s에게\n칭찬 도장판을 만들어 줄 수 있어요</string>
     <string name="search_request_empty_text">%s님을\n찾을 수 없어요</string>
     <string name="search_request_loading_text">%s님을\n열심히 찾는 중이에요</string>

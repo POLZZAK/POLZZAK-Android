@@ -133,7 +133,7 @@ class LinkViewModel @AssistedInject constructor(
     }
 
     //보낸 요청
-    private fun requestSentRequest(accessToken: String) {
+    fun requestSentRequest(accessToken: String) {
         if (getSentRequestJob?.isCompleted == false) return
         getSentRequestJob = viewModelScope.launch {
             _sentRequestLiveData.value = ModelState.Loading()
@@ -142,7 +142,7 @@ class LinkViewModel @AssistedInject constructor(
                     ?: emptyList()
                 _sentRequestLiveData.value = ModelState.Success(data = data)
             }.onError { exception, _ ->
-                //TODO 에러처리
+                _sentRequestLiveData.value = ModelState.Error(exception = exception)
             }
         }
     }
@@ -160,7 +160,7 @@ class LinkViewModel @AssistedInject constructor(
             ).onSuccess {
                 successLinkEventResult(eventType = linkEventType)
             }.onError { exception, unit ->
-
+                //TODO error handling
             }
         }
     }

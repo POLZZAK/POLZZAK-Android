@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentSearchBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.item.ErrorRefreshItem
+import com.polzzak_android.presentation.common.item.FullLoadingItem
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
@@ -25,6 +27,7 @@ import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.component.PolzzakSnackBar
+import com.polzzak_android.presentation.component.ScrollSwitchLinearLayoutManager
 import com.polzzak_android.presentation.feature.link.LinkClickListener
 import com.polzzak_android.presentation.feature.link.LinkDialogFactory
 import com.polzzak_android.presentation.feature.link.LinkViewModel
@@ -138,6 +141,8 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
 
     private fun initMainPageView() {
         with(binding.inMain) {
+            rvRequestList.layoutManager =
+                ScrollSwitchLinearLayoutManager(context = binding.root.context)
             rvRequestList.adapter = BindableItemAdapter()
             val betweenMarginPx = MAIN_REQUEST_ITEM_BETWEEN_MARGIN_DP.toPx(binding.root.context)
             val bottomMarginPx = MAIN_REQUEST_ITEM_BOTTOM_MARGIN_DP.toPx(binding.root.context)
@@ -220,13 +225,17 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
             val requestListRecyclerView = binding.inMain.rvRequestList
             val adapter =
                 (requestListRecyclerView.adapter as? BindableItemAdapter) ?: return@observe
-            val items = mutableListOf<BindableItem<*>>()
-            //TODO 로딩, 에러케이스 적용
+            val headerTitleStr = getString(R.string.search_main_header_text)
+            val items = mutableListOf<BindableItem<*>>(LinkMainHeaderItem(text = headerTitleStr))
+            val layoutManager =
+                (requestListRecyclerView.layoutManager as? ScrollSwitchLinearLayoutManager)
+            layoutManager?.isScrollable = (it is ModelState.Success)
             when (it) {
-                is ModelState.Loading -> {}
+                is ModelState.Loading -> {
+                    items.add(FullLoadingItem())
+                }
+
                 is ModelState.Success -> {
-                    val headerTitleStr = getString(R.string.search_main_header_text)
-                    items.add(LinkMainHeaderItem(text = headerTitleStr))
                     if (it.data.isEmpty()) {
                         val emptyContentStr = getString(R.string.search_main_empty_text)
                         items.add(SearchMainEmptyItem(text = emptyContentStr))
@@ -240,7 +249,17 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                     }
                 }
 
-                is ModelState.Error -> {}
+                is ModelState.Error -> {
+                    items.add(
+                        ErrorRefreshItem(
+                            content = getString(R.string.search_main_sent_request_error_content),
+                            onRefreshClick = {
+                                linkViewModel.requestSentRequest(
+                                    accessToken = getAccessTokenOrNull() ?: ""
+                                )
+                            })
+                    )
+                }
             }
             setEnabledBtnComplete(isEmpty = it.data.isNullOrEmpty())
             adapter.updateItem(item = items)
