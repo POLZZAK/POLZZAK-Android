@@ -1,7 +1,15 @@
 package com.polzzak_android.presentation.feature.coupon.detail.kid
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Rect
+import android.icu.util.Measure
+import android.view.View.INVISIBLE
+import android.view.View.MeasureSpec
+import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.text.toSpannable
+import androidx.core.view.drawToBitmap
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -15,8 +23,11 @@ import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
+import com.polzzak_android.presentation.common.util.saveBitmapToGallery
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
@@ -30,10 +41,13 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailScreen_Kid
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailViewModel
+import com.polzzak_android.presentation.feature.coupon.detail.CouponTicketImage
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.lang.Exception
 
@@ -65,6 +79,33 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
 
     override fun onToolbarIconClicked() {
         // TODO: 사진 저장
+
+        // 1. 퍼미션 확인 2. 저장
+
+        val isGranted = getPermissionManagerOrNull()?.checkPermissionAndMoveSettingIfDenied(
+            PermissionManager.READ_MEDIA_PERMISSION,
+            dialogTitle = getString(R.string.permission_manager_dialog_storage_title)
+        ) ?: false
+
+        if (isGranted.not()) return
+
+        val couponData = viewModel.couponDetailData.value.data ?: return
+        
+
+        /*lifecycleScope.launch {
+            saveBitmapToGallery(couponBitmap)
+                .onSuccess {
+                    PolzzakSnackBar
+                        .make(binding.root, "성공!!!!", PolzzakSnackBar.Type.SUCCESS)
+                        .show()
+                }
+                .onFailure {
+                    PolzzakSnackBar
+                        .make(binding.root, "실패!!!", PolzzakSnackBar.Type.WARNING)
+                        .show()
+                }
+        }*/
+
     }
 
     override fun initView() {
