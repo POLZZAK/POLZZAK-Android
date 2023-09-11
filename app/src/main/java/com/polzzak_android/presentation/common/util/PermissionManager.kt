@@ -53,12 +53,7 @@ class PermissionManager(private val activity: AppCompatActivity) {
         vararg permissions: String,
         dialogTitle: String
     ): Boolean {
-        if (!permissions.any { permission ->
-                ActivityCompat.checkSelfPermission(
-                    activity,
-                    permission
-                ) != PackageManager.PERMISSION_GRANTED
-            }) return true
+        if (isPermissionsGranted(permissions = permissions)) return true
         val dialogTitleSpannable = SpannableBuilder.build(activity) {
             span(text = dialogTitle, textColor = R.color.gray_700, style = R.style.subtitle_18_600)
         }
@@ -87,6 +82,14 @@ class PermissionManager(private val activity: AppCompatActivity) {
             }).show(activity.supportFragmentManager, null)
         return false
     }
+
+    fun isPermissionsGranted(vararg permissions: String) =
+        !permissions.any { permission ->
+            ActivityCompat.checkSelfPermission(
+                activity,
+                permission
+            ) != PackageManager.PERMISSION_GRANTED
+        }
 
     companion object {
         val READ_MEDIA_PERMISSION =

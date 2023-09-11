@@ -8,68 +8,62 @@ sealed interface SettingMenuType {
     @get:StringRes
     val titleStringRes: Int
 
-    object All : SettingMenuType {
-        override val titleStringRes: Int = R.string.notification_setting_all_title
+    @get:StringRes
+    val contentStringRes: Int
+
+    object Link : SettingMenuType {
+        override val titleStringRes: Int = R.string.notification_setting_link_title
+        override val contentStringRes: Int = R.string.notification_setting_link_content
     }
 
-    sealed interface Menu : SettingMenuType {
-        @get:StringRes
-        val contentStringRes: Int
+    object Level : SettingMenuType {
+        override val titleStringRes: Int = R.string.notification_setting_level_title
+        override val contentStringRes: Int = R.string.notification_setting_level_content
+    }
 
-        object Link : Menu {
-            override val titleStringRes: Int = R.string.notification_setting_link_title
-            override val contentStringRes: Int = R.string.notification_setting_link_content
-        }
+    object RequestStamp : SettingMenuType {
+        override val titleStringRes: Int = R.string.notification_setting_request_stamp_title
+        override val contentStringRes: Int = R.string.notification_setting_request_stamp_content
+    }
 
-        object Level : Menu {
-            override val titleStringRes: Int = R.string.notification_setting_level_title
-            override val contentStringRes: Int = R.string.notification_setting_level_content
-        }
+    object RequestGift : SettingMenuType {
+        override val titleStringRes: Int = R.string.notification_setting_request_gift_title
+        override val contentStringRes: Int = R.string.notification_setting_request_gift_content
+    }
 
-        object RequestStamp : Menu {
-            override val titleStringRes: Int = R.string.notification_setting_request_stamp_title
-            override val contentStringRes: Int = R.string.notification_setting_request_stamp_content
-        }
+    object CompleteStampBoard : SettingMenuType {
+        override val titleStringRes: Int =
+            R.string.notification_setting_complete_stamp_board_title
+        override val contentStringRes: Int =
+            R.string.notification_setting_complete_stamp_board_content
+    }
 
-        object RequestGift : Menu {
-            override val titleStringRes: Int = R.string.notification_setting_request_gift_title
-            override val contentStringRes: Int = R.string.notification_setting_request_gift_content
-        }
+    object ReceiveGift : SettingMenuType {
+        override val titleStringRes: Int = R.string.notification_setting_receive_gift_title
+        override val contentStringRes: Int = R.string.notification_setting_receive_gift_content
+    }
 
-        object CompleteStampBoard : Menu {
-            override val titleStringRes: Int =
-                R.string.notification_setting_complete_stamp_board_title
-            override val contentStringRes: Int =
-                R.string.notification_setting_complete_stamp_board_content
-        }
+    object BreakPromise : SettingMenuType {
+        override val titleStringRes: Int = R.string.notification_setting_break_promise_title
+        override val contentStringRes: Int = R.string.notification_setting_break_promise_content
+    }
 
-        object ReceiveGift : Menu {
-            override val titleStringRes: Int = R.string.notification_setting_receive_gift_title
-            override val contentStringRes: Int = R.string.notification_setting_receive_gift_content
-        }
+    object NewStampBoard : SettingMenuType {
+        override val titleStringRes: Int = R.string.notification_setting_new_stamp_board_title
+        override val contentStringRes: Int =
+            R.string.notification_setting_new_stamp_board_content
+    }
 
-        object BreakPromise : Menu {
-            override val titleStringRes: Int = R.string.notification_setting_break_promise_title
-            override val contentStringRes: Int = R.string.notification_setting_break_promise_content
-        }
+    object PaymentCoupon : SettingMenuType {
+        override val titleStringRes: Int = R.string.notification_setting_payment_coupon_title
+        override val contentStringRes: Int =
+            R.string.notification_setting_payment_coupon_content
+    }
 
-        object NewStampBoard : Menu {
-            override val titleStringRes: Int = R.string.notification_setting_new_stamp_board_title
-            override val contentStringRes: Int =
-                R.string.notification_setting_new_stamp_board_content
-        }
-
-        object PaymentCoupon : Menu {
-            override val titleStringRes: Int = R.string.notification_setting_payment_coupon_title
-            override val contentStringRes: Int =
-                R.string.notification_setting_payment_coupon_content
-        }
-
-        object CheckDeliveryGift : Menu {
-            override val titleStringRes: Int =
-                R.string.notification_setting_check_delivery_gift_title
-            override val contentStringRes: Int =
-                R.string.notification_setting_check_delivery_gift_content
-        }
+    object CheckDeliveryGift : SettingMenuType {
+        override val titleStringRes: Int =
+            R.string.notification_setting_check_delivery_gift_title
+        override val contentStringRes: Int =
+            R.string.notification_setting_check_delivery_gift_content
     }
 }

@@ -46,14 +46,14 @@
             android:name="com.polzzak_android.presentation.feature.notification.list.kid.KidNotificationListFragment"
             android:label="KidNotificationFragment">
             <action
-                android:id="@+id/action_kidNotificationFragment_to_notificationSettingFragment"
-                app:destination="@id/notificationSettingFragment" />
+                android:id="@+id/action_kidNotificationFragment_to_kidNotificationSettingFragment"
+                app:destination="@id/kidNotificationSettingFragment" />
         </fragment>
 
         <fragment
-            android:id="@+id/notificationSettingFragment"
-            android:name="com.polzzak_android.presentation.feature.notification.setting.NotificationSettingFragment"
-            android:label="NotificationSettingFragment" />
+            android:id="@+id/kidNotificationSettingFragment"
+            android:name="com.polzzak_android.presentation.feature.notification.setting.kid.KidNotificationSettingFragment"
+            android:label="KidNotificationSettingFragment" />
     </navigation>
 
     <!-- 마이페이지 -->
