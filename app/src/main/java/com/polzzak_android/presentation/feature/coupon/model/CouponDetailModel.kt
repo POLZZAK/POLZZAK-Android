@@ -19,6 +19,7 @@ data class CouponDetailModel(
     val stampCount: Int,
     val startDate: LocalDate,
     val endDate: LocalDate,
+    val rewardDate: LocalDate?,
     val rewardRequestDate: LocalDateTime?
 )
 
@@ -34,5 +35,6 @@ fun CouponDetailDto.toModel(): CouponDetailModel = CouponDetailModel(
     stampCount = this.stampCount,
     startDate = this.startDate.toLocalDateOrNull() ?: LocalDate.now(),
     endDate =  this.endDate.toLocalDateOrNull() ?: LocalDate.now(),
+    rewardDate = this.rewardDate.toLocalDateOrNull(),
     rewardRequestDate = this.rewardRequestDate.toLocalDateTimeOrNull()
 )

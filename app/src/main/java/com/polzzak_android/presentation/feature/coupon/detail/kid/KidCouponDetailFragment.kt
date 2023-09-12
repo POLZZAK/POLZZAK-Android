@@ -200,7 +200,9 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
 
             loadingDialog?.show(childFragmentManager, null)
         } else {
-            loadingDialog?.dismiss()
+            if (loadingDialog?.isVisible == true) {
+                loadingDialog?.dismiss()
+            }
             loadingDialog = null
         }
     }

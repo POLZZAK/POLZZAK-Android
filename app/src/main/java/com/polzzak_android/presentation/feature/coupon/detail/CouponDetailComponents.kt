@@ -154,7 +154,8 @@ fun CouponTicketImagePreview() {
             stampCount = 16,
             startDate = LocalDate.now().minusDays(7),
             endDate = LocalDate.now(),
-            rewardRequestDate = null
+            rewardRequestDate = null,
+            rewardDate = null
         )
     )
 }

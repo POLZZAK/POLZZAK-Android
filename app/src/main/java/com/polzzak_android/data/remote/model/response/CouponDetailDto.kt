@@ -17,6 +17,8 @@ data class CouponDetailDto(
     val stampCount: Int,
     @SerializedName("state")
     val state: String,
+    @SerializedName("rewardDate")
+    val rewardDate: String,     // 상품 수령 예정 날짜
     @SerializedName("rewardRequestDate")
     val rewardRequestDate: String,
     @SerializedName("startDate")

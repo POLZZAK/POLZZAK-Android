@@ -162,7 +162,7 @@ private fun CouponDetailScreen(
     when (data.state) {
         CouponState.ISSUED -> {     // 쿠폰 발급 완료 상태
             Spacer(modifier = Modifier.height(30.dp))
-            DeliveryDayText(date = LocalDate.now())
+            DeliveryDayText(date = data.rewardDate ?: LocalDate.now())
 
             if (buttons != null) {
                 Row(
@@ -198,7 +198,8 @@ fun CouponDetailScreenPreview() {
             stampCount = 16,
             startDate = LocalDate.now().minusDays(7),
             endDate = LocalDate.now(),
-            rewardRequestDate = LocalDateTime.now().minusMinutes(30)
+            rewardRequestDate = LocalDateTime.now().minusMinutes(30),
+            rewardDate = LocalDate.now()
         ),
         onMissionClick = {},
         buttons = {
