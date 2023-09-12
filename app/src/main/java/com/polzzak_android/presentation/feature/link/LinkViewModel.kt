@@ -112,7 +112,7 @@ class LinkViewModel @AssistedInject constructor(
                     ?: emptyList()
                 _linkedUsersLiveData.value = ModelState.Success(data = data)
             }.onError { exception, _ ->
-                //TODO 에러처리
+                _linkedUsersLiveData.value = ModelState.Error(exception = exception)
             }
         }
     }
@@ -127,7 +127,7 @@ class LinkViewModel @AssistedInject constructor(
                     ?: emptyList()
                 _receivedRequestLiveData.value = ModelState.Success(data = data)
             }.onError { exception, _ ->
-                //TODO 에러처리
+                _receivedRequestLiveData.value = ModelState.Error(exception = exception)
             }
         }
     }
@@ -159,8 +159,8 @@ class LinkViewModel @AssistedInject constructor(
                 eventType = linkEventType
             ).onSuccess {
                 successLinkEventResult(eventType = linkEventType)
-            }.onError { exception, unit ->
-                //TODO error handling
+            }.onError { exception, _ ->
+                _linkEventLiveData.value = ModelState.Error(exception = exception)
             }
         }
     }

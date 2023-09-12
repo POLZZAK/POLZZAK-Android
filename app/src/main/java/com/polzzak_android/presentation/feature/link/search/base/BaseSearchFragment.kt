@@ -28,6 +28,7 @@ import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.ScrollSwitchLinearLayoutManager
+import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.feature.link.LinkClickListener
 import com.polzzak_android.presentation.feature.link.LinkDialogFactory
 import com.polzzak_android.presentation.feature.link.LinkViewModel
@@ -288,7 +289,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 }
 
                 is ModelState.Error -> {
-                    //TODO 에러케이스 적용
+                    val item = createRequestUserItem(
+                        model = LinkRequestUserModel.Guide(targetLinkMemberType = targetLinkMemberType)
+                    )
+                    items.add(item)
+                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
                 }
             }
             adapter.updateItem(items)
@@ -356,7 +361,8 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 }
 
                 is ModelState.Error -> {
-                    //TODO 에러처리
+                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    dismissDialog()
                 }
             }
         }
