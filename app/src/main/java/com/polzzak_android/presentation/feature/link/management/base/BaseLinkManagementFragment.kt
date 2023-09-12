@@ -17,6 +17,7 @@ import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentLinkManagementBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.item.FullLoadingItem
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
@@ -24,6 +25,7 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.component.PolzzakSnackBar
+import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.feature.link.LinkClickListener
@@ -255,7 +257,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
             val items = mutableListOf<BindableItem<*>>()
             when (it) {
                 is ModelState.Loading -> {
-                    //TODO 로딩
+                    items.add(FullLoadingItem())
                 }
 
                 is ModelState.Success -> {
@@ -276,7 +278,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    //TODO 에러케이스
+                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
                 }
             }
             adapter.updateItem(item = items)
@@ -290,7 +292,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
             val items = mutableListOf<BindableItem<*>>()
             when (it) {
                 is ModelState.Loading -> {
-                    //TODO 로딩
+                    items.add(FullLoadingItem())
                 }
 
                 is ModelState.Success -> {
@@ -313,7 +315,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    //TODO 에러케이스
+                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
                 }
             }
             adapter.updateItem(item = items)
@@ -327,7 +329,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
             val items = mutableListOf<BindableItem<*>>()
             when (it) {
                 is ModelState.Loading -> {
-                    //TODO 로딩
+                    items.add(FullLoadingItem())
                 }
 
                 is ModelState.Success -> {
@@ -349,7 +351,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    //TODO 에러케이스
+                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
                 }
             }
             adapter.updateItem(item = items)
@@ -397,7 +399,8 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    //TODO 에러처리
+                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    dismissDialog()
                 }
             }
         }
@@ -435,7 +438,11 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    //TODO 에러케이스 적용
+                    val item = createRequestUserItem(
+                        model = LinkRequestUserModel.Guide(targetLinkMemberType = targetLinkMemberType)
+                    )
+                    items.add(item)
+                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
                 }
             }
             adapter.updateItem(items)
