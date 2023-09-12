@@ -200,4 +200,7 @@
     <!-- Term -->
     <string name="terms_of_service_detail_service_title">이용약관</string>
     <string name="terms_of_service_detail_privacy_title">개인정보처리방침</string>
+
+    <!-- Coupon Detail -->
+    <string name="coupon_detail_request_reward_success">조르기 완료! 1시간 후에 다시 조를 수 있어요.</string>
 </resources>

@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,8 +53,25 @@ class CouponDetailViewModel @Inject constructor(
             }
     }
 
-    fun requestReward(couponId: Int) {
-        // TODO: 조르기 api 호출 처리
+    fun requestReward(
+        token: String,
+        couponId: Int,
+        onCompletion: (cause: Throwable?) -> Unit
+    ) = viewModelScope.launch {
+        repository
+            .requestReward(token, couponId)
+            .onSuccess {
+                kotlin.runCatching {
+                    _couponDetailData.update {
+                        ModelState.Success(it.data!!.copy(rewardRequestDate = LocalDateTime.now()))
+                    }
+
+                    onCompletion(null)
+                }
+            }
+            .onError { exception, _ ->
+                onCompletion(exception)
+            }
     }
 
     fun receiveReward(couponId: Int) {

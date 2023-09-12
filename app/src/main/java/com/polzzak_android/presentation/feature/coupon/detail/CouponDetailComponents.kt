@@ -70,7 +70,7 @@ fun CountdownButton(
     modifier: Modifier = Modifier,
     onCountEnd: (() -> Unit)? = null
 ) = PolzzakOutlineButton(
-    onClick = { /*TODO*/ },
+    onClick = {},
     modifier = modifier
 ) {
     var ticks by remember(remainingSeconds) {

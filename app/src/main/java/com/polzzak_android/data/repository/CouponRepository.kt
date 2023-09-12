@@ -1,11 +1,13 @@
 package com.polzzak_android.data.repository
 
+import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.response.CouponListResponse
 import com.polzzak_android.data.remote.service.CouponService
 import com.polzzak_android.data.remote.util.createHeaderAuthorization
 import com.polzzak_android.data.remote.util.requestCatching
 import com.polzzak_android.data.remote.model.response.CouponDetailDto
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 interface CouponRepository {
@@ -19,6 +21,11 @@ interface CouponRepository {
         token: String,
         couponId: Int
     ): ApiResult<CouponDetailDto>
+
+    suspend fun requestReward(
+        token: String,
+        couponId: Int
+    ): ApiResult<Unit>
 }
 
 
@@ -40,6 +47,14 @@ class CouponRepositoryImpl @Inject constructor(
         couponId: Int
     ): ApiResult<CouponDetailDto> = requestCatching {
         val accessToken = createHeaderAuthorization(token)
-        couponService.getCouponDetail(token, couponId)
+        couponService.getCouponDetail(accessToken, couponId)
+    }
+
+    override suspend fun requestReward(
+        token: String,
+        couponId: Int
+    ): ApiResult<Unit> = requestCatching {
+        val accessToken = createHeaderAuthorization(token)
+        couponService.requestReward(accessToken, couponId)
     }
 }

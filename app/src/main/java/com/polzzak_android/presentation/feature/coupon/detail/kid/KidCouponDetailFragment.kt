@@ -90,7 +90,7 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
         if (isGranted.not()) return
 
         val couponData = viewModel.couponDetailData.value.data ?: return
-        
+
 
         /*lifecycleScope.launch {
             saveBitmapToGallery(couponBitmap)
@@ -123,7 +123,7 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
                     CouponDetailScreen_Kid(
                         couponDetailData = viewModel.couponDetailData,
                         onMissionClick = this@KidCouponDetailFragment::openMissionsDialog,
-                        onRewardRequestClick = viewModel::requestReward,
+                        onRewardRequestClick = this@KidCouponDetailFragment::requestReward,
                         onRewardDeliveredClick = viewModel::receiveReward
                     )
                 }
@@ -152,6 +152,24 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
                 )
             )
         ).show(childFragmentManager, null)
+    }
+
+    private fun requestReward(couponId: Int) {
+        viewModel.requestReward(
+            token = getAccessTokenOrNull() ?: "",
+            couponId = couponId,
+            onCompletion = { exception ->
+                if (exception == null) {
+                    PolzzakSnackBar.make(
+                        binding.root,
+                        R.string.coupon_detail_request_reward_success,
+                        PolzzakSnackBar.Type.SUCCESS
+                    ).show()
+                } else {
+                    PolzzakSnackBar.errorOf(binding.root, exception).show()
+                }
+            }
+        )
     }
 
     override fun initObserver() {
