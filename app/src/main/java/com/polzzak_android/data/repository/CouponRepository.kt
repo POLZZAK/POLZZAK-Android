@@ -26,6 +26,11 @@ interface CouponRepository {
         token: String,
         couponId: Int
     ): ApiResult<Unit>
+
+    suspend fun receiveReward(
+        token: String,
+        couponId: Int
+    ): ApiResult<Unit>
 }
 
 
@@ -57,4 +62,13 @@ class CouponRepositoryImpl @Inject constructor(
         val accessToken = createHeaderAuthorization(token)
         couponService.requestReward(accessToken, couponId)
     }
+
+    override suspend fun receiveReward(
+        token: String,
+        couponId: Int
+    ): ApiResult<Unit> = requestCatching {
+        val accessToken = createHeaderAuthorization(token)
+        couponService.receiveReward(accessToken, couponId)
+    }
+
 }

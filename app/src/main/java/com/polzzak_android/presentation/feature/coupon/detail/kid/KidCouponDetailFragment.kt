@@ -124,7 +124,7 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
                         couponDetailData = viewModel.couponDetailData,
                         onMissionClick = this@KidCouponDetailFragment::openMissionsDialog,
                         onRewardRequestClick = this@KidCouponDetailFragment::requestReward,
-                        onRewardDeliveredClick = viewModel::receiveReward
+                        onRewardDeliveredClick = this@KidCouponDetailFragment::openReceiveDialog
                     )
                 }
             }
@@ -170,6 +170,86 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
                 }
             }
         )
+    }
+
+    private fun openReceiveDialog(couponId: Int, rewardTitle: String) {
+        CommonDialogHelper.getInstance(
+            content = CommonDialogModel(
+                type = DialogStyleType.ALERT,
+                content = CommonDialogContent(
+                    title = SpannableBuilder.build(requireContext()) {
+                        span(
+                            text = rewardTitle,
+                            textColor = R.color.gray_800,
+                            style = R.style.subtitle_18_600
+                        )
+                        span(
+                            text = "\n선물을 실제로 전달 받았나요?",
+                            textColor = R.color.gray_500,
+                            style = R.style.body_16_500
+                        )
+                    }
+                ),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.TWO,
+                    negativeButtonText = "취소",
+                    positiveButtonText = "네, 받았어요!"
+                )
+            ),
+            onConfirmListener = {
+                object : OnButtonClickListener {
+                    override fun setBusinessLogic() {
+                        receiveReward(couponId, rewardTitle)
+                    }
+
+                    override fun getReturnValue(value: Any) {
+                    }
+                }
+            }
+        ).show(childFragmentManager, null)
+    }
+
+    private fun receiveReward(couponId: Int, rewardTitle: String) {
+        val dialog = CommonDialogHelper.getInstance(
+            content = CommonDialogModel(
+                type = DialogStyleType.LOADING,
+                content = CommonDialogContent(
+                    title = SpannableBuilder.build(requireContext()) {
+                        span(
+                            text = rewardTitle,
+                            textColor = R.color.gray_800,
+                            style = R.style.subtitle_18_600
+                        )
+                        span(
+                            text = "\n선물을 실제로 전달 받았나요?",
+                            textColor = R.color.gray_500,
+                            style = R.style.body_16_500
+                        )
+                    }
+                ),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.ZERO,
+                )
+            )
+        )
+
+        viewModel
+            .receiveReward(
+                token = getAccessTokenOrNull() ?: "",
+                couponId = couponId,
+                onStart = {
+                    dialog.show(childFragmentManager, null)
+                },
+                onCompletion = { exception ->
+                    if (dialog.isVisible) {
+                        dialog.dismiss()
+                    }
+
+                    if (exception != null) {
+                        PolzzakSnackBar.errorOf(binding.root, exception = exception).show()
+                    }
+                }
+            )
     }
 
     override fun initObserver() {

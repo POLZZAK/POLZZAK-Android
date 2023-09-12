@@ -68,7 +68,7 @@ fun CouponDetailScreen_Kid(
     couponDetailData: StateFlow<ModelState<CouponDetailModel>>,
     onMissionClick: (missions: List<String>) -> Unit,
     onRewardRequestClick: (couponId: Int) -> Unit,
-    onRewardDeliveredClick: (couponId: Int) -> Unit
+    onRewardDeliveredClick: (couponId: Int, reward: String) -> Unit
 ) {
     val state by couponDetailData.collectAsState()
 
@@ -108,7 +108,12 @@ fun CouponDetailScreen_Kid(
                         }
                         Spacer(modifier = Modifier.width(7.dp))
                         PolzzakWhiteButton(
-                            onClick = { onRewardDeliveredClick(currentState.data.couponId) },
+                            onClick = {
+                                onRewardDeliveredClick(
+                                    currentState.data.couponId,
+                                    currentState.data.rewardTitle
+                                )
+                            },
                             modifier = Modifier.weight(1f)
                         ) {
                             Text(text = "선물 받기 완료")

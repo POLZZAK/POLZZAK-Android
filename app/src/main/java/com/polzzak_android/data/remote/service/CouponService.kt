@@ -33,4 +33,13 @@ interface CouponService {
         @Header("Authorization") token: String,
         @Path("couponId") couponId: Int
     ): Response<EmptyDataResponse>
+
+    /**
+     * (아이 전용) 보상 수령 API
+     */
+    @POST("/api/v1/coupons/{couponId}/receive")
+    suspend fun receiveReward(
+        @Header("Authorization") token: String,
+        @Path("couponId") couponId: Int
+    ): Response<EmptyDataResponse>
 }

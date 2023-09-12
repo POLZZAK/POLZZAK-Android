@@ -61,20 +61,30 @@ class CouponDetailViewModel @Inject constructor(
         repository
             .requestReward(token, couponId)
             .onSuccess {
-                kotlin.runCatching {
-                    _couponDetailData.update {
-                        ModelState.Success(it.data!!.copy(rewardRequestDate = LocalDateTime.now()))
-                    }
-
-                    onCompletion(null)
-                }
+                fetchCouponDetailData(token, couponId)
+                onCompletion(null)
             }
             .onError { exception, _ ->
                 onCompletion(exception)
             }
     }
 
-    fun receiveReward(couponId: Int) {
-        // TODO: 보상 받음 api 호출 처리
+    fun receiveReward(
+        token: String,
+        couponId: Int,
+        onStart: () -> Unit,
+        onCompletion: (cause: Throwable?) -> Unit
+    ) = viewModelScope.launch {
+        onStart()
+
+        repository
+            .receiveReward(token, couponId)
+            .onSuccess {
+                fetchCouponDetailData(token, couponId)
+                onCompletion(null)
+            }
+            .onError { exception, _ ->
+                onCompletion(exception)
+            }
     }
  }
