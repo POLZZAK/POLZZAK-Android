@@ -12,8 +12,8 @@ import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
 import com.polzzak_android.presentation.feature.notification.list.NotificationListClickListener
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationStatusType
 
-//TODO 버튼 클릭 상태 적용
 class NotificationItem(
     private val model: NotificationModel,
     private val itemStateController: NotificationItemStateController,
@@ -68,7 +68,12 @@ class NotificationItem(
 
     private fun bindBtnLayout(binding: ItemNotificationBinding) {
         with(binding) {
-            clBtnLayout.isVisible = model.isButtonVisible
+            clBtnLayout.isVisible =
+                model.isButtonVisible && model.statusType != NotificationStatusType.REQUEST_FAMILY_REJECT && model.statusType != NotificationStatusType.REQUEST_FAMILY_ACCEPT
+            clBtnAccepted.isVisible =
+                (model.statusType == NotificationStatusType.REQUEST_FAMILY_ACCEPT)
+            clBtnRejected.isVisible =
+                (model.statusType == NotificationStatusType.REQUEST_FAMILY_REJECT)
             tvBtnAccept.setOnClickListener {
                 //TODO 수락 버튼 클릭
             }
@@ -81,9 +86,9 @@ class NotificationItem(
 
     private fun bindProfile(binding: ItemNotificationBinding) {
         with(binding) {
-            clProfile.isVisible = (model.userInfo != null)
-            ivProfileImage.loadCircleImageUrl(imageUrl = model.userInfo?.profileImageUrl)
-            tvNickName.text = model.userInfo?.nickName
+            clProfile.isVisible = (model.user != null)
+            ivProfileImage.loadCircleImageUrl(imageUrl = model.user?.profileImageUrl)
+            tvNickName.text = model.user?.nickName
         }
     }
 

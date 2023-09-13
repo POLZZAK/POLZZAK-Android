@@ -15,6 +15,7 @@ import com.polzzak_android.presentation.common.model.MemberType
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.feature.notification.NotificationViewModel
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemDecoration
@@ -26,6 +27,7 @@ import com.polzzak_android.presentation.feature.notification.list.item.Notificat
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 //TODO 하단 네비게이션 바 만큼 marign 필요
@@ -34,7 +36,14 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
     NotificationListClickListener {
     override val layoutResId: Int = R.layout.fragment_notification_list
 
-    private val notificationViewModel by viewModels<NotificationViewModel>(ownerProducer = {
+    @Inject
+    lateinit var notificationViewModelAssistedFactory: NotificationViewModel.NotificationAssistedFactory
+    private val notificationViewModel by viewModels<NotificationViewModel>(factoryProducer = {
+        NotificationViewModel.provideFactory(
+            notificationViewModelAssistedFactory,
+            initAccessToken = getAccessTokenOrNull() ?: ""
+        )
+    }, ownerProducer = {
         parentFragment ?: this@BaseNotificationListFragment
     })
 
@@ -77,7 +86,9 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
-                    if (!recyclerView.canScrollVertically(1)) notificationViewModel.requestMoreNotifications()
+                    if (!recyclerView.canScrollVertically(1)) notificationViewModel.requestMoreNotifications(
+                        getAccessTokenOrNull() ?: ""
+                    )
                 }
 
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -101,7 +112,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         val layoutManager = (recyclerView.layoutManager as? LinearLayoutManager) ?: return
         val firstCompletelyVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition()
         if (firstCompletelyVisibleItem == 0) {
-            notificationViewModel.refreshNotifications()
+            notificationViewModel.refreshNotifications(getAccessTokenOrNull() ?: "")
             return
         }
         val firstVisibleItem =

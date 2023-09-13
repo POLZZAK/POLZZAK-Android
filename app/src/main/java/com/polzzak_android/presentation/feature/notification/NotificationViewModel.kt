@@ -1,29 +1,34 @@
 package com.polzzak_android.presentation.feature.notification
 
-import android.text.SpannableString
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.polzzak_android.data.repository.NotificationRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.model.copyWithData
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationsModel
+import com.polzzak_android.presentation.feature.notification.list.model.toNotificationModel
 import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenuType
 import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenusModel
 import com.polzzak_android.presentation.feature.notification.setting.model.SettingModel
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import javax.inject.Inject
 
-@HiltViewModel
-class NotificationViewModel @Inject constructor() : ViewModel(), NotificationItemStateController {
+class NotificationViewModel @AssistedInject constructor(
+    private val notificationRepository: NotificationRepository,
+    @Assisted private val initAccessToken: String
+) : ViewModel(), NotificationItemStateController {
     private val _notificationLiveData = MutableLiveData<ModelState<NotificationsModel>>()
     val notificationLiveData: LiveData<ModelState<NotificationsModel>> = _notificationLiveData
     private var requestNotificationJobData: NotificationJobData? = null
@@ -80,12 +85,12 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
                 notificationMutex.lock()
                 _notificationLiveData.value = ModelState.Loading(NotificationsModel())
                 notificationMutex.unlock()
-                requestNotifications()
+                requestNotifications(accessToken = initAccessToken)
             },
         )
     }
 
-    fun refreshNotifications() {
+    fun refreshNotifications(accessToken: String) {
         val priority = REFRESH_NOTIFICATIONS_PRIORITY
         if (requestNotificationJobData.getPriorityOrZero() < priority) requestNotificationJobData?.job?.cancel()
         else if (requestNotificationJobData?.job?.isCompleted == false) return
@@ -98,13 +103,13 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
                 _notificationLiveData.value =
                     ModelState.Loading(prevData.copy(refreshStatusType = NotificationRefreshStatusType.Loading))
                 notificationMutex.unlock()
-                requestNotifications()
+                requestNotifications(accessToken = accessToken)
             },
         )
     }
 
-    fun requestMoreNotifications() {
-        if (notificationLiveData.value?.data?.hasNextPage == false) return
+    fun requestMoreNotifications(accessToken: String) {
+        if (notificationLiveData.value?.data?.nextId == null) return
         val priority = MORE_NOTIFICATIONS_PRIORITY
         if (requestNotificationJobData.getPriorityOrZero() <= priority) requestNotificationJobData?.job?.cancel()
         else if (requestNotificationJobData?.job?.isCompleted == false) return
@@ -117,31 +122,33 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
                 _notificationLiveData.value =
                     ModelState.Loading(prevData.copy(refreshStatusType = NotificationRefreshStatusType.Normal))
                 notificationMutex.unlock()
-                requestNotifications()
+                requestNotifications(accessToken = accessToken)
             },
         )
     }
 
-    //TODO test용 delay를 위해 suspend 붙여줌(제거 필요)
-    private suspend fun requestNotifications() {
-        //TODO api 연동(현재 mock data)
-        val nextOffset = notificationLiveData.value?.data?.nextOffset.takeIf { !isRefreshed } ?: 0
-        delay(2000)
-        val nextData = getMockNotificationData(nextOffset, NOTIFICATION_PAGE_SIZE)
-
-        //onSuccess
-        notificationMutex.lock()
-        val prevData =
-            notificationLiveData.value?.data.takeIf { !isRefreshed } ?: NotificationsModel()
-        if (isRefreshed) notificationHorizontalScrollPositionMap.clear()
-        _notificationLiveData.value =
-            ModelState.Success(
-                nextData.copy(
-                    items = (prevData.items ?: emptyList()) + (nextData.items ?: emptyList()),
+    private suspend fun requestNotifications(accessToken: String) {
+        notificationRepository.requestNotifications(
+            accessToken = accessToken,
+            startId = notificationLiveData.value?.data?.nextId,
+        ).onSuccess {
+            notificationMutex.lock()
+            val prevData = notificationLiveData.value?.data ?: NotificationsModel()
+            val updatedNotifications =
+                prevData.copy(
+                    nextId = it?.startId,
+                    items = (prevData.items ?: emptyList()) + (it?.notificationDtoList
+                        ?: emptyList()).mapNotNull { notificationDto -> notificationDto.toNotificationModel() },
                     refreshStatusType = NotificationRefreshStatusType.Normal
                 )
-            )
-        notificationMutex.unlock()
+            _notificationLiveData.value = ModelState.Success(updatedNotifications)
+            notificationMutex.unlock()
+        }.onError { exception, notificationsDto ->
+            notificationMutex.lock()
+            _notificationLiveData.value =
+                ModelState.Error(exception = exception, data = notificationLiveData.value?.data)
+            notificationMutex.unlock()
+        }
     }
 
     fun deleteNotification(id: Int) {
@@ -149,7 +156,7 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
         updateNotificationJobMap[id] = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
             //TODO api 적용
             delay(1000)
-            deleteMockNotificationData(id = id)
+//            deleteMockNotificationData(id = id)
 
             //onSuccess
             notificationMutex.lock()
@@ -246,58 +253,25 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
     override fun getIsRefreshedSuccess(): Boolean =
         isRefreshed && notificationLiveData.value is ModelState.Success
 
+    @AssistedFactory
+    interface NotificationAssistedFactory {
+        fun create(initAccessToken: String): NotificationViewModel
+    }
+
     companion object {
         const val NOTIFICATION_PAGE_SIZE = 10
         private const val INIT_NOTIFICATIONS_PRIORITY = 3
         private const val REFRESH_NOTIFICATIONS_PRIORITY = 2
         private const val MORE_NOTIFICATIONS_PRIORITY = 1
-    }
-}
-
-private fun getMockNotificationData(nextOffset: Int, pageSize: Int): NotificationsModel {
-    return NotificationsModel(
-        hasNextPage = nextOffset + pageSize < mockNotification.size,
-        nextOffset = nextOffset + pageSize,
-        items = mockNotification.subList(
-            nextOffset,
-            minOf(mockNotification.size, nextOffset + pageSize)
-        )
-    )
-}
-
-private fun deleteMockNotificationData(id: Int) {
-    mockNotification.removeIf { it.id == id }
-}
-
-private val mockNotification = MutableList(187) {
-    when (it % 4) {
-        0 -> NotificationModel.CompleteLink(
-            id = it,
-            date = "${it}일 전",
-            content = SpannableString("연동 완료"),
-            nickName = "닉네임${it}",
-            profileImageUrl = "https://picsum.photos/id/${it + 1}/200/300"
-        )
-
-        1 -> NotificationModel.LevelDown(
-            id = it,
-            date = "${it}일 전",
-            content = SpannableString("레벨 감소"),
-        )
-
-        2 -> NotificationModel.LevelUp(
-            id = it,
-            date = "${it}일 전",
-            content = SpannableString("레벨 업")
-        )
-
-        else -> NotificationModel.RequestLink(
-            id = it,
-            date = "${it}일 전",
-            content = SpannableString("연동 요청"),
-            nickName = "닉네임${it}",
-            profileImageUrl = "https://picsum.photos/id/${it + 1}/200/300"
-        )
+        fun provideFactory(
+            notificationAssistedFactory: NotificationAssistedFactory,
+            initAccessToken: String
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return notificationAssistedFactory.create(initAccessToken = initAccessToken) as T
+            }
+        }
     }
 }
 
