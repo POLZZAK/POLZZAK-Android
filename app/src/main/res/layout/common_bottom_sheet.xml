@@ -14,19 +14,16 @@
             type="com.polzzak_android.presentation.common.model.ButtonCount" />
 
         <variable
-            name="type"
-            type="com.polzzak_android.presentation.component.bottomsheet.BottomSheetType" />
-
-        <variable
             name="bottomSheet"
             type="com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper" />
     </data>
 
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="680dp"
         android:background="@color/white"
+        android:orientation="vertical"
         android:paddingHorizontal="16dp"
         android:paddingBottom="16dp">
 
@@ -34,12 +31,10 @@
             android:id="@+id/bottom_sheet_handler"
             android:layout_width="100dp"
             android:layout_height="4dp"
+            android:layout_gravity="center"
             android:layout_marginTop="12dp"
             android:background="@drawable/round_background"
-            android:backgroundTint="@color/gray_200"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:backgroundTint="@color/gray_200" />
 
         <TextView
             android:id="@+id/bottom_sheet_title"
@@ -49,12 +44,7 @@
             android:layout_marginTop="22dp"
             android:gravity="center"
             android:text="@{data.title}"
-            android:textColor="@color/black"
-            app:layout_constraintBottom_toTopOf="@id/bottom_sheet_subtitle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_handler"
-            app:layout_constraintVertical_chainStyle="packed"
+            android:textColor="@color/gray_800"
             tools:text="제목" />
 
         <TextView
@@ -67,122 +57,25 @@
             android:gravity="center"
             android:text="@{data.subTitle}"
             android:textColor="@color/gray_500"
-            app:layout_constraintBottom_toTopOf="@id/bottom_sheet_content_container"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_title"
             tools:text="서브 제목" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/bottom_sheet_content_container"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/bottom_sheet_recycler_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toTopOf="@id/bottom_sheet_button_container"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_subtitle">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/bottom_sheet_recycler_view"
-                setVisibility="@{data.type != type.COUPON}"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:clipToPadding="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:itemCount="3"
-                tools:listitem="@layout/item_select_user_filter" />
-
-            <!-- 쿠폰 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                setVisibility="@{data.type == type.COUPON}"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/coupon_img"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_launcher_background"
-                    app:layout_constraintBottom_toTopOf="@id/coupon_alert_text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/coupon_alert_text"
-                    style="@style/caption.12.500"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:gravity="center"
-                    android:text="언제까지 선물을 주실 예정인가요?\n선물 예정일은 수정이 불가하니 신중하게 정해주세요."
-                    android:textColor="@color/gray_500"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toTopOf="@id/coupon_d_day_container"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/coupon_img" />
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/coupon_d_day_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="47dp"
-                    android:background="@drawable/bg_gray_stroke_light_gray_bg_r8"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="14dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/coupon_alert_text">
-
-                    <TextView
-                        android:id="@+id/gift_title"
-                        style="@style/body.14.500"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="선물 예정일"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@id/gift_day"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/gift_day"
-                        style="@style/body.14.500"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/gift_title"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="2023.03.30" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:itemCount="3"
+            tools:listitem="@layout/item_select_user_filter" />
 
         <LinearLayout
             android:id="@+id/bottom_sheet_button_container"
             setVisibility="@{data.button.buttonCount != buttonCount.ZERO}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/bottom_sheet_content_container">
+            android:layout_marginTop="12dp">
 
             <Button
                 android:id="@+id/bottom_sheet_negative_button"
@@ -213,6 +106,6 @@
                 tools:text="확인" />
         </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 
 </layout>

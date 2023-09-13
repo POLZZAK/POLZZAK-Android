@@ -33,16 +33,7 @@
             android:id="@+id/makeStampFragment"
             android:name="com.polzzak_android.presentation.feature.stamp.make.MakeStampFragment"
             android:label="fragment_make_stamp"
-            tools:layout="@layout/fragment_make_stamp">
-            <action
-                android:id="@+id/action_makeStampFragment_to_exampleMissionFragment"
-                app:destination="@id/exampleMissionFragment" />
-        </fragment>
-        <fragment
-            android:id="@+id/exampleMissionFragment"
-            android:name="com.polzzak_android.presentation.feature.stamp.make.exampleMission.ExampleMissionFragment"
-            android:label="fragment_example_mission"
-            tools:layout="@layout/fragment_example_mission" />
+            tools:layout="@layout/fragment_make_stamp"/>
         <fragment
             android:id="@+id/protectorStampBoardDetailFragment"
             android:name="com.polzzak_android.presentation.feature.stamp.detail.protector.ProtectorStampBoardDetailFragment"

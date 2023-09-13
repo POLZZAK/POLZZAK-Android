@@ -9,6 +9,7 @@ import com.polzzak_android.databinding.ItemMissionBinding
 import com.polzzak_android.presentation.feature.stamp.make.ExampleMissionHelper
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.ExampleMissionInteraction
 
+@Deprecated("바텀 시트 사용")
 class MakeExampleMissionAdapter(
     private val interaction: ExampleMissionInteraction,
     private val exampleMissionHelper: ExampleMissionHelper
@@ -41,8 +42,8 @@ class MakeExampleMissionAdapter(
              * recyclerview selected issue 막는 체크 로직
              * 체크 로직이 없으면 아이템 재활용 때문에 selected 상태가 됨
              */
-            val isSelected = exampleMissionHelper.checkSelectedMission(value)
-            exampleMissionHelper.setSelectedMissionView(binding, isSelected)
+//            val isSelected = exampleMissionHelper.checkSelectedMission(value)
+//            exampleMissionHelper.setSelectedMissionView(binding, isSelected)
 
             binding.root.setOnClickListener {
                 interaction.onExampleMissionClicked(binding, value)

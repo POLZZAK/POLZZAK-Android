@@ -66,6 +66,10 @@ class ToolbarHelper(
         backButtonView.imageTintList = AppCompatResources.getColorStateList(backButtonView.context, colorResource)
     }
 
+    fun updateBackButtonImage(imgResource: Int) {
+        backButtonView.setImageResource(imgResource)
+    }
+
     fun updateTitleColor(colorResource: Int) {
         titleView.setTextColor(titleView.context.getColor(colorResource))
     }

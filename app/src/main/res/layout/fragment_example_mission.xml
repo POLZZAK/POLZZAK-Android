@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="마음에 드는 미션들 선택해보세요!"
-            android:textColor="@color/black"
+            android:textColor="@color/gray_800"
             app:layout_constraintBottom_toBottomOf="@id/mission_example_icon"
             app:layout_constraintStart_toEndOf="@id/mission_example_icon"
             app:layout_constraintTop_toTopOf="@id/mission_example_icon" />

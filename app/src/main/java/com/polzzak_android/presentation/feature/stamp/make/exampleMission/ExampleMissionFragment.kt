@@ -11,9 +11,8 @@ import com.polzzak_android.presentation.feature.stamp.make.MakeStampViewModel
 import com.polzzak_android.presentation.feature.stamp.make.ExampleMissionHelper
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.ExampleMissionInteraction
 
-
-class ExampleMissionFragment : BaseFragment<FragmentExampleMissionBinding>(),
-    ExampleMissionInteraction {
+@Deprecated("바텀 시트로 변경")
+class ExampleMissionFragment : BaseFragment<FragmentExampleMissionBinding>(){
     override val layoutResId: Int = R.layout.fragment_example_mission
 
     private lateinit var makeExampleMissionAdapter: MakeExampleMissionAdapter
@@ -24,40 +23,40 @@ class ExampleMissionFragment : BaseFragment<FragmentExampleMissionBinding>(),
 
     private val makeStampViewModel: MakeStampViewModel by activityViewModels()
 
-    override fun initView() {
-        super.initView()
-        exampleMissionHelper = ExampleMissionHelper.getInstance()
-
-        setAdapter()
-        initData()
-
-        // todo: 임시 추가 툴바 단 후 삭제
-        binding.tempButton.setOnClickListener {
-            Toast.makeText(context, exampleMissionHelper.selectedExampleMission.toString(), Toast.LENGTH_SHORT).show()
-            makeStampViewModel.addMissionList(exampleMissionHelper.selectedExampleMission)
-        }
-    }
-
-    override fun initObserver() {
-        super.initObserver()
-    }
-
-    private fun setAdapter() {
-        makeExampleMissionAdapter = MakeExampleMissionAdapter(this, exampleMissionHelper)
-        binding.missionExampleRc.adapter = makeExampleMissionAdapter
-    }
-
-    private fun initData() {
-        makeExampleMissionAdapter.submitList(exampleMissionHelper.getList())
-        currentMissionListSize = makeStampViewModel.getMissionListSize()
-    }
-
-    override fun onExampleMissionClicked(viewBinding: ItemMissionBinding, value: String) {
-        if (currentMissionListSize.plus(1) > 50) {
-            Toast.makeText(context, "미션은 총 50개까지 등록할 수 있어요", Toast.LENGTH_SHORT).show()
-            return
-        }
-        exampleMissionHelper.onMissionClicked(viewBinding = viewBinding, value = value)
-        currentMissionListSize.plus(1)
-    }
+//    override fun initView() {
+//        super.initView()
+//        exampleMissionHelper = ExampleMissionHelper.getInstance()
+//
+//        setAdapter()
+//        initData()
+//
+//        // todo: 임시 추가 툴바 단 후 삭제
+//        binding.tempButton.setOnClickListener {
+//            Toast.makeText(context, exampleMissionHelper.selectedExampleMission.toString(), Toast.LENGTH_SHORT).show()
+//            makeStampViewModel.addMissionList(exampleMissionHelper.selectedExampleMission)
+//        }
+//    }
+//
+//    override fun initObserver() {
+//        super.initObserver()
+//    }
+//
+//    private fun setAdapter() {
+//        makeExampleMissionAdapter = MakeExampleMissionAdapter(this, exampleMissionHelper)
+//        binding.missionExampleRc.adapter = makeExampleMissionAdapter
+//    }
+//
+//    private fun initData() {
+//        makeExampleMissionAdapter.submitList(exampleMissionHelper.getList())
+//        currentMissionListSize = makeStampViewModel.getMissionListSize()
+//    }
+//
+//    override fun onExampleMissionClicked(viewBinding: ItemMissionBinding, value: String) {
+//        if (currentMissionListSize.plus(1) > 50) {
+//            Toast.makeText(context, "미션은 총 50개까지 등록할 수 있어요", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+//        exampleMissionHelper.onMissionClicked(viewBinding = viewBinding, value = value)
+//        currentMissionListSize.plus(1)
+//    }
 }

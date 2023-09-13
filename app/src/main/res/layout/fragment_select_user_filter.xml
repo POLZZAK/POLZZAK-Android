@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="22dp"
             android:text="누구의 도장판을 볼까요?"
-            android:textColor="@color/black"
+            android:textColor="@color/gray_800"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/user_select_modal_top" />

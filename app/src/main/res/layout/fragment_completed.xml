@@ -6,118 +6,167 @@
     <data>
 
         <variable
+            name="fragment"
+            type="com.polzzak_android.presentation.feature.stamp.main.completed.ProtectorCompletedFragment" />
+
+        <variable
             name="hasLinkedUser"
             type="Boolean" />
     </data>
 
-    <androidx.core.widget.NestedScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:scrollbars="none">
+        android:layout_height="match_parent">
 
-        <!-- 메인 화면 출력 -->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/mainContainer"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/stampListRefresh"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/gray_100"
-            android:paddingHorizontal="15dp"
-            android:paddingBottom="60dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tabContainer">
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <!-- 연동 유저 선택 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/selectContainer"
-                setVisibility="@{hasLinkedUser}"
+            <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none">
 
-                <TextView
-                    android:id="@+id/selectedTxt"
-                    style="@style/title.22.700"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/gray_800"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/selectBtn"
-                    app:layout_constraintHorizontal_chainStyle="spread_inside"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="전체" />
-
-                <ImageButton
-                    android:id="@+id/selectBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="15dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/selectedTxt"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <!-- 도장판 목록 -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/stampListRc"
-                setVisibility="@{hasLinkedUser}"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.482"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/selectContainer"
-                tools:listitem="@layout/item_stamp_non" />
-
-            <!-- 연동된 사용자가 없는 경우 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                setVisibility="@{!hasLinkedUser}"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_marginHorizontal="11dp"
-                android:layout_marginVertical="26dp"
-                android:background="@drawable/round_dashed_background"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:id="@+id/no_linked_user_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_launcher_background"
-                    app:layout_constraintBottom_toTopOf="@id/no_linked_user_text"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_chainStyle="packed" />
-
-                <TextView
-                    android:id="@+id/no_linked_user_text"
-                    style="@style/body.14.500"
+                <!-- 메인 화면 출력 -->
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/mainContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="아이와 연동되면\n도장판을 만들 수 있어요!"
-                    android:textColor="@color/black"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:background="@color/gray_100"
+                    android:paddingBottom="60dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/no_linked_user_icon" />
+                    app:layout_constraintTop_toBottomOf="@id/tabContainer">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <!-- 연동 유저 선택 -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/selectContainer"
+                        setVisibility="@{hasLinkedUser}"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{() -> fragment.clickUserFilter()}"
+                        android:paddingHorizontal="15dp"
+                        android:paddingTop="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/selectTxt"
+                            style="@style/title.22.700"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="전체"
+                            android:textColor="@color/gray_800"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/selectBtn"
+                            app:layout_constraintHorizontal_chainStyle="spread_inside"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
-    </androidx.core.widget.NestedScrollView>
+                        <ImageView
+                            android:id="@+id/selectBtn"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginStart="5dp"
+                            android:background="@drawable/ic_switch"
+                            android:padding="15dp"
+                            app:layout_constraintBottom_toBottomOf="@id/selectTxt"
+                            app:layout_constraintStart_toEndOf="@id/selectTxt"
+                            app:layout_constraintTop_toTopOf="@id/selectTxt" />
 
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <!-- 도장판 목록 -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/stampListRc"
+                        setVisibility="@{hasLinkedUser}"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="20dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/selectContainer"
+                        tools:listitem="@layout/item_stamp_non" />
+
+                    <!-- 연동된 사용자가 없는 경우 -->
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        setVisibility="@{!hasLinkedUser}"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_margin="26dp"
+                        android:background="@drawable/round_dashed_background"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <ImageView
+                            android:id="@+id/no_linked_user_icon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_launcher_background"
+                            app:layout_constraintBottom_toTopOf="@id/no_linked_user_text"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintVertical_chainStyle="packed" />
+
+                        <TextView
+                            android:id="@+id/no_linked_user_text"
+                            style="@style/body.14.500"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:gravity="center"
+                            android:text="아이와 연동되면\n도장판을 만들 수 있어요!"
+                            android:textColor="@color/gray_800"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/no_linked_user_icon" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.core.widget.NestedScrollView>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <!-- 스켈레톤 -->
+        <LinearLayout
+            android:id="@+id/skeleton"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="15dp"
+            android:visibility="gone">
+
+            <View
+                android:layout_width="63dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/shape_rectangle_gray_200_r8" />
+
+            <View
+                android:layout_width="195dp"
+                android:layout_height="28dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/shape_rectangle_gray_200_r8" />
+
+            <View
+                android:layout_width="323dp"
+                android:layout_height="377dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/shape_rectangle_gray_200_r8" />
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

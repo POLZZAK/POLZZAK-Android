@@ -5,12 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.polzzak_android.data.remote.model.response.UserInfoDto
 import com.polzzak_android.databinding.CommonBottomSheetBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.component.bottomsheet.bindable.BottomSheetExampleMissionListClickInteraction
 import com.polzzak_android.presentation.component.bottomsheet.bindable.BottomSheetMissionListClickInteraction
 import com.polzzak_android.presentation.component.bottomsheet.bindable.BottomSheetUserInfoImageListClickInteraction
 import com.polzzak_android.presentation.component.bottomsheet.bindable.BottomSheetUserInfoListClickInteraction
+import com.polzzak_android.presentation.component.bottomsheet.bindable.ExampleMissionListItem
 import com.polzzak_android.presentation.component.bottomsheet.bindable.MissionListItem
 import com.polzzak_android.presentation.component.bottomsheet.bindable.UserInfoImageListItem
 import com.polzzak_android.presentation.component.bottomsheet.bindable.UserInfoListItem
@@ -23,7 +26,8 @@ class CommonBottomSheetHelper(
     private val data: CommonBottomSheetModel,
     private val onClickListener: (() -> OnButtonClickListener)? = null,
 ) : BottomSheetDialogFragment(), BottomSheetMissionListClickInteraction,
-    BottomSheetUserInfoListClickInteraction, BottomSheetUserInfoImageListClickInteraction {
+    BottomSheetExampleMissionListClickInteraction, BottomSheetUserInfoListClickInteraction,
+    BottomSheetUserInfoImageListClickInteraction {
 
     private var _binding: CommonBottomSheetBinding? = null
     private val binding get() = _binding!!
@@ -80,10 +84,20 @@ class CommonBottomSheetHelper(
                 })
             }
 
+            BottomSheetType.EXAMPLE_MISSION -> {
+                var id = 1000000
+                items.addAll(data.contentList.map { model ->
+                    ExampleMissionListItem(
+                        model = MissionModel(id = id++, content = model as String),
+                        interaction = this
+                    )
+                })
+            }
+
             BottomSheetType.PROFILE_IMAGE -> {
                 items.addAll(data.contentList.map { model ->
                     UserInfoImageListItem(
-                        model = model as SelectUserMakeBoardModelModel,
+                        model = model as UserInfoDto,
                         interaction = this
                     )
                 })
@@ -135,10 +149,12 @@ class CommonBottomSheetHelper(
                     item.isSelected = item.model.id == modelId
                     if (item.isSelected) selectedItem = item
                 }
+
                 is UserInfoImageListItem -> {
-                    item.isSelected = item.model.userId == modelId
+                    item.isSelected = item.model.memberId == modelId
                     if (item.isSelected) selectedItem = item
                 }
+
                 is UserInfoListItem -> {
                     item.isSelected = item.model.userId == modelId
                     if (item.isSelected) selectedItem = item
@@ -160,10 +176,25 @@ class CommonBottomSheetHelper(
     }
 
     /**
+     * 예시 미션 : BottomSheetType.EXAMPLE_MISSION
+     */
+    private val exampleMissionList = mutableListOf<MissionModel>()
+    override fun onExampleMissionClick(model: MissionModel) {
+        if (model in exampleMissionList) {
+            exampleMissionList.remove(model)
+        } else {
+            exampleMissionList.add(model)
+        }
+        returnValue = exampleMissionList
+
+        binding.bottomSheetPositiveButton.isEnabled = exampleMissionList.isNotEmpty()
+    }
+
+    /**
      * 프로필 조회 : BottomSheetType.PROFILE_IMAGE
      */
-    override fun onUserProfileClick(model: SelectUserMakeBoardModelModel) {
-        selectItem(items, model.userId)?.let {
+    override fun onUserProfileClick(model: UserInfoDto) {
+        selectItem(items, model.memberId)?.let {
             adapter.notifyDataSetChanged()
             this.returnValue = model
             binding.bottomSheetPositiveButton.isEnabled = true

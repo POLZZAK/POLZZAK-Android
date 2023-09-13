@@ -7,18 +7,18 @@ import com.polzzak_android.databinding.ItemMissionBinding
 
 class ExampleMissionHelper {
 
-    var selectedExampleMission = mutableListOf<String>()
-
-    companion object {
-        private var instance: ExampleMissionHelper? = null
-
-        fun getInstance(): ExampleMissionHelper {
-            if (instance == null) {
-                instance = ExampleMissionHelper()
-            }
-            return instance!!
-        }
-    }
+//    var selectedExampleMission = mutableListOf<String>()
+//
+//    companion object {
+//        private var instance: ExampleMissionHelper? = null
+//
+//        fun getInstance(): ExampleMissionHelper {
+//            if (instance == null) {
+//                instance = ExampleMissionHelper()
+//            }
+//            return instance!!
+//        }
+//    }
 
     fun getList(): List<String> {
         return listOf(
@@ -76,51 +76,51 @@ class ExampleMissionHelper {
         )
     }
 
-    fun onMissionClicked(viewBinding: ItemMissionBinding, value: String) {
-        val isSelected = checkSelectedMission(value)
-        updateSelectedMissionList(isSelected, value)
-        setSelectedMissionView(viewBinding, !isSelected)
-    }
-
-    fun checkSelectedMission(value: String): Boolean {
-        return value in selectedExampleMission
-    }
-
-    private fun updateSelectedMissionList(isSelected: Boolean, value: String) {
-        if (!isSelected) {
-            selectedExampleMission.add(value)
-        } else {
-            selectedExampleMission.remove(value)
-        }
-    }
-
-    fun setSelectedMissionView(binding: ItemMissionBinding, isSelected: Boolean) {
-        val context = binding.root.context
-
-        val background = if (isSelected) {
-            R.drawable.bg_blue_stroke_blue_bg_r8
-        } else {
-            R.drawable.bg_gray_stroke_white_bg_r8
-        }
-
-        val textColor = if (isSelected) {
-            R.color.primary_600
-        } else {
-            R.color.black
-        }
-
-        val checkIconVisibility = if (isSelected) {
-            View.VISIBLE
-        } else {
-            View.GONE
-        }
-
-        binding.itemExMissionText.apply {
-            this.isSelected = isSelected
-            setTextColor(ContextCompat.getColor(context, textColor))
-        }
-
-        binding.root.setBackgroundResource(background)
-        binding.itemExMissionCheck.visibility = checkIconVisibility
-    }
+//    fun onMissionClicked(viewBinding: ItemMissionBinding, value: String) {
+//        val isSelected = checkSelectedMission(value)
+//        updateSelectedMissionList(isSelected, value)
+//        setSelectedMissionView(viewBinding, !isSelected)
+//    }
+//
+//    fun checkSelectedMission(value: String): Boolean {
+//        return value in selectedExampleMission
+//    }
+//
+//    private fun updateSelectedMissionList(isSelected: Boolean, value: String) {
+//        if (!isSelected) {
+//            selectedExampleMission.add(value)
+//        } else {
+//            selectedExampleMission.remove(value)
+//        }
+//    }
+//
+//    fun setSelectedMissionView(binding: ItemMissionBinding, isSelected: Boolean) {
+//        val context = binding.root.context
+//
+//        val background = if (isSelected) {
+//            R.drawable.bg_blue_stroke_blue_bg_r8
+//        } else {
+//            R.drawable.bg_gray_stroke_white_bg_r8
+//        }
+//
+//        val textColor = if (isSelected) {
+//            R.color.primary_600
+//        } else {
+//            R.color.black
+//        }
+//
+//        val checkIconVisibility = if (isSelected) {
+//            View.VISIBLE
+//        } else {
+//            View.GONE
+//        }
+//
+//        binding.itemExMissionText.apply {
+//            this.isSelected = isSelected
+//            setTextColor(ContextCompat.getColor(context, textColor))
+//        }
+//
+//        binding.root.setBackgroundResource(background)
+//        binding.itemExMissionCheck.visibility = checkIconVisibility
+//    }
 }

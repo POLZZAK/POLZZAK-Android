@@ -1,13 +1,15 @@
 package com.polzzak_android.presentation.component.bottomsheet.bindable
 
 import android.view.View
+import com.bumptech.glide.Glide
 import com.polzzak_android.R
+import com.polzzak_android.data.remote.model.response.UserInfoDto
 import com.polzzak_android.databinding.ItemProfileBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserMakeBoardModelModel
 
 class UserInfoImageListItem(
-    val model: SelectUserMakeBoardModelModel,
+    val model: UserInfoDto,
     private val interaction: BottomSheetUserInfoImageListClickInteraction
 ) :
     BindableItem<ItemProfileBinding>() {
@@ -18,6 +20,10 @@ class UserInfoImageListItem(
     override fun bind(binding: ItemProfileBinding, position: Int) {
         with(binding) {
             userName = model.nickName
+
+            Glide.with(binding.itemProfileImage.context).load(model.profileUrl)
+                .error(R.drawable.ic_launcher_background)
+                .into(binding.itemProfileImage)
 
             // isSelected에 따른 view와 value 세팅
             root.isSelected = isSelected
@@ -47,7 +53,7 @@ class UserInfoImageListItem(
     }
 
     override fun areItemsTheSame(other: BindableItem<*>): Boolean =
-        other is UserInfoImageListItem && other.model.userId == this.model.userId
+        other is UserInfoImageListItem && other.model.memberId == this.model.memberId
 
 
     override fun areContentsTheSame(other: BindableItem<*>): Boolean =
@@ -55,5 +61,5 @@ class UserInfoImageListItem(
 }
 
 interface BottomSheetUserInfoImageListClickInteraction {
-    fun onUserProfileClick(model: SelectUserMakeBoardModelModel)
+    fun onUserProfileClick(model: UserInfoDto)
 }
