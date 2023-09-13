@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">POLZZAK_android</string>
 
     <!-- 바텀 네비게이션 메인 메뉴 -->
@@ -26,6 +26,7 @@
     <string name="common_accept">수락</string>
     <string name="common_reject">거절</string>
     <string name="common_notification">알림</string>
+    <string name="common_notice">공지사항</string>
 
     <!-- Login -->
     <string name="login_title">참 잘 했어요 도장 쾅!</string>
@@ -34,8 +35,10 @@
     <string name="login_last_login">마지막으로\n로그인한 계정이에요</string>
     <string name="login_loading_content">폴짝의 세계로!</string>
 
-    <!-- back btn snackbar message -->
-    <string name="common_back_pressed_snackbar_message">한 번 더 누르면 앱이 종료됩니다.</string>
+    <!-- snackbar message -->
+    <string name="common_snackbar_back_pressed_message">한 번 더 누르면 앱이 종료됩니다.</string>
+    <string name="common_snackbar_network_error">네트워크 상태 확인 후 다시 시도해주세요.</string>
+    <string name="common_snackbar_api_error">요청에 실패하였습니다. 잠시 후 다시 시도해주세요.</string>
 
     <!-- SignUp -->
     <string name="signup_select_type_guide_title">어떤 회원으로 활동하시겠어요?</string>
@@ -46,6 +49,7 @@
     <string name="signup_select_type_kid_card_content">칭찬 도장을 모아서\n선물을 받고 싶어요</string>
     <string name="signup_select_parent_type_guide_title">함께 활동할 아이와의\n가족관계를 알려주세요</string>
     <string name="signup_select_parent_type_guide_content">설정한 가족관계는 뱃지로 설정돼요\n나중에 변경이 불가하니 신중하게 선택해 주세요</string>
+    <string name="signup_select_parent_type_default">선택해주세요</string>
     <string name="signup_set_nickname_guide_title">닉네임을 설정해주세요</string>
     <string name="signup_set_nickname_guide_content">나중에 자유롭게 수정할 수 있어요</string>
     <string name="signup_set_nickname_pattern_guide">한글, 영문(대소문자 구별), 숫자 사용 가능 / 특수 문자, 공백 불가</string>
@@ -58,8 +62,14 @@
     <string name="signup_terms_of_service_agree_all">모두 동의</string>
     <string name="signup_terms_of_service_agree_service">서비스 이용약관에 동의합니다.</string>
     <string name="signup_terms_of_service_agree_privacy">개인정보처리방침에 동의합니다.</string>
-    <string name="signup_terms_of_service_detail_service_title">이용약관</string>
-    <string name="signup_terms_of_service_detail_privacy_title">개인정보처리방침</string>
+    <string name="signup_loading" tools:ignore="TypographyEllipsis">회원가입 처리 중 ...</string>
+    <string name="signup_nickname_check_validation_btn_check">중복 확인</string>
+    <string name="signup_nickname_check_validation_btn_complete">확인 완료</string>
+    <string name="nickname_check_validation_duplicated_nickname">이미 사용되고 있는 닉네임이에요</string>
+    <string name="nickname_check_validation_possible">사용 가능한 닉네임이에요</string>
+    <string name="nickname_check_validation_under_minimum_length">최소 2글자로 설정해주세요</string>
+    <string name="nickname_check_validation_over_maximum_length">10자까지만 쓸 수 있어요</string>
+    <string name="nickname_check_validation_invalid_char">특수문자(공백)는 쓸 수 없어요</string>
 
     <!-- OnBoarding -->
     <string name="on_boarding_kid_first_title">폴짝!\n회원이 되신 것을 환영해요</string>
@@ -105,6 +115,7 @@
     <string name="search_main_header_text">요청 보낸 목록</string>
     <string name="search_main_empty_text">보낸 요청이 없어요</string>
     <string name="search_main_search_complete">%s 찾기 완료</string>
+    <string name="search_main_sent_request_error_content">목록을 불러오는 데에 실패했어요\n다시 시도해주세요!</string>
     <string name="search_request_guide_text">연동된 %s에게\n칭찬 도장판을 만들어 줄 수 있어요</string>
     <string name="search_request_empty_text">%s님을\n찾을 수 없어요</string>
     <string name="search_request_loading_text">%s님을\n열심히 찾는 중이에요</string>
@@ -162,5 +173,31 @@
     <string name="notification_setting_check_delivery_gift_title">선물 전달 확인 알림</string>
     <string name="notification_setting_check_delivery_gift_content">선물 전달이 완료되었는지 확인하는 알림을 받을래요</string>
 
+    <!-- permission -->
+    <string name="permission_manager_dialog_btn_positive_text">설정하기</string>
+    <string name="permission_manager_dialog_btn_negative_text">취소</string>
+    <string name="permission_manager_dialog_storage_title">앱 설정에서 ‘저장소’ 권한을 허용해 주세요</string>
+    <string name="permission_manager_dialog_notification_title">앱 설정에서 알림 권한을 허용해주세요</string>
 
+    <!-- MyPage -->
+    <string name="my_notice_empty">업데이트된 소식이 없어요</string>
+    <string name="my_account_management">계정관리</string>
+    <string name="my_account_management_logout">로그아웃</string>
+    <string name="my_account_management_delete_account">회원탈퇴</string>
+    <string name="my_account_management_logout_dialog_title">정말로 로그아웃 하시겠어요?</string>
+    <string name="my_account_management_logout_dialog_btn_positive">로그아웃 할래요</string>
+    <string name="my_account_management_delete_title">%s 회원님\n폴짝을 떠나시나요?</string>
+    <string name="my_account_management_delete_menu_guide">다음 안내사항을 확인하고 동의해주세요</string>
+    <string name="my_account_management_delete_menu_delete_social_account_data">가입한 소셜 계정 정보가 삭제돼요.</string>
+    <string name="my_account_management_delete_menu_delete_link">연동 목록이 모두 삭제돼요. </string>
+    <string name="my_account_management_delete_menu_delete_stamp_and_coupon">도장판과 쿠폰들이 모두 사라져요.</string>
+    <string name="my_account_management_delete_menu_delete_point">열심히 모은 포인트가 모두 사라져요.</string>
+    <string name="my_account_management_delete_btn">탈퇴하기</string>
+    <string name="my_account_management_delete_dialog_title">정말로 탈퇴하시겠어요?</string>
+    <string name="my_account_management_delete_dialog_btn_negative">아니요</string>
+    <string name="my_account_management_delete_dialog_btn_positive">네,탈퇴할래요</string>
+
+    <!-- Term -->
+    <string name="terms_of_service_detail_service_title">이용약관</string>
+    <string name="terms_of_service_detail_privacy_title">개인정보처리방침</string>
 </resources>

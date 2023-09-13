@@ -6,6 +6,6 @@ import com.polzzak_android.presentation.feature.notification.list.base.BaseNotif
 
 class ProtectorNotificationListFragment : BaseNotificationListFragment() {
     override val actionToSettingFragment: Int =
-        R.id.action_protectorNotificationFragment_to_notificationSettingFragment
+        R.id.action_protectorNotificationFragment_to_protectorNotificationSettingFragment
     override val memberType: MemberType = MemberType.Parent("")
 }

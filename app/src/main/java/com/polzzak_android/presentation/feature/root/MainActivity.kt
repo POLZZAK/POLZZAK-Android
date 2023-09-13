@@ -11,6 +11,7 @@ import com.polzzak_android.presentation.feature.auth.login.sociallogin.GoogleLog
 import com.polzzak_android.presentation.feature.auth.login.sociallogin.KakaoLoginHelper
 import com.polzzak_android.presentation.feature.auth.login.sociallogin.SocialLoginManager
 import com.polzzak_android.presentation.common.base.BaseActivity
+import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.component.BackButtonPressedSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -36,11 +37,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
 
     private var backPressedSnackBar: BackButtonPressedSnackBar? = null
 
+    val permissionManager = PermissionManager(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        permissionManager.requestAllPermissions()
         initLoginHelper()
-
         // set navigation
         val navHostFragment =
             supportFragmentManager.findFragmentById(binding.fcvContainer.id) as NavHostFragment
@@ -80,7 +83,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
          */
         compositeDisposable.add(publishSubject.debounce(100, TimeUnit.MICROSECONDS)
             .observeOn(AndroidSchedulers.mainThread()).doOnNext {
-                val message = getString(R.string.common_back_pressed_snackbar_message)
+                val message = getString(R.string.common_snackbar_back_pressed_message)
                 backPressedSnackBar = BackButtonPressedSnackBar(
                     binding.root,
                     message = message,

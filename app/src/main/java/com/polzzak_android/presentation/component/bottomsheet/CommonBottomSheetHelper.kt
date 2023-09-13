@@ -111,6 +111,11 @@ class CommonBottomSheetHelper(
                     )
                 })
             }
+
+            BottomSheetType.COUPON -> {
+                binding.bottomSheetPositiveButton.isEnabled = true
+                binding.giftDay.text = data.contentList.first().toString()
+            }
         }
 
         this.adapter.updateItem(item = items)

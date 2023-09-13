@@ -53,6 +53,7 @@ fun asApiError(code: Int): Exception {
         410 -> ApiException.RequestResourceNotValid()
         411 -> ApiException.OauthAuthenticationFail()
         412 -> ApiException.RequiredRegister()
+        413 -> ApiException.TargetNotExist()
         431 -> ApiException.AccessTokenInvalid()
         432 -> ApiException.RefreshTokenInvalid()
         433 -> ApiException.AccessTokenExpired()

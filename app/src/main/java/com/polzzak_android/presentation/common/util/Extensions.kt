@@ -1,20 +1,25 @@
 package com.polzzak_android.presentation.common.util
 
 import android.content.Context
-import android.util.DisplayMetrics
 import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Period
 import java.time.format.DateTimeFormatter
 
-const val SERVER_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"
 
-fun String?.toLocalDate(): LocalDate? = kotlin.runCatching {
-    LocalDate.parse(this, DateTimeFormatter.ofPattern(SERVER_DATE_FORMAT))
+/**
+ * "yyyy-MM-dd'T'HH:mm:ss" 형태의 스트링을 [LocalDate]로 변환
+ */
+fun String?.toLocalDateOrNull(): LocalDate? = kotlin.runCatching {
+    LocalDateTime.parse(this).toLocalDate()
 }.getOrNull()
 
-fun String?.toLocalDateTime(): LocalDateTime? = kotlin.runCatching {
-    LocalDateTime.parse(this, DateTimeFormatter.ofPattern(SERVER_DATE_FORMAT))
+/**
+ * "yyyy-MM-dd'T'HH:mm:ss" 형태의 스트링을 [LocalDateTime]로 변환
+ */
+fun String?.toLocalDateTimeOrNull(): LocalDateTime? = kotlin.runCatching {
+    LocalDateTime.parse(this)
 }.getOrNull()
 
 fun Int.toPx(context: Context): Int {
@@ -32,3 +37,21 @@ fun LocalDateTime.getRemainingSeconds(): Int {
         .seconds
         .toInt()
 }
+
+/**
+ * 날짜 규칙
+ * 3달 미만의 공지: O월.O일 (ex. 06.24)
+ * 3개월 이상 1년 미만의 공지: O개월 전 (ex. 3개월 전 ~ 11개월 전)
+ * 1년 이상이 지난 공지: 1년 단위로 카운팅(ex. 1년 전, 2년 전)
+ */
+fun LocalDate.toPublishedDateString(): String {
+    val nowDate = LocalDate.now()
+    val diff = Period.between(this, nowDate)
+    val getDateStr = { date: Int -> String.format("%02d", date) }
+    return when {
+        this.isAfter(nowDate.minusMonths(3)) -> "${getDateStr(this.monthValue)}.${getDateStr(this.dayOfMonth)}"
+        this.isBefore(nowDate.minusYears(1)) || this.isEqual(nowDate.minusYears(1)) -> "${diff.years}년 전"
+        else -> "${diff.months}개월 전"
+    }
+}
+

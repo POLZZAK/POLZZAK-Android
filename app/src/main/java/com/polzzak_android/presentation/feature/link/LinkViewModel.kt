@@ -112,7 +112,7 @@ class LinkViewModel @AssistedInject constructor(
                     ?: emptyList()
                 _linkedUsersLiveData.value = ModelState.Success(data = data)
             }.onError { exception, _ ->
-                //TODO 에러처리
+                _linkedUsersLiveData.value = ModelState.Error(exception = exception)
             }
         }
     }
@@ -127,13 +127,13 @@ class LinkViewModel @AssistedInject constructor(
                     ?: emptyList()
                 _receivedRequestLiveData.value = ModelState.Success(data = data)
             }.onError { exception, _ ->
-                //TODO 에러처리
+                _receivedRequestLiveData.value = ModelState.Error(exception = exception)
             }
         }
     }
 
     //보낸 요청
-    private fun requestSentRequest(accessToken: String) {
+    fun requestSentRequest(accessToken: String) {
         if (getSentRequestJob?.isCompleted == false) return
         getSentRequestJob = viewModelScope.launch {
             _sentRequestLiveData.value = ModelState.Loading()
@@ -142,7 +142,7 @@ class LinkViewModel @AssistedInject constructor(
                     ?: emptyList()
                 _sentRequestLiveData.value = ModelState.Success(data = data)
             }.onError { exception, _ ->
-                //TODO 에러처리
+                _sentRequestLiveData.value = ModelState.Error(exception = exception)
             }
         }
     }
@@ -159,8 +159,8 @@ class LinkViewModel @AssistedInject constructor(
                 eventType = linkEventType
             ).onSuccess {
                 successLinkEventResult(eventType = linkEventType)
-            }.onError { exception, unit ->
-
+            }.onError { exception, _ ->
+                _linkEventLiveData.value = ModelState.Error(exception = exception)
             }
         }
     }

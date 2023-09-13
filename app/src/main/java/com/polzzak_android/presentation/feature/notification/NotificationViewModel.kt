@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.feature.notification
 
 import android.text.SpannableString
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,8 +12,9 @@ import com.polzzak_android.presentation.feature.notification.list.NotificationIt
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationsModel
-import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenuModel
 import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenuType
+import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenusModel
+import com.polzzak_android.presentation.feature.notification.setting.model.SettingModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -34,11 +36,34 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
 
     private val notificationHorizontalScrollPositionMap = HashMap<Int, Int>()
 
-    private val _settingMenusLiveData = MutableLiveData<List<SettingMenuModel>>()
-    val settingMenusLiveData: LiveData<List<SettingMenuModel>> = _settingMenusLiveData
+    private val _settingMenuLiveData =
+        MutableLiveData<ModelState<SettingMenusModel>>()
     private var requestSettingMenusJob: Job? = null
 
+    private val _isGrantedPermissionLiveData = MutableLiveData<Boolean?>(null)
+
+    val settingMenusLiveData = MediatorLiveData<ModelState<SettingModel>>().apply {
+        addSource(_settingMenuLiveData) {
+            value = it.copyWithData(
+                newData = SettingModel(
+                    menusModel = it.data,
+                    isGranted = _isGrantedPermissionLiveData.value
+                )
+            )
+        }
+        addSource(_isGrantedPermissionLiveData) {
+            value = (_settingMenuLiveData.value
+                ?: ModelState.Success(SettingModel())).copyWithData(
+                newData = SettingModel(
+                    menusModel = _settingMenuLiveData.value?.data,
+                    isGranted = it
+                )
+            )
+        }
+    }
+
     private val notificationMutex = Mutex()
+    private val settingMutex = Mutex()
 
     init {
         initNotifications()
@@ -50,7 +75,7 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
         else if (requestNotificationJobData?.job?.isCompleted == false) return
         requestNotificationJobData = NotificationJobData(
             priority = priority,
-            job = createJobWithUnlockOnCompleted {
+            job = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
                 isRefreshed = true
                 notificationMutex.lock()
                 _notificationLiveData.value = ModelState.Loading(NotificationsModel())
@@ -66,7 +91,7 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
         else if (requestNotificationJobData?.job?.isCompleted == false) return
         requestNotificationJobData = NotificationJobData(
             priority = priority,
-            job = createJobWithUnlockOnCompleted {
+            job = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
                 isRefreshed = true
                 notificationMutex.lock()
                 val prevData = notificationLiveData.value?.data ?: NotificationsModel()
@@ -85,7 +110,7 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
         else if (requestNotificationJobData?.job?.isCompleted == false) return
         requestNotificationJobData = NotificationJobData(
             priority = priority,
-            job = createJobWithUnlockOnCompleted {
+            job = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
                 isRefreshed = false
                 notificationMutex.lock()
                 val prevData = notificationLiveData.value?.data ?: NotificationsModel()
@@ -121,7 +146,7 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
 
     fun deleteNotification(id: Int) {
         if (updateNotificationJobMap[id]?.isCompleted == false) return
-        updateNotificationJobMap[id] = createJobWithUnlockOnCompleted {
+        updateNotificationJobMap[id] = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
             //TODO api 적용
             delay(1000)
             deleteMockNotificationData(id = id)
@@ -142,27 +167,70 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
 
     fun addNotification(model: NotificationModel) {
         if (updateNotificationJobMap[model.id]?.isCompleted == false) return
-        updateNotificationJobMap[model.id] = createJobWithUnlockOnCompleted {
-            //TODO 푸쉬알림으로 인한 알림 목록 추가
+        updateNotificationJobMap[model.id] =
+            createJobWithUnlockOnCompleted(mutex = notificationMutex) {
+                //TODO 푸쉬알림으로 인한 알림 목록 추가
 
-        }
+            }
     }
 
-    private fun createJobWithUnlockOnCompleted(action: suspend () -> Unit) = viewModelScope.launch {
-        action.invoke()
-    }.apply {
-        invokeOnCompletion {
-            if (notificationMutex.isLocked) notificationMutex.unlock()
+    private fun createJobWithUnlockOnCompleted(mutex: Mutex, action: suspend () -> Unit) =
+        viewModelScope.launch {
+            action.invoke()
+        }.apply {
+            invokeOnCompletion {
+                if (mutex.isLocked) mutex.unlock()
+            }
         }
-    }
 
     fun requestSettingMenu() {
         requestSettingMenusJob?.cancel()
         requestSettingMenusJob = viewModelScope.launch {
             //TOOD repository 구현
-            _settingMenusLiveData.value = mockSettingMenus
+            _settingMenuLiveData.value = ModelState.Loading()
+            delay(2000)
+            _settingMenuLiveData.value =
+                ModelState.Success(mockKidSettingMenus)
         }
     }
+
+    fun setPermissionGranted(isGranted: Boolean) {
+        _isGrantedPermissionLiveData.value = isGranted
+    }
+
+    fun checkMenu(type: SettingMenuType, isChecked: Boolean) {
+        if (requestSettingMenusJob?.isCompleted == false) return
+        requestSettingMenusJob = createJobWithUnlockOnCompleted(mutex = settingMutex) {
+            //TODO setting 변경 api 호출
+            delay(1000)
+            //onSuccess
+            _settingMenuLiveData.value = _settingMenuLiveData.value?.run {
+                val newData = (data ?: SettingMenusModel()).run {
+                    typeToCheckedMap[type] = isChecked
+                    copy(isAllMenuChecked = typeToCheckedMap.any { it.value } || isAllMenuChecked)
+                }
+                copyWithData(newData)
+            }
+        }
+    }
+
+    fun checkAllMenu(isChecked: Boolean) {
+        if (requestSettingMenusJob?.isCompleted == false) return
+        requestSettingMenusJob = createJobWithUnlockOnCompleted(mutex = settingMutex) {
+            //TODO setting 변경 api 호출
+            delay(1000)
+            _settingMenuLiveData.value = _settingMenuLiveData.value?.run {
+                val newData = (data ?: SettingMenusModel()).run {
+                    copy(
+                        isAllMenuChecked = isChecked,
+                        typeToCheckedMap = typeToCheckedMap.apply { replaceAll { _, _ -> isChecked } })
+                }
+                copyWithData(newData)
+            }
+        }
+    }
+
+    //TODO Setting 변경 request
 
     private data class NotificationJobData(val priority: Int, val job: Job)
 
@@ -233,13 +301,13 @@ private val mockNotification = MutableList(187) {
     }
 }
 
-private val mockSettingMenus = mutableListOf(
-    SettingMenuModel(type = SettingMenuType.All, isChecked = false),
-    SettingMenuModel(type = SettingMenuType.Menu.Link, isChecked = false),
-    SettingMenuModel(type = SettingMenuType.Menu.Level, isChecked = false),
-    SettingMenuModel(type = SettingMenuType.Menu.RequestStamp, isChecked = false),
-    SettingMenuModel(type = SettingMenuType.Menu.RequestGift, isChecked = false),
-    SettingMenuModel(type = SettingMenuType.Menu.CompleteStampBoard, isChecked = false),
-    SettingMenuModel(type = SettingMenuType.Menu.ReceiveGift, isChecked = false),
-    SettingMenuModel(type = SettingMenuType.Menu.BreakPromise, isChecked = false)
+private val mockKidSettingMenus = SettingMenusModel(
+    hashMapOf(
+        SettingMenuType.Link to false,
+        SettingMenuType.Level to false,
+        SettingMenuType.NewStampBoard to true,
+        SettingMenuType.PaymentCoupon to false,
+        SettingMenuType.CheckDeliveryGift to false,
+    ),
+    isAllMenuChecked = true,
 )

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -123,7 +124,7 @@ class CouponContentFragment : BaseFragment<FragmentCouponContentBinding>(), Coup
             CommonBottomSheetHelper.getInstance(
                 data = CommonBottomSheetModel(
                     type = BottomSheetType.SELECT_STAMP_BOARD,
-                    title = "누구에게 선물한 쿠폰을 볼까요?",
+                    title = "누구에게 선물한 쿠폰을 볼까요?".toSpannable(),
                     contentList = userList.map { it.toSelectUserStampBoardModel() },
                     button = CommonButtonModel(
                         buttonCount = ButtonCount.ZERO

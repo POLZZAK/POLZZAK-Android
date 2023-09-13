@@ -1,20 +1,11 @@
 package com.polzzak_android.presentation.feature.stamp.main.protector
 
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentProtectorMainBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.presentation.common.model.ButtonCount
-import com.polzzak_android.presentation.common.model.CommonButtonModel
-import com.polzzak_android.presentation.common.util.createStyledSpannable
-import com.polzzak_android.presentation.component.dialog.CommonDialogContent
-import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
-import com.polzzak_android.presentation.component.dialog.CommonDialogModel
-import com.polzzak_android.presentation.component.dialog.DialogStyleType
-import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
@@ -50,7 +41,8 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), Tool
     override fun initView() {
         super.initView()
 
-        childFragmentManager.beginTransaction().replace(binding.fragmentContainer.id, protectorProgressFragment).commit()
+        childFragmentManager.beginTransaction()
+            .replace(binding.fragmentContainer.id, protectorProgressFragment).commit()
         tabListener()
 
         binding.fab.setOnClickListener {
@@ -68,13 +60,15 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), Tool
                     0 -> {
                         selectedFragment = protectorProgressFragment
                     }
+
                     1 -> {
                         selectedFragment = protectorCompletedFragment
                     }
                 }
 
                 if (selectedFragment != null) {
-                    childFragmentManager.beginTransaction().replace(binding.fragmentContainer.id, selectedFragment).commit()
+                    childFragmentManager.beginTransaction()
+                        .replace(binding.fragmentContainer.id, selectedFragment).commit()
                 }
             }
 
@@ -88,7 +82,6 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), Tool
     }
 
     override fun onToolbarIconClicked() {
-        // todo: 연동 페이지 이동
-        Toast.makeText(requireContext(), "연동 페이지 이동", Toast.LENGTH_SHORT).show()
+        findNavController().navigate(R.id.action_protectorMainFragment_to_protectorLinkManagementFragment)
     }
 }

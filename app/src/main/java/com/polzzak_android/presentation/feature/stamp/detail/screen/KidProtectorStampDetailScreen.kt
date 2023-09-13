@@ -1,5 +1,7 @@
 package com.polzzak_android.presentation.feature.stamp.detail.screen
 
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,22 +32,41 @@ fun StampBoardDetailScreen_Kid(
     stampBoardData: StateFlow<ModelState<StampBoardDetailModel>>,
     onStampClick: (StampModel) -> Unit,
     onEmptyStampClick: () -> Unit,
-    onRewardButtonClick: () -> Unit
+    onRewardButtonClick: () -> Unit,
+    onError: (exception: Exception) -> Unit
 ) {
     val state by stampBoardData.collectAsState()
 
-    StampBoardDetailScreen_Kid(
-        stampBoardStatus = state.data?.stampBoardStatus ?: StampBoardStatus.PROGRESS,
-        boardTitle = state.data?.boardTitle ?: "",
-        dateCount = state.data?.dateCount ?: 0,
-        totalStampCount = state.data?.totalStampCount ?: 16,
-        stampList = state.data?.stampList ?: emptyList(),
-        onStampClick = onStampClick,
-        onEmptyStampClick = onEmptyStampClick,
-        missionList = state.data?.missionList ?: emptyList(),
-        rewardTitle = state.data?.rewardTitle ?: "",
-        onRewardButtonClick = onRewardButtonClick
-    )
+    Crossfade(
+        targetState = state,
+        animationSpec = tween(400),
+        label = "StampBoardDetailScreen change animation"
+    ) { currentState ->
+        when (currentState) {
+            is ModelState.Loading -> {
+                // 스켈레톤
+                StampBoardDetailSkeleton()
+            }
+            is ModelState.Success -> {
+                StampBoardDetailScreen_Kid(
+                    stampBoardStatus = currentState.data.stampBoardStatus,
+                    boardTitle = currentState.data.boardTitle,
+                    dateCount = currentState.data.dateCount,
+                    totalStampCount = currentState.data.totalStampCount,
+                    stampList = currentState.data.stampList,
+                    onStampClick = onStampClick,
+                    onEmptyStampClick = onEmptyStampClick,
+                    missionList = currentState.data.missionList,
+                    rewardTitle = currentState.data.rewardTitle,
+                    onRewardButtonClick = onRewardButtonClick
+                )
+            }
+            is ModelState.Error -> {
+                onError(currentState.exception)
+            }
+        }
+    }
+
 }
 
 /**
@@ -153,7 +174,7 @@ private fun getCouponButtonEnable(stampBoardStatus: StampBoardStatus): Boolean {
 
 private fun getCouponInfoText(stampBoardStatus: StampBoardStatus): String {
     return when (stampBoardStatus) {
-        StampBoardStatus.PROGRESS -> "도장판을 다 채우 쿠폰을 받을 수 있어요."
+        StampBoardStatus.PROGRESS -> "도장판을 다 채우면 쿠폰을 받을 수 있어요."
         StampBoardStatus.COMPLETED -> "보호자가 쿠폰을 발급해줄 때까지 잠시만 기다려주세요."
         StampBoardStatus.ISSUED_COUPON -> "선물 쿠폰이 도착했어요!"
         StampBoardStatus.REWARDED -> "내 쿠폰함에서 확인하세요."
