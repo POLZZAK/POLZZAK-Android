@@ -32,6 +32,8 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
 import com.polzzak_android.presentation.common.util.hideKeyboard
+import com.polzzak_android.presentation.component.PolzzakSnackBar
+import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.feature.term.TermDetailFragment
 import com.polzzak_android.presentation.feature.term.model.TermType
 import dagger.hilt.android.AndroidEntryPoint
@@ -199,6 +201,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             }
             tvBtnCheckValidation.setOnClickListener {
                 signUpViewModel.requestCheckNickNameValidation()
+                hideKeyboardAndClearFocus()
             }
             binding.root.setOnTouchListener { _, _ ->
                 hideKeyboardAndClearFocus()
@@ -342,12 +345,15 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             with(binding.inSetNickName) {
                 tvBtnCheckValidation.isEnabled =
                     validNickNameRegex.matches(it.nickName ?: "")
-                //TODO string resource로 변경
                 tvBtnCheckValidation.text =
-                    if (it.nickNameState == NickNameValidationState.VALID) "확인 완료" else "중복 확인"
+                    getString(if (it.nickNameState is NickNameValidationState.Valid) R.string.signup_nickname_check_validation_btn_complete else R.string.signup_nickname_check_validation_btn_check)
                 setNickNameResultTextView(isFocused = etInput.isFocused, uiModel = it)
                 ivBtnClearText.isVisible = !it.nickName.isNullOrEmpty() && etInput.isFocused
                 refreshNextButton()
+                if (it.nickNameState is NickNameValidationState.Error) PolzzakSnackBar.errorOf(
+                    binding.root,
+                    it.nickNameState.exception
+                ).show()
             }
         }
     }
@@ -377,9 +383,12 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
     private fun observeSignUpResultLiveData() {
         signUpViewModel.signUpResultLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
+            var btnNextEnabled = true
+            var btnTextRes = R.string.signup_complete
             when (it) {
                 is ModelState.Loading -> {
-                    //TODO 회원가입 로딩
+                    btnNextEnabled = false
+                    btnTextRes = R.string.signup_loading
                 }
 
                 is ModelState.Success -> {
@@ -392,8 +401,12 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 }
 
                 is ModelState.Error -> {
-                    //TODO 회원가입 에러 핸들링
+                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
                 }
+            }
+            binding.tvBtnNext.run {
+                text = getString(btnTextRes)
+                isEnabled = btnNextEnabled
             }
         })
     }
@@ -407,11 +420,11 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             )
             val textColor = ContextCompat.getColor(
                 binding.root.context,
-                if (uiModel.nickNameState == NickNameValidationState.VALID) R.color.primary else R.color.error_500
+                if (uiModel.nickNameState is NickNameValidationState.Valid) R.color.primary else R.color.error_500
             )
             tvCheckDuplicatedResult.setTextColor(textColor)
             val resultDrawableRes =
-                if (uiModel.nickNameState == NickNameValidationState.VALID) R.drawable.ic_signup_nickname_check_result_valid else 0
+                if (uiModel.nickNameState is NickNameValidationState.Valid) R.drawable.ic_signup_nickname_check_result_valid else 0
             tvCheckDuplicatedResult.setCompoundDrawablesWithIntrinsicBounds(
                 resultDrawableRes,
                 0,
@@ -423,7 +436,6 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         }
     }
 
-    //TODO string resource로 변경
     private fun createDuplicatedResultText(
         isFocused: Boolean,
         isSelected: Boolean,
@@ -431,14 +443,14 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     ): String {
         return when {
             !isSelected -> ""
-            uiModel.nickNameState == NickNameValidationState.INVALID -> "이미 사용되고 있는 닉네임이에요"
-            uiModel.nickNameState == NickNameValidationState.VALID -> "사용 가능한 닉네임이에요"
+            uiModel.nickNameState is NickNameValidationState.Invalid -> getString(R.string.nickname_check_validation_duplicated_nickname)
+            uiModel.nickNameState is NickNameValidationState.Valid -> getString(R.string.nickname_check_validation_possible)
             uiModel.nickName == null -> ""
-            uiModel.nickName.isEmpty() -> if (isFocused) "" else "최소 2글자로 설정해주세요"
-            uiModel.nickName.length < 2 -> "최소 2글자로 설정해주세요"
-            uiModel.nickName.length > 10 -> "10자까지만 쓸 수 있어요"
+            uiModel.nickName.isEmpty() -> if (isFocused) "" else getString(R.string.nickname_check_validation_under_minimum_length)
+            uiModel.nickName.length < 2 -> getString(R.string.nickname_check_validation_under_minimum_length)
+            uiModel.nickName.length > 10 -> getString(R.string.nickname_check_validation_over_maximum_length)
             validNickNameRegex.matches(uiModel.nickName) -> ""
-            else -> "특수문자(공백)는 쓸 수 없어요"
+            else -> getString(R.string.nickname_check_validation_invalid_char)
         }
     }
 
@@ -446,7 +458,6 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         val memberTypeData = signUpViewModel.memberTypeLiveData.value
         val nickNameData = signUpViewModel.nickNameLiveData.value
         val termsOfServiceData = signUpViewModel.termsOfServiceLiveData.value
-        //TODO 프로필 사진 설정페이지, 약관페이지 추가
         val nextBtnStringRes = when (signUpViewModel.pageLiveData.value) {
             SignUpPage.SET_PROFILE_IMAGE -> R.string.signup_complete
             else -> R.string.common_next
@@ -456,7 +467,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             when (signUpViewModel.pageLiveData.value) {
                 SignUpPage.SELECT_TYPE -> memberTypeData?.selectedType != null
                 SignUpPage.SELECT_PARENT_TYPE -> memberTypeData?.selectedTypeId != null
-                SignUpPage.SET_NICKNAME -> nickNameData?.nickNameState == NickNameValidationState.VALID
+                SignUpPage.SET_NICKNAME -> nickNameData?.nickNameState is NickNameValidationState.Valid
                 SignUpPage.SET_PROFILE_IMAGE -> true
                 SignUpPage.TERMS_OF_SERVICE -> {
                     termsOfServiceData?.run { isCheckedPrivacy && isCheckedService } ?: false

@@ -20,11 +20,19 @@
                     android:defaultValue="-1"
                     app:argType="integer" />
             </action>
+            <action
+                android:id="@+id/action_kidMainFragment_to_kidLinkManagementFragment"
+                app:destination="@id/kidLinkManagementFragment" />
         </fragment>
         <fragment
             android:id="@+id/kidStampBoardDetailFragment"
             android:name="com.polzzak_android.presentation.feature.stamp.detail.kid.KidStampBoardDetailFragment"
             android:label="KidStampBoardDetailFragment" />
+
+        <fragment
+            android:id="@+id/kidLinkManagementFragment"
+            android:name="com.polzzak_android.presentation.feature.link.management.kid.KidLinkManagementFragment"
+            android:label="kidLinkManagementFragment" />
     </navigation>
 
     <!-- 쿠폰 -->

@@ -3,6 +3,7 @@ package com.polzzak_android.presentation.feature.auth.signup.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemSignupParentTypeBinding
 import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail
 
@@ -42,7 +43,8 @@ class ParentTypeRollableAdapter(
 
         fun bind(parentType: MemberTypeDetail.Parent?) {
             binding.root.tag = if (parentType == null) ITEM_EMPTY_TAG else ITEM_NORMAL_TAG
-            binding.tvTitle.text = parentType?.label ?: "선택해주세요"
+            binding.tvTitle.text = parentType?.label
+                ?: binding.root.context.getText(R.string.signup_select_parent_type_default)
         }
     }
 

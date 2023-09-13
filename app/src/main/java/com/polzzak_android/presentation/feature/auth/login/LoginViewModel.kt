@@ -21,7 +21,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -45,8 +44,7 @@ class LoginViewModel @Inject constructor(
             accessToken?.let {
                 requestLogin(accessToken = it, loginType = SocialLoginType.GOOGLE)
             } ?: run {
-                Timber.d("google access token 발급 실패")
-                //TODO access token 발급 실패 callback
+                setLoginResultError()
             }
         }
     }

@@ -13,14 +13,16 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.kakao.sdk.auth.model.OAuthToken
 import com.polzzak_android.R
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
+import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.databinding.FragmentLoginBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.MemberType
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.getSocialLoginManager
 import com.polzzak_android.presentation.common.util.shotBackPressed
+import com.polzzak_android.presentation.component.PolzzakSnackBar
+import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoUiModel
-import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.signup.SignUpFragment
 import com.polzzak_android.presentation.feature.root.MainViewModel
@@ -39,12 +41,19 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         googleSignInAccount.serverAuthCode?.let { authCode ->
             loginViewModel.requestGoogleLogin(authCode = authCode)
         } ?: run {
-            //TODO id값, authcode가 안내려온 경우
+            loginHelperFailedCallback.invoke()
         }
     }
     private val kakaoLoginSuccessCallback: (OAuthToken) -> Unit = { token ->
         loginViewModel.requestKakaoLogin(accessToken = token.accessToken)
     }
+
+    private val loginFailedCallback: (Exception) -> Unit = {
+        PolzzakSnackBar.errorOf(binding.root, it).show()
+    }
+
+    private val loginHelperFailedCallback: () -> Unit =
+        { loginFailedCallback(ApiException.UnknownError()) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +68,11 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         val kakaoLoginHelper = getSocialLoginManager()?.kakaoLoginHelper
 
         googleLoginHelper?.registerLoginSuccessCallback(callback = googleLoginSuccessCallback)
+        googleLoginHelper?.registerLoginFailedCallback(callback = loginHelperFailedCallback)
         kakaoLoginHelper?.registerLoginSuccessCallback(callback = kakaoLoginSuccessCallback)
-        with(binding) {
+        kakaoLoginHelper?.registerLoginFailedCallback(callback = loginHelperFailedCallback)
+        with(binding)
+        {
             tvBtnStartGoogle.setOnClickListener {
                 googleLoginHelper?.requestLogin()
             }
@@ -69,16 +81,6 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
             }
             tvContent.text = createContentSpannable()
 
-        }
-
-        //TODO 회원가입 이동 테스트
-        binding.tvTitle.setOnClickListener {
-            val mockSignUpModel = LoginInfoUiModel.SignUp(
-                userName = "t26",
-                socialType = SocialLoginType.GOOGLE,
-                parentTypes = List(17) { MemberTypeDetail.Parent(id = it + 2, label = "label:$it") }
-            )
-            signUp(model = mockSignUpModel)
         }
         lastSocialLoginViewModel.loadLastSocialLoginType()
     }
@@ -108,7 +110,9 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     override fun onDestroyView() {
         getSocialLoginManager()?.run {
             googleLoginHelper?.unregisterLoginSuccessCallback(callback = googleLoginSuccessCallback)
+            googleLoginHelper?.unregisterLoginFailedCallback(callback = loginHelperFailedCallback)
             kakaoLoginHelper?.unregisterLoginSuccessCallback(callback = kakaoLoginSuccessCallback)
+            kakaoLoginHelper?.unregisterLoginFailedCallback(callback = loginHelperFailedCallback)
         }
         super.onDestroyView()
     }
@@ -128,7 +132,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 }
 
                 is ModelState.Error -> {
-                    //TODO 에러처리
+                    loginFailedCallback.invoke(it.exception)
                     binding.clLoading.isVisible = false
                 }
             }

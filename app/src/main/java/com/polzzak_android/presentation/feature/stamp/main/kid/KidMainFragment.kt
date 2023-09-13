@@ -38,7 +38,7 @@ class KidMainFragment : BaseFragment<FragmentKidMainBinding>(), ToolbarIconInter
     }
 
     override fun onToolbarIconClicked() {
-        // TODO: 연동 페이지 이동
+        findNavController().navigate(R.id.action_kidMainFragment_to_kidLinkManagementFragment)
     }
 
     override fun initView() {
