@@ -20,11 +20,10 @@
             app:navGraph="@navigation/protector_nav_graph" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
+            style="@style/polzzakBottomNav"
             android:id="@+id/protectorBtmNav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
-            app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
