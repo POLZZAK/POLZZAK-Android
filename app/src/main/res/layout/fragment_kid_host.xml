@@ -23,14 +23,13 @@
                 app:navGraph="@navigation/kid_nav_graph"/>
             
             <com.google.android.material.bottomnavigation.BottomNavigationView
+                style="@style/polzzakBottomNav"
                 android:id="@+id/kidBtmNav"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 app:menu="@menu/kid_bottom_nav_menu"/>
-            
-        </LinearLayout>
 
+        </LinearLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
