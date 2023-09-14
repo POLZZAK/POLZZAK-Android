@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.root.host
 
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -39,10 +40,11 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>(), RootNavigationOw
             when (destination.id) {
                 destination.parent?.findStartDestination()?.id -> {
                     backPressedCallback.isEnabled = false
+                    binding.kidBtmNav.visibility = View.VISIBLE
                 }
-
                 else -> {
                     backPressedCallback.isEnabled = true
+                    binding.kidBtmNav.visibility = View.GONE
                 }
             }
         }

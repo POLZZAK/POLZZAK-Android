@@ -16,7 +16,6 @@
             style="@style/MemberType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="엄마"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/userNickNameHeader"
             app:layout_constraintBottom_toBottomOf="@id/userNickNameHeader"

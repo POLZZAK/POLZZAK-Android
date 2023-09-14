@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.feature.stamp.main.completed
 
 import android.view.View
 import android.widget.TextView
+import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -88,7 +89,7 @@ class ProtectorCompletedFragment : BaseFragment<FragmentCompletedBinding>(),
             CommonBottomSheetHelper.getInstance(
                 data = CommonBottomSheetModel(
                     type = BottomSheetType.SELECT_STAMP_BOARD,
-                    title = "누구의 도장판을 볼까요?",
+                    title = "누구의 도장판을 볼까요?".toSpannable(),
                     contentList = listOf(SelectUserStampBoardModel(userId = 0, nickName = "전체", userType = null)) + userList.map { it.toSelectUserStampBoardModel() },
                     button = CommonButtonModel(
                         buttonCount = ButtonCount.ZERO

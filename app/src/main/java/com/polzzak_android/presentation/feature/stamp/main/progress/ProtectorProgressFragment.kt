@@ -93,7 +93,7 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
             CommonBottomSheetHelper.getInstance(
                 data = CommonBottomSheetModel(
                     type = BottomSheetType.SELECT_STAMP_BOARD,
-                    title = "누구의 도장판을 볼까요?",
+                    title = "누구의 도장판을 볼까요?".toSpannable(),
                     contentList = listOf(SelectUserStampBoardModel(userId = 0, nickName = "전체", userType = null)) + userList.map { it.toSelectUserStampBoardModel() },
                     button = CommonButtonModel(
                         buttonCount = ButtonCount.ZERO
@@ -182,7 +182,7 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         stampList: List<StampBoardSummaryModel>?,
         partner: PartnerModel
     ) {
-        vpAdapter = MainStampPagerAdapter(stampList, this)
+        vpAdapter = MainStampPagerAdapter(stampList, this, partner)
         view.adapter = vpAdapter
 
         // indicator
