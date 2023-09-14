@@ -29,25 +29,14 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
-                    android:id="@+id/tvEmoji"
-                    style="@style/subtitle.18.600"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/gray_800"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="{emoji}" />
-
-                <TextView
                     android:id="@+id/tvTitle"
                     style="@style/subtitle.16.700"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:textColor="@color/gray_800"
-                    app:layout_constraintBottom_toBottomOf="@id/tvEmoji"
-                    app:layout_constraintStart_toEndOf="@id/tvEmoji"
-                    app:layout_constraintTop_toTopOf="@id/tvEmoji"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="연동 요청" />
 
                 <ImageView
@@ -56,9 +45,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="7dp"
                     android:src="@drawable/ic_dot"
-                    app:layout_constraintBottom_toBottomOf="@id/tvEmoji"
+                    app:layout_constraintBottom_toBottomOf="@id/tvTitle"
                     app:layout_constraintStart_toEndOf="@id/tvTitle"
-                    app:layout_constraintTop_toTopOf="@id/tvEmoji"
+                    app:layout_constraintTop_toTopOf="@id/tvTitle"
                     app:tint="@color/gray_300"
                     tools:tint="@color/gray_300" />
 
@@ -69,11 +58,11 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="7dp"
                     android:textColor="@color/gray_500"
-                    app:layout_constraintBottom_toBottomOf="@id/tvEmoji"
+                    app:layout_constraintBottom_toBottomOf="@id/tvTitle"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toEndOf="@id/ivDot"
-                    app:layout_constraintTop_toTopOf="@id/tvEmoji"
+                    app:layout_constraintTop_toTopOf="@id/tvTitle"
                     tools:text="방금 전" />
 
                 <TextView
@@ -84,7 +73,7 @@
                     android:gravity="start"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvEmoji"
+                    app:layout_constraintTop_toBottomOf="@id/tvTitle"
                     tools:text="죽음의ASMR님과 연동이 완료되었어요! 도장판을 만들러 가볼까요? :)" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout

@@ -137,30 +137,6 @@
     <string name="link_management_search_linked">이미 연동됐어요</string>
 
     <!-- Notification -->
-    <string name="notification_family_request_emoji">💌</string>
-    <string name="notification_family_request_title">연동 요청</string>
-    <string name="notification_family_request_complete_emoji">🤝🏻</string>
-    <string name="notification_family_request_complete_title">연동 완료</string>
-    <string name="notification_level_up_emoji">🥳</string>
-    <string name="notification_level_up_title">레벨 UP</string>
-    <string name="notification_level_down_emoji">🚨</string>
-    <string name="notification_level_down_title">레벨 DOWN</string>
-    <string name="notification_stamp_request_emoji">✊🏻</string>
-    <string name="notification_stamp_request_title">도장 요청</string>
-    <string name="notification_reward_request_emoji">⚡️</string>
-    <string name="notification_reward_request_title">선물 조르기</string>
-    <string name="notification_stamp_board_complete_emoji">✔️️</string>
-    <string name="notification_stamp_board_complete_title">도장판 채우기 완료</string>
-    <string name="notification_rewarded_emoji">🎁️️</string>
-    <string name="notification_rewarded_title">선물 받기 완료</string>
-    <string name="notification_reward_request_again_emoji">⏱️️</string>
-    <string name="notification_reward_request_again_title">선물 약속 날짜 D-1</string>
-    <string name="notification_reward_fail_emoji">☠️️️</string>
-    <string name="notification_reward_fail_title">선물 약속 어김</string>
-    <string name="notification_created_stamp_board_emoji">🥁️️</string>
-    <string name="notification_created_stamp_board_title">새로운 도장판 도착</string>
-    <string name="notification_issued_coupon_emoji">🎟️️</string>
-    <string name="notification_issued_coupon_title">쿠폰 발급 완료</string>
     <string name="notification_rewarded_request_emoji">🎁️️</string>
     <string name="notification_rewarded_request_title">혹시 선물은 잘 받았나요?</string>
     <string name="notification_btn_accepted">수락했어요</string>

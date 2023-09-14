@@ -28,9 +28,7 @@ class NotificationItem(
 
     override fun bind(binding: ItemNotificationBinding, position: Int) {
         with(binding) {
-            val context = root.context
-            tvEmoji.text = context.getString(model.emojiStringRes)
-            tvTitle.text = context.getString(model.titleStringRes)
+            tvTitle.text = model.title
             tvDate.text = model.date
             tvContent.text = model.content
             ivBtnRemoveNotification.setOnClickListener {
