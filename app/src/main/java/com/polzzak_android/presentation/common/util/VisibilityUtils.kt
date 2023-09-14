@@ -24,7 +24,7 @@ object SetVisibility {
                 this.visibility = View.GONE
             }
 
-            DialogStyleType.MISSION, DialogStyleType.CALENDAR, DialogStyleType.STAMP, DialogStyleType.MISSION_LIST -> {
+            DialogStyleType.MISSION, DialogStyleType.CALENDAR, DialogStyleType.STAMP, DialogStyleType.MISSION_LIST, DialogStyleType.CAPTURE -> {
                 this.visibility = View.VISIBLE
             }
         }
