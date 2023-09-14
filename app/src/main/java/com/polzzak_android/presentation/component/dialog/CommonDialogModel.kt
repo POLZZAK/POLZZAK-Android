@@ -49,6 +49,12 @@ data class CommonDialogModel(
                 require(content.stampImg == null) { "Stamp image must be null for MISSION LIST type" }
                 require(content.missionList != null) { "Mission list not be null for MISSION LIST type" }
             }
+            DialogStyleType.CAPTURE -> {
+                require(content.calendar == null) { "Calendar must be null for CAPTURE type" }
+                require(content.mission == null) { "Mission must be null for CAPTURE type" }
+                require(content.stampImg == null) { "Stamp image must be null for CAPTURE type" }
+                require(content.missionList == null) { "Mission list must be null for CAPTURE type" }
+            }
         }
     }
 }
@@ -69,5 +75,5 @@ data class CommonDialogMissionData(
 )
 
 enum class DialogStyleType {
-    ALERT, CALENDAR, MISSION, LOADING, STAMP, MISSION_LIST
+    ALERT, CALENDAR, MISSION, LOADING, STAMP, MISSION_LIST, CAPTURE
 }
