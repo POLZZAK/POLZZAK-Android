@@ -69,7 +69,12 @@ class MainStampCompletedAdapter(private val dummy: List<StampBoardModel>, privat
 
         fun bind(item: StampBoardModel) {
             with(binding) {
-                // TODO: 멤버 타입 라벨 표시
+                // 아이가 아닌 경우 멤버 타입 라벨 표시
+                if (item.partner?.isKid == false) {
+                    memberType.text = item.partner.memberType
+                    memberType.visibility = View.VISIBLE
+                }
+
                 userNickNameHeader.text = item.partner?.nickname
                 userNickNameContent.text = item.partner?.nickname
             }
@@ -102,7 +107,12 @@ class MainStampCompletedAdapter(private val dummy: List<StampBoardModel>, privat
 
         fun bind(item: StampBoardModel) {
             with(binding) {
-                // TODO: 멤버타입 라벨 표시
+                // 아이가 아닌 경우 멤버 타입 라벨 표시
+                if (item.partner?.isKid == false) {
+                    memberType.text = item.partner.memberType
+                    memberType.visibility = View.VISIBLE
+                }
+
                 userNickName.text = item.partner?.nickname
                 interaction.setViewPager(stampPager, curPage, totalPage, item.stampBoardSummaries)
             }
