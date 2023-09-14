@@ -41,6 +41,7 @@ class NotificationItem(
     }
 
     private fun bindHorizontalScroll(binding: ItemNotificationBinding) {
+        if (model.statusType == NotificationStatusType.REQUEST_FAMILY) return
         with(binding) {
             clNotification.doOnPreDraw {
                 it.updateLayoutParams {
