@@ -128,7 +128,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
             CommonBottomSheetHelper.getInstance(
                 data = CommonBottomSheetModel(
                     type = BottomSheetType.EXAMPLE_MISSION,
-                    title = "마음에 드는 미션들을 추가해보세요!",
+                    title = "마음에 드는 미션들을 추가해보세요!".toSpannable(),
                     contentList = exampleList,
                     button = CommonButtonModel(
                         buttonCount = ButtonCount.ONE,
@@ -311,7 +311,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         CommonBottomSheetHelper.getInstance(
             data = CommonBottomSheetModel(
                 type = BottomSheetType.PROFILE_IMAGE,
-                title = "도장판을 누구에게 만들어줄까요?",
+                title = "도장판을 누구에게 만들어줄까요?".toSpannable(),
                 contentList = linkedUserViewModel.getLinkedUserList() ?: listOf(""),
                 button = CommonButtonModel(
                     buttonCount = ButtonCount.ONE,
