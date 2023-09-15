@@ -12,5 +12,5 @@ class ProtectorSearchOptionMenuFragment : BaseSearchOptionMenuFragment() {
         R.id.action_protectorSearchOptionMenuFragment_to_protectorHostFragment
     override val actionNavigateSearchFragment: Int =
         R.id.action_protectorSearchOptionMenuFragment_to_protectorSearchFragment
-    override val searchButtonTextRes: Int = R.string.common_search_parent
+    override val searchButtonTextRes: Int = R.string.common_search_kid
 }
