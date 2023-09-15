@@ -13,7 +13,8 @@ data class NotificationModel(
     val isButtonVisible: Boolean,
     val user: NotificationUserModel?,
     val statusType: NotificationStatusType,
-    val type: NotificationType
+    val type: NotificationType,
+    val link: String?
 ) {
     data class NotificationUserModel(
         val userId: Int,
@@ -38,7 +39,8 @@ fun NotificationDto.toNotificationModel(): NotificationModel? {
         },
         statusType = this.status.toNotificationStatusType(),
         type = NotificationType.values()
-            .find { this.type?.compareTo(it.name, ignoreCase = true) == 0 } ?: return null
+            .find { this.type?.compareTo(it.name, ignoreCase = true) == 0 } ?: return null,
+        link = this.link
     )
 }
 

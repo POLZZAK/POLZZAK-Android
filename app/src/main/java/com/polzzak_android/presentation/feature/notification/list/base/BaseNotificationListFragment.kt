@@ -1,11 +1,9 @@
 package com.polzzak_android.presentation.feature.notification.list.base
 
-import android.util.DisplayMetrics
 import androidx.annotation.IdRes
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.R
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
@@ -27,7 +25,6 @@ import com.polzzak_android.presentation.feature.notification.list.item.Notificat
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationItem
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationSkeletonLoadingItem
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
-import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -49,27 +46,27 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         parentFragment ?: this@BaseNotificationListFragment
     })
 
-    private val smoothScroller by lazy {
-        object : LinearSmoothScroller(context) {
-            override fun getVerticalSnapPreference(): Int {
-                return SNAP_TO_START
-            }
-
-            override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics?): Float {
-                return super.calculateSpeedPerPixel(displayMetrics) * 4f
-            }
-        }
-    }
-
     @get:IdRes
     abstract val actionToSettingFragment: Int
     abstract val memberType: MemberType
 
     override fun initView() {
         super.initView()
+        initSwipeRefreshLayout()
         initRecyclerView()
         binding.ivBtnSetting.setOnClickListener {
             findNavController().navigate(actionToSettingFragment)
+        }
+    }
+
+    private fun initSwipeRefreshLayout() {
+        with(binding.srlNotifications) {
+            setOnRefreshListener {
+                notificationViewModel.refreshNotifications(
+                    accessToken = getAccessTokenOrNull() ?: ""
+                )
+            }
+            setColorSchemeResources(R.color.primary)
         }
     }
 
@@ -86,42 +83,16 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
             addItemDecoration(itemDecoration)
             adapter = BindableItemAdapter()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (!recyclerView.canScrollVertically(1)) notificationViewModel.requestMoreNotifications(
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    super.onScrollStateChanged(recyclerView, newState)
+                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING && !recyclerView.canScrollVertically(
+                            1
+                        )
+                    ) notificationViewModel.requestMoreNotifications(
                         getAccessTokenOrNull() ?: ""
                     )
                 }
-
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    when (notificationViewModel.notificationLiveData.value?.data?.refreshStatusType) {
-                        NotificationRefreshStatusType.Normal -> onScrollStateChangedRefreshNormal(
-                            recyclerView = recyclerView,
-                            newState = newState
-                        )
-
-                        else -> {
-                            //do nothing
-                        }
-                    }
-                }
             })
-        }
-    }
-
-    private fun onScrollStateChangedRefreshNormal(recyclerView: RecyclerView, newState: Int) {
-        val layoutManager = (recyclerView.layoutManager as? LinearLayoutManager) ?: return
-        val firstCompletelyVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition()
-        if (firstCompletelyVisibleItem == 0) {
-            notificationViewModel.refreshNotifications(getAccessTokenOrNull() ?: "")
-            return
-        }
-        val firstVisibleItem =
-            layoutManager.findFirstVisibleItemPosition().takeIf { it >= 0 } ?: return
-        if (firstVisibleItem < 1 && newState != RecyclerView.SCROLL_STATE_DRAGGING) {
-            smoothScroller.targetPosition = 1
-            layoutManager.startSmoothScroll(smoothScroller)
         }
     }
 
@@ -137,12 +108,9 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
                 (binding.rvNotifications.layoutManager as? LinearLayoutManager) ?: return@observe
             val adapter =
                 (binding.rvNotifications.adapter as? BindableItemAdapter) ?: return@observe
-            val refreshStatusType =
-                it.data?.refreshStatusType ?: NotificationRefreshStatusType.Disable
-//            val items =
-//                mutableListOf<BindableItem<*>>(NotificationRefreshItem(statusType = refreshStatusType))
             val items = mutableListOf<BindableItem<*>>()
             var updateCallback: (() -> Unit)? = null
+            binding.srlNotifications.isEnabled = it.data?.isRefreshable ?: false
             when (it) {
                 is ModelState.Loading -> {
                     if (it.data?.items == null) {
@@ -159,6 +127,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
 
                 is ModelState.Success -> {
                     items.addAll(createNotificationItems(data = it.data.items))
+                    binding.srlNotifications.isRefreshing = false
                     if (notificationViewModel.isRefreshed) {
                         updateCallback = {
                             layoutManager.scrollToPositionWithOffset(1, 0)

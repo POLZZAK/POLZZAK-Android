@@ -7,13 +7,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.util.livedata.EventWrapper
+import com.polzzak_android.data.remote.model.ApiResult
+import com.polzzak_android.data.remote.model.response.NotificationDto
+import com.polzzak_android.data.remote.model.response.NotificationsDto
 import com.polzzak_android.data.repository.FamilyRepository
 import com.polzzak_android.data.repository.NotificationRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.model.copyWithData
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
-import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationStatusType
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationsModel
 import com.polzzak_android.presentation.feature.notification.list.model.toNotificationModel
@@ -107,7 +109,7 @@ class NotificationViewModel @AssistedInject constructor(
                 notificationMutex.lock()
                 val prevData = notificationLiveData.value?.data ?: NotificationsModel()
                 _notificationLiveData.value =
-                    ModelState.Loading(prevData.copy(refreshStatusType = NotificationRefreshStatusType.Loading))
+                    ModelState.Loading(prevData.copy(isRefreshable = true))
                 notificationMutex.unlock()
                 requestNotifications(accessToken = accessToken)
             },
@@ -126,7 +128,7 @@ class NotificationViewModel @AssistedInject constructor(
                 notificationMutex.lock()
                 val prevData = notificationLiveData.value?.data ?: NotificationsModel()
                 _notificationLiveData.value =
-                    ModelState.Loading(prevData.copy(refreshStatusType = NotificationRefreshStatusType.Normal))
+                    ModelState.Loading(prevData.copy(isRefreshable = true))
                 notificationMutex.unlock()
                 requestNotifications(accessToken = accessToken)
             },
@@ -146,7 +148,7 @@ class NotificationViewModel @AssistedInject constructor(
                     nextId = it?.startId,
                     items = (prevData.items ?: emptyList()) + (it?.notificationDtoList
                         ?: emptyList()).mapNotNull { notificationDto -> notificationDto.toNotificationModel() },
-                    refreshStatusType = NotificationRefreshStatusType.Normal
+                    isRefreshable = true
                 )
             _notificationLiveData.value = ModelState.Success(updatedNotifications)
             notificationMutex.unlock()
@@ -334,6 +336,31 @@ class NotificationViewModel @AssistedInject constructor(
             }
         }
     }
+}
+
+//TODO test mock notificaiton 제거
+private fun getMockNotifications(nextId: Int?, pageSize: Int = 10) = ApiResult.success(
+    NotificationsDto(
+        startId = ((nextId ?: 0) + pageSize).takeIf { it < mockNotifications.size },
+        notificationDtoList = mockNotifications.subList(
+            nextId ?: 0,
+            minOf(mockNotifications.size, (nextId ?: 0) + pageSize)
+        )
+    )
+)
+
+private val mockNotifications = List(187) {
+    NotificationDto(
+        id = it,
+        type = "FAMILY_REQUEST",
+        status = "UNREAD",
+        title = "title$it",
+        message = "message$it",
+        sender = NotificationDto.Sender(id = it, nickName = "nickName$it", null),
+        link = "",
+        requestFamilyId = it,
+        createdDate = "2023-09-14T15:50:38.296456354"
+    )
 }
 
 private val mockKidSettingMenus = SettingMenusModel(

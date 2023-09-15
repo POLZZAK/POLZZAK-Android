@@ -84,14 +84,7 @@ class NotificationItem(
                 (model.statusType == NotificationStatusType.REQUEST_FAMILY_ACCEPT)
             clBtnRejected.isVisible =
                 (model.statusType == NotificationStatusType.REQUEST_FAMILY_REJECT)
-            tvBtnAccept.setOnClickListener {
-                //TODO 수락 버튼 클릭
-            }
-            tvBtnReject.setOnClickListener {
-                //TODO 거절 버튼 클릭
-            }
         }
-
     }
 
     private fun bindProfile(binding: ItemNotificationBinding) {
@@ -114,7 +107,9 @@ class NotificationItem(
             }
 
             else -> {
-
+                model.link?.let {
+                    //TODO 링크 파싱 후 이동
+                }
             }
         }
     }
