@@ -15,6 +15,7 @@ import com.polzzak_android.presentation.feature.notification.list.NotificationIt
 import com.polzzak_android.presentation.feature.notification.list.NotificationListClickListener
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationStatusType
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationType
 
 class NotificationItem(
     private val model: NotificationModel,
@@ -39,9 +40,11 @@ class NotificationItem(
             ivBtnRemoveNotification.setOnClickListener {
                 clickListener.onClickDeleteNotification(id = model.id)
             }
+
             bindBtnLayout(binding = binding)
             bindProfile(binding = binding)
             bindHorizontalScroll(binding = binding)
+            bindClickListener(binding = binding)
         }
     }
 
@@ -72,8 +75,11 @@ class NotificationItem(
 
     private fun bindBtnLayout(binding: ItemNotificationBinding) {
         with(binding) {
-            clBtnLayout.isVisible =
-                model.isButtonVisible && model.statusType != NotificationStatusType.REQUEST_FAMILY_REJECT && model.statusType != NotificationStatusType.REQUEST_FAMILY_ACCEPT
+            clBtnLayout.isVisible = model.isButtonVisible
+            listOf(tvBtnAccept, tvBtnReject).forEach {
+                it.isVisible =
+                    model.statusType != NotificationStatusType.REQUEST_FAMILY_REJECT && model.statusType != NotificationStatusType.REQUEST_FAMILY_ACCEPT
+            }
             clBtnAccepted.isVisible =
                 (model.statusType == NotificationStatusType.REQUEST_FAMILY_ACCEPT)
             clBtnRejected.isVisible =
@@ -93,6 +99,23 @@ class NotificationItem(
             clProfile.isVisible = (model.user != null)
             ivProfileImage.loadCircleImageUrl(imageUrl = model.user?.profileImageUrl)
             tvNickName.text = model.user?.nickName
+        }
+    }
+
+    private fun bindClickListener(binding: ItemNotificationBinding) {
+        when (model.type) {
+            NotificationType.FAMILY_REQUEST -> {
+                binding.tvBtnAccept.setOnClickListener {
+                    clickListener.onClickFamilyRequestAcceptClick(model = model)
+                }
+                binding.tvBtnReject.setOnClickListener {
+                    clickListener.onClickFamilyRequestRejectClick(model = model)
+                }
+            }
+
+            else -> {
+
+            }
         }
     }
 

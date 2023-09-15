@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.R
+import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentNotificationListBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.item.LoadMoreLoadingSpinnerItem
@@ -17,12 +18,13 @@ import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.toPx
+import com.polzzak_android.presentation.component.PolzzakSnackBar
+import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.feature.notification.NotificationViewModel
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemDecoration
 import com.polzzak_android.presentation.feature.notification.list.NotificationListClickListener
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationEmptyItem
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationItem
-import com.polzzak_android.presentation.feature.notification.list.item.NotificationRefreshItem
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationSkeletonLoadingItem
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
@@ -126,6 +128,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
     override fun initObserver() {
         super.initObserver()
         initNotificationObserver()
+        initErrorEventObserver()
     }
 
     private fun initNotificationObserver() {
@@ -136,8 +139,9 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
                 (binding.rvNotifications.adapter as? BindableItemAdapter) ?: return@observe
             val refreshStatusType =
                 it.data?.refreshStatusType ?: NotificationRefreshStatusType.Disable
-            val items =
-                mutableListOf<BindableItem<*>>(NotificationRefreshItem(statusType = refreshStatusType))
+//            val items =
+//                mutableListOf<BindableItem<*>>(NotificationRefreshItem(statusType = refreshStatusType))
+            val items = mutableListOf<BindableItem<*>>()
             var updateCallback: (() -> Unit)? = null
             when (it) {
                 is ModelState.Loading -> {
@@ -171,6 +175,12 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         }
     }
 
+    private fun initErrorEventObserver() {
+        notificationViewModel.errorEventLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
+            PolzzakSnackBar.errorOf(binding.root, it)
+        })
+    }
+
     private fun createSkeletonLoadingItems() = List(LOADING_SKELETON_ITEM_COUNT) {
         NotificationSkeletonLoadingItem()
     }
@@ -186,7 +196,24 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
     }
 
     override fun onClickDeleteNotification(id: Int) {
-        notificationViewModel.deleteNotification(id = id)
+        notificationViewModel.deleteNotification(
+            accessToken = getAccessTokenOrNull() ?: "",
+            id = id
+        )
+    }
+
+    override fun onClickFamilyRequestAcceptClick(model: NotificationModel) {
+        notificationViewModel.requestApproveLinkRequest(
+            accessToken = getAccessTokenOrNull() ?: "",
+            notificationModel = model
+        )
+    }
+
+    override fun onClickFamilyRequestRejectClick(model: NotificationModel) {
+        notificationViewModel.requestRejectLinkRequest(
+            accessToken = getAccessTokenOrNull() ?: "",
+            notificationModel = model
+        )
     }
 
     companion object {

@@ -1,7 +1,5 @@
 package com.polzzak_android.presentation.feature.notification.list.model
 
-import android.text.Spannable
-import androidx.core.text.toSpannable
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.data.remote.model.response.NotificationDto
 import com.polzzak_android.presentation.common.util.toLocalDateTimeOrNull
@@ -15,6 +13,7 @@ data class NotificationModel(
     val isButtonVisible: Boolean,
     val user: NotificationUserModel?,
     val statusType: NotificationStatusType,
+    val type: NotificationType
 ) {
     data class NotificationUserModel(
         val userId: Int,
@@ -38,6 +37,8 @@ fun NotificationDto.toNotificationModel(): NotificationModel? {
             )
         },
         statusType = this.status.toNotificationStatusType(),
+        type = NotificationType.values()
+            .find { this.type?.compareTo(it.name, ignoreCase = true) == 0 } ?: return null
     )
 }
 

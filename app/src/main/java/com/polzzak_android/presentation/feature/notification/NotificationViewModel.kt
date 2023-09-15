@@ -6,12 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.polzzak_android.common.util.livedata.EventWrapper
+import com.polzzak_android.data.repository.FamilyRepository
 import com.polzzak_android.data.repository.NotificationRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.model.copyWithData
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationStatusType
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationsModel
 import com.polzzak_android.presentation.feature.notification.list.model.toNotificationModel
 import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenuType
@@ -27,15 +30,18 @@ import kotlinx.coroutines.sync.Mutex
 
 class NotificationViewModel @AssistedInject constructor(
     private val notificationRepository: NotificationRepository,
+    private val familyRepository: FamilyRepository,
     @Assisted private val initAccessToken: String
 ) : ViewModel(), NotificationItemStateController {
     private val _notificationLiveData = MutableLiveData<ModelState<NotificationsModel>>()
     val notificationLiveData: LiveData<ModelState<NotificationsModel>> = _notificationLiveData
     private var requestNotificationJobData: NotificationJobData? = null
 
-    //TODO 추가 삭제 등 알림목록 수정 이벤트
-    private var updateNotificationJobMap = HashMap<Int, Job?>()
+    private val _errorEventLiveData = MutableLiveData<EventWrapper<Exception>>()
+    val errorEventLiveData: LiveData<EventWrapper<Exception>> = _errorEventLiveData
+    private val updateNotificationJobMap = HashMap<Int, Job?>()
 
+    private val requestLinkJob = HashMap<Int, Job?>()
     var isRefreshed = false
         private set
 
@@ -130,10 +136,11 @@ class NotificationViewModel @AssistedInject constructor(
     private suspend fun requestNotifications(accessToken: String) {
         notificationRepository.requestNotifications(
             accessToken = accessToken,
-            startId = notificationLiveData.value?.data?.nextId,
+            startId = notificationLiveData.value?.data?.nextId.takeIf { !isRefreshed },
         ).onSuccess {
             notificationMutex.lock()
-            val prevData = notificationLiveData.value?.data ?: NotificationsModel()
+            val prevData =
+                notificationLiveData.value?.data.takeIf { !isRefreshed } ?: NotificationsModel()
             val updatedNotifications =
                 prevData.copy(
                     nextId = it?.startId,
@@ -143,32 +150,30 @@ class NotificationViewModel @AssistedInject constructor(
                 )
             _notificationLiveData.value = ModelState.Success(updatedNotifications)
             notificationMutex.unlock()
-        }.onError { exception, notificationsDto ->
-            notificationMutex.lock()
-            _notificationLiveData.value =
-                ModelState.Error(exception = exception, data = notificationLiveData.value?.data)
-            notificationMutex.unlock()
+        }.onError { exception, _ ->
+            _errorEventLiveData.value = EventWrapper(exception)
         }
     }
 
-    fun deleteNotification(id: Int) {
+    fun deleteNotification(accessToken: String, id: Int) {
         if (updateNotificationJobMap[id]?.isCompleted == false) return
         updateNotificationJobMap[id] = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
-            //TODO api 적용
-            delay(1000)
-//            deleteMockNotificationData(id = id)
-
-            //onSuccess
-            notificationMutex.lock()
-            val updatedList = notificationLiveData.value?.data?.items?.toMutableList()?.apply {
-                removeIf { it.id == id }
+            notificationRepository.deleteNotifications(
+                accessToken = accessToken,
+                notificationIds = listOf(id)
+            ).onSuccess {
+                notificationMutex.lock()
+                _notificationLiveData.value = _notificationLiveData.value?.run {
+                    val prevModel = data ?: return@onSuccess
+                    val updatedList =
+                        prevModel.items?.toMutableList()?.apply { removeIf { it.id == id } }
+                    val updatedModel = prevModel.copy(items = updatedList)
+                    copyWithData(updatedModel)
+                }
+                notificationMutex.unlock()
+            }.onError { exception, _ ->
+                _errorEventLiveData.value = EventWrapper(exception)
             }
-            val updatedData =
-                notificationLiveData.value?.data?.copy(items = updatedList) ?: NotificationsModel()
-            _notificationLiveData.value =
-                _notificationLiveData.value?.copyWithData(newData = updatedData)
-            notificationMutex.unlock()
-            //TODO onError 이벤트 추가(Livedata, eventWrapper 등 필요할 수도 있음)
         }
     }
 
@@ -179,6 +184,63 @@ class NotificationViewModel @AssistedInject constructor(
                 //TODO 푸쉬알림으로 인한 알림 목록 추가
 
             }
+    }
+
+    fun requestApproveLinkRequest(accessToken: String, notificationModel: NotificationModel) {
+        val userId = notificationModel.user?.userId ?: return
+        if (requestLinkJob[userId]?.isCompleted == false) return
+        requestLinkJob[userId] = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
+            familyRepository.requestApproveLinkRequest(accessToken = accessToken, targetId = userId)
+                .onSuccess {
+                    notificationMutex.lock()
+                    _notificationLiveData.value = _notificationLiveData.value?.run {
+                        val prevModel = data ?: return@onSuccess
+                        val updatedList =
+                            prevModel.items?.toMutableList()?.apply {
+                                forEachIndexed { idx, model ->
+                                    if (model.id == notificationModel.id) {
+                                        this[idx] =
+                                            this[idx].copy(statusType = NotificationStatusType.REQUEST_FAMILY_ACCEPT)
+                                    }
+                                }
+                            }
+                        val updatedModel = prevModel.copy(items = updatedList)
+                        copyWithData(updatedModel)
+                    }
+                    notificationMutex.unlock()
+                }.onError { exception, _ ->
+                    _errorEventLiveData.value = EventWrapper(exception)
+                }
+        }
+    }
+
+
+    fun requestRejectLinkRequest(accessToken: String, notificationModel: NotificationModel) {
+        val userId = notificationModel.user?.userId ?: return
+        if (requestLinkJob[userId]?.isCompleted == false) return
+        requestLinkJob[userId] = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
+            familyRepository.requestRejectLinkRequest(accessToken = accessToken, targetId = userId)
+                .onSuccess {
+                    notificationMutex.lock()
+                    _notificationLiveData.value = _notificationLiveData.value?.run {
+                        val prevModel = data ?: return@onSuccess
+                        val updatedList =
+                            prevModel.items?.toMutableList()?.apply {
+                                forEachIndexed { idx, model ->
+                                    if (model.id == notificationModel.id) {
+                                        this[idx] =
+                                            this[idx].copy(statusType = NotificationStatusType.REQUEST_FAMILY_REJECT)
+                                    }
+                                }
+                            }
+                        val updatedModel = prevModel.copy(items = updatedList)
+                        copyWithData(updatedModel)
+                    }
+                    notificationMutex.unlock()
+                }.onError { exception, _ ->
+                    _errorEventLiveData.value = EventWrapper(exception)
+                }
+        }
     }
 
     private fun createJobWithUnlockOnCompleted(mutex: Mutex, action: suspend () -> Unit) =
@@ -259,7 +321,6 @@ class NotificationViewModel @AssistedInject constructor(
     }
 
     companion object {
-        const val NOTIFICATION_PAGE_SIZE = 10
         private const val INIT_NOTIFICATIONS_PRIORITY = 3
         private const val REFRESH_NOTIFICATIONS_PRIORITY = 2
         private const val MORE_NOTIFICATIONS_PRIORITY = 1

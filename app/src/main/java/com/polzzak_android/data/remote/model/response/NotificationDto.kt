@@ -1,5 +1,7 @@
 package com.polzzak_android.data.remote.model.response
 
+import com.google.gson.annotations.SerializedName
+
 data class NotificationDto(
     val id: Int?,
     val type: String?,
@@ -13,6 +15,7 @@ data class NotificationDto(
 ) {
     data class Sender(
         val id: Int?,
+        @SerializedName("nickname")
         val nickName: String?,
         val profileUrl: String?
     )

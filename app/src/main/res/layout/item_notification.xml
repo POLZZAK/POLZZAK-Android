@@ -154,7 +154,7 @@
                         android:id="@+id/clBtnRejected"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/shape_rectangle_white_stroke_primary_r8"
+                        android:background="@drawable/shape_rectangle_white_stroke_error_500_r8"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
