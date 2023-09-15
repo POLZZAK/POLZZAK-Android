@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.coupon.detail.kid
 
+import android.graphics.Bitmap
 import android.widget.ImageView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.text.toSpannable
@@ -84,16 +85,13 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
 
         // 화면에 나타난 쿠폰 View를 비트맵으로 변환
         val bitmap = couponImageView?.drawToBitmap()
-        val imageView = ImageView(requireContext()).apply {
-            setImageBitmap(bitmap!!)
-        }
 
         CommonDialogHelper.getInstance(
             content = CommonDialogModel(
                 type = DialogStyleType.CAPTURE,
                 content = CommonDialogContent(
                     title = "다음 쿠폰을 사진첩에 저장합니다.".toSpannable(),
-                    captureView = imageView
+                    captureBitmap = bitmap
                 ),
                 button = CommonButtonModel(
                     buttonCount = ButtonCount.TWO,
@@ -104,7 +102,10 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
             onConfirmListener = {
                 object : OnButtonClickListener {
                     override fun setBusinessLogic() {
-                        val couponBitmap = imageView.drawToBitmap()
+                    }
+
+                    override fun getReturnValue(value: Any) {
+                        val couponBitmap = value as Bitmap
 
                         lifecycleScope.launch {
                             saveBitmapToGallery(couponBitmap)
@@ -119,9 +120,6 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
                                         .show()
                                 }
                         }
-                    }
-
-                    override fun getReturnValue(value: Any) {
                     }
                 }
             }
