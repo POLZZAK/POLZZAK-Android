@@ -1,12 +1,6 @@
 package com.polzzak_android.presentation.feature.coupon.detail.kid
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Rect
-import android.icu.util.Measure
-import android.view.View.INVISIBLE
-import android.view.View.MeasureSpec
-import androidx.compose.ui.platform.ComposeView
+import android.widget.ImageView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.text.toSpannable
 import androidx.core.view.drawToBitmap
@@ -28,6 +22,7 @@ import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
 import com.polzzak_android.presentation.common.util.saveBitmapToGallery
+import com.polzzak_android.presentation.component.CouponImageView
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
@@ -41,14 +36,9 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailScreen_Kid
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailViewModel
-import com.polzzak_android.presentation.feature.coupon.detail.CouponTicketImage
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.lang.Exception
 
 @AndroidEntryPoint
@@ -58,6 +48,8 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
     private val viewModel: CouponDetailViewModel by viewModels()
 
     private var loadingDialog: FullLoadingDialog? = FullLoadingDialog()
+
+    private var couponImageView: CouponImageView? = null
 
     override fun setToolbar() {
         super.setToolbar()
@@ -78,34 +70,62 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
     }
 
     override fun onToolbarIconClicked() {
-        // TODO: 사진 저장
-
-        // 1. 퍼미션 확인 2. 저장
-
+        // 권환 확인
         val isGranted = getPermissionManagerOrNull()?.checkPermissionAndMoveSettingIfDenied(
             PermissionManager.READ_MEDIA_PERMISSION,
             dialogTitle = getString(R.string.permission_manager_dialog_storage_title)
         ) ?: false
 
+        // 권한 없으면 리턴
         if (isGranted.not()) return
 
-        val couponData = viewModel.couponDetailData.value.data ?: return
+        // 쿠폰 이미지 뷰가 null이면 리턴
+        couponImageView ?: return
 
+        // 화면에 나타난 쿠폰 View를 비트맵으로 변환
+        val bitmap = couponImageView?.drawToBitmap()
+        val imageView = ImageView(requireContext()).apply {
+            setImageBitmap(bitmap!!)
+        }
 
-        /*lifecycleScope.launch {
-            saveBitmapToGallery(couponBitmap)
-                .onSuccess {
-                    PolzzakSnackBar
-                        .make(binding.root, "성공!!!!", PolzzakSnackBar.Type.SUCCESS)
-                        .show()
+        CommonDialogHelper.getInstance(
+            content = CommonDialogModel(
+                type = DialogStyleType.CAPTURE,
+                content = CommonDialogContent(
+                    title = "다음 쿠폰을 사진첩에 저장합니다.".toSpannable(),
+                    captureView = imageView
+                ),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.TWO,
+                    positiveButtonText = "저장하기",
+                    negativeButtonText = "취소"
+                )
+            ),
+            onConfirmListener = {
+                object : OnButtonClickListener {
+                    override fun setBusinessLogic() {
+                        val couponBitmap = imageView.drawToBitmap()
+
+                        lifecycleScope.launch {
+                            saveBitmapToGallery(couponBitmap)
+                                .onSuccess {
+                                    PolzzakSnackBar
+                                        .make(binding.root, "쿠폰이 사진첩에 저장됐어요", PolzzakSnackBar.Type.SUCCESS)
+                                        .show()
+                                }
+                                .onFailure {
+                                    PolzzakSnackBar
+                                        .make(binding.root, "저장에 실패했습니다", PolzzakSnackBar.Type.WARNING)
+                                        .show()
+                                }
+                        }
+                    }
+
+                    override fun getReturnValue(value: Any) {
+                    }
                 }
-                .onFailure {
-                    PolzzakSnackBar
-                        .make(binding.root, "실패!!!", PolzzakSnackBar.Type.WARNING)
-                        .show()
-                }
-        }*/
-
+            }
+        ).show(childFragmentManager, null)
     }
 
     override fun initView() {
@@ -124,7 +144,8 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
                         couponDetailData = viewModel.couponDetailData,
                         onMissionClick = this@KidCouponDetailFragment::openMissionsDialog,
                         onRewardRequestClick = this@KidCouponDetailFragment::requestReward,
-                        onRewardDeliveredClick = this@KidCouponDetailFragment::openReceiveDialog
+                        onRewardDeliveredClick = this@KidCouponDetailFragment::openReceiveDialog,
+                        setCouponImageView = this@KidCouponDetailFragment::setCouponView
                     )
                 }
             }
@@ -250,6 +271,10 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
                     }
                 }
             )
+    }
+
+    private fun setCouponView(view: CouponImageView) {
+        couponImageView = view
     }
 
     override fun initObserver() {

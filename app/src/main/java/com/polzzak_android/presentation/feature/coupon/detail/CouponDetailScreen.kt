@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -26,9 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import com.polzzak_android.presentation.common.compose.Blue600
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.getRemainingSeconds
+import com.polzzak_android.presentation.component.CouponImageView
 import com.polzzak_android.presentation.component.PolzzakButton
 import com.polzzak_android.presentation.component.PolzzakWhiteButton
 import com.polzzak_android.presentation.component.polzzakButtonColors
@@ -39,36 +42,17 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+/**
+ * 부모 쿠폰 상세 화면 컴포저블
+ *
+ * @param onMissionClick 완료 미션 클릭 시 동작할 코드
+ * @param setCouponImageView 화면에 표시하고 있는 쿠폰 이미지 View를 Fragment단으로 넘기기 위한 코드
+ */
 @Composable
 fun CouponDetailScreen_Protector(
     couponDetailData: StateFlow<ModelState<CouponDetailModel>>,
     onMissionClick: (missions: List<String>) -> Unit,
-) {
-    val state by couponDetailData.collectAsState()
-
-    Crossfade(
-        targetState = state,
-        animationSpec = tween(200),
-        label = "CouponDetailScreen change animation"
-    ) { currentState ->
-        when (currentState) {
-            is ModelState.Success -> {
-                CouponDetailScreen(data = currentState.data, onMissionClick = onMissionClick)
-            }
-            else -> {
-                // Fragment에서 로딩, 에러 상태 화면 처리 중
-            }
-        }
-    }
-
-}
-
-@Composable
-fun CouponDetailScreen_Kid(
-    couponDetailData: StateFlow<ModelState<CouponDetailModel>>,
-    onMissionClick: (missions: List<String>) -> Unit,
-    onRewardRequestClick: (couponId: Int) -> Unit,
-    onRewardDeliveredClick: (couponId: Int, reward: String) -> Unit
+    setCouponImageView: (CouponImageView) -> Unit
 ) {
     val state by couponDetailData.collectAsState()
 
@@ -82,6 +66,46 @@ fun CouponDetailScreen_Kid(
                 CouponDetailScreen(
                     data = currentState.data,
                     onMissionClick = onMissionClick,
+                    setCouponImageView = setCouponImageView
+                )
+            }
+            else -> {
+                // Fragment에서 로딩, 에러 상태 화면 처리 중
+            }
+        }
+    }
+
+}
+
+/**
+ * 아이 쿠폰 상세 화면 컴포저블
+ *
+ * @param onMissionClick 완료 미션 클릭 시 동작할 코드
+ * @param onRewardRequestClick 조르기 클릭 시 동작할 코드
+ * @param onRewardDeliveredClick 선물 받기 완료 클릭 시 동작할 코드
+ * @param setCouponImageView 화면에 표시하고 있는 쿠폰 이미지 View를 Fragment단으로 넘기기 위한 코드
+ */
+@Composable
+fun CouponDetailScreen_Kid(
+    couponDetailData: StateFlow<ModelState<CouponDetailModel>>,
+    onMissionClick: (missions: List<String>) -> Unit,
+    onRewardRequestClick: (couponId: Int) -> Unit,
+    onRewardDeliveredClick: (couponId: Int, reward: String) -> Unit,
+    setCouponImageView: (CouponImageView) -> Unit
+) {
+    val state by couponDetailData.collectAsState()
+
+    Crossfade(
+        targetState = state,
+        animationSpec = tween(200),
+        label = "CouponDetailScreen change animation"
+    ) { currentState ->
+        when (currentState) {
+            is ModelState.Success -> {
+                CouponDetailScreen(
+                    data = currentState.data,
+                    onMissionClick = onMissionClick,
+                    setCouponImageView = setCouponImageView,
                     buttons = {
                         // 조르기 시간이 없으면 조르기 버튼 표시
                         // 조르기 시간이 있으면 카운트다운 표시
@@ -132,14 +156,28 @@ fun CouponDetailScreen_Kid(
 private fun CouponDetailScreen(
     data: CouponDetailModel,
     onMissionClick: (missions: List<String>) -> Unit,
-    buttons: @Composable (RowScope.() -> Unit)? = null
+    setCouponImageView: (CouponImageView) -> Unit,
+    buttons: @Composable (RowScope.() -> Unit)? = null,
 ) = Column(
     horizontalAlignment = Alignment.CenterHorizontally,
     modifier = Modifier
         .fillMaxSize()
         .padding(top = 26.dp, start = 16.dp, end = 16.dp, bottom = 8.dp)
 ) {
-    CouponTicket(
+
+    // 이미지로 저장하기 위해 View 사용
+    AndroidView(
+        modifier = Modifier.wrapContentSize(),
+        factory = {
+            CouponImageView(data = data, context = it).apply {
+                this.onMissionClick = { onMissionClick(data.missions) }
+                post { setCouponImageView(this) }
+            }
+        }
+    )
+
+    // View 사용해서 화면 표시하기 전 코드
+    /*CouponTicket(
         header = {
             CouponHeaderContent(title = data.rewardTitle)
         },
@@ -162,7 +200,7 @@ private fun CouponDetailScreen(
             CouponFooterContent(startDate = data.startDate, endDate = data.endDate)
         },
         modifier = Modifier.padding(horizontal = 10.dp)
-    )
+    )*/
 
     when (data.state) {
         CouponState.ISSUED -> {     // 쿠폰 발급 완료 상태
@@ -207,6 +245,7 @@ fun CouponDetailScreenPreview() {
             rewardDate = LocalDate.now()
         ),
         onMissionClick = {},
+        setCouponImageView = {},
         buttons = {
             Box(modifier = Modifier.weight(1f)) {
                 var countdownVisibility by remember {

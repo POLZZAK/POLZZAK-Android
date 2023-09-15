@@ -116,14 +116,45 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 
-            <View
+            <LinearLayout
+                android:id="@+id/dialog_capture_frame"
                 setVisibility="@{data.type == type.CAPTURE}"
-                android:layout_width="237dp"
-                android:layout_height="366dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintHeight_max="366dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                app:layout_constraintDimensionRatio="1:1.544"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="53dp"
+                android:background="@color/primary"
+                android:paddingTop="30dp"
+                android:paddingBottom="20dp"
+                android:paddingHorizontal="16dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/iv_couponImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:scaleType="centerInside" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="17dp"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.7"
+                    android:scaleY="0.7"
+                    android:src="@drawable/img_logo_polzzak_text"/>
+
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

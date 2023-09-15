@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -100,43 +101,33 @@ fun CountdownButtonPreview() {
 
 @Composable
 fun CouponTicketImage(
-    data: CouponDetailModel
-) = Column(
-    horizontalAlignment = Alignment.CenterHorizontally,
-    modifier = Modifier
-        .background(color = Blue500)
-        .padding(horizontal = 26.dp)
-        .padding(top = 40.dp, bottom = 30.dp)
-) {
-    CouponTicket(
-        header = {
-            CouponHeaderContent(title = data.rewardTitle)
-        },
-        body = {
-            CouponBodyContent(
-                giverName = data.giverName,
-                giverProfileUrl = data.giverProfileUrl,
-                receiverName = data.receiverName,
-                receiverProfileUrl = data.receiverProfileUrl,
-                completedMissionCount = data.missions.size,
-                stampCount = data.stampCount,
-                dateCount = Duration.between(
-                    data.startDate.atStartOfDay(),
-                    data.endDate.atStartOfDay()
-                ).toDays().toInt(),
-                onMissionClick = {}
-            )
-        },
-        footer = {
-            CouponFooterContent(startDate = data.startDate, endDate = data.endDate)
-        }
-    )
-    Spacer(modifier = Modifier.height(30.dp))
-    Image(
-        painter = painterResource(id = R.drawable.img_logo_polzzak_text),
-        contentDescription = "Polzzak"
-    )
-}
+    data: CouponDetailModel,
+    modifier: Modifier = Modifier,
+    onMissionClick: (() -> Unit)? = null
+) = CouponTicket(
+    header = {
+        CouponHeaderContent(title = data.rewardTitle)
+    },
+    body = {
+        CouponBodyContent(
+            giverName = data.giverName,
+            giverProfileUrl = data.giverProfileUrl,
+            receiverName = data.receiverName,
+            receiverProfileUrl = data.receiverProfileUrl,
+            completedMissionCount = data.missions.size,
+            stampCount = data.stampCount,
+            dateCount = Duration.between(
+                data.startDate.atStartOfDay(),
+                data.endDate.atStartOfDay()
+            ).toDays().toInt(),
+            onMissionClick = { onMissionClick?.invoke() }
+        )
+    },
+    footer = {
+        CouponFooterContent(startDate = data.startDate, endDate = data.endDate)
+    },
+    modifier = modifier
+)
 
 @Preview
 @Composable
