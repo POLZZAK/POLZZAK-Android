@@ -40,7 +40,7 @@ class NotificationItem(
             ivBtnRemoveNotification.setOnClickListener {
                 clickListener.onClickDeleteNotification(id = model.id)
             }
-
+            ivIconUnRead.isVisible = model.statusType == NotificationStatusType.UNREAD
             bindBtnLayout(binding = binding)
             bindProfile(binding = binding)
             bindHorizontalScroll(binding = binding)

@@ -65,6 +65,14 @@
                     app:layout_constraintTop_toTopOf="@id/tvTitle"
                     tools:text="방금 전" />
 
+                <ImageView
+                    android:id="@+id/ivIconUnRead"
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:background="@drawable/shape_oval_error_500"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <TextView
                     android:id="@+id/tvContent"
                     android:layout_width="0dp"

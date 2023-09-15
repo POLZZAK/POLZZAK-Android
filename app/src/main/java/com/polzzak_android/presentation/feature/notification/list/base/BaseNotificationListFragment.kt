@@ -104,12 +104,9 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
 
     private fun initNotificationObserver() {
         notificationViewModel.notificationLiveData.observe(viewLifecycleOwner) {
-            val layoutManager =
-                (binding.rvNotifications.layoutManager as? LinearLayoutManager) ?: return@observe
             val adapter =
                 (binding.rvNotifications.adapter as? BindableItemAdapter) ?: return@observe
             val items = mutableListOf<BindableItem<*>>()
-            var updateCallback: (() -> Unit)? = null
             binding.srlNotifications.isEnabled = it.data?.isRefreshable ?: false
             when (it) {
                 is ModelState.Loading -> {
@@ -128,11 +125,6 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
                 is ModelState.Success -> {
                     items.addAll(createNotificationItems(data = it.data.items))
                     binding.srlNotifications.isRefreshing = false
-                    if (notificationViewModel.isRefreshed) {
-                        updateCallback = {
-                            layoutManager.scrollToPositionWithOffset(1, 0)
-                        }
-                    }
                 }
 
                 is ModelState.Error -> {
@@ -140,7 +132,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
                 }
             }
 
-            adapter.updateItem(item = items, commitCallback = updateCallback)
+            adapter.updateItem(item = items)
         }
     }
 

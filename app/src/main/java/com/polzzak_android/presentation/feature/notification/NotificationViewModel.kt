@@ -111,6 +111,7 @@ class NotificationViewModel @AssistedInject constructor(
                 _notificationLiveData.value =
                     ModelState.Loading(prevData.copy(isRefreshable = true))
                 notificationMutex.unlock()
+                notificationHorizontalScrollPositionMap.clear()
                 requestNotifications(accessToken = accessToken)
             },
         )
@@ -352,8 +353,8 @@ private fun getMockNotifications(nextId: Int?, pageSize: Int = 10) = ApiResult.s
 private val mockNotifications = List(187) {
     NotificationDto(
         id = it,
-        type = "FAMILY_REQUEST",
-        status = "UNREAD",
+        type = "FAMILY_REQUEST_COMPLETE",
+        status = if (it % 2 == 0) "READ" else "UNREAD",
         title = "title$it",
         message = "message$it",
         sender = NotificationDto.Sender(id = it, nickName = "nickName$it", null),
