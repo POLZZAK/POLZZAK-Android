@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.notification.list.item
 
+import android.content.Context
 import android.view.View
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
@@ -7,6 +8,7 @@ import androidx.core.view.updateLayoutParams
 import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemNotificationBinding
 import com.polzzak_android.presentation.common.util.BindableItem
+import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.loadCircleImageUrl
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
@@ -30,7 +32,10 @@ class NotificationItem(
         with(binding) {
             tvTitle.text = model.title
             tvDate.text = model.date
-            tvContent.text = model.content
+            tvContent.text = createNotificationContentSpannable(
+                context = binding.root.context,
+                string = model.content
+            )
             ivBtnRemoveNotification.setOnClickListener {
                 clickListener.onClickDeleteNotification(id = model.id)
             }
@@ -90,6 +95,35 @@ class NotificationItem(
             tvNickName.text = model.user?.nickName
         }
     }
+
+    private fun createNotificationContentSpannable(context: Context, string: String) =
+        SpannableBuilder.build(context = context) {
+            var isOpen = false
+            var startIdx = 0
+            string.forEachIndexed { index, c ->
+                if (!isOpen && c == '<') {
+                    span(
+                        string.substring(startIdx, index),
+                        style = R.style.body_14_500,
+                        textColor = R.color.gray_700
+                    )
+                    isOpen = true
+                    startIdx = index + 3
+                } else if (isOpen && c == '<') {
+                    span(
+                        string.substring(startIdx, index),
+                        style = R.style.body_14_600,
+                        textColor = R.color.gray_800
+                    )
+                    isOpen = false
+                    startIdx = index + 4
+                }
+            }
+            span(
+                string.substring(startIdx, string.length), style = R.style.body_14_500,
+                textColor = R.color.gray_700
+            )
+        }
 
     companion object {
         private const val NOTIFICATION_REMOVE_LAYOUT_WIDTH_DP = 56

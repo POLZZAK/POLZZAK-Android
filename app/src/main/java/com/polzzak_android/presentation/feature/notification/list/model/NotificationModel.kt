@@ -11,7 +11,7 @@ data class NotificationModel(
     val id: Int,
     val title: String,
     val date: String,
-    val content: Spannable,
+    val content: String,
     val isButtonVisible: Boolean,
     val user: NotificationUserModel?,
     val statusType: NotificationStatusType,
@@ -26,9 +26,9 @@ data class NotificationModel(
 fun NotificationDto.toNotificationModel(): NotificationModel? {
     return NotificationModel(
         id = this.id ?: return null,
-        title = this.title ?: "",
+        title = this.title.orEmpty(),
         date = this.createdDate?.toLocalDateTimeOrNull()?.toNotificationDateString() ?: return null,
-        content = this.message?.toSpannable() ?: return null,
+        content = this.message.orEmpty(),
         isButtonVisible = (this.type == "FAMILY_REQUEST"),
         user = safeLet(this.sender?.id, this.sender?.nickName) { id, nickName ->
             NotificationModel.NotificationUserModel(
