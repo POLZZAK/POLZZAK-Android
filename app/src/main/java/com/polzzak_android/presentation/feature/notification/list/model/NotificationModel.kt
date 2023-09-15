@@ -14,7 +14,7 @@ data class NotificationModel(
     val user: NotificationUserModel?,
     val statusType: NotificationStatusType,
     val type: NotificationType,
-    val link: String?
+    val link: NotificationLinkType?
 ) {
     data class NotificationUserModel(
         val userId: Int,
@@ -40,7 +40,7 @@ fun NotificationDto.toNotificationModel(): NotificationModel? {
         statusType = this.status.toNotificationStatusType(),
         type = NotificationType.values()
             .find { this.type?.compareTo(it.name, ignoreCase = true) == 0 } ?: return null,
-        link = this.link
+        link = this.link?.toNotificationLinkType()
     )
 }
 
@@ -51,4 +51,16 @@ private fun String?.toNotificationStatusType() = when (this) {
     "REQUEST_FAMILY_ACCEPT" -> NotificationStatusType.REQUEST_FAMILY_ACCEPT
     "REQUEST_FAMILY_REJECT" -> NotificationStatusType.REQUEST_FAMILY_REJECT
     else -> NotificationStatusType.UNKNOWN
+}
+
+private fun String.toNotificationLinkType(): NotificationLinkType? {
+    val destination = this.substringBefore('/')
+    val id = this.substringAfter('/').toIntOrNull()
+    return when (destination) {
+        "home" -> NotificationLinkType.Home
+        "my-page" -> NotificationLinkType.My
+        "stamp-board" -> NotificationLinkType.StampDetail(id = id ?: return null)
+        "coupon" -> NotificationLinkType.CouponDetail(id = id ?: return null)
+        else -> null
+    }
 }

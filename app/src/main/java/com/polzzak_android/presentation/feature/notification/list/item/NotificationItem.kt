@@ -96,20 +96,17 @@ class NotificationItem(
     }
 
     private fun bindClickListener(binding: ItemNotificationBinding) {
-        when (model.type) {
-            NotificationType.FAMILY_REQUEST -> {
-                binding.tvBtnAccept.setOnClickListener {
-                    clickListener.onClickFamilyRequestAcceptClick(model = model)
-                }
-                binding.tvBtnReject.setOnClickListener {
-                    clickListener.onClickFamilyRequestRejectClick(model = model)
-                }
+        if (model.type == NotificationType.FAMILY_REQUEST) {
+            binding.tvBtnAccept.setOnClickListener {
+                clickListener.onClickFamilyRequestAcceptClick(model = model)
             }
-
-            else -> {
-                model.link?.let {
-                    //TODO 링크 파싱 후 이동
-                }
+            binding.tvBtnReject.setOnClickListener {
+                clickListener.onClickFamilyRequestRejectClick(model = model)
+            }
+        }
+        binding.clNotification.setOnClickListener {
+            model.link?.let {
+                clickListener.onClickPageLink(it)
             }
         }
     }

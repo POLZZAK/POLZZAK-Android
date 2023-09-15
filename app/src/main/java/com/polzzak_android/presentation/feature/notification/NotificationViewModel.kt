@@ -358,7 +358,12 @@ private val mockNotifications = List(187) {
         title = "title$it",
         message = "message$it",
         sender = NotificationDto.Sender(id = it, nickName = "nickName$it", null),
-        link = "",
+        link = when (it % 4) {
+            0 -> "home"
+            1 -> "my-page"
+            2 -> "stamp-board/$it"
+            else -> "coupon/$it"
+        },
         requestFamilyId = it,
         createdDate = "2023-09-14T15:50:38.296456354"
     )
