@@ -12,5 +12,5 @@ class KidSearchOptionMenuFragment : BaseSearchOptionMenuFragment() {
         R.id.action_kidSearchOptionMenuFragment_to_kidHostFragment
     override val actionNavigateSearchFragment: Int =
         R.id.action_kidSearchOptionMenuFragment_to_kidSearchFragment
-    override val searchButtonTextRes: Int = R.string.common_search_kid
+    override val searchButtonTextRes: Int = R.string.common_search_parent
 }
