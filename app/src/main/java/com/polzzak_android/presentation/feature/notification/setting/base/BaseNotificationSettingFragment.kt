@@ -14,15 +14,26 @@ import com.polzzak_android.databinding.ItemNotificationSettingBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.PermissionManager
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
 import com.polzzak_android.presentation.feature.notification.NotificationViewModel
 import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenuType
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 abstract class BaseNotificationSettingFragment :
     BaseFragment<FragmentNotificationSettingBinding>() {
     override val layoutResId: Int = R.layout.fragment_notification_setting
 
-    private val notificationViewModel by viewModels<NotificationViewModel>(ownerProducer = {
+    @Inject
+    lateinit var notificationViewModelAssistedFactory: NotificationViewModel.NotificationAssistedFactory
+    private val notificationViewModel by viewModels<NotificationViewModel>(factoryProducer = {
+        NotificationViewModel.provideFactory(
+            notificationViewModelAssistedFactory,
+            initAccessToken = getAccessTokenOrNull() ?: ""
+        )
+    }, ownerProducer = {
         parentFragment ?: this@BaseNotificationSettingFragment
     })
 

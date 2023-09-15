@@ -137,18 +137,8 @@
     <string name="link_management_search_linked">이미 연동됐어요</string>
 
     <!-- Notification -->
-    <string name="notification_request_link_emoji">💌</string>
-    <string name="notification_request_link_title">연동 요청</string>
-    <string name="notification_request_link_content">%s님이 회원님께 연동 요청을 보냈어요</string>
-    <string name="notification_complete_link_emoji">🤝🏻</string>
-    <string name="notification_complete_link_title">연동 완료</string>
-    <string name="notification_complete_link_content">%s님과 연동이 완료되었어요! 도장판을 만들러 가볼까요? :)</string>
-    <string name="notification_level_up_emoji">🥳</string>
-    <string name="notification_level_up_title">레벨 UP</string>
-    <string name="notification_level_up_content">폴짝! %s으로 올라갔어요!</string>
-    <string name="notification_level_down_emoji">🚨</string>
-    <string name="notification_level_down_title">레벨 DOWN</string>
-    <string name="notification_level_down_content">조심! %s으로 내려왔어요</string>
+    <string name="notification_btn_accepted">수락했어요</string>
+    <string name="notification_btn_rejected">거절했어요</string>
     <string name="notification_empty_content">알림이 없어요</string>
     <string name="notification_setting_header_title">알림 설정</string>
     <string name="notification_setting_all_title">모든 알림</string>

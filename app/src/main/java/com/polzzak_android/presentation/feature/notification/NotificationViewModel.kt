@@ -1,36 +1,49 @@
 package com.polzzak_android.presentation.feature.notification
 
-import android.text.SpannableString
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.polzzak_android.common.util.livedata.EventWrapper
+import com.polzzak_android.data.remote.model.ApiResult
+import com.polzzak_android.data.remote.model.response.NotificationDto
+import com.polzzak_android.data.remote.model.response.NotificationsDto
+import com.polzzak_android.data.repository.FamilyRepository
+import com.polzzak_android.data.repository.NotificationRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.model.copyWithData
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
-import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
+import com.polzzak_android.presentation.feature.notification.list.model.NotificationStatusType
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationsModel
+import com.polzzak_android.presentation.feature.notification.list.model.toNotificationModel
 import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenuType
 import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenusModel
 import com.polzzak_android.presentation.feature.notification.setting.model.SettingModel
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
-import javax.inject.Inject
 
-@HiltViewModel
-class NotificationViewModel @Inject constructor() : ViewModel(), NotificationItemStateController {
+class NotificationViewModel @AssistedInject constructor(
+    private val notificationRepository: NotificationRepository,
+    private val familyRepository: FamilyRepository,
+    @Assisted private val initAccessToken: String
+) : ViewModel(), NotificationItemStateController {
     private val _notificationLiveData = MutableLiveData<ModelState<NotificationsModel>>()
     val notificationLiveData: LiveData<ModelState<NotificationsModel>> = _notificationLiveData
     private var requestNotificationJobData: NotificationJobData? = null
 
-    //TODO 추가 삭제 등 알림목록 수정 이벤트
-    private var updateNotificationJobMap = HashMap<Int, Job?>()
+    private val _errorEventLiveData = MutableLiveData<EventWrapper<Exception>>()
+    val errorEventLiveData: LiveData<EventWrapper<Exception>> = _errorEventLiveData
+    private val updateNotificationJobMap = HashMap<Int, Job?>()
 
+    private val requestLinkJob = HashMap<Int, Job?>()
     var isRefreshed = false
         private set
 
@@ -80,12 +93,12 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
                 notificationMutex.lock()
                 _notificationLiveData.value = ModelState.Loading(NotificationsModel())
                 notificationMutex.unlock()
-                requestNotifications()
+                requestNotifications(accessToken = initAccessToken)
             },
         )
     }
 
-    fun refreshNotifications() {
+    fun refreshNotifications(accessToken: String) {
         val priority = REFRESH_NOTIFICATIONS_PRIORITY
         if (requestNotificationJobData.getPriorityOrZero() < priority) requestNotificationJobData?.job?.cancel()
         else if (requestNotificationJobData?.job?.isCompleted == false) return
@@ -96,15 +109,16 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
                 notificationMutex.lock()
                 val prevData = notificationLiveData.value?.data ?: NotificationsModel()
                 _notificationLiveData.value =
-                    ModelState.Loading(prevData.copy(refreshStatusType = NotificationRefreshStatusType.Loading))
+                    ModelState.Loading(prevData.copy(isRefreshable = true))
                 notificationMutex.unlock()
-                requestNotifications()
+                notificationHorizontalScrollPositionMap.clear()
+                requestNotifications(accessToken = accessToken)
             },
         )
     }
 
-    fun requestMoreNotifications() {
-        if (notificationLiveData.value?.data?.hasNextPage == false) return
+    fun requestMoreNotifications(accessToken: String) {
+        if (notificationLiveData.value?.data?.nextId == null) return
         val priority = MORE_NOTIFICATIONS_PRIORITY
         if (requestNotificationJobData.getPriorityOrZero() <= priority) requestNotificationJobData?.job?.cancel()
         else if (requestNotificationJobData?.job?.isCompleted == false) return
@@ -115,53 +129,54 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
                 notificationMutex.lock()
                 val prevData = notificationLiveData.value?.data ?: NotificationsModel()
                 _notificationLiveData.value =
-                    ModelState.Loading(prevData.copy(refreshStatusType = NotificationRefreshStatusType.Normal))
+                    ModelState.Loading(prevData.copy(isRefreshable = true))
                 notificationMutex.unlock()
-                requestNotifications()
+                requestNotifications(accessToken = accessToken)
             },
         )
     }
 
-    //TODO test용 delay를 위해 suspend 붙여줌(제거 필요)
-    private suspend fun requestNotifications() {
-        //TODO api 연동(현재 mock data)
-        val nextOffset = notificationLiveData.value?.data?.nextOffset.takeIf { !isRefreshed } ?: 0
-        delay(2000)
-        val nextData = getMockNotificationData(nextOffset, NOTIFICATION_PAGE_SIZE)
-
-        //onSuccess
-        notificationMutex.lock()
-        val prevData =
-            notificationLiveData.value?.data.takeIf { !isRefreshed } ?: NotificationsModel()
-        if (isRefreshed) notificationHorizontalScrollPositionMap.clear()
-        _notificationLiveData.value =
-            ModelState.Success(
-                nextData.copy(
-                    items = (prevData.items ?: emptyList()) + (nextData.items ?: emptyList()),
-                    refreshStatusType = NotificationRefreshStatusType.Normal
+    private suspend fun requestNotifications(accessToken: String) {
+        notificationRepository.requestNotifications(
+            accessToken = accessToken,
+            startId = notificationLiveData.value?.data?.nextId.takeIf { !isRefreshed },
+        ).onSuccess {
+            notificationMutex.lock()
+            val prevData =
+                notificationLiveData.value?.data.takeIf { !isRefreshed } ?: NotificationsModel()
+            val updatedNotifications =
+                prevData.copy(
+                    nextId = it?.startId,
+                    items = (prevData.items ?: emptyList()) + (it?.notificationDtoList
+                        ?: emptyList()).mapNotNull { notificationDto -> notificationDto.toNotificationModel() },
+                    isRefreshable = true
                 )
-            )
-        notificationMutex.unlock()
+            _notificationLiveData.value = ModelState.Success(updatedNotifications)
+            notificationMutex.unlock()
+        }.onError { exception, _ ->
+            _errorEventLiveData.value = EventWrapper(exception)
+        }
     }
 
-    fun deleteNotification(id: Int) {
+    fun deleteNotification(accessToken: String, id: Int) {
         if (updateNotificationJobMap[id]?.isCompleted == false) return
         updateNotificationJobMap[id] = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
-            //TODO api 적용
-            delay(1000)
-            deleteMockNotificationData(id = id)
-
-            //onSuccess
-            notificationMutex.lock()
-            val updatedList = notificationLiveData.value?.data?.items?.toMutableList()?.apply {
-                removeIf { it.id == id }
+            notificationRepository.deleteNotifications(
+                accessToken = accessToken,
+                notificationIds = listOf(id)
+            ).onSuccess {
+                notificationMutex.lock()
+                _notificationLiveData.value = _notificationLiveData.value?.run {
+                    val prevModel = data ?: return@onSuccess
+                    val updatedList =
+                        prevModel.items?.toMutableList()?.apply { removeIf { it.id == id } }
+                    val updatedModel = prevModel.copy(items = updatedList)
+                    copyWithData(updatedModel)
+                }
+                notificationMutex.unlock()
+            }.onError { exception, _ ->
+                _errorEventLiveData.value = EventWrapper(exception)
             }
-            val updatedData =
-                notificationLiveData.value?.data?.copy(items = updatedList) ?: NotificationsModel()
-            _notificationLiveData.value =
-                _notificationLiveData.value?.copyWithData(newData = updatedData)
-            notificationMutex.unlock()
-            //TODO onError 이벤트 추가(Livedata, eventWrapper 등 필요할 수도 있음)
         }
     }
 
@@ -172,6 +187,63 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
                 //TODO 푸쉬알림으로 인한 알림 목록 추가
 
             }
+    }
+
+    fun requestApproveLinkRequest(accessToken: String, notificationModel: NotificationModel) {
+        val userId = notificationModel.user?.userId ?: return
+        if (requestLinkJob[userId]?.isCompleted == false) return
+        requestLinkJob[userId] = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
+            familyRepository.requestApproveLinkRequest(accessToken = accessToken, targetId = userId)
+                .onSuccess {
+                    notificationMutex.lock()
+                    _notificationLiveData.value = _notificationLiveData.value?.run {
+                        val prevModel = data ?: return@onSuccess
+                        val updatedList =
+                            prevModel.items?.toMutableList()?.apply {
+                                forEachIndexed { idx, model ->
+                                    if (model.id == notificationModel.id) {
+                                        this[idx] =
+                                            this[idx].copy(statusType = NotificationStatusType.REQUEST_FAMILY_ACCEPT)
+                                    }
+                                }
+                            }
+                        val updatedModel = prevModel.copy(items = updatedList)
+                        copyWithData(updatedModel)
+                    }
+                    notificationMutex.unlock()
+                }.onError { exception, _ ->
+                    _errorEventLiveData.value = EventWrapper(exception)
+                }
+        }
+    }
+
+
+    fun requestRejectLinkRequest(accessToken: String, notificationModel: NotificationModel) {
+        val userId = notificationModel.user?.userId ?: return
+        if (requestLinkJob[userId]?.isCompleted == false) return
+        requestLinkJob[userId] = createJobWithUnlockOnCompleted(mutex = notificationMutex) {
+            familyRepository.requestRejectLinkRequest(accessToken = accessToken, targetId = userId)
+                .onSuccess {
+                    notificationMutex.lock()
+                    _notificationLiveData.value = _notificationLiveData.value?.run {
+                        val prevModel = data ?: return@onSuccess
+                        val updatedList =
+                            prevModel.items?.toMutableList()?.apply {
+                                forEachIndexed { idx, model ->
+                                    if (model.id == notificationModel.id) {
+                                        this[idx] =
+                                            this[idx].copy(statusType = NotificationStatusType.REQUEST_FAMILY_REJECT)
+                                    }
+                                }
+                            }
+                        val updatedModel = prevModel.copy(items = updatedList)
+                        copyWithData(updatedModel)
+                    }
+                    notificationMutex.unlock()
+                }.onError { exception, _ ->
+                    _errorEventLiveData.value = EventWrapper(exception)
+                }
+        }
     }
 
     private fun createJobWithUnlockOnCompleted(mutex: Mutex, action: suspend () -> Unit) =
@@ -246,59 +318,55 @@ class NotificationViewModel @Inject constructor() : ViewModel(), NotificationIte
     override fun getIsRefreshedSuccess(): Boolean =
         isRefreshed && notificationLiveData.value is ModelState.Success
 
+    @AssistedFactory
+    interface NotificationAssistedFactory {
+        fun create(initAccessToken: String): NotificationViewModel
+    }
+
     companion object {
-        const val NOTIFICATION_PAGE_SIZE = 10
         private const val INIT_NOTIFICATIONS_PRIORITY = 3
         private const val REFRESH_NOTIFICATIONS_PRIORITY = 2
         private const val MORE_NOTIFICATIONS_PRIORITY = 1
+        fun provideFactory(
+            notificationAssistedFactory: NotificationAssistedFactory,
+            initAccessToken: String
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return notificationAssistedFactory.create(initAccessToken = initAccessToken) as T
+            }
+        }
     }
 }
 
-private fun getMockNotificationData(nextOffset: Int, pageSize: Int): NotificationsModel {
-    return NotificationsModel(
-        hasNextPage = nextOffset + pageSize < mockNotification.size,
-        nextOffset = nextOffset + pageSize,
-        items = mockNotification.subList(
-            nextOffset,
-            minOf(mockNotification.size, nextOffset + pageSize)
+//TODO test mock notificaiton 제거
+private fun getMockNotifications(nextId: Int?, pageSize: Int = 10) = ApiResult.success(
+    NotificationsDto(
+        startId = ((nextId ?: 0) + pageSize).takeIf { it < mockNotifications.size },
+        notificationDtoList = mockNotifications.subList(
+            nextId ?: 0,
+            minOf(mockNotifications.size, (nextId ?: 0) + pageSize)
         )
     )
-}
+)
 
-private fun deleteMockNotificationData(id: Int) {
-    mockNotification.removeIf { it.id == id }
-}
-
-private val mockNotification = MutableList(187) {
-    when (it % 4) {
-        0 -> NotificationModel.CompleteLink(
-            id = it,
-            date = "${it}일 전",
-            content = SpannableString("연동 완료"),
-            nickName = "닉네임${it}",
-            profileImageUrl = "https://picsum.photos/id/${it + 1}/200/300"
-        )
-
-        1 -> NotificationModel.LevelDown(
-            id = it,
-            date = "${it}일 전",
-            content = SpannableString("레벨 감소"),
-        )
-
-        2 -> NotificationModel.LevelUp(
-            id = it,
-            date = "${it}일 전",
-            content = SpannableString("레벨 업")
-        )
-
-        else -> NotificationModel.RequestLink(
-            id = it,
-            date = "${it}일 전",
-            content = SpannableString("연동 요청"),
-            nickName = "닉네임${it}",
-            profileImageUrl = "https://picsum.photos/id/${it + 1}/200/300"
-        )
-    }
+private val mockNotifications = List(187) {
+    NotificationDto(
+        id = it,
+        type = "FAMILY_REQUEST_COMPLETE",
+        status = if (it % 2 == 0) "READ" else "UNREAD",
+        title = "title$it",
+        message = "message$it",
+        sender = NotificationDto.Sender(id = it, nickName = "nickName$it", null),
+        link = when (it % 4) {
+            0 -> "home"
+            1 -> "my-page"
+            2 -> "stamp-board/$it"
+            else -> "coupon/$it"
+        },
+        requestFamilyId = it,
+        createdDate = "2023-09-14T15:50:38.296456354"
+    )
 }
 
 private val mockKidSettingMenus = SettingMenusModel(

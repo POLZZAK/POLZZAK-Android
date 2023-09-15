@@ -25,15 +25,15 @@
                 app:destination="@id/kidLinkManagementFragment" />
         </fragment>
         <fragment
-            android:id="@+id/kidStampBoardDetailFragment"
-            android:name="com.polzzak_android.presentation.feature.stamp.detail.kid.KidStampBoardDetailFragment"
-            android:label="KidStampBoardDetailFragment" />
-
-        <fragment
             android:id="@+id/kidLinkManagementFragment"
             android:name="com.polzzak_android.presentation.feature.link.management.kid.KidLinkManagementFragment"
             android:label="kidLinkManagementFragment" />
     </navigation>
+
+    <fragment
+        android:id="@+id/kidStampBoardDetailFragment"
+        android:name="com.polzzak_android.presentation.feature.stamp.detail.kid.KidStampBoardDetailFragment"
+        android:label="KidStampBoardDetailFragment" />
 
     <!-- 쿠폰 -->
     <navigation
@@ -69,6 +69,9 @@
             <action
                 android:id="@+id/action_kidNotificationFragment_to_kidNotificationSettingFragment"
                 app:destination="@id/kidNotificationSettingFragment" />
+            <action
+                android:id="@+id/action_kidNotificationFragment_to_kidStampBoardDetailFragment"
+                app:destination="@id/kidStampBoardDetailFragment" />
         </fragment>
 
         <fragment

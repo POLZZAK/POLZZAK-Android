@@ -33,18 +33,19 @@
             android:id="@+id/makeStampFragment"
             android:name="com.polzzak_android.presentation.feature.stamp.make.MakeStampFragment"
             android:label="fragment_make_stamp"
-            tools:layout="@layout/fragment_make_stamp"/>
-        <fragment
-            android:id="@+id/protectorStampBoardDetailFragment"
-            android:name="com.polzzak_android.presentation.feature.stamp.detail.protector.ProtectorStampBoardDetailFragment"
-            android:label="ProtectorStampBoardDetailFragment"
-            tools:layout="@layout/fragment_kid_stamp_board_detail" />
+            tools:layout="@layout/fragment_make_stamp" />
         <fragment
             android:id="@+id/protectorLinkManagementFragment"
             android:name="com.polzzak_android.presentation.feature.link.management.protector.ProtectorLinkManagementFragment"
             android:label="ProtectorLinkManagementFragment"
             tools:layout="@layout/fragment_link_management" />
     </navigation>
+
+    <fragment
+        android:id="@+id/protectorStampBoardDetailFragment"
+        android:name="com.polzzak_android.presentation.feature.stamp.detail.protector.ProtectorStampBoardDetailFragment"
+        android:label="ProtectorStampBoardDetailFragment"
+        tools:layout="@layout/fragment_kid_stamp_board_detail" />
 
     <!-- 쿠폰 -->
     <fragment
@@ -62,6 +63,9 @@
         <action
             android:id="@+id/action_protectorNotificationFragment_to_protectorNotificationSettingFragment"
             app:destination="@id/protectorNotificationSettingFragment" />
+        <action
+            android:id="@+id/action_protectorNotificationFragment_to_protectorStampBoardDetailFragment"
+            app:destination="@id/protectorStampBoardDetailFragment" />
     </fragment>
 
     <fragment
