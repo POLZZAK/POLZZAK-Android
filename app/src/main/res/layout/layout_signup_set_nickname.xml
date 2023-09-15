@@ -62,7 +62,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/bg_signup_set_nickname_input"
                 android:hint="@string/signup_set_nickname_input_hint"
                 android:inputType="text"
                 android:paddingHorizontal="16dp"

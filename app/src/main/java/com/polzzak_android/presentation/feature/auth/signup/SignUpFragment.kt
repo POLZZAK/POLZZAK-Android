@@ -433,6 +433,13 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             )
             val lengthText = if (isFocused) "${(uiModel.nickName ?: "").length}/10" else ""
             tvInputLength.text = lengthText
+            etInput.setBackgroundResource(
+                createDuplicatedEditTextBackgroundResId(
+                    isFocused = isFocused,
+                    isSelected = etInput.isSelected,
+                    uiModel = uiModel
+                )
+            )
         }
     }
 
@@ -446,11 +453,32 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             uiModel.nickNameState is NickNameValidationState.Invalid -> getString(R.string.nickname_check_validation_duplicated_nickname)
             uiModel.nickNameState is NickNameValidationState.Valid -> getString(R.string.nickname_check_validation_possible)
             uiModel.nickName == null -> ""
-            uiModel.nickName.isEmpty() -> if (isFocused) "" else getString(R.string.nickname_check_validation_under_minimum_length)
+            uiModel.nickName.isEmpty() -> if (!uiModel.isEdited) "" else getString(R.string.nickname_check_validation_under_minimum_length)
             uiModel.nickName.length < 2 -> getString(R.string.nickname_check_validation_under_minimum_length)
             uiModel.nickName.length > 10 -> getString(R.string.nickname_check_validation_over_maximum_length)
             validNickNameRegex.matches(uiModel.nickName) -> ""
             else -> getString(R.string.nickname_check_validation_invalid_char)
+        }
+    }
+
+    private fun createDuplicatedEditTextBackgroundResId(
+        isFocused: Boolean,
+        isSelected: Boolean,
+        uiModel: NickNameUiModel
+    ): Int {
+        return when {
+            !isSelected -> R.drawable.shape_rectangle_white_stroke_gray_300_r8
+            uiModel.nickNameState is NickNameValidationState.Invalid -> R.drawable.shape_rectangle_white_stroke_error_500_r8
+            uiModel.nickNameState is NickNameValidationState.Valid -> R.drawable.shape_rectangle_white_stroke_primary_r8
+            uiModel.nickName == null -> R.drawable.shape_rectangle_white_stroke_gray_300_r8
+            uiModel.nickName.isEmpty() -> if (!uiModel.isEdited) {
+                if (isFocused) R.drawable.shape_rectangle_white_stroke_primary_r8 else R.drawable.shape_rectangle_white_stroke_gray_300_r8
+            } else R.drawable.shape_rectangle_white_stroke_error_500_r8
+
+            uiModel.nickName.length < 2 -> R.drawable.shape_rectangle_white_stroke_error_500_r8
+            uiModel.nickName.length > 10 -> R.drawable.shape_rectangle_white_stroke_error_500_r8
+            validNickNameRegex.matches(uiModel.nickName) -> R.drawable.shape_rectangle_white_stroke_primary_r8
+            else -> R.drawable.shape_rectangle_white_stroke_error_500_r8
         }
     }
 
