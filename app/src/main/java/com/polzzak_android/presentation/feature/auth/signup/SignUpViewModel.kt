@@ -107,7 +107,11 @@ class SignUpViewModel @AssistedInject constructor(
 
     fun setNickNameValue(nickName: String) {
         checkNickNameValidationJob?.cancel()
-        _nickNameLiveData.value = NickNameUiModel(nickName = nickName)
+        val prevData = _nickNameLiveData.value ?: NickNameUiModel()
+        _nickNameLiveData.value = NickNameUiModel(
+            nickName = nickName,
+            isEdited = prevData.isEdited || nickName.isNotEmpty()
+        )
     }
 
     fun setProfileImagePath(path: String?) {
