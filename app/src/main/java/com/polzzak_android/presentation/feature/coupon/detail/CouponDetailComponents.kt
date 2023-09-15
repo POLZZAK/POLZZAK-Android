@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -55,6 +56,7 @@ import com.polzzak_android.presentation.common.compose.Gray500
 import com.polzzak_android.presentation.common.compose.Gray700
 import com.polzzak_android.presentation.common.compose.Gray800
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
+import com.polzzak_android.presentation.common.compose.fixedSp
 import com.polzzak_android.presentation.component.PolzzakOutlineButton
 import com.polzzak_android.presentation.coupon.model.CouponState
 import com.polzzak_android.presentation.feature.coupon.model.CouponDetailModel
@@ -69,7 +71,7 @@ fun CountdownButton(
     modifier: Modifier = Modifier,
     onCountEnd: (() -> Unit)? = null
 ) = PolzzakOutlineButton(
-    onClick = { /*TODO*/ },
+    onClick = {},
     modifier = modifier
 ) {
     var ticks by remember(remainingSeconds) {
@@ -99,43 +101,33 @@ fun CountdownButtonPreview() {
 
 @Composable
 fun CouponTicketImage(
-    data: CouponDetailModel
-) = Column(
-    horizontalAlignment = Alignment.CenterHorizontally,
-    modifier = Modifier
-        .background(color = Blue500)
-        .padding(horizontal = 26.dp)
-        .padding(top = 40.dp, bottom = 30.dp)
-) {
-    CouponTicket(
-        header = {
-            CouponHeaderContent(title = data.rewardTitle)
-        },
-        body = {
-            CouponBodyContent(
-                giverName = data.giverName,
-                giverProfileUrl = data.giverProfileUrl,
-                receiverName = data.receiverName,
-                receiverProfileUrl = data.receiverProfileUrl,
-                completedMissionCount = data.missions.size,
-                stampCount = data.stampCount,
-                dateCount = Duration.between(
-                    data.startDate.atStartOfDay(),
-                    data.endDate.atStartOfDay()
-                ).toDays().toInt(),
-                onMissionClick = {}
-            )
-        },
-        footer = {
-            CouponFooterContent(startDate = data.startDate, endDate = data.endDate)
-        }
-    )
-    Spacer(modifier = Modifier.height(30.dp))
-    Image(
-        painter = painterResource(id = R.drawable.img_logo_polzzak_text),
-        contentDescription = "Polzzak"
-    )
-}
+    data: CouponDetailModel,
+    modifier: Modifier = Modifier,
+    onMissionClick: (() -> Unit)? = null
+) = CouponTicket(
+    header = {
+        CouponHeaderContent(title = data.rewardTitle)
+    },
+    body = {
+        CouponBodyContent(
+            giverName = data.giverName,
+            giverProfileUrl = data.giverProfileUrl,
+            receiverName = data.receiverName,
+            receiverProfileUrl = data.receiverProfileUrl,
+            completedMissionCount = data.missions.size,
+            stampCount = data.stampCount,
+            dateCount = Duration.between(
+                data.startDate.atStartOfDay(),
+                data.endDate.atStartOfDay()
+            ).toDays().toInt(),
+            onMissionClick = { onMissionClick?.invoke() }
+        )
+    },
+    footer = {
+        CouponFooterContent(startDate = data.startDate, endDate = data.endDate)
+    },
+    modifier = modifier
+)
 
 @Preview
 @Composable
@@ -153,7 +145,8 @@ fun CouponTicketImagePreview() {
             stampCount = 16,
             startDate = LocalDate.now().minusDays(7),
             endDate = LocalDate.now(),
-            rewardRequestDate = null
+            rewardRequestDate = null,
+            rewardDate = null
         )
     )
 }
@@ -304,13 +297,13 @@ fun CouponHeaderContent(
     Text(
         text = "Reward",
         color = Blue600,
-        style = PolzzakTheme.typography.semiBold16
+        style = PolzzakTheme.typography.semiBold16.copy(fontSize = 16.fixedSp)
     )
     Spacer(modifier = Modifier.height(10.dp))
     Text(
         text = title,
         color = Gray800,
-        style = PolzzakTheme.typography.semiBold20,
+        style = PolzzakTheme.typography.semiBold20.copy(fontSize = 20.fixedSp),
         maxLines = 2,
         overflow = TextOverflow.Clip,
         textAlign = TextAlign.Center
@@ -376,12 +369,16 @@ private fun UserProfile(
     )
     Spacer(modifier = Modifier.width(14.dp))
     Column {
-        Text(text = label, color = Gray500, style = PolzzakTheme.typography.medium13)
+        Text(
+            text = label,
+            color = Gray500,
+            style = PolzzakTheme.typography.medium13.copy(fontSize = 13.fixedSp)
+        )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
             text = name,
             color = Gray800,
-            style = PolzzakTheme.typography.semiBold16,
+            style = PolzzakTheme.typography.semiBold16.copy(fontSize = 16.fixedSp),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -408,7 +405,11 @@ private fun LabeledCounter(
                 indication = null
             )
     ) {
-        Text(text = label, color = Gray500, style = PolzzakTheme.typography.medium13)
+        Text(
+            text = label,
+            color = Gray500,
+            style = PolzzakTheme.typography.medium13.copy(fontSize = 13.fixedSp)
+        )
         if (onClick != null) {
             Spacer(modifier = Modifier.width(2.dp))
             Icon(
@@ -424,14 +425,14 @@ private fun LabeledCounter(
         Text(
             text = value.toString(),
             color = Blue600,
-            style = PolzzakTheme.typography.semiBold18,
+            style = PolzzakTheme.typography.semiBold18.copy(fontSize = 18.fixedSp),
             modifier = Modifier.alignByBaseline()
         )
         Spacer(modifier = Modifier.width(2.dp))
         Text(
             text = unit,
             color = Blue600,
-            style = PolzzakTheme.typography.semiBold12,
+            style = PolzzakTheme.typography.semiBold12.copy(fontSize = 12.fixedSp),
             modifier = Modifier.alignByBaseline()
         )
     }
@@ -462,11 +463,19 @@ private fun MissionDate(
     label: String,
     date: LocalDate
 ) = Column {
-    Text(text = label, color = Gray500, style = PolzzakTheme.typography.medium13)
+    Text(
+        text = label,
+        color = Gray500,
+        style = PolzzakTheme.typography.medium13.copy(fontSize = 13.fixedSp)
+    )
     Spacer(modifier = Modifier.height(2.dp))
 
     val dateText = date.format(DateTimeFormatter.ofPattern("yyyy. MM. dd"))
-    Text(text = dateText, color = Gray800, style = PolzzakTheme.typography.semiBold18)
+    Text(
+        text = dateText,
+        color = Gray800,
+        style = PolzzakTheme.typography.semiBold18.copy(fontSize = 18.fixedSp)
+    )
 }
 
 @Preview(device = "spec:width=500dp,height=891dp", showBackground = false)

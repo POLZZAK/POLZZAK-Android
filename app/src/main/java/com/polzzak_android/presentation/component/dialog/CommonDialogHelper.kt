@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.polzzak_android.R
@@ -17,6 +18,7 @@ import com.polzzak_android.databinding.ItemDialogMissionListBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getCurrentDate
+import com.polzzak_android.presentation.feature.coupon.detail.CouponTicketImage
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
 /**
@@ -101,6 +103,10 @@ class CommonDialogHelper(
             })
 
             adapter.updateItem(item = items)
+        }
+
+        if (content.type == DialogStyleType.CAPTURE) {
+            binding.ivCouponImage.setImageDrawable(content.content.captureView!!.drawable)
         }
     }
 
