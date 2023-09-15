@@ -137,8 +137,6 @@
     <string name="link_management_search_linked">이미 연동됐어요</string>
 
     <!-- Notification -->
-    <string name="notification_rewarded_request_emoji">🎁️️</string>
-    <string name="notification_rewarded_request_title">혹시 선물은 잘 받았나요?</string>
     <string name="notification_btn_accepted">수락했어요</string>
     <string name="notification_btn_rejected">거절했어요</string>
     <string name="notification_empty_content">알림이 없어요</string>
