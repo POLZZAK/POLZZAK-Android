@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.myPage.protector
 
+import android.graphics.Paint
 import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
@@ -35,6 +36,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
         super.initView()
         binding.fragment = this
         setUpPointView()
+        setTermsLinkUnderLine()
     }
 
     private fun setUpPointView() {
@@ -51,6 +53,15 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
         with(binding.pointRule) {
             text = "포인트 규칙"
             icon.setImageResource(R.drawable.ic_point_rule)
+        }
+    }
+
+    private fun setTermsLinkUnderLine() {
+        binding.usingTerms.run {
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        }
+        binding.privacyPolicy.run {
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
         }
     }
 

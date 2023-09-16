@@ -1,10 +1,11 @@
 package com.polzzak_android.presentation.feature.myPage.kid
 
+import android.graphics.Paint
 import android.os.Bundle
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
-import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.databinding.FragmentKidMyPageBinding
+import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
@@ -34,6 +35,7 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
         super.initView()
         binding.fragment = this
         setUpPointView()
+        setTermsLinkUnderLine()
     }
 
     private fun setUpPointView() {
@@ -50,6 +52,15 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
         with(binding.pointRule) {
             text = "포인트 규칙"
             icon.setImageResource(R.drawable.ic_point_rule)
+        }
+    }
+
+    private fun setTermsLinkUnderLine(){
+        binding.usingTerms.run{
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        }
+        binding.privacyPolicy.run{
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
         }
     }
 
