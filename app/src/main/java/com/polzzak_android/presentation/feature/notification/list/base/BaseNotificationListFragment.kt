@@ -18,6 +18,9 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.errorOf
+import com.polzzak_android.presentation.component.toolbar.ToolbarData
+import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
+import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.notification.NotificationViewModel
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemDecoration
 import com.polzzak_android.presentation.feature.notification.list.NotificationListClickListener
@@ -29,7 +32,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 
-//TODO 하단 네비게이션 바 만큼 marign 필요
 @AndroidEntryPoint
 abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationListBinding>(),
     NotificationListClickListener {
@@ -52,11 +54,24 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
 
     override fun initView() {
         super.initView()
+        initToolbar()
         initSwipeRefreshLayout()
         initRecyclerView()
-        binding.ivBtnSetting.setOnClickListener {
-            findNavController().navigate(actionToSettingFragment)
-        }
+
+    }
+
+    private fun initToolbar() {
+        ToolbarHelper(
+            data = ToolbarData(
+                titleText = getString(R.string.common_notification),
+                iconImageId = R.drawable.ic_setting,
+                iconInteraction = object : ToolbarIconInteraction {
+                    override fun onToolbarIconClicked() {
+                        findNavController().navigate(actionToSettingFragment)
+                    }
+                }
+            ), toolbar = binding.inToolbar
+        ).set()
     }
 
     private fun initSwipeRefreshLayout() {

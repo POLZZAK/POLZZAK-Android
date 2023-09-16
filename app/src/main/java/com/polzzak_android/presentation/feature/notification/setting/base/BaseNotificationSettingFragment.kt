@@ -16,6 +16,8 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
+import com.polzzak_android.presentation.component.toolbar.ToolbarData
+import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.feature.notification.NotificationViewModel
 import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenuType
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,13 +45,18 @@ abstract class BaseNotificationSettingFragment :
 
     override fun initView() {
         super.initView()
+        initToolbar()
         initMenusView()
-        with(binding) {
-            ivHeaderBtnBack.setOnClickListener {
-                findNavController().popBackStack()
-            }
-        }
         notificationViewModel.requestSettingMenu()
+    }
+
+    private fun initToolbar() {
+        ToolbarHelper(
+            data = ToolbarData(
+                popStack = findNavController(),
+                titleText = getString(R.string.notification_setting_header_title),
+            ), toolbar = binding.inToolbar
+        ).set()
     }
 
     override fun onResume() {
