@@ -66,7 +66,7 @@
     <string name="signup_terms_of_service_agree_privacy">개인정보처리방침에 동의합니다.</string>
     <string name="signup_loading" tools:ignore="TypographyEllipsis">회원가입 처리 중 ...</string>
     <string name="signup_nickname_check_validation_btn_check">중복 확인</string>
-    <string name="signup_nickname_check_validation_btn_complete">확인 완료</string>
+    <string name="signup_nickname_check_validation_btn_complete">사용 가능</string>
     <string name="nickname_check_validation_duplicated_nickname">이미 사용되고 있는 닉네임이에요</string>
     <string name="nickname_check_validation_possible">사용 가능한 닉네임이에요</string>
     <string name="nickname_check_validation_under_minimum_length">최소 2글자로 설정해주세요</string>

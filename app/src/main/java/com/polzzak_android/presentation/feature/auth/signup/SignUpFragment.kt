@@ -375,10 +375,25 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     private fun observeNickNameLiveData() {
         signUpViewModel.nickNameLiveData.observe(viewLifecycleOwner) {
             with(binding.inSetNickName) {
-                tvBtnCheckValidation.isEnabled =
-                    validNickNameRegex.matches(it.nickName ?: "")
-                tvBtnCheckValidation.text =
-                    getString(if (it.nickNameState is NickNameValidationState.Valid) R.string.signup_nickname_check_validation_btn_complete else R.string.signup_nickname_check_validation_btn_check)
+                val isReady = validNickNameRegex.matches(
+                    it.nickName ?: ""
+                ) && (it.nickNameState is NickNameValidationState.Unchecked)
+                tvBtnCheckValidation.isEnabled = isReady
+
+
+                val validationStringRes = when (it.nickNameState) {
+                    is NickNameValidationState.Valid -> R.string.signup_nickname_check_validation_btn_complete
+                    else -> R.string.signup_nickname_check_validation_btn_check
+                }
+                tvBtnCheckValidation.text = getString(validationStringRes)
+
+                val validationDrawableRes = when {
+                    it.nickNameState is NickNameValidationState.Valid -> R.drawable.shape_rectangle_primary_200_r8
+                    isReady -> R.drawable.shape_rectangle_primary_r8
+                    else -> R.drawable.shape_rectangle_gray_300_r8
+                }
+                tvBtnCheckValidation.setBackgroundResource(validationDrawableRes)
+
                 setNickNameResultTextView(isFocused = etInput.isFocused, uiModel = it)
                 ivBtnClearText.isVisible = !it.nickName.isNullOrEmpty() && etInput.isFocused
                 refreshNextButton()
