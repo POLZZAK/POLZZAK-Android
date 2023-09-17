@@ -57,7 +57,6 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun requestLogin(accessToken: String, loginType: SocialLoginType) {
-        setLoginResultLoading()
         loginRepository.requestLogin(accessToken = accessToken, loginType = loginType)
             .onSuccess {
                 requestUserInfo(accessToken = it?.accessToken ?: "", socialType = loginType)
@@ -82,6 +81,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun requestUserInfo(accessToken: String, socialType: SocialLoginType) {
+        setLoginResultLoading()
         userRepository.requestUser(accessToken = accessToken).onSuccess {
             val memberType = it?.memberType?.let { memberTypeResponseData ->
                 asMemberTypeOrNull(memberTypeResponseData)
