@@ -5,7 +5,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
+import android.text.Spanned
 import android.text.TextWatcher
+import android.text.style.TextAppearanceSpan
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -13,12 +16,20 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.polzzak_android.R
+import com.polzzak_android.common.util.livedata.EventWrapperObserver
+import com.polzzak_android.databinding.FragmentSignupBinding
+import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.PermissionManager
+import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getParcelableArrayListOrNull
 import com.polzzak_android.presentation.common.util.getParcelableOrNull
-import com.polzzak_android.common.util.livedata.EventWrapperObserver
+import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
+import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.loadCircleImageDrawableRes
 import com.polzzak_android.presentation.common.util.loadCircleImageUrl
-import com.polzzak_android.databinding.FragmentSignupBinding
+import com.polzzak_android.presentation.component.PolzzakSnackBar
+import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.signup.adapter.ParentTypeRollableAdapter
@@ -27,13 +38,6 @@ import com.polzzak_android.presentation.feature.auth.signup.model.NickNameValida
 import com.polzzak_android.presentation.feature.auth.signup.model.SignUpPage
 import com.polzzak_android.presentation.feature.auth.signup.model.SignUpTermsOfServiceModel
 import com.polzzak_android.presentation.feature.root.MainViewModel
-import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.presentation.common.model.ModelState
-import com.polzzak_android.presentation.common.util.PermissionManager
-import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
-import com.polzzak_android.presentation.common.util.hideKeyboard
-import com.polzzak_android.presentation.component.PolzzakSnackBar
-import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.feature.term.TermDetailFragment
 import com.polzzak_android.presentation.feature.term.model.TermType
 import dagger.hilt.android.AndroidEntryPoint
@@ -112,6 +116,33 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
             clSelectKidCard.setOnClickListener {
                 signUpViewModel.selectTypeKid()
             }
+            setCardContent(
+                textView = tvKidCardContent,
+                string = getString(R.string.signup_select_type_kid_card_content),
+                highlightString = getString(R.string.signup_select_type_kid_card_content_highlight)
+            )
+            setCardContent(
+                textView = tvParentCardContent,
+                string = getString(R.string.signup_select_type_parent_card_content),
+                highlightString = getString(R.string.signup_select_type_parent_card_content_highlight)
+            )
+        }
+    }
+
+    private fun setCardContent(textView: TextView, string: String, highlightString: String) {
+        textView.text = SpannableBuilder.build(binding.root.context) {
+            span(
+                text = string,
+                style = R.style.caption_12_500,
+            )
+        }.apply {
+            val firstIndex = string.indexOf(highlightString)
+            setSpan(
+                TextAppearanceSpan(context, R.style.caption_12_700),
+                firstIndex,
+                firstIndex + highlightString.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
         }
     }
 
