@@ -272,6 +272,7 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
             val adapter =
                 (binding.inRequest.rvSearchResult.adapter as? BindableItemAdapter) ?: return@observe
             val items = mutableListOf<BindableItem<*>>()
+            setSearchEditTextEnabled(isEnabled = it !is ModelState.Loading)
             when (it) {
                 is ModelState.Loading -> {
                     val nickName = it.data?.user?.nickName ?: ""
@@ -297,6 +298,15 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 }
             }
             adapter.updateItem(items)
+        }
+    }
+
+    private fun setSearchEditTextEnabled(isEnabled: Boolean) {
+        with(binding) {
+            etSearch.isEnabled = isEnabled
+            tvBtnCancel.isEnabled = isEnabled
+            ivBtnClearText.isVisible =
+                isEnabled && linkViewModel.searchQueryLiveData.value.isNullOrEmpty().not()
         }
     }
 
