@@ -1,6 +1,7 @@
 package com.polzzak_android.data.remote.service
 
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
+import com.polzzak_android.data.remote.model.request.ReceiveCouponRequest
 import com.polzzak_android.data.remote.model.request.StampRequest
 import com.polzzak_android.data.remote.model.response.EmptyDataResponse
 import com.polzzak_android.data.remote.model.response.MainStampBoardListResponse
@@ -48,10 +49,9 @@ interface StampBoardService {
     /**
      * 쿠폰 수령 API(아이)
      */
-    @FormUrlEncoded
     @POST("/api/v1/coupons")
     suspend fun receiveCoupon(
         @Header("Authorization") token: String,
-        @Field("stampBoardId") stampBoardId: Int
+        @Body receiveCouponRequest: ReceiveCouponRequest
     ): Response<EmptyDataResponse>
 }
