@@ -57,6 +57,7 @@ import com.polzzak_android.presentation.common.compose.Gray700
 import com.polzzak_android.presentation.common.compose.Gray800
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
 import com.polzzak_android.presentation.common.compose.fixedSp
+import com.polzzak_android.presentation.common.util.dateBetween
 import com.polzzak_android.presentation.component.PolzzakOutlineButton
 import com.polzzak_android.presentation.coupon.model.CouponState
 import com.polzzak_android.presentation.feature.coupon.model.CouponDetailModel
@@ -116,10 +117,7 @@ fun CouponTicketImage(
             receiverProfileUrl = data.receiverProfileUrl,
             completedMissionCount = data.missions.size,
             stampCount = data.stampCount,
-            dateCount = Duration.between(
-                data.startDate.atStartOfDay(),
-                data.endDate.atStartOfDay()
-            ).toDays().toInt(),
+            dateCount = dateBetween(date1 = data.startDate, date2 = data.endDate),
             onMissionClick = { onMissionClick?.invoke() }
         )
     },

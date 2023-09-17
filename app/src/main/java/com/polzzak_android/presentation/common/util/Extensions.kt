@@ -79,3 +79,22 @@ fun LocalDateTime.toNotificationDateString(): String {
 }
 
 private fun getTimeFormat(t: Int) = String.format("%02d", t)
+
+/**
+ * 파라미터로 받은 날짜와 며칠 차이나는지 계산합니다.
+ * 0일부터 시작하지 않고 1일부터 시작합니다.
+ *
+ * @return 전달받은 날짜가 대상 날짜보다 이전이면 -1을 반환합니다.
+ */
+fun dateBetween(date1: LocalDate, date2: LocalDate): Int {
+    if (date2.isBefore(date1)) {
+        return -1
+    }
+
+    return Duration.between(
+        date1.atStartOfDay(),
+        date2.atStartOfDay()
+    ).toDays()
+        .toInt()
+        .plus(1)
+}
