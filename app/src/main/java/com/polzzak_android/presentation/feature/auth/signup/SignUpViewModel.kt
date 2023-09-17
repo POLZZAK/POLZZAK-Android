@@ -55,17 +55,30 @@ class SignUpViewModel @AssistedInject constructor(
 
     init {
         _pageLiveData.value =
-            safeLet(userName, userType) { _, _ -> SignUpPage.TERMS_OF_SERVICE } ?: SignUpPage.ERROR
+            safeLet(userName, userType) { _, _ -> SignUpPage.TermsOfService() }
+                ?: SignUpPage.Error()
     }
 
     fun moveNextPage() {
-        when (pageLiveData.value) {
-            SignUpPage.TERMS_OF_SERVICE -> _pageLiveData.value = SignUpPage.SELECT_TYPE
-            SignUpPage.SELECT_TYPE -> _pageLiveData.value =
-                if (memberTypeLiveData.value?.isKid() == true) SignUpPage.SET_NICKNAME else SignUpPage.SELECT_PARENT_TYPE
+        when (val page = pageLiveData.value) {
+            is SignUpPage.TermsOfService -> _pageLiveData.value = SignUpPage.SelectType()
+            is SignUpPage.SelectType -> _pageLiveData.value =
+                if (memberTypeLiveData.value?.isKid() == true) SignUpPage.SetNickName(
+                    progressCount = 1,
+                    maxCount = 2
+                ) else SignUpPage.SelectParentType(1, 3)
 
-            SignUpPage.SELECT_PARENT_TYPE -> _pageLiveData.value = SignUpPage.SET_NICKNAME
-            SignUpPage.SET_NICKNAME -> _pageLiveData.value = SignUpPage.SET_PROFILE_IMAGE
+            is SignUpPage.SelectParentType -> _pageLiveData.value = SignUpPage.SetNickName(
+                progressCount = page.progressCount + 1,
+                maxCount = page.maxCount
+            )
+
+
+            is SignUpPage.SetNickName -> _pageLiveData.value = SignUpPage.SetProfileImage(
+                progressCount = page.progressCount + 1,
+                maxCount = page.maxCount
+            )
+
             else -> {
                 //do nothing
             }
@@ -73,13 +86,18 @@ class SignUpViewModel @AssistedInject constructor(
     }
 
     fun movePrevPage() {
-        when (pageLiveData.value) {
-            SignUpPage.SELECT_TYPE -> _pageLiveData.value = SignUpPage.TERMS_OF_SERVICE
-            SignUpPage.SELECT_PARENT_TYPE -> _pageLiveData.value = SignUpPage.SELECT_TYPE
-            SignUpPage.SET_NICKNAME -> _pageLiveData.value =
-                if (memberTypeLiveData.value?.isParent() == true) SignUpPage.SELECT_PARENT_TYPE else SignUpPage.SELECT_TYPE
+        when (val page = pageLiveData.value) {
+            is SignUpPage.SelectType -> _pageLiveData.value = SignUpPage.TermsOfService()
+            is SignUpPage.SelectParentType -> _pageLiveData.value = SignUpPage.SelectType()
+            is SignUpPage.SetNickName -> _pageLiveData.value =
+                if (memberTypeLiveData.value?.isParent() == true) SignUpPage.SelectParentType(
+                    page.progressCount - 1,
+                    page.maxCount
+                ) else SignUpPage.SelectType()
 
-            SignUpPage.SET_PROFILE_IMAGE -> _pageLiveData.value = SignUpPage.SET_NICKNAME
+            is SignUpPage.SetProfileImage -> _pageLiveData.value =
+                SignUpPage.SetNickName(page.progressCount - 1, page.maxCount)
+
             else -> {
                 //do nothing
             }

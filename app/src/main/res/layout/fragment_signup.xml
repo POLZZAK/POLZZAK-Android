@@ -38,7 +38,6 @@
                 app:drawableWidth="8dp"
                 app:layout_constraintBottom_toBottomOf="@id/ivBtnBack"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:maxCount="3"
                 app:uncheckedDrawable="@drawable/shape_oval_gray_300" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

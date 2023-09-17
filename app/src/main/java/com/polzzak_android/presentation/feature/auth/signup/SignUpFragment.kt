@@ -69,13 +69,13 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         photoPicker = PhotoPicker(this)
         binding.ivBtnBack.setOnClickListener {
             hideKeyboardAndClearFocus()
-            if (signUpViewModel.pageLiveData.value == SignUpPage.TERMS_OF_SERVICE) activity?.onBackPressedDispatcher?.onBackPressed()
+            if (signUpViewModel.pageLiveData.value is SignUpPage.TermsOfService) activity?.onBackPressedDispatcher?.onBackPressed()
             else signUpViewModel.movePrevPage()
         }
         binding.tvBtnNext.setOnClickListener {
             val pageData = signUpViewModel.pageLiveData.value ?: return@setOnClickListener
             when (pageData) {
-                SignUpPage.SET_PROFILE_IMAGE -> signUpViewModel.requestSignUp()
+                is SignUpPage.SetProfileImage -> signUpViewModel.requestSignUp()
                 else -> signUpViewModel.moveNextPage()
             }
         }
@@ -91,13 +91,13 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         val backPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val backToPrevPageList = listOf(
-                    SignUpPage.SELECT_TYPE,
-                    SignUpPage.SELECT_PARENT_TYPE,
-                    SignUpPage.SET_NICKNAME,
-                    SignUpPage.SET_PROFILE_IMAGE
+                    SignUpPage.SelectType::class.java,
+                    SignUpPage.SelectParentType::class.java,
+                    SignUpPage.SetNickName::class.java,
+                    SignUpPage.SetProfileImage::class.java
                 )
                 val page = signUpViewModel.pageLiveData.value
-                if (backToPrevPageList.contains(page)) signUpViewModel.movePrevPage()
+                if (page != null && backToPrevPageList.contains(page.javaClass)) signUpViewModel.movePrevPage()
                 else findNavController().popBackStack()
             }
         }
@@ -296,15 +296,16 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         signUpViewModel.pageLiveData.observe(viewLifecycleOwner) {
             refreshNextButton()
             with(binding) {
-                inSelectType.root.isVisible = (it == SignUpPage.SELECT_TYPE)
-                inSelectParentType.root.isVisible = (it == SignUpPage.SELECT_PARENT_TYPE)
-                inSetNickName.root.isVisible = (it == SignUpPage.SET_NICKNAME)
-                inSelectProfileImage.root.isVisible = (it == SignUpPage.SET_PROFILE_IMAGE)
-                inTermsOfService.root.isVisible = (it == SignUpPage.TERMS_OF_SERVICE)
-                cpvProgressView.isVisible = it.progressCount != null
+                inSelectType.root.isVisible = (it is SignUpPage.SelectType)
+                inSelectParentType.root.isVisible = (it is SignUpPage.SelectParentType)
+                inSetNickName.root.isVisible = (it is SignUpPage.SetNickName)
+                inSelectProfileImage.root.isVisible = (it is SignUpPage.SetProfileImage)
+                inTermsOfService.root.isVisible = (it is SignUpPage.TermsOfService)
+                cpvProgressView.isVisible = (it.progressCount != null)
                 cpvProgressView.checkedCount = it.progressCount ?: 0
+                cpvProgressView.maxCount = it.maxCount
                 when (it) {
-                    SignUpPage.SELECT_PARENT_TYPE -> {
+                    is SignUpPage.SelectParentType -> {
                         val currentTypeId = signUpViewModel.memberTypeLiveData.value?.selectedTypeId
                         val adapterStartPosition =
                             parentTypeRollableAdapter?.getTypeStartPosition(parentTypeId = currentTypeId)
@@ -316,7 +317,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                         }
                     }
 
-                    SignUpPage.SET_NICKNAME -> {
+                    is SignUpPage.SetNickName -> {
                         inSetNickName.etInput.setText(signUpViewModel.nickNameLiveData.value?.nickName)
                     }
 
@@ -487,17 +488,17 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         val nickNameData = signUpViewModel.nickNameLiveData.value
         val termsOfServiceData = signUpViewModel.termsOfServiceLiveData.value
         val nextBtnStringRes = when (signUpViewModel.pageLiveData.value) {
-            SignUpPage.SET_PROFILE_IMAGE -> R.string.signup_complete
+            is SignUpPage.SetProfileImage -> R.string.signup_complete
             else -> R.string.common_next
         }
         binding.tvBtnNext.text = getString(nextBtnStringRes)
         binding.tvBtnNext.isEnabled =
             when (signUpViewModel.pageLiveData.value) {
-                SignUpPage.SELECT_TYPE -> memberTypeData?.selectedType != null
-                SignUpPage.SELECT_PARENT_TYPE -> memberTypeData?.selectedTypeId != null
-                SignUpPage.SET_NICKNAME -> nickNameData?.nickNameState is NickNameValidationState.Valid
-                SignUpPage.SET_PROFILE_IMAGE -> true
-                SignUpPage.TERMS_OF_SERVICE -> {
+                is SignUpPage.SelectType -> memberTypeData?.selectedType != null
+                is SignUpPage.SelectParentType -> memberTypeData?.selectedTypeId != null
+                is SignUpPage.SetNickName -> nickNameData?.nickNameState is NickNameValidationState.Valid
+                is SignUpPage.SetProfileImage -> true
+                is SignUpPage.TermsOfService -> {
                     termsOfServiceData?.run { isCheckedPrivacy && isCheckedService } ?: false
                 }
 
