@@ -110,7 +110,7 @@ fun CouponDetailScreen_Kid(
                         // 조르기 시간이 없으면 조르기 버튼 표시
                         // 조르기 시간이 있으면 카운트다운 표시
                         Box(modifier = Modifier.weight(1f)) {
-                            var countdownVisibility by remember {
+                            var countdownVisibility by remember(currentState) {
                                 mutableStateOf(currentState.data.rewardRequestDate != null)
                             }
 

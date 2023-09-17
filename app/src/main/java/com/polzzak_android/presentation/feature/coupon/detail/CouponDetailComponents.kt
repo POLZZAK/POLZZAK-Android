@@ -75,7 +75,7 @@ fun CountdownButton(
     onClick = {},
     modifier = modifier
 ) {
-    var ticks by remember(remainingSeconds) {
+    var ticks by remember {
         mutableStateOf(remainingSeconds)
     }
 

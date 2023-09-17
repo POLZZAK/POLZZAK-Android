@@ -5,20 +5,30 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 
 /**
- * "yyyy-MM-dd'T'HH:mm:ss" 형태의 스트링을 [LocalDate]로 변환
+ * 서버에서 보내주는 UTC 기준 시간 String을 디바이스 로컬 시간으로 변환한 [LocalDate]를 반환합니다.
  */
 fun String?.toLocalDateOrNull(): LocalDate? = kotlin.runCatching {
-    LocalDateTime.parse(this).toLocalDate()
+    LocalDateTime
+        .parse(this)
+        .atOffset(ZoneOffset.UTC)
+        .atZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDate()
 }.getOrNull()
 
 /**
- * "yyyy-MM-dd'T'HH:mm:ss" 형태의 스트링을 [LocalDateTime]로 변환
+ * 서버에서 보내주는 UTC 기준 시간 String을 디바이스 로컬 시간으로 변환한 [LocalDateTime]을 반환합니다.
  */
 fun String?.toLocalDateTimeOrNull(): LocalDateTime? = kotlin.runCatching {
-    LocalDateTime.parse(this)
+    LocalDateTime
+        .parse(this)
+        .atOffset(ZoneOffset.UTC)
+        .atZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDateTime()
 }.getOrNull()
 
 fun Int.toPx(context: Context): Int {
