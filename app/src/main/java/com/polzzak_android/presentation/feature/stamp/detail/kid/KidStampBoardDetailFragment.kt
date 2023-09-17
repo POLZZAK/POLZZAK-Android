@@ -196,7 +196,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                         textColor = R.color.primary_600
                     )
                     span(
-                        text = "쿠폰을 선물 받았어요!",
+                        text = "\n쿠폰을 선물 받았어요!",
                         style = R.style.subtitle_16_600
                     )
                 },
@@ -217,10 +217,11 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
             onClickListener = {
                 object : OnButtonClickListener {
                     override fun setBusinessLogic() {
+                        receiveCoupon()
                     }
 
                     override fun getReturnValue(value: Any) {
-                        receiveCoupon()
+
                     }
                 }
             }
@@ -258,7 +259,6 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                         }
                     )
 
-                    // TODO: 쿠폰 수령 후 데이터 새로 받아와서 쿠폰 받기 버튼 비활성화 되는지 테스트
                     viewModel.fetchStampBoardDetailData(
                         accessToken = getAccessTokenOrNull() ?: "",
                         stampBoardId = viewModel.stampBoardId
