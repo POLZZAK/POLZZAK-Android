@@ -173,10 +173,8 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                 } else {
                     // 실패
                     exception.printStackTrace()
-
+                    // 스낵바가 바텀시트에 가려지는 현상 발생으로 바텀시트 다시 띄우지 않음
                     PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
-                    // TODO: 선택했던 미션 선택 처리 필요
-                    openStampRequestSheet()
                 }
             }
         )
@@ -265,8 +263,8 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                     )
                 } else {
                     // 실패
+                    // 스낵바가 바텀시트에 가려지는 현상 발생으로 바텀시트 다시 띄우지 않음
                     PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
-                    openRewardSheet()
                 }
             }
         )
