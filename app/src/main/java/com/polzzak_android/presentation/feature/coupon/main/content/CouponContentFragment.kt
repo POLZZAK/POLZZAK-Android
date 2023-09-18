@@ -181,7 +181,7 @@ class CouponContentFragment : BaseFragment<FragmentCouponContentBinding>(), Coup
         // TODO: 부모 nav_graph.xml에도 같은 action 추가 필요
         findNavController().navigate(
             R.id.action_to_couponDetailFragment,
-            Bundle().apply { putInt("boardId", couponModel.id) }
+            Bundle().apply { putInt("couponId", couponModel.id) }
         )
     }
 

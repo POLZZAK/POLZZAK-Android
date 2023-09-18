@@ -173,10 +173,8 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                 } else {
                     // 실패
                     exception.printStackTrace()
-
+                    // 스낵바가 바텀시트에 가려지는 현상 발생으로 바텀시트 다시 띄우지 않음
                     PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
-                    // TODO: 선택했던 미션 선택 처리 필요
-                    openStampRequestSheet()
                 }
             }
         )
@@ -196,7 +194,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                         textColor = R.color.primary_600
                     )
                     span(
-                        text = "쿠폰을 선물 받았어요!",
+                        text = "\n쿠폰을 선물 받았어요!",
                         style = R.style.subtitle_16_600
                     )
                 },
@@ -217,10 +215,11 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
             onClickListener = {
                 object : OnButtonClickListener {
                     override fun setBusinessLogic() {
+                        receiveCoupon()
                     }
 
                     override fun getReturnValue(value: Any) {
-                        receiveCoupon()
+
                     }
                 }
             }
@@ -258,15 +257,14 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                         }
                     )
 
-                    // TODO: 쿠폰 수령 후 데이터 새로 받아와서 쿠폰 받기 버튼 비활성화 되는지 테스트
                     viewModel.fetchStampBoardDetailData(
                         accessToken = getAccessTokenOrNull() ?: "",
                         stampBoardId = viewModel.stampBoardId
                     )
                 } else {
                     // 실패
+                    // 스낵바가 바텀시트에 가려지는 현상 발생으로 바텀시트 다시 띄우지 않음
                     PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
-                    openRewardSheet()
                 }
             }
         )

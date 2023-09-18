@@ -433,7 +433,8 @@ fun ExpandToggleButton(
     Spacer(modifier = Modifier.height(16.dp))
     SeeMore(
         toggleText = "접기" to "펼치기",
-        expandedProvider = { expanded }
+        expandedProvider = { expanded },
+        onClick = onClick
     )
 }
 
