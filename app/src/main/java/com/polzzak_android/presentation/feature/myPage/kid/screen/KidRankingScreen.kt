@@ -24,6 +24,7 @@ import com.polzzak_android.presentation.common.compose.Blue500
 import com.polzzak_android.presentation.common.compose.Gray800
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
 import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.feature.myPage.components.EmptyRankingText
 import com.polzzak_android.presentation.feature.myPage.components.MyRankingCard
 import com.polzzak_android.presentation.feature.myPage.components.RankingHeader
 import com.polzzak_android.presentation.feature.myPage.components.RankingListItemBase
@@ -75,7 +76,6 @@ private fun KidRankingScreen(
         RankingHeader(rankingType = stringResource(id = R.string.ranking_type_kid))
     }
 
-    // TODO: top30 안에 드냐 마냐에 따라 표시 여부 달라짐
     if (currentUserRanking.isOutOfRanking) {
         stickyHeader {
             MyRankingCard {
@@ -106,26 +106,31 @@ private fun KidRankingScreen(
         )
     }
 
-    itemsIndexed(
-        items = rankingList,
-        key = { index, _ -> index }
-    ) { _, data ->
-        RankingListItemBase(
-            ranking = data.ranking,
-            rankingStatus = data.rankingStatus,
-            point = data.point,
-            level = data.level,
-            profileUrl = data.profileUrl,
-        ) {
-            UserNickname(isMe = data.isMe) {
-                Text(
-                    text = data.nickname,
-                    style = PolzzakTheme.typography.semiBold14,
-                    color = if (data.isMe) Blue500 else Gray800
-                )
+    if (rankingList.isEmpty()) {
+        item { EmptyRankingText() }
+    } else {
+        itemsIndexed(
+            items = rankingList,
+            key = { index, _ -> index }
+        ) { _, data ->
+            RankingListItemBase(
+                ranking = data.ranking,
+                rankingStatus = data.rankingStatus,
+                point = data.point,
+                level = data.level,
+                profileUrl = data.profileUrl,
+            ) {
+                UserNickname(isMe = data.isMe) {
+                    Text(
+                        text = data.nickname,
+                        style = PolzzakTheme.typography.semiBold14,
+                        color = if (data.isMe) Blue500 else Gray800
+                    )
+                }
             }
         }
     }
+
 }
 
 @Preview
@@ -133,6 +138,7 @@ private fun KidRankingScreen(
 fun KidRankingScreenPreview() {
     KidRankingScreen(
         currentUserRanking = RankingItemModel(ranking = 56),
+        /*rankingList = emptyList()*/
         rankingList = List(30) {
             RankingItemModel(
                 ranking = it + 1,
