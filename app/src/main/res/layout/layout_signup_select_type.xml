@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -73,11 +74,11 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxLines="2"
-                    android:text="@string/signup_select_type_parent_card_content"
                     android:textColor="@color/selector_signup_select_type_card_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvParentCardTitle" />
+                    app:layout_constraintTop_toBottomOf="@id/tvParentCardTitle"
+                    tools:text="@string/signup_select_type_parent_card_content" />
 
                 <ImageView
                     android:id="@+id/ivParentCardLogo"
@@ -131,11 +132,11 @@
                     android:ellipsize="end"
                     android:gravity="center"
                     android:maxLines="2"
-                    android:text="@string/signup_select_type_kid_card_content"
                     android:textColor="@color/selector_signup_select_type_card_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tvKidCardTitle" />
+                    app:layout_constraintTop_toBottomOf="@id/tvKidCardTitle"
+                    tools:text="@string/signup_select_type_kid_card_content" />
 
                 <ImageView
                     android:id="@+id/ivKidCardLogo"

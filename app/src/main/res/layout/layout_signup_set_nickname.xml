@@ -88,7 +88,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:background="@drawable/bg_signup_set_nickname_btn_check_validation"
                 android:gravity="center"
                 android:paddingHorizontal="13dp"
                 android:paddingVertical="15dp"
