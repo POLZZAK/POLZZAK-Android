@@ -20,6 +20,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.polzzak_android.R
+import com.polzzak_android.presentation.common.compose.Blue500
+import com.polzzak_android.presentation.common.compose.Gray800
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.feature.myPage.components.MyRankingCard
@@ -118,7 +120,8 @@ private fun KidRankingScreen(
             UserNickname(isMe = data.isMe) {
                 Text(
                     text = data.nickname,
-                    style = PolzzakTheme.typography.semiBold14
+                    style = PolzzakTheme.typography.semiBold14,
+                    color = if (data.isMe) Blue500 else Gray800
                 )
             }
         }
