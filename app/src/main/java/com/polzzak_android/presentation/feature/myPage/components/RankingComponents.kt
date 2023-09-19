@@ -1,10 +1,13 @@
 package com.polzzak_android.presentation.feature.myPage.components
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,22 +27,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.compose.Blue100
+import com.polzzak_android.presentation.common.compose.Blue150
 import com.polzzak_android.presentation.common.compose.Blue200
 import com.polzzak_android.presentation.common.compose.Blue400
 import com.polzzak_android.presentation.common.compose.Blue500
+import com.polzzak_android.presentation.common.compose.Gray100
 import com.polzzak_android.presentation.common.compose.Gray200
 import com.polzzak_android.presentation.common.compose.Gray300
 import com.polzzak_android.presentation.common.compose.Gray700
 import com.polzzak_android.presentation.common.compose.Gray800
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
+import com.polzzak_android.presentation.feature.myPage.model.RankingItemModel
+import com.polzzak_android.presentation.feature.myPage.model.RankingStatus
+import java.time.LocalDate
 
 @Composable
-fun RankingHeader() = Box(
+fun RankingHeader(
+    rankingType: String
+) = Box(
     contentAlignment = Alignment.Center,
     modifier = Modifier
         .fillMaxWidth()
@@ -53,14 +66,14 @@ fun RankingHeader() = Box(
             .paint(painter = painterResource(id = R.drawable.img_confetti))
     ) {
         Text(
-            text = "폴짝! 랭킹",
+            text = stringResource(id = R.string.ranking_screen_title),
             color = Color.White,
             style = PolzzakTheme.typography.bold22
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                text = "보호자 회원",    // TODO: 회원 종류에 따라 텍스트 바뀌어야 함
+                text = stringResource(id = R.string.ranking_type_suffix, rankingType),
                 color = Blue500,
                 style = PolzzakTheme.typography.semiBold12,
                 modifier = Modifier
@@ -69,7 +82,7 @@ fun RankingHeader() = Box(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "TOP 30",
+                text = stringResource(id = R.string.ranking_top_30),
                 color = Color.White,
                 style = PolzzakTheme.typography.semiBold18
             )
@@ -83,8 +96,14 @@ fun RankingHeader() = Box(
                 modifier = Modifier.size(12.dp)
             )
             Spacer(modifier = Modifier.width(4.dp))
+
+            val today = LocalDate.now()
             Text(
-                text = "n월 n hh:MM 기준",
+                text = stringResource(
+                    id = R.string.ranking_update_time,
+                    today.monthValue,
+                    today.dayOfMonth
+                ),
                 color = Blue200,
                 style = PolzzakTheme.typography.medium12
             )
@@ -96,15 +115,53 @@ fun RankingHeader() = Box(
 @Preview
 @Composable
 fun RankingHeaderPreview() {
-    RankingHeader()
+    RankingHeader(
+        rankingType = "보호자"
+    )
 }
 
 @Composable
-private fun RankingUserItem() = Row(
+fun EmptyRankingText() = Text(
+    text = stringResource(id = R.string.ranking_empty_list),
+    style = PolzzakTheme.typography.semiBold16,
+    textAlign = TextAlign.Center,
+    modifier = Modifier
+        .fillMaxWidth()
+        .padding(horizontal = 24.dp, vertical = 16.dp)
+        .background(color = Gray100, shape = RoundedCornerShape(20.dp))
+        .padding(vertical = 38.dp)
+)
+
+@Preview
+@Composable
+fun EmptyRankingTextPreview() {
+    EmptyRankingText()
+}
+
+@Composable
+fun MyRankingCard(
+    content: @Composable BoxScope.() -> Unit
+) = Box(
+    modifier = Modifier
+        .fillMaxWidth()
+        .background(color = Color.White)
+        .padding(horizontal = 8.dp, vertical = 16.dp)
+        .background(color = Blue150, shape = RoundedCornerShape(8.dp)),
+    content = content
+)
+
+@Composable
+fun RankingListItemBase(
+    ranking: Int,
+    rankingStatus: RankingStatus,
+    point: Int,
+    level: Int,
+    profileUrl: String,
+    userNickname: @Composable ColumnScope.() -> Unit
+) = Row(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier
         .fillMaxWidth()
-        .background(color = Color.White)    // TODO: 지우기
         .padding(all = 16.dp)
 ) {
     Column(
@@ -112,15 +169,14 @@ private fun RankingUserItem() = Row(
         modifier = Modifier.width(24.dp)
     ) {
         Text(
-            text = "1",
+            text = "$ranking",
             color = Gray800,
             style = PolzzakTheme.typography.semiBold14
         )
-        // TODO: 랭킹 등락 표시
-        Box(
-            modifier = Modifier
-                .size(8.dp)
-                .background(color = Blue200)
+        Image(
+            painter = painterResource(id = rankingStatus.resId),
+            contentDescription = "Ranking ${rankingStatus.name}",
+            modifier = Modifier.size(8.dp)
         )
     }
     Spacer(modifier = Modifier.width(8.dp))
@@ -133,24 +189,14 @@ private fun RankingUserItem() = Row(
     Spacer(modifier = Modifier.width(8.dp))
 
     Column(
+        verticalArrangement = Arrangement.spacedBy(2.dp),
         modifier = Modifier
             .weight(1f)
-            .padding(end = 14.dp)
-    ) {
-        // TODO: 보호자/아이 and 본인 여부에 따라 구성 바뀌어야 함
-        MemberTypeTag(value = "엄마")
-        Spacer(modifier = Modifier.height(2.dp))
+            .padding(end = 14.dp),
+        content = userNickname
+    )
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = "가나다라마바사",
-                style = PolzzakTheme.typography.semiBold13
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            MeMarker()
-        }
-    }
-
+    // 포인트 정보
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -163,13 +209,13 @@ private fun RankingUserItem() = Row(
             .padding(vertical = 4.dp)
     ) {
         Text(
-            text = "12,345P",
+            text = stringResource(id = R.string.ranking_list_item_point_unit, point),
             color = Blue400,
             style = PolzzakTheme.typography.medium12.copy(fontSize = 10.sp)
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
-            text = "20계단",
+            text = stringResource(id = R.string.ranking_list_item_level_unit, level),
             color = Blue500,
             style = PolzzakTheme.typography.semiBold12
         )
@@ -179,12 +225,43 @@ private fun RankingUserItem() = Row(
 @Preview
 @Composable
 private fun RankingUserItemPreview() {
-    RankingUserItem()
+    val data = RankingItemModel()
+    Surface {
+        RankingListItemBase(
+            ranking = data.ranking,
+            rankingStatus = data.rankingStatus,
+            point = data.point,
+            level = data.level,
+            profileUrl = data.profileUrl,
+            userNickname = {
+                MemberTypeTag(value = "엄마")
+                UserNickname(isMe = true) {
+                    Text(
+                        text = "가나다라마바사",
+                        style = PolzzakTheme.typography.semiBold13
+                    )
+                }
+            }
+        )
+    }
 }
 
 @Composable
-fun MeMarker() = Text(
-    text = "나",
+fun UserNickname(
+    isMe: Boolean,
+    nickname: @Composable () -> Unit
+) = Row(verticalAlignment = Alignment.CenterVertically) {
+    nickname()
+    Spacer(modifier = Modifier.width(8.dp))
+
+    if (isMe) {
+        MeMarker()
+    }
+}
+
+@Composable
+private fun MeMarker() = Text(
+    text = stringResource(id = R.string.ranking_me),
     color = Color.White,
     style = PolzzakTheme.typography.medium12,
     modifier = Modifier
@@ -196,8 +273,8 @@ fun MeMarker() = Text(
 )
 
 @Composable
-private fun MemberTypeTag(value: String) = Text(
-    text = "$value 회원",
+fun MemberTypeTag(value: String) = Text(
+    text = stringResource(id = R.string.ranking_member_type_suffix, value),
     color = Gray700,
     style = PolzzakTheme.typography.medium12,
     modifier = Modifier
