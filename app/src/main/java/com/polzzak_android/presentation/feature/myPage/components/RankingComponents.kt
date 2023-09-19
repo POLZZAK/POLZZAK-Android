@@ -48,6 +48,11 @@ import com.polzzak_android.presentation.feature.myPage.model.RankingItemModel
 import com.polzzak_android.presentation.feature.myPage.model.RankingStatus
 import java.time.LocalDate
 
+/**
+ * 랭킹 화면 상단 헤더
+ *
+ * @param rankingType "아이" 혹은 "보호자"
+ */
 @Composable
 fun RankingHeader(
     rankingType: String
@@ -65,12 +70,16 @@ fun RankingHeader(
             .heightIn(max = 128.dp)
             .paint(painter = painterResource(id = R.drawable.img_confetti))
     ) {
+        // 상단
         Text(
             text = stringResource(id = R.string.ranking_screen_title),
             color = Color.White,
             style = PolzzakTheme.typography.bold22
         )
+        
         Spacer(modifier = Modifier.height(8.dp))
+
+        // 중간
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = stringResource(id = R.string.ranking_type_suffix, rankingType),
@@ -87,7 +96,10 @@ fun RankingHeader(
                 style = PolzzakTheme.typography.semiBold18
             )
         }
+
         Spacer(modifier = Modifier.height(8.dp))
+
+        // 하단 날짜 표시
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_clock),
@@ -120,6 +132,9 @@ fun RankingHeaderPreview() {
     )
 }
 
+/**
+ * 랭킹 리스트가 없는 경우에 표시할 텍스트
+ */
 @Composable
 fun EmptyRankingText() = Text(
     text = stringResource(id = R.string.ranking_empty_list),
@@ -138,6 +153,9 @@ fun EmptyRankingTextPreview() {
     EmptyRankingText()
 }
 
+/**
+ * 랭킹 리스트 상단에 현재 사용자 정보 표시할 때 사용하는 프레임
+ */
 @Composable
 fun MyRankingCard(
     content: @Composable BoxScope.() -> Unit
@@ -150,6 +168,11 @@ fun MyRankingCard(
     content = content
 )
 
+/**
+ * 랭킹 리스트의 각 아이템.
+ *
+ * @param userNickname [UserNickname] 컴포저블을 사용해서 사용자의 닉네임 Text를 넘겨줘야 합니다.
+ */
 @Composable
 fun RankingListItemBase(
     ranking: Int,
@@ -164,6 +187,7 @@ fun RankingListItemBase(
         .fillMaxWidth()
         .padding(all = 16.dp)
 ) {
+    // 등 수 표시
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.width(24.dp)
@@ -188,6 +212,7 @@ fun RankingListItemBase(
     )
     Spacer(modifier = Modifier.width(8.dp))
 
+    // 회원 닉네임 영역
     Column(
         verticalArrangement = Arrangement.spacedBy(2.dp),
         modifier = Modifier
@@ -246,6 +271,12 @@ private fun RankingUserItemPreview() {
     }
 }
 
+/**
+ * [RankingListItemBase]에 닉네임 Text 넘길 때 사용하는 컴포저블.
+ * 아이/보호자 화면에 따라 닉네임 Text의 스타일이 달라지기 때문에 호출하는 곳에서 Text 컴포저블을 넘겨야 합니다.
+ *
+ * @param isMe true이면 닉네임 옆에 "나" 표시됨.
+ */
 @Composable
 fun UserNickname(
     isMe: Boolean,
@@ -259,6 +290,9 @@ fun UserNickname(
     }
 }
 
+/**
+ * "나" 표시
+ */
 @Composable
 private fun MeMarker() = Text(
     text = stringResource(id = R.string.ranking_me),
@@ -272,6 +306,9 @@ private fun MeMarker() = Text(
         .padding(horizontal = 5.dp, vertical = 2.dp)
 )
 
+/**
+ * 보호자 랭킹 화면에서 유저들이 어떤 타입의 보호자인지 표시하기 위한 Tag
+ */
 @Composable
 fun MemberTypeTag(value: String) = Text(
     text = stringResource(id = R.string.ranking_member_type_suffix, value),
