@@ -7,12 +7,12 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.polzzak_android.R
 import com.polzzak_android.databinding.ActivityMainBinding
-import com.polzzak_android.presentation.feature.auth.login.sociallogin.GoogleLoginHelper
-import com.polzzak_android.presentation.feature.auth.login.sociallogin.KakaoLoginHelper
-import com.polzzak_android.presentation.feature.auth.login.sociallogin.SocialLoginManager
 import com.polzzak_android.presentation.common.base.BaseActivity
 import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.component.BackButtonPressedSnackBar
+import com.polzzak_android.presentation.feature.auth.login.sociallogin.GoogleLoginHelper
+import com.polzzak_android.presentation.feature.auth.login.sociallogin.KakaoLoginHelper
+import com.polzzak_android.presentation.feature.auth.login.sociallogin.SocialLoginManager
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -107,6 +107,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         backPressedSnackBar = null
         clearBackPressedEvent()
         setBackPressedEvent()
+    }
+
+    fun logout() {
+        if (navController.popBackStack(R.id.loginFragment, false)) mainViewModel.logout()
     }
 
     companion object {
