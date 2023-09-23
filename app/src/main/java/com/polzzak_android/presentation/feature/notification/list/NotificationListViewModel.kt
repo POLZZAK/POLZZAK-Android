@@ -1,36 +1,27 @@
-package com.polzzak_android.presentation.feature.notification
+package com.polzzak_android.presentation.feature.notification.list
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.util.livedata.EventWrapper
-import com.polzzak_android.data.remote.model.ApiResult
-import com.polzzak_android.data.remote.model.response.NotificationDto
-import com.polzzak_android.data.remote.model.response.NotificationsDto
 import com.polzzak_android.data.repository.FamilyRepository
 import com.polzzak_android.data.repository.NotificationRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.model.copyWithData
-import com.polzzak_android.presentation.feature.notification.list.NotificationItemStateController
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationStatusType
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationsModel
 import com.polzzak_android.presentation.feature.notification.list.model.toNotificationModel
-import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenuType
-import com.polzzak_android.presentation.feature.notification.setting.model.SettingMenusModel
-import com.polzzak_android.presentation.feature.notification.setting.model.SettingModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 
-class NotificationViewModel @AssistedInject constructor(
+class NotificationListViewModel @AssistedInject constructor(
     private val notificationRepository: NotificationRepository,
     private val familyRepository: FamilyRepository,
     @Assisted private val initAccessToken: String
@@ -48,35 +39,7 @@ class NotificationViewModel @AssistedInject constructor(
         private set
 
     private val notificationHorizontalScrollPositionMap = HashMap<Int, Int>()
-
-    private val _settingMenuLiveData =
-        MutableLiveData<ModelState<SettingMenusModel>>()
-    private var requestSettingMenusJob: Job? = null
-
-    private val _isGrantedPermissionLiveData = MutableLiveData<Boolean?>(null)
-
-    val settingMenusLiveData = MediatorLiveData<ModelState<SettingModel>>().apply {
-        addSource(_settingMenuLiveData) {
-            value = it.copyWithData(
-                newData = SettingModel(
-                    menusModel = it.data,
-                    isGranted = _isGrantedPermissionLiveData.value
-                )
-            )
-        }
-        addSource(_isGrantedPermissionLiveData) {
-            value = (_settingMenuLiveData.value
-                ?: ModelState.Success(SettingModel())).copyWithData(
-                newData = SettingModel(
-                    menusModel = _settingMenuLiveData.value?.data,
-                    isGranted = it
-                )
-            )
-        }
-    }
-
     private val notificationMutex = Mutex()
-    private val settingMutex = Mutex()
 
     init {
         initNotifications()
@@ -217,7 +180,6 @@ class NotificationViewModel @AssistedInject constructor(
         }
     }
 
-
     fun requestRejectLinkRequest(accessToken: String, notificationModel: NotificationModel) {
         val userId = notificationModel.user?.userId ?: return
         if (requestLinkJob[userId]?.isCompleted == false) return
@@ -255,55 +217,6 @@ class NotificationViewModel @AssistedInject constructor(
             }
         }
 
-    fun requestSettingMenu() {
-        requestSettingMenusJob?.cancel()
-        requestSettingMenusJob = viewModelScope.launch {
-            //TOOD repository 구현
-            _settingMenuLiveData.value = ModelState.Loading()
-            delay(2000)
-            _settingMenuLiveData.value =
-                ModelState.Success(mockKidSettingMenus)
-        }
-    }
-
-    fun setPermissionGranted(isGranted: Boolean) {
-        _isGrantedPermissionLiveData.value = isGranted
-    }
-
-    fun checkMenu(type: SettingMenuType, isChecked: Boolean) {
-        if (requestSettingMenusJob?.isCompleted == false) return
-        requestSettingMenusJob = createJobWithUnlockOnCompleted(mutex = settingMutex) {
-            //TODO setting 변경 api 호출
-            delay(1000)
-            //onSuccess
-            _settingMenuLiveData.value = _settingMenuLiveData.value?.run {
-                val newData = (data ?: SettingMenusModel()).run {
-                    typeToCheckedMap[type] = isChecked
-                    copy(isAllMenuChecked = typeToCheckedMap.any { it.value } || isAllMenuChecked)
-                }
-                copyWithData(newData)
-            }
-        }
-    }
-
-    fun checkAllMenu(isChecked: Boolean) {
-        if (requestSettingMenusJob?.isCompleted == false) return
-        requestSettingMenusJob = createJobWithUnlockOnCompleted(mutex = settingMutex) {
-            //TODO setting 변경 api 호출
-            delay(1000)
-            _settingMenuLiveData.value = _settingMenuLiveData.value?.run {
-                val newData = (data ?: SettingMenusModel()).run {
-                    copy(
-                        isAllMenuChecked = isChecked,
-                        typeToCheckedMap = typeToCheckedMap.apply { replaceAll { _, _ -> isChecked } })
-                }
-                copyWithData(newData)
-            }
-        }
-    }
-
-    //TODO Setting 변경 request
-
     private data class NotificationJobData(val priority: Int, val job: Job)
 
     private fun NotificationJobData?.getPriorityOrZero() = this?.priority ?: 0
@@ -320,7 +233,7 @@ class NotificationViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface NotificationAssistedFactory {
-        fun create(initAccessToken: String): NotificationViewModel
+        fun create(initAccessToken: String): NotificationListViewModel
     }
 
     companion object {
@@ -338,44 +251,3 @@ class NotificationViewModel @AssistedInject constructor(
         }
     }
 }
-
-//TODO test mock notificaiton 제거
-private fun getMockNotifications(nextId: Int?, pageSize: Int = 10) = ApiResult.success(
-    NotificationsDto(
-        startId = ((nextId ?: 0) + pageSize).takeIf { it < mockNotifications.size },
-        notificationDtoList = mockNotifications.subList(
-            nextId ?: 0,
-            minOf(mockNotifications.size, (nextId ?: 0) + pageSize)
-        )
-    )
-)
-
-private val mockNotifications = List(187) {
-    NotificationDto(
-        id = it,
-        type = "FAMILY_REQUEST_COMPLETE",
-        status = if (it % 2 == 0) "READ" else "UNREAD",
-        title = "title$it",
-        message = "message$it",
-        sender = NotificationDto.Sender(id = it, nickName = "nickName$it", null),
-        link = when (it % 4) {
-            0 -> "home"
-            1 -> "my-page"
-            2 -> "stamp-board/$it"
-            else -> "coupon/$it"
-        },
-        requestFamilyId = it,
-        createdDate = "2023-09-14T15:50:38.296456354"
-    )
-}
-
-private val mockKidSettingMenus = SettingMenusModel(
-    hashMapOf(
-        SettingMenuType.Link to false,
-        SettingMenuType.Level to false,
-        SettingMenuType.NewStampBoard to true,
-        SettingMenuType.PaymentCoupon to false,
-        SettingMenuType.CheckDeliveryGift to false,
-    ),
-    isAllMenuChecked = true,
-)

@@ -3,67 +3,55 @@ package com.polzzak_android.presentation.feature.notification.setting.model
 import androidx.annotation.StringRes
 import com.polzzak_android.R
 
-//TODO 서버타입과 이름 맞추기(현재 임의로 이름 지음)
-sealed interface SettingMenuType {
-    @get:StringRes
-    val titleStringRes: Int
-
-    @get:StringRes
-    val contentStringRes: Int
-
-    object Link : SettingMenuType {
-        override val titleStringRes: Int = R.string.notification_setting_link_title
-        override val contentStringRes: Int = R.string.notification_setting_link_content
-    }
-
-    object Level : SettingMenuType {
-        override val titleStringRes: Int = R.string.notification_setting_level_title
-        override val contentStringRes: Int = R.string.notification_setting_level_content
-    }
-
-    object RequestStamp : SettingMenuType {
-        override val titleStringRes: Int = R.string.notification_setting_request_stamp_title
-        override val contentStringRes: Int = R.string.notification_setting_request_stamp_content
-    }
-
-    object RequestGift : SettingMenuType {
-        override val titleStringRes: Int = R.string.notification_setting_request_gift_title
-        override val contentStringRes: Int = R.string.notification_setting_request_gift_content
-    }
-
-    object CompleteStampBoard : SettingMenuType {
-        override val titleStringRes: Int =
-            R.string.notification_setting_complete_stamp_board_title
-        override val contentStringRes: Int =
-            R.string.notification_setting_complete_stamp_board_content
-    }
-
-    object ReceiveGift : SettingMenuType {
-        override val titleStringRes: Int = R.string.notification_setting_receive_gift_title
-        override val contentStringRes: Int = R.string.notification_setting_receive_gift_content
-    }
-
-    object BreakPromise : SettingMenuType {
-        override val titleStringRes: Int = R.string.notification_setting_break_promise_title
-        override val contentStringRes: Int = R.string.notification_setting_break_promise_content
-    }
-
-    object NewStampBoard : SettingMenuType {
-        override val titleStringRes: Int = R.string.notification_setting_new_stamp_board_title
-        override val contentStringRes: Int =
-            R.string.notification_setting_new_stamp_board_content
-    }
-
-    object PaymentCoupon : SettingMenuType {
-        override val titleStringRes: Int = R.string.notification_setting_payment_coupon_title
-        override val contentStringRes: Int =
-            R.string.notification_setting_payment_coupon_content
-    }
-
-    object CheckDeliveryGift : SettingMenuType {
-        override val titleStringRes: Int =
-            R.string.notification_setting_check_delivery_gift_title
-        override val contentStringRes: Int =
-            R.string.notification_setting_check_delivery_gift_content
-    }
+//TODO 순서 재배치
+enum class SettingMenuType(
+    val dataString: String,
+    @StringRes val titleStringRes: Int,
+    @StringRes val contentStringRes: Int
+) {
+    //TODO 선물 수령 알림 추가
+    FAMILY_REQUEST(
+        dataString = "familyRequest",
+        titleStringRes = R.string.notification_setting_family_request_title,
+        contentStringRes = R.string.notification_setting_family_request_content
+    ),
+    LEVEL(
+        dataString = "level", titleStringRes = R.string.notification_setting_level_title,
+        contentStringRes = R.string.notification_setting_level_content
+    ),
+    STAMP_REQUEST(
+        dataString = "stampRequest",
+        titleStringRes = R.string.notification_setting_stamp_request_title,
+        contentStringRes = R.string.notification_setting_stamp_request_content
+    ),
+    STAMP_BOARD_COMPLETE(
+        dataString = "stampBoardComplete",
+        titleStringRes = R.string.notification_setting_stamp_board_complete_title,
+        contentStringRes = R.string.notification_setting_stamp_board_complete_content
+    ),
+    REWARD_REQUEST(
+        dataString = "rewardRequest",
+        titleStringRes = R.string.notification_setting_reward_request_title,
+        contentStringRes = R.string.notification_setting_reward_request_content
+    ),
+    REWARDED(
+        dataString = "rewarded",
+        titleStringRes = R.string.notification_setting_rewarded_title,
+        contentStringRes = R.string.notification_setting_rewarded_content
+    ),
+    REWARD_FAIL(
+        dataString = "rewardFail",
+        titleStringRes = R.string.notification_setting_reward_fail_title,
+        contentStringRes = R.string.notification_setting_reward_fail_content
+    ),
+    CREATED_STAMP_BOARD(
+        dataString = "createdStampBoard",
+        titleStringRes = R.string.notification_setting_created_stamp_board_title,
+        contentStringRes = R.string.notification_setting_created_stamp_board_content
+    ),
+    ISSUED_COUPON(
+        dataString = "issuedCoupon",
+        titleStringRes = R.string.notification_setting_issued_coupon_title,
+        contentStringRes = R.string.notification_setting_issued_coupon_content
+    )
 }

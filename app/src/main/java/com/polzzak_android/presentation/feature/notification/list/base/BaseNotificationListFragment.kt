@@ -21,7 +21,7 @@ import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
-import com.polzzak_android.presentation.feature.notification.NotificationViewModel
+import com.polzzak_android.presentation.feature.notification.list.NotificationListViewModel
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemDecoration
 import com.polzzak_android.presentation.feature.notification.list.NotificationListClickListener
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationEmptyItem
@@ -38,14 +38,12 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
     override val layoutResId: Int = R.layout.fragment_notification_list
 
     @Inject
-    lateinit var notificationViewModelAssistedFactory: NotificationViewModel.NotificationAssistedFactory
-    private val notificationViewModel by viewModels<NotificationViewModel>(factoryProducer = {
-        NotificationViewModel.provideFactory(
-            notificationViewModelAssistedFactory,
+    lateinit var notificationListViewModelAssistedFactory: NotificationListViewModel.NotificationAssistedFactory
+    private val notificationListViewModel by viewModels<NotificationListViewModel>(factoryProducer = {
+        NotificationListViewModel.provideFactory(
+            notificationListViewModelAssistedFactory,
             initAccessToken = getAccessTokenOrNull() ?: ""
         )
-    }, ownerProducer = {
-        parentFragment ?: this@BaseNotificationListFragment
     })
 
     @get:IdRes
@@ -57,7 +55,6 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         initToolbar()
         initSwipeRefreshLayout()
         initRecyclerView()
-
     }
 
     private fun initToolbar() {
@@ -77,7 +74,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
     private fun initSwipeRefreshLayout() {
         with(binding.srlNotifications) {
             setOnRefreshListener {
-                notificationViewModel.refreshNotifications(
+                notificationListViewModel.refreshNotifications(
                     accessToken = getAccessTokenOrNull() ?: ""
                 )
             }
@@ -103,7 +100,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
                     if (newState == RecyclerView.SCROLL_STATE_DRAGGING && !recyclerView.canScrollVertically(
                             1
                         )
-                    ) notificationViewModel.requestMoreNotifications(
+                    ) notificationListViewModel.requestMoreNotifications(
                         getAccessTokenOrNull() ?: ""
                     )
                 }
@@ -118,7 +115,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
     }
 
     private fun initNotificationObserver() {
-        notificationViewModel.notificationLiveData.observe(viewLifecycleOwner) {
+        notificationListViewModel.notificationLiveData.observe(viewLifecycleOwner) {
             val adapter =
                 (binding.rvNotifications.adapter as? BindableItemAdapter) ?: return@observe
             val items = mutableListOf<BindableItem<*>>()
@@ -129,7 +126,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
                         items.addAll(createSkeletonLoadingItems())
                     } else {
                         items.addAll(createNotificationItems(data = it.data?.items))
-                        if (!notificationViewModel.isRefreshed) items.add(
+                        if (!notificationListViewModel.isRefreshed) items.add(
                             LoadMoreLoadingSpinnerItem(
                                 marginTopDp = 8
                             )
@@ -152,9 +149,11 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
     }
 
     private fun initErrorEventObserver() {
-        notificationViewModel.errorEventLiveData.observe(viewLifecycleOwner, EventWrapperObserver {
-            PolzzakSnackBar.errorOf(binding.root, it)
-        })
+        notificationListViewModel.errorEventLiveData.observe(
+            viewLifecycleOwner,
+            EventWrapperObserver {
+                PolzzakSnackBar.errorOf(binding.root, it)
+            })
     }
 
     private fun createSkeletonLoadingItems() = List(LOADING_SKELETON_ITEM_COUNT) {
@@ -165,28 +164,28 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         return if (data.isNullOrEmpty()) listOf(NotificationEmptyItem()) else data.map {
             NotificationItem(
                 model = it,
-                itemStateController = notificationViewModel,
+                itemStateController = notificationListViewModel,
                 clickListener = this@BaseNotificationListFragment
             )
         }
     }
 
     override fun onClickDeleteNotification(id: Int) {
-        notificationViewModel.deleteNotification(
+        notificationListViewModel.deleteNotification(
             accessToken = getAccessTokenOrNull() ?: "",
             id = id
         )
     }
 
     override fun onClickFamilyRequestAcceptClick(model: NotificationModel) {
-        notificationViewModel.requestApproveLinkRequest(
+        notificationListViewModel.requestApproveLinkRequest(
             accessToken = getAccessTokenOrNull() ?: "",
             notificationModel = model
         )
     }
 
     override fun onClickFamilyRequestRejectClick(model: NotificationModel) {
-        notificationViewModel.requestRejectLinkRequest(
+        notificationListViewModel.requestRejectLinkRequest(
             accessToken = getAccessTokenOrNull() ?: "",
             notificationModel = model
         )
