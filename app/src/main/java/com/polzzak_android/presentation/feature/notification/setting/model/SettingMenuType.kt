@@ -24,20 +24,15 @@ enum class SettingMenuType(
         titleStringRes = R.string.notification_setting_stamp_request_title,
         contentStringRes = R.string.notification_setting_stamp_request_content
     ),
-    STAMP_BOARD_COMPLETE(
-        dataString = "stampBoardComplete",
-        titleStringRes = R.string.notification_setting_stamp_board_complete_title,
-        contentStringRes = R.string.notification_setting_stamp_board_complete_content
-    ),
     REWARD_REQUEST(
         dataString = "rewardRequest",
         titleStringRes = R.string.notification_setting_reward_request_title,
         contentStringRes = R.string.notification_setting_reward_request_content
     ),
-    REWARDED(
-        dataString = "rewarded",
-        titleStringRes = R.string.notification_setting_rewarded_title,
-        contentStringRes = R.string.notification_setting_rewarded_content
+    STAMP_BOARD_COMPLETE(
+        dataString = "stampBoardComplete",
+        titleStringRes = R.string.notification_setting_stamp_board_complete_title,
+        contentStringRes = R.string.notification_setting_stamp_board_complete_content
     ),
     REWARD_FAIL(
         dataString = "rewardFail",
@@ -53,5 +48,10 @@ enum class SettingMenuType(
         dataString = "issuedCoupon",
         titleStringRes = R.string.notification_setting_issued_coupon_title,
         contentStringRes = R.string.notification_setting_issued_coupon_content
+    ),
+    REWARDED(
+        dataString = "rewarded",
+        titleStringRes = R.string.notification_setting_rewarded_title,
+        contentStringRes = R.string.notification_setting_rewarded_content
     )
 }
