@@ -42,6 +42,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        savedInstanceState?.let {
+            val savedToken = it.getString(SAVE_INSTANCE_ACCESS_TOKEN_KEY)
+            if (getAccessToken().isNullOrEmpty()) mainViewModel.accessToken = savedToken
+        }
         permissionManager.requestAllPermissions()
         initLoginHelper()
         // set navigation
@@ -71,6 +75,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         clearBackPressedEvent()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(SAVE_INSTANCE_ACCESS_TOKEN_KEY, getAccessToken())
+    }
 
     private fun clearBackPressedEvent() {
         compositeDisposable.clear()
@@ -111,5 +119,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
 
     companion object {
         private const val BACK_BTN_DEBOUNCE_TIMER = 3000
+        private const val SAVE_INSTANCE_ACCESS_TOKEN_KEY = "save_instance_access_token_key"
     }
 }
