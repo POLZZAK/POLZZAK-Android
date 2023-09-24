@@ -21,9 +21,9 @@ import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
-import com.polzzak_android.presentation.feature.notification.list.NotificationListViewModel
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemDecoration
 import com.polzzak_android.presentation.feature.notification.list.NotificationListClickListener
+import com.polzzak_android.presentation.feature.notification.list.NotificationListViewModel
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationEmptyItem
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationItem
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationSkeletonLoadingItem
@@ -152,7 +152,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         notificationListViewModel.errorEventLiveData.observe(
             viewLifecycleOwner,
             EventWrapperObserver {
-                PolzzakSnackBar.errorOf(binding.root, it)
+                PolzzakSnackBar.errorOf(binding.root, it).show()
             })
     }
 
