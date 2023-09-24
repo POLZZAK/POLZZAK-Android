@@ -49,7 +49,6 @@ class NotificationItem(
     }
 
     private fun bindHorizontalScroll(binding: ItemNotificationBinding) {
-        if (model.statusType == NotificationStatusType.REQUEST_FAMILY) return
         with(binding) {
             clNotification.doOnPreDraw {
                 it.updateLayoutParams {
@@ -57,19 +56,23 @@ class NotificationItem(
                 }
                 clRemoveNotification.updateLayoutParams {
                     width =
-                        it.width + NOTIFICATION_REMOVE_LAYOUT_WIDTH_DP.toPx(context = binding.root.context)
+                        if (model.statusType == NotificationStatusType.REQUEST_FAMILY) 0 else
+                            it.width + NOTIFICATION_REMOVE_LAYOUT_WIDTH_DP.toPx(context = binding.root.context)
                 }
+
                 hsvNotification.doOnPreDraw {
                     hsvNotification.scrollX =
-                        itemStateController.getHorizontalScrollPosition(id = model.id)
+                        if (model.statusType == NotificationStatusType.REQUEST_FAMILY) 0 else
+                            itemStateController.getHorizontalScrollPosition(id = model.id)
                 }
             }
             hsvNotification.setOnScrollChangeListener { _, scrollX, _, _, _ ->
+                if (model.statusType == NotificationStatusType.REQUEST_FAMILY) return@setOnScrollChangeListener
                 clRemoveNotification.visibility = if (scrollX > 0) View.VISIBLE else View.INVISIBLE
                 itemStateController.setHorizontalScrollPosition(id = model.id, position = scrollX)
             }
             clRemoveNotification.visibility =
-                if (hsvNotification.scrollX == 0) View.INVISIBLE else View.VISIBLE
+                if (hsvNotification.scrollX == 0 || model.statusType == NotificationStatusType.REQUEST_FAMILY) View.INVISIBLE else View.VISIBLE
         }
     }
 
