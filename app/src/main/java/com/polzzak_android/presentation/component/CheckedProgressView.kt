@@ -90,7 +90,7 @@ class CheckedProgressView @JvmOverloads constructor(
         setMeasuredDimension(width, height)
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         canvas?.let { drawView(canvas = it) }
     }
 

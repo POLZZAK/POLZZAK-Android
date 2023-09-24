@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalGlideComposeApi::class)
+
 package com.polzzak_android.presentation.feature.myPage.components
 
 import androidx.compose.foundation.Image
@@ -24,14 +26,18 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.compose.Blue100
 import com.polzzak_android.presentation.common.compose.Blue150
@@ -206,11 +212,16 @@ fun RankingListItemBase(
         }
     }
     Spacer(modifier = Modifier.width(8.dp))
-    // TODO: 프로필 사진으로 변경하기
-    Box(
+
+    // 프로필 이미지
+    GlideImage(
+        model = profileUrl,
+        contentDescription = "user profile image",
+        contentScale = ContentScale.Crop,
         modifier = Modifier
             .size(40.dp)
-            .background(color = Blue200, shape = CircleShape)
+            .clip(CircleShape)
+
     )
     Spacer(modifier = Modifier.width(8.dp))
 
