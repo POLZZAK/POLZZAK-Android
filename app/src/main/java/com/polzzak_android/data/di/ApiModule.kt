@@ -8,6 +8,7 @@ import com.polzzak_android.data.remote.service.StampBoardService
 import com.polzzak_android.data.repository.CouponRepository
 import com.polzzak_android.data.repository.CouponRepositoryImpl
 import com.polzzak_android.data.remote.service.GoogleOAuthService
+import com.polzzak_android.data.remote.service.PointService
 import com.polzzak_android.data.repository.LastSocialLoginRepository
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.SignUpRepository
@@ -22,6 +23,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -107,4 +109,9 @@ object ApiModule {
     @Provides
     fun provideCouponService(@Named("Polzzak") retrofit: Retrofit): CouponService =
         retrofit.create(CouponService::class.java)
+
+    @Singleton
+    @Provides
+    fun providePointService(@Named("Polzzak") retrofit: Retrofit): PointService =
+        retrofit.create(PointService::class.java)
 }

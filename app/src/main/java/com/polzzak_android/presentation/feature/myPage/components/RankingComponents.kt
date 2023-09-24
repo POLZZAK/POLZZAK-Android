@@ -197,11 +197,13 @@ fun RankingListItemBase(
             color = Gray800,
             style = PolzzakTheme.typography.semiBold14
         )
-        Image(
-            painter = painterResource(id = rankingStatus.resId),
-            contentDescription = "Ranking ${rankingStatus.name}",
-            modifier = Modifier.size(8.dp)
-        )
+        if (rankingStatus != RankingStatus.NONE) {
+            Image(
+                painter = painterResource(id = rankingStatus.resId),
+                contentDescription = "Ranking ${rankingStatus.name}",
+                modifier = Modifier.size(8.dp)
+            )
+        }
     }
     Spacer(modifier = Modifier.width(8.dp))
     // TODO: 프로필 사진으로 변경하기
