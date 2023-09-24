@@ -100,6 +100,10 @@
             <action
                 android:id="@+id/action_kidMyPageFragment_to_termDetailFragment"
                 app:destination="@id/termDetailFragment" />
+
+            <action
+                android:id="@+id/action_kidMyPageFragment_to_kidRankingFragment"
+                app:destination="@id/kidRankingFragment" />
         </fragment>
 
         <fragment
@@ -135,6 +139,11 @@
             android:id="@+id/termDetailFragment"
             android:name="com.polzzak_android.presentation.feature.term.TermDetailFragment"
             android:label="TermDetailFragment" />
+
+        <fragment
+            android:id="@+id/kidRankingFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.kid.point.ranking.KidRankingFragment"
+            android:label="KidRankingFragment" />
     </navigation>
 
 

@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 data class RankingDto(
     @SerializedName("memberSimpleResponse")
     val currentUserRanking: CurrentUserRankingDto,
+    @SerializedName("rankingSummaries")
     val rankingList: List<UserRankingDto>
 ) {
     data class CurrentUserRankingDto(
@@ -36,13 +37,21 @@ data class RankingDto(
     }
 
     data class UserRankingDto(
+        @SerializedName("ranking")
         val ranking: Int,
+        @SerializedName("rankingStatus")
         val rankingStatus: String,
+        @SerializedName("nickname")
         val nickname: String,
+        @SerializedName("point")
         val point: Int,
+        @SerializedName("level")
         val level: Int,
+        @SerializedName("memberTypeDetail")
         val memberTypeDetail: String?,
+        @SerializedName("profileUrl")
         val profileUrl: String,
+        @SerializedName("isMe")
         val isMe: Boolean
     )
 }

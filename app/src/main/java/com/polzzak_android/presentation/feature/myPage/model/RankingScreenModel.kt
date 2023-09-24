@@ -10,5 +10,5 @@ data class RankingScreenModel(
 fun RankingDto.toModel(): RankingScreenModel =
     RankingScreenModel(
         currentUserRanking = this.currentUserRanking.toModel(),
-        rankingList = this.rankingList.map { it.toModel() }
+        rankingList = this.rankingList.mapNotNull { it.toModel() }
     )

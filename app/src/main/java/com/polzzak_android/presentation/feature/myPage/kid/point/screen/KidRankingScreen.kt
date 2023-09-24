@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
 
-package com.polzzak_android.presentation.feature.myPage.kid.screen
+package com.polzzak_android.presentation.feature.myPage.kid.point.screen
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
@@ -32,14 +32,16 @@ import com.polzzak_android.presentation.feature.myPage.components.UserNickname
 import com.polzzak_android.presentation.feature.myPage.model.RankingItemModel
 import com.polzzak_android.presentation.feature.myPage.model.RankingScreenModel
 import com.polzzak_android.presentation.feature.myPage.model.RankingStatus
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun KidRankingScreen(
-    data: StateFlow<ModelState<RankingScreenModel>>,
-    onError: () -> Unit
+    data: SharedFlow<ModelState<RankingScreenModel>>,
+    onError: (Exception) -> Unit
 ) {
-    val state by data.collectAsState()
+    val state by data.collectAsState(initial = ModelState.Loading())
 
     Crossfade(
         targetState = state,
@@ -57,7 +59,7 @@ fun KidRankingScreen(
                 )
             }
             is ModelState.Error -> {
-                onError()
+                onError(currentState.exception)
             }
         }
     }
