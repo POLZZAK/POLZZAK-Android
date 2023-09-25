@@ -199,4 +199,45 @@
 
     <!-- Coupon Detail -->
     <string name="coupon_detail_request_reward_success">조르기 완료! 1시간 후에 다시 조를 수 있어요.</string>
+
+    <!-- Point Ranking -->
+    <string name="ranking_screen_title">폴짝! 랭킹</string>
+    <string name="ranking_type_suffix">%s 회원</string>
+    <string name="ranking_type_kid">아이</string>
+    <string name="ranking_type_protector">보호자</string>
+    <string name="ranking_empty_list">랭킹 업데이트 전입니다!\n오늘 20:00시에 다시 확인해주세요.</string>
+    <string name="ranking_top_30">TOP 30</string>
+    <string name="ranking_update_time">%d월 %d일 20:00 기준</string>
+    <string name="ranking_list_item_level_unit">%d 계단</string>
+    <string name="ranking_list_item_point_unit">%dP</string>
+    <string name="ranking_member_type_suffix">%s 회원</string>
+    <string name="ranking_me">나</string>
+
+    <!-- Point History -->
+    <string name="point_history_toolbar_title">포인트 적립내역</string>
+    <string name="point_history_empty">최근 적립내역이 없어요\n포인트를 모아보세요!</string>
+
+    <!-- Point rules -->
+    <string name="point_rules_toolbar_title">포인트 규칙</string>
+    <string name="point_rules_level_up_rule">100P를 모을 때마다 1계단을 올라가요!</string>
+    <string name="point_rules_positive_title">포인트 적립</string>
+    <string name="point_rules_negative_title">포인트 차감</string>
+    <string-array name="point_rules_protector_positive">
+        <item>아이 1명과 연동한 경우 20P</item>
+        <item>도장판 1개 생성 5P</item>
+        <item>도장 1개 찍어주기 10P</item>
+        <item>쿠폰에 대한 선물을 완료한 경우 30P</item>
+        <item>회원가입 50P</item>
+    </string-array>
+    <string-array name="point_rules_protector_negative">
+        <item>도장판을 삭제한 경우 -20P</item>
+        <item>선물 약속 날짜 안에 선물을 지급하지 않은 경우 -100P</item>
+    </string-array>
+    <string-array name="point_rules_kid_positive">
+        <item>보호자 1명과 연동한 경우 20P</item>
+        <item>도장 1개 받기 10P</item>
+        <item>선물 쿠폰 받은 경우 30P</item>
+        <item>\'선물 받기 완료\' 버튼을 눌러준 경우 10P</item>
+        <item>회원가입 90P</item>
+    </string-array>
 </resources>

@@ -12,7 +12,9 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment.Companion.ARGUMENT_NICKNAME_KEY
 import com.polzzak_android.presentation.feature.term.TermDetailFragment
 import com.polzzak_android.presentation.feature.term.model.TermType
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_kid_my_page
 
@@ -73,15 +75,15 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickRanking() {
-        // todo: 폴짝 랭킹 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_kidRankingFragment)
     }
 
     fun onClickPointHistory() {
-        // todo: 적립 내역 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_pointHistoryFragment)
     }
 
     fun onClickPointRule() {
-        // todo: 포인트 규칙 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_pointRuleFragment)
     }
 
     fun onClickCustomerService() {

@@ -95,6 +95,23 @@
         <action
             android:id="@+id/action_protectorMyPageFragment_to_protectorCSFragment"
             app:destination="@id/protectorCSFragment" />
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_protectorRankingFragment"
+            app:destination="@id/protectorRankingFragment" />
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_pointHistoryFragment2"
+            app:destination="@id/pointHistoryFragment2" />
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_pointRuleFragment2"
+            app:destination="@id/pointRuleFragment2">
+                <argument
+                    android:name="isKid"
+                    app:argType="boolean"
+                    android:defaultValue="false"/>
+        </action>
     </fragment>
 
     <fragment
@@ -139,4 +156,20 @@
         android:name="com.polzzak_android.presentation.feature.term.TermDetailFragment"
         android:label="TermDetailFragment"
         tools:layout="@layout/fragment_term_detail" />
+
+    <fragment
+        android:id="@+id/protectorRankingFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.point.ranking.protector.ProtectorRankingFragment"
+        android:label="ProtectorRankingFragment" />
+
+    <fragment
+        android:id="@+id/pointHistoryFragment2"
+        android:name="com.polzzak_android.presentation.feature.myPage.point.history.PointHistoryFragment"
+        android:label="PointHistoryFragment" />
+
+    <fragment
+        android:id="@+id/pointRuleFragment2"
+        android:name="com.polzzak_android.presentation.feature.myPage.point.rules.PointRuleFragment"
+        android:label="PointRuleFragment" />
+
 </navigation>

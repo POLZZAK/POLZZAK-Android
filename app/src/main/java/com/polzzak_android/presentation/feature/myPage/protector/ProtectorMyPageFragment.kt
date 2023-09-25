@@ -74,15 +74,15 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickRanking() {
-        // todo: 폴짝 랭킹 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_protectorRankingFragment)
     }
 
     fun onClickPointHistory() {
-        // todo: 적립 내역 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_pointHistoryFragment2)
     }
 
     fun onClickPointRule() {
-        // todo: 포인트 규칙 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_pointRuleFragment2)
     }
 
     fun onClickCustomerService() {
