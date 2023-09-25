@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package com.polzzak_android.presentation.feature.myPage.protector.screen
+package com.polzzak_android.presentation.feature.myPage.protector.point.screen
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
@@ -33,14 +33,15 @@ import com.polzzak_android.presentation.feature.myPage.components.UserNickname
 import com.polzzak_android.presentation.feature.myPage.model.RankingItemModel
 import com.polzzak_android.presentation.feature.myPage.model.RankingScreenModel
 import com.polzzak_android.presentation.feature.myPage.model.RankingStatus
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun ProtectorRankingScreen(
-    data: StateFlow<ModelState<RankingScreenModel>>,
-    onError: () -> Unit
+    data: SharedFlow<ModelState<RankingScreenModel>>,
+    onError: (Exception) -> Unit
 ) {
-    val state by data.collectAsState()
+    val state by data.collectAsState(initial = ModelState.Loading())
 
     Crossfade(
         targetState = state,
@@ -58,7 +59,7 @@ fun ProtectorRankingScreen(
                 )
             }
             is ModelState.Error -> {
-                onError()
+                onError(currentState.exception)
             }
         }
     }

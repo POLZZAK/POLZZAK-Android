@@ -75,7 +75,6 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickRanking() {
-        // todo: 폴짝 랭킹 클릭
         findNavController().navigate(R.id.action_kidMyPageFragment_to_kidRankingFragment)
     }
 

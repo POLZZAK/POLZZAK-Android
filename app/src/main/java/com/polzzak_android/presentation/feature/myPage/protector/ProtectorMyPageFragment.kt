@@ -74,7 +74,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickRanking() {
-        // todo: 폴짝 랭킹 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_protectorRankingFragment)
     }
 
     fun onClickPointHistory() {
