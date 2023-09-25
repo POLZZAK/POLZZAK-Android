@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.myPage.kid.point.screen
+package com.polzzak_android.presentation.feature.myPage.point.rules.kid
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

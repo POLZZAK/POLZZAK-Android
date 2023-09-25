@@ -142,7 +142,7 @@
 
         <fragment
             android:id="@+id/kidRankingFragment"
-            android:name="com.polzzak_android.presentation.feature.myPage.kid.point.ranking.KidRankingFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.point.ranking.kid.KidRankingFragment"
             android:label="KidRankingFragment" />
     </navigation>
 

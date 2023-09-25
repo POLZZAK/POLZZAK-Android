@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.myPage.kid.point.ranking
+package com.polzzak_android.presentation.feature.myPage.point.ranking.protector
 
 import android.os.Bundle
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -9,16 +9,14 @@ import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.errorOf
-import com.polzzak_android.presentation.feature.myPage.kid.point.screen.KidRankingScreen
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.lang.Exception
 
 @AndroidEntryPoint
-class KidRankingFragment : BaseFragment<FragmentPointRankingBinding>() {
+class ProtectorRankingFragment : BaseFragment<FragmentPointRankingBinding>() {
     override val layoutResId: Int = R.layout.fragment_point_ranking
 
-    private val viewModel: KidRankingViewModel by viewModels()
+    private val viewModel: ProtectorRankingViewModel by viewModels()
 
     override fun initView() {
         super.initView()
@@ -29,16 +27,15 @@ class KidRankingFragment : BaseFragment<FragmentPointRankingBinding>() {
             putString("token", getAccessTokenOrNull())
         }
 
-
         binding.composeView.apply {
             setContent {
                 setViewCompositionStrategy(
                     ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed
                 )
 
-                KidRankingScreen(
+                ProtectorRankingScreen(
                     data = viewModel.rankingScreenModel,
-                    onError = this@KidRankingFragment::onError
+                    onError = this@ProtectorRankingFragment::onError
                 )
             }
         }

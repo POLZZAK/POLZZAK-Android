@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.myPage.kid.point.ranking
+package com.polzzak_android.presentation.feature.myPage.point.ranking.protector
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class KidRankingViewModel @Inject constructor(
+class ProtectorRankingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val repository: PointRepository
 ) : ViewModel() {
@@ -30,7 +30,7 @@ class KidRankingViewModel @Inject constructor(
 
     private fun getRankingList(token: String) = viewModelScope.launch {
         repository
-            .getKidRankingList(token)
+            .getProtectorRankingList(token)
             .onSuccess { data ->
                 data ?: return@onSuccess
 

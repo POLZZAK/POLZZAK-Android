@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package com.polzzak_android.presentation.feature.myPage.protector.point.screen
+package com.polzzak_android.presentation.feature.myPage.point.ranking.protector
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
@@ -34,7 +34,6 @@ import com.polzzak_android.presentation.feature.myPage.model.RankingItemModel
 import com.polzzak_android.presentation.feature.myPage.model.RankingScreenModel
 import com.polzzak_android.presentation.feature.myPage.model.RankingStatus
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun ProtectorRankingScreen(

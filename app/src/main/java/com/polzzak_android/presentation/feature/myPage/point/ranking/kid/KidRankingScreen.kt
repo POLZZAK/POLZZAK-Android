@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class, ExperimentalFoundationApi::class)
 
-package com.polzzak_android.presentation.feature.myPage.kid.point.screen
+package com.polzzak_android.presentation.feature.myPage.point.ranking.kid
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
@@ -32,9 +32,7 @@ import com.polzzak_android.presentation.feature.myPage.components.UserNickname
 import com.polzzak_android.presentation.feature.myPage.model.RankingItemModel
 import com.polzzak_android.presentation.feature.myPage.model.RankingScreenModel
 import com.polzzak_android.presentation.feature.myPage.model.RankingStatus
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun KidRankingScreen(

@@ -146,6 +146,6 @@
 
     <fragment
         android:id="@+id/protectorRankingFragment"
-        android:name="com.polzzak_android.presentation.feature.myPage.protector.point.ranking.ProtectorRankingFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.point.ranking.protector.ProtectorRankingFragment"
         android:label="ProtectorRankingFragment" />
 </navigation>
