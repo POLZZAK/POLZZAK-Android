@@ -78,7 +78,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickPointHistory() {
-        // todo: 적립 내역 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_pointHistoryFragment2)
     }
 
     fun onClickPointRule() {

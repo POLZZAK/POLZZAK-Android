@@ -79,7 +79,7 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickPointHistory() {
-        // todo: 적립 내역 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_pointHistoryFragment)
     }
 
     fun onClickPointRule() {

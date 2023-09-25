@@ -99,6 +99,10 @@
         <action
             android:id="@+id/action_protectorMyPageFragment_to_protectorRankingFragment"
             app:destination="@id/protectorRankingFragment" />
+
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_pointHistoryFragment2"
+            app:destination="@id/pointHistoryFragment2" />
     </fragment>
 
     <fragment
@@ -148,4 +152,9 @@
         android:id="@+id/protectorRankingFragment"
         android:name="com.polzzak_android.presentation.feature.myPage.point.ranking.protector.ProtectorRankingFragment"
         android:label="ProtectorRankingFragment" />
+
+    <fragment
+        android:id="@+id/pointHistoryFragment2"
+        android:name="com.polzzak_android.presentation.feature.myPage.point.history.PointHistoryFragment"
+        android:label="PointHistoryFragment" />
 </navigation>

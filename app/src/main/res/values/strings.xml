@@ -213,6 +213,10 @@
     <string name="ranking_member_type_suffix">%s 회원</string>
     <string name="ranking_me">나</string>
 
+    <!-- Point History -->
+    <string name="point_history_toolbar_title">포인트 적립내역</string>
+    <string name="point_history_empty">최근 적립내역이 없어요\n포인트를 모아보세요!</string>
+
     <!-- Point rules -->
     <string-array name="point_rules_protector_positive">
         <item>아이 1명과 연동한 경우 20P</item>

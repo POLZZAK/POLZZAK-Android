@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.feature.myPage.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,34 +20,50 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.polzzak_android.R
 import com.polzzak_android.presentation.common.compose.Blue200
 import com.polzzak_android.presentation.common.compose.Gray200
 import com.polzzak_android.presentation.common.compose.Gray300
 import com.polzzak_android.presentation.common.compose.Gray500
 import com.polzzak_android.presentation.common.compose.Gray800
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
+import kotlin.math.absoluteValue
 
 @Composable
-private fun PointHistoryListItem() = Card(
+fun PointHistoryListItem(
+    title: String,
+    date: String,
+    increasedPoint: Int,
+    remainingPoint: Int
+) = Card(
     elevation = 0.dp,
     border = BorderStroke(width = 1.dp, color = Gray200),
     shape = RoundedCornerShape(8.dp),
     backgroundColor = Color.White,
     modifier = Modifier.fillMaxWidth()
 ) {
+    val isIncreased: Boolean = increasedPoint > 0
+    val contentText = if (isIncreased) "%dP 적립" else "%dP 차감"
+
     Column(
         modifier = Modifier.padding(16.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            // TODO: 적립 이미지로 변경하기
             // 적립 이미지
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(color = Blue200)
+            Image(
+                painter = painterResource(
+                    id = if (isIncreased) {
+                        R.drawable.ic_point_history_increase
+                    } else {
+                        R.drawable.ic_point_history_decrease
+                    }
+                ),
+                contentDescription = "point image",
+                modifier = Modifier.size(40.dp)
             )
             Spacer(modifier = Modifier.width(16.dp))
             
@@ -55,7 +72,7 @@ private fun PointHistoryListItem() = Card(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     // 제목
                     Text(
-                        text = "타이틀",
+                        text = title,
                         color = Gray800,
                         style = PolzzakTheme.typography.semiBold14
                     )
@@ -66,15 +83,16 @@ private fun PointHistoryListItem() = Card(
                     Spacer(modifier = Modifier.width(7.dp))
                     // 날짜
                     Text(
-                        text = "날짜",
+                        text = date,
                         color = Gray500,
                         style = PolzzakTheme.typography.medium12
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
+
                 // 적립 내역
                 Text(
-                    text = "100P 적립",
+                    text = contentText.format(increasedPoint.absoluteValue),
                     color = Gray800,
                     style = PolzzakTheme.typography.bold16
                 )
@@ -83,7 +101,7 @@ private fun PointHistoryListItem() = Card(
 
         // 현재 포인트
         Text(
-            text = "내 포인트 123P",
+            text = "내 포인트 ${remainingPoint}P",
             color = Gray500,
             style = PolzzakTheme.typography.semiBold14,
             textAlign = TextAlign.End,
@@ -95,5 +113,18 @@ private fun PointHistoryListItem() = Card(
 @Preview
 @Composable
 private fun PointHistoryListItemPreview() {
-    PointHistoryListItem()
+    Column {
+        PointHistoryListItem(
+            title = "연동 성공",
+            date = "2일전",
+            increasedPoint = 100,
+            remainingPoint = 123
+        )
+        PointHistoryListItem(
+            title = "도장판 삭제",
+            date = "2일전",
+            increasedPoint = -100,
+            remainingPoint = 123
+        )
+    }
 }

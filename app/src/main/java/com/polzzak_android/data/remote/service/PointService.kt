@@ -1,5 +1,6 @@
 package com.polzzak_android.data.remote.service
 
+import com.polzzak_android.data.remote.model.response.PointHistoryResponse
 import com.polzzak_android.data.remote.model.response.RankingResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -9,7 +10,9 @@ import retrofit2.http.Query
 
 interface PointService {
     /**
-     * 보호자 전용 랭킹 리스트 API
+     * 랭킹 리스트 API
+     *
+     * @param type 'kids' or 'guardians'
      */
     @GET("api/v1/rankings/{type}")
     suspend fun getRankingList(
@@ -18,10 +21,11 @@ interface PointService {
     ): Response<RankingResponse>
 
     /**
-     * 아이 전용 랭킹 리스트 API
+     * 포인트 내역 조회 API
      */
-    @GET("api/v1/rankings/kids")
-    suspend fun getKidRanking(
+    @GET("api/v1/member-points/earning-histories/me")
+    suspend fun getPointHistoryList(
         @Header("Authorization") authorization: String,
-    ): Response<RankingResponse>
+        @Query("startId") startId: Int
+    ): Response<PointHistoryResponse>
 }
