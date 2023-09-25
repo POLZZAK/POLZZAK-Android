@@ -83,7 +83,7 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickPointRule() {
-        // todo: 포인트 규칙 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_pointRuleFragment)
     }
 
     fun onClickCustomerService() {

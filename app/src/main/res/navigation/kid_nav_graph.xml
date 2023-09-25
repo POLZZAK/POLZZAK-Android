@@ -108,6 +108,15 @@
             <action
                 android:id="@+id/action_kidMyPageFragment_to_pointHistoryFragment"
                 app:destination="@id/pointHistoryFragment" />
+
+            <action
+                android:id="@+id/action_kidMyPageFragment_to_pointRuleFragment"
+                app:destination="@id/pointRuleFragment" >
+                    <argument
+                        android:name="isKid"
+                        app:argType="boolean"
+                        android:defaultValue="true"/>
+            </action>
         </fragment>
 
         <fragment
@@ -154,7 +163,10 @@
             android:name="com.polzzak_android.presentation.feature.myPage.point.history.PointHistoryFragment"
             android:label="PointHistoryFragment" />
 
+        <fragment
+            android:id="@+id/pointRuleFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.point.rules.PointRuleFragment"
+            android:label="PointRuleFragment" />
     </navigation>
-
 
 </navigation>

@@ -82,7 +82,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickPointRule() {
-        // todo: 포인트 규칙 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_pointRuleFragment2)
     }
 
     fun onClickCustomerService() {

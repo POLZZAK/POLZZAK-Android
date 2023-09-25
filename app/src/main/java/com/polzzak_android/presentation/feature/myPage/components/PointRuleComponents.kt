@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -64,7 +65,7 @@ fun LevelUpGuide() {
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = "100P를 모을 때마다 1계단을 올라가요!",
+            text = stringResource(id = R.string.point_rules_level_up_rule),
             style = PolzzakTheme.typography.medium13
         )
     }

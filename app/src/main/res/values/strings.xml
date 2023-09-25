@@ -218,6 +218,10 @@
     <string name="point_history_empty">최근 적립내역이 없어요\n포인트를 모아보세요!</string>
 
     <!-- Point rules -->
+    <string name="point_rules_toolbar_title">포인트 규칙</string>
+    <string name="point_rules_level_up_rule">100P를 모을 때마다 1계단을 올라가요!</string>
+    <string name="point_rules_positive_title">포인트 적립</string>
+    <string name="point_rules_negative_title">포인트 차감</string>
     <string-array name="point_rules_protector_positive">
         <item>아이 1명과 연동한 경우 20P</item>
         <item>도장판 1개 생성 5P</item>
