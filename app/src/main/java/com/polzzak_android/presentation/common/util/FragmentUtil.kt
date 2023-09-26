@@ -114,3 +114,7 @@ suspend fun Fragment.saveBitmapToGallery(bitmap: Bitmap): Result<Unit> = withCon
 fun Fragment.logout() {
     (activity as? MainActivity)?.logout()
 }
+
+fun Fragment.handleInvalidToken() {
+    (activity as? MainActivity)?.handleInvalidToken()
+}

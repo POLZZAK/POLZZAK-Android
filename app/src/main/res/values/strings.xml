@@ -27,6 +27,7 @@
     <string name="common_reject">거절</string>
     <string name="common_notification">알림</string>
     <string name="common_notice">공지사항</string>
+    <string name="common_expire_access_token">로그아웃 되었어요.\n다시 로그인 해주세요!</string>
 
     <!-- Login -->
     <string name="login_title">참 잘 했어요 도장 쾅!</string>

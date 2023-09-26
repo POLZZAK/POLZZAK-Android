@@ -8,8 +8,15 @@ import androidx.navigation.fragment.NavHostFragment
 import com.polzzak_android.R
 import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.common.base.BaseActivity
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.util.PermissionManager
+import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.component.BackButtonPressedSnackBar
+import com.polzzak_android.presentation.component.dialog.CommonDialogContent
+import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
+import com.polzzak_android.presentation.component.dialog.CommonDialogModel
+import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.feature.auth.login.sociallogin.GoogleLoginHelper
 import com.polzzak_android.presentation.feature.auth.login.sociallogin.KakaoLoginHelper
 import com.polzzak_android.presentation.feature.auth.login.sociallogin.SocialLoginManager
@@ -111,6 +118,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
 
     fun logout() {
         if (navController.popBackStack(R.id.loginFragment, false)) mainViewModel.logout()
+    }
+
+    fun handleInvalidToken() {
+        val dialogTitleSpannable = SpannableBuilder.build(context = this) {
+            span(text = getString(R.string.common_expire_access_token))
+        }
+        val dialogModel = CommonDialogModel(
+            type = DialogStyleType.ALERT,
+            content = CommonDialogContent(title = dialogTitleSpannable),
+            button = CommonButtonModel(buttonCount = ButtonCount.ONE)
+        )
+        CommonDialogHelper.getInstance(
+            content = dialogModel
+        ).show(supportFragmentManager, null)
+        logout()
     }
 
     companion object {
