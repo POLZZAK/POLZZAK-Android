@@ -8,16 +8,13 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.polzzak_android.presentation.feature.auth.login.sociallogin.SocialLoginManager
 import com.polzzak_android.presentation.feature.root.MainActivity
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-import kotlin.coroutines.cancellation.CancellationException
 
 fun Fragment.getSocialLoginManager(): SocialLoginManager? = activity as? SocialLoginManager
 
@@ -112,4 +109,12 @@ suspend fun Fragment.saveBitmapToGallery(bitmap: Bitmap): Result<Unit> = withCon
 
     // 성공하면 여기까지 도달하지 않음
     return@withContext Result.failure(Exception("저장 실패"))
+}
+
+fun Fragment.logout() {
+    (activity as? MainActivity)?.logout()
+}
+
+fun Fragment.handleInvalidToken() {
+    (activity as? MainActivity)?.handleInvalidToken()
 }

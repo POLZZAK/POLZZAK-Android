@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.polzzak_android.R
+import com.polzzak_android.data.remote.model.isAccessTokenException
 import com.polzzak_android.databinding.FragmentLinkManagementBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.item.FullLoadingItem
@@ -22,6 +23,7 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.component.PolzzakSnackBar
@@ -278,7 +280,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
             adapter.updateItem(item = items)
