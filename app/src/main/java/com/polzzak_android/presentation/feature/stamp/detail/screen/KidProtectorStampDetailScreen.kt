@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.polzzak_android.presentation.common.model.ModelState
@@ -146,7 +147,7 @@ private fun StampBoardDetailScreen_Kid(
                         modifier = Modifier.fillMaxWidth(),
                         enabled = getCouponButtonEnable(stampBoardStatus)
                     ) {
-                        Text(text = getCouponButtonText(stampBoardStatus))
+                        Text(text = getCouponButtonText(stampBoardStatus), color = Color.White)
                     }
                 },
                 rewardStateText = {

@@ -96,7 +96,7 @@ fun CountdownButton(
     val minute = String.format("%02d", ticks/60)
     val seconds = String.format("%02d", ticks%60)
 
-    Text(text = "$minute:$seconds")
+    Text(text = "$minute:$seconds", color = Color.White)
 }
 
 @Preview
