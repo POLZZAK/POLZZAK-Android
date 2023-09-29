@@ -8,6 +8,14 @@
         <variable
             name="fragment"
             type="com.polzzak_android.presentation.feature.myPage.protector.ProtectorMyPageFragment" />
+
+        <variable
+            name="profileData"
+            type="com.polzzak_android.data.remote.model.response.ProfileDto" />
+
+        <variable
+            name="level"
+            type="com.polzzak_android.presentation.feature.myPage.model.LevelModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -59,6 +67,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:text="@{profileData.memberType.detail}"
                         android:textColor="@color/gray_700"
                         app:layout_constraintBottom_toTopOf="@id/profile_link_icon"
                         app:layout_constraintEnd_toStartOf="@id/profile_nickname"
@@ -72,6 +81,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
+                        android:text="@{profileData.nickName}"
                         android:textColor="@color/gray_800"
                         app:layout_constraintBottom_toTopOf="@id/profile_link_icon"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -86,6 +96,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:src="@drawable/ic_link"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintHorizontal_chainStyle="packed"
                         app:layout_constraintBottom_toBottomOf="@id/profile_image"
                         app:layout_constraintEnd_toStartOf="@id/profile_link_user_count"
                         app:layout_constraintStart_toEndOf="@id/profile_image"
@@ -94,7 +106,7 @@
                     <TextView
                         android:id="@+id/profile_link_user_count"
                         style="@style/body.13.500"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:onClick="@{() -> fragment.onClickLinkUser()}"
@@ -161,6 +173,7 @@
                             style="@style/subtitle.16.700"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{level.previousLevel}"
                             android:textColor="@color/gray_500"
                             app:layout_constraintBottom_toBottomOf="@id/point_previous_phase"
                             app:layout_constraintEnd_toEndOf="@id/point_previous_phase"
@@ -193,6 +206,7 @@
                             style="@style/subtitle.16.700"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{level.currentLevel}"
                             android:textColor="@color/primary_600"
                             app:layout_constraintBottom_toBottomOf="@id/point_current_phase"
                             app:layout_constraintEnd_toEndOf="@id/point_current_phase"
@@ -217,6 +231,7 @@
                             style="@style/subtitle.16.700"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="@{level.nextLevel}"
                             android:textColor="@color/gray_500"
                             app:layout_constraintBottom_toBottomOf="@id/point_next_phase"
                             app:layout_constraintEnd_toEndOf="@id/point_next_phase"
