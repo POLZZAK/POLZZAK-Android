@@ -22,6 +22,7 @@ import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.common.util.saveBitmapToGallery
 import com.polzzak_android.presentation.component.CouponImageView
 import com.polzzak_android.presentation.component.PolzzakSnackBar
@@ -333,6 +334,9 @@ class KidCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(), Too
                         }
                     }
                 ).show(childFragmentManager, null)
+            }
+            is ApiException.AccessTokenExpired -> {
+                handleInvalidToken()
             }
             else -> {
                 PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
