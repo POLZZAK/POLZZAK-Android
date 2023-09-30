@@ -3,6 +3,8 @@ package com.polzzak_android.data.remote.model.response
 import com.polzzak_android.presentation.feature.coupon.model.Coupon
 import com.polzzak_android.presentation.feature.coupon.model.CouponModel
 import com.polzzak_android.presentation.feature.coupon.model.CouponPartner
+import java.text.SimpleDateFormat
+import java.util.Calendar
 
 data class CouponListResponse(
     override val code: Int?,
@@ -15,10 +17,10 @@ data class CouponListResponse(
     )
 }
 
-fun CouponListResponse.Data.toCoupon() = Coupon(
+fun CouponListResponse.Data.toCoupon(isKid: Boolean) = Coupon(
     type = if (this.coupons.isEmpty()) 1 else 2,
     partner = this.family.toPartner(),
-    couponList = this.coupons.map { it.toCouponModel() }
+    couponList = this.coupons.map { it.toCouponModel(isKid) }
 )
 
 data class Family(
@@ -47,9 +49,21 @@ data class CouponDto(
     val rewardRequestDate: Any
 )
 
-fun CouponDto.toCouponModel() = CouponModel(
+fun CouponDto.toCouponModel(isKid: Boolean) = CouponModel(
+    isKid = isKid,
     id = this.couponId,
     name = this.reward,
-    dDay = this.rewardDate,      // todo: 계산
-    deadLine = this.rewardDate  // todo: 계산
+    dDay = getRemainDay(this.rewardDate),
+    deadLine = this.rewardDate
 )
+
+fun getRemainDay(rewardDay: String): String {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS")
+    val targetDate = dateFormat.parse(rewardDay)
+
+    val today = Calendar.getInstance().time
+
+    val differenceInMillis = targetDate.time - today.time
+
+    return (differenceInMillis / (1000 * 60 * 60 * 24)).toString()
+}

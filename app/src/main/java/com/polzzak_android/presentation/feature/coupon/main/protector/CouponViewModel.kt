@@ -19,11 +19,11 @@ class CouponViewModel @Inject constructor(
     private val _couponList: MutableLiveData<ModelState<List<Coupon>>> = MutableLiveData()
     val couponList get() = _couponList
 
-    fun requestCouponList(token: String, couponState: String, memberId: Int?) {
+    fun requestCouponList(token: String, couponState: String, memberId: Int?, isKid: Boolean) {
         viewModelScope.launch {
             _couponList.value = ModelState.Loading()
             repository.getCouponList(token, couponState, memberId).onSuccess { couponList ->
-                _couponList.value = ModelState.Success(couponList!!.map { it.toCoupon() })
+                _couponList.value = ModelState.Success(couponList!!.map { it.toCoupon(isKid) })
             }.onError { exception, data ->
                 _couponList.value = ModelState.Error(exception)
             }
