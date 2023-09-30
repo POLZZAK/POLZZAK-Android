@@ -27,4 +27,24 @@ class NotificationRepository @Inject constructor(private val notificationService
             notificationIds = notificationIds
         )
     }
+
+    suspend fun requestNotificationSettings(
+        accessToken: String
+    ) = requestCatching {
+        val authorization = createHeaderAuthorization(accessToken = accessToken)
+        notificationService.requestNotificationSettings(
+            authorization = authorization
+        )
+    }
+
+    suspend fun requestSwitchNotificationSettings(
+        accessToken: String,
+        settingsMap: Map<String, Boolean>
+    ) = requestCatching {
+        val authorization = createHeaderAuthorization(accessToken = accessToken)
+        notificationService.requestSwitchNotificationSettings(
+            authorization = authorization,
+            settings = settingsMap
+        )
+    }
 }

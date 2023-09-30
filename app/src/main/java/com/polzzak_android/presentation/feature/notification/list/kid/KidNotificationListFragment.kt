@@ -11,7 +11,7 @@ import timber.log.Timber
 
 class KidNotificationListFragment : BaseNotificationListFragment() {
     override val actionToSettingFragment: Int =
-        R.id.action_kidNotificationFragment_to_kidNotificationSettingFragment
+        R.id.action_kidNotificationFragment_to_notificationSettingFragment
     override val memberType: MemberType = MemberType.Kid("")
     override fun onClickPageLink(type: NotificationLinkType) {
         findNavController().run {
