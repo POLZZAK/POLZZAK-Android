@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.polzzak_android.R
+import com.polzzak_android.data.remote.model.isAccessTokenException
 import com.polzzak_android.databinding.FragmentSearchBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.item.ErrorRefreshItem
@@ -23,6 +24,7 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.common.util.toPx
@@ -251,15 +253,18 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 }
 
                 is ModelState.Error -> {
-                    items.add(
-                        ErrorRefreshItem(
-                            content = getString(R.string.search_main_sent_request_error_content),
-                            onRefreshClick = {
-                                linkViewModel.requestSentRequest(
-                                    accessToken = getAccessTokenOrNull() ?: ""
-                                )
-                            })
-                    )
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> items.add(
+                            ErrorRefreshItem(
+                                content = getString(R.string.search_main_sent_request_error_content),
+                                onRefreshClick = {
+                                    linkViewModel.requestSentRequest(
+                                        accessToken = getAccessTokenOrNull() ?: ""
+                                    )
+                                })
+                        )
+                    }
                 }
             }
             setEnabledBtnComplete(isEmpty = it.data.isNullOrEmpty())
@@ -294,7 +299,10 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                         model = LinkRequestUserModel.Guide(targetLinkMemberType = targetLinkMemberType)
                     )
                     items.add(item)
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
             adapter.updateItem(items)
@@ -371,8 +379,11 @@ abstract class BaseSearchFragment : BaseFragment<FragmentSearchBinding>(), LinkC
                 }
 
                 is ModelState.Error -> {
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
                     dismissDialog()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
         }
