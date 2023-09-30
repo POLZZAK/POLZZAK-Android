@@ -140,7 +140,7 @@
         tools:layout="@layout/fragment_term_detail" />
     <fragment
         android:id="@+id/protectorProfileModifyFragment"
-        android:name="com.polzzak_android.presentation.feature.myPage.protector.ProtectorProfileModifyFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.profile.ProfileModifyFragment"
         android:label="fragment_protector_profile_modify"
-        tools:layout="@layout/fragment_protector_profile_modify" />
+        tools:layout="@layout/fragment_profile_modify" />
 </navigation>

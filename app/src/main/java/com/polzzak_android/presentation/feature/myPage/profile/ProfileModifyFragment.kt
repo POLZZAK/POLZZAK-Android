@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.myPage.protector
+package com.polzzak_android.presentation.feature.myPage.profile
 
 import android.net.Uri
 import android.provider.MediaStore
@@ -9,7 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.polzzak_android.R
-import com.polzzak_android.databinding.FragmentProtectorProfileModifyBinding
+import com.polzzak_android.databinding.FragmentProfileModifyBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
@@ -28,9 +28,9 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.auth.signup.PhotoPicker
 import timber.log.Timber
 
-class ProtectorProfileModifyFragment : BaseFragment<FragmentProtectorProfileModifyBinding>(),
+class ProfileModifyFragment : BaseFragment<FragmentProfileModifyBinding>(),
     ToolbarIconInteraction {
-    override val layoutResId: Int = R.layout.fragment_protector_profile_modify
+    override val layoutResId: Int = R.layout.fragment_profile_modify
 
     private lateinit var toolbarHelper: ToolbarHelper
     private var photoPicker: PhotoPicker? = null

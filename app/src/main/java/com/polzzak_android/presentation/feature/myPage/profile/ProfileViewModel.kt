@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.feature.myPage.protector
+package com.polzzak_android.presentation.feature.myPage.profile
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
