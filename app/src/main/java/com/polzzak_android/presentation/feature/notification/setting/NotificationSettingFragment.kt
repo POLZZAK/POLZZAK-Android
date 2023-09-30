@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
+import com.polzzak_android.data.remote.model.isAccessTokenException
 import com.polzzak_android.databinding.FragmentNotificationSettingBinding
 import com.polzzak_android.databinding.ItemNotificationSettingBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -17,6 +18,7 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.getPermissionManagerOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
@@ -134,7 +136,10 @@ class NotificationSettingFragment :
         notificationSettingViewModel.errorEventLiveData.observe(
             viewLifecycleOwner,
             EventWrapperObserver {
-                PolzzakSnackBar.errorOf(binding.root, it).show()
+                when {
+                    it.isAccessTokenException() -> handleInvalidToken()
+                    else -> PolzzakSnackBar.errorOf(binding.root, it).show()
+                }
             })
     }
 
