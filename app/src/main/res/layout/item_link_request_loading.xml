@@ -7,12 +7,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- TODO Loading drawable 추가 -->
-        <ImageView
+        <ProgressBar
             android:id="@+id/ivProgress"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/ic_launcher_background"
+            android:indeterminateDrawable="@drawable/ic_loading_spinner_opacity_rotate"
+            android:indeterminateDuration="1000"
             app:layout_constraintBottom_toTopOf="@id/tvContent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
