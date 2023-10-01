@@ -274,7 +274,16 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                                 R.string.link_management_empty_link,
                                 targetLinkTypeStringOrEmpty
                             )
-                            listOf(LinkManagementMainEmptyItem(content = content))
+                            val imageDrawableRes = when (linkMemberType) {
+                                LinkMemberType.KID -> R.drawable.ic_search_option_menu_kid
+                                LinkMemberType.PROTECTOR -> R.drawable.ic_search_option_menu_parent
+                            }
+                            listOf(
+                                LinkManagementMainEmptyItem(
+                                    imageDrawableRes = imageDrawableRes,
+                                    content = content
+                                )
+                            )
                         }
                     items.addAll(linkedUserItems)
                 }
@@ -309,7 +318,12 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                             )
                         }.ifEmpty {
                             val content = getString(R.string.link_management_empty_received)
-                            listOf(LinkManagementMainEmptyItem(content = content))
+                            listOf(
+                                LinkManagementMainEmptyItem(
+                                    imageDrawableRes = R.drawable.ic_link_request_empty,
+                                    content = content
+                                )
+                            )
                         }
                     items.addAll(receivedRequestItems)
                     setTabUpdatedStatusVisibility(
@@ -349,7 +363,12 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                             )
                         }.ifEmpty {
                             val content = getString(R.string.link_management_empty_sent)
-                            listOf(LinkManagementMainEmptyItem(content = content))
+                            listOf(
+                                LinkManagementMainEmptyItem(
+                                    imageDrawableRes = R.drawable.ic_link_request_empty,
+                                    content = content
+                                )
+                            )
                         }
                     items.addAll(sentRequestItems)
                     setTabUpdatedStatusVisibility(

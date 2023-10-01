@@ -19,10 +19,19 @@ class KidOnBoardingFragment : BaseOnBoardingFragment() {
         R.string.on_boarding_kid_fourth_content,
         R.string.on_boarding_kid_fifth_content
     )
+    private val imageDrawableResList = listOf(
+        R.drawable.ic_onboarding_first,
+        R.drawable.ic_onboarding_second,
+        R.drawable.ic_onboarding_third,
+        R.drawable.ic_onboarding_kid_fourth,
+        R.drawable.ic_onboarding_kid_fifth
+    )
+
     override val pageData = List(5) {
         OnBoardingPageModel(
             titleStringRes = titleStringResList[it],
             contentStringRes = contentStringResList[it],
+            imageDrawableRes = imageDrawableResList[it],
             progress = it + 1,
             maxCount = 5
         )

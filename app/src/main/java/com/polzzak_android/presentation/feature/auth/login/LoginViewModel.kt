@@ -12,7 +12,7 @@ import com.polzzak_android.data.repository.MemberTypeRepository
 import com.polzzak_android.data.repository.UserRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.model.asMemberTypeOrNull
-import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoUiModel
+import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoModel
 import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.model.asMemberTypeDetail
@@ -29,8 +29,8 @@ class LoginViewModel @Inject constructor(
     private val memberTypeRepository: MemberTypeRepository,
     private val userRepository: UserRepository
 ) : ViewModel() {
-    private val _loginInfoLiveData = MutableLiveData<EventWrapper<ModelState<LoginInfoUiModel>>>()
-    val loginInfoLiveData: LiveData<EventWrapper<ModelState<LoginInfoUiModel>>> = _loginInfoLiveData
+    private val _loginInfoLiveData = MutableLiveData<EventWrapper<ModelState<LoginInfoModel>>>()
+    val loginInfoLiveData: LiveData<EventWrapper<ModelState<LoginInfoModel>>> = _loginInfoLiveData
 
     private var loginJob: Job? = null
 
@@ -89,13 +89,13 @@ class LoginViewModel @Inject constructor(
                 setLoginResultError()
                 return@onSuccess
             }
-            val loginInfoUiModel =
-                LoginInfoUiModel.Login(
+            val loginInfoModel =
+                LoginInfoModel.Login(
                     accessToken = accessToken,
                     memberType = memberType,
                     socialType = socialType
                 )
-            setLoginResultSuccess(data = loginInfoUiModel)
+            setLoginResultSuccess(data = loginInfoModel)
         }.onError { exception, _ ->
             setLoginResultError(exception = exception)
         }
@@ -106,13 +106,13 @@ class LoginViewModel @Inject constructor(
             val parentTypes = it?.memberTypeDetailList?.map { responseData ->
                 asMemberTypeDetail(memberTypeDetailResponseData = responseData)
             }?.filterIsInstance<MemberTypeDetail.Parent>() ?: emptyList()
-            val loginInfoUiModel =
-                LoginInfoUiModel.SignUp(
+            val loginInfoModel =
+                LoginInfoModel.SignUp(
                     userName = userName,
                     socialType = socialType,
                     parentTypes = parentTypes
                 )
-            setLoginResultSuccess(data = loginInfoUiModel)
+            setLoginResultSuccess(data = loginInfoModel)
         }.onError { exception, _ ->
             setLoginResultError(exception = exception)
         }
@@ -122,7 +122,7 @@ class LoginViewModel @Inject constructor(
         _loginInfoLiveData.value = EventWrapper(ModelState.Loading())
     }
 
-    private fun setLoginResultSuccess(data: LoginInfoUiModel) {
+    private fun setLoginResultSuccess(data: LoginInfoModel) {
         _loginInfoLiveData.value = EventWrapper(ModelState.Success(data = data))
     }
 
