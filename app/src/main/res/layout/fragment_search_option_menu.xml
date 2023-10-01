@@ -23,7 +23,6 @@
                 android:id="@+id/ivIcon"
                 android:layout_width="256dp"
                 android:layout_height="256dp"
-
                 app:layout_constraintBottom_toTopOf="@id/tvContent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

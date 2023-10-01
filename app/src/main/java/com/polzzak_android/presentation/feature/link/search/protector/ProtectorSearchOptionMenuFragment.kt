@@ -4,8 +4,7 @@ import com.polzzak_android.R
 import com.polzzak_android.presentation.feature.link.search.base.BaseSearchOptionMenuFragment
 
 class ProtectorSearchOptionMenuFragment : BaseSearchOptionMenuFragment() {
-    //TODO 임시 drawable -> 디자인가이드 적용 필요
-    override val iconDrawableRes: Int = R.drawable.logo_third
+    override val iconDrawableRes: Int = R.drawable.ic_search_option_menu_parent
 
     override val contentStringRes: Int = R.string.search_main_parent_content
     override val actionNavigateHostFragment: Int =
