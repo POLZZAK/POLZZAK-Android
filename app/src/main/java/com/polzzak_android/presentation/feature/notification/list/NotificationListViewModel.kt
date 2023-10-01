@@ -100,13 +100,14 @@ class NotificationListViewModel @AssistedInject constructor(
     }
 
     private suspend fun requestNotifications(accessToken: String) {
+        val prevData =
+            notificationLiveData.value?.data.takeIf { !isRefreshed } ?: NotificationsModel()
         notificationRepository.requestNotifications(
             accessToken = accessToken,
             startId = notificationLiveData.value?.data?.nextId.takeIf { !isRefreshed },
         ).onSuccess {
             notificationMutex.lock()
-            val prevData =
-                notificationLiveData.value?.data.takeIf { !isRefreshed } ?: NotificationsModel()
+
             val updatedNotifications =
                 prevData.copy(
                     nextId = it?.startId,
@@ -117,6 +118,8 @@ class NotificationListViewModel @AssistedInject constructor(
             _notificationLiveData.value = ModelState.Success(updatedNotifications)
             notificationMutex.unlock()
         }.onError { exception, _ ->
+            _notificationLiveData.value =
+                ModelState.Error(exception = exception, data = prevData.copy(isRefreshable = true))
             _errorEventLiveData.value = EventWrapper(exception)
         }
     }

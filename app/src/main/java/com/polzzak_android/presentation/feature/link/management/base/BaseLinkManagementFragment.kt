@@ -320,7 +320,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
             adapter.updateItem(item = items)
@@ -356,7 +359,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
             adapter.updateItem(item = items)
@@ -404,8 +410,11 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
                     dismissDialog()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
         }
@@ -448,7 +457,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                         model = LinkRequestUserModel.Guide(targetLinkMemberType = targetLinkMemberType)
                     )
                     items.add(item)
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
             adapter.updateItem(items)

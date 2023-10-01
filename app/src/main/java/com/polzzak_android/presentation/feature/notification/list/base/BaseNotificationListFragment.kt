@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.R
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
+import com.polzzak_android.data.remote.model.isAccessTokenException
 import com.polzzak_android.databinding.FragmentNotificationListBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.item.LoadMoreLoadingSpinnerItem
@@ -15,6 +16,7 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.errorOf
@@ -58,7 +60,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
     }
 
     private fun initToolbar() {
-        ToolbarHelper(
+        val toolbar = ToolbarHelper(
             data = ToolbarData(
                 titleText = getString(R.string.common_notification),
                 iconImageId = R.drawable.ic_setting,
@@ -68,7 +70,8 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
                     }
                 }
             ), toolbar = binding.inToolbar
-        ).set()
+        ).apply { set() }
+        toolbar.hideBackButton()
     }
 
     private fun initSwipeRefreshLayout() {
@@ -140,7 +143,8 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
                 }
 
                 is ModelState.Error -> {
-                    //TODO 에러처리
+                    items.addAll(createNotificationItems(data = it.data?.items))
+                    binding.srlNotifications.isRefreshing = false
                 }
             }
 
@@ -152,7 +156,10 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         notificationListViewModel.errorEventLiveData.observe(
             viewLifecycleOwner,
             EventWrapperObserver {
-                PolzzakSnackBar.errorOf(binding.root, it).show()
+                when {
+                    it.isAccessTokenException() -> handleInvalidToken()
+                    else -> PolzzakSnackBar.errorOf(binding.root, it).show()
+                }
             })
     }
 

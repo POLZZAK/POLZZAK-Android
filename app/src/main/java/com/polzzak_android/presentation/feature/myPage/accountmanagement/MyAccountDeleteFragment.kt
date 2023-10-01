@@ -4,18 +4,22 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
+import com.polzzak_android.data.remote.model.isAccessTokenException
 import com.polzzak_android.databinding.FragmentMyAccountDeleteBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.SpannableBuilder
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.common.util.logout
+import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel
 import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
+import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment.Companion.ARGUMENT_NICKNAME_KEY
@@ -149,7 +153,11 @@ class MyAccountDeleteFragment : BaseFragment<FragmentMyAccountDeleteBinding>() {
                 }
 
                 is ModelState.Error -> {
-                    //TODO error handling
+                    dismissCurrentDialog()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
         }
