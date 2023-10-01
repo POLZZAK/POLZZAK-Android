@@ -74,7 +74,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="아이 찾기" />
 
-            <!-- TODO string resource 적용 -->
             <TextView
                 android:id="@+id/tvBtnCancel"
                 style="@style/subtitle.16.600"
