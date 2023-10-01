@@ -12,12 +12,12 @@ import com.polzzak_android.data.repository.SignUpRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail.Companion.KID_TYPE_ID
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
-import com.polzzak_android.presentation.feature.auth.signup.model.MemberTypeUiModel
-import com.polzzak_android.presentation.feature.auth.signup.model.NickNameUiModel
+import com.polzzak_android.presentation.feature.auth.signup.model.MemberTypeModel
+import com.polzzak_android.presentation.feature.auth.signup.model.NickNameModel
 import com.polzzak_android.presentation.feature.auth.signup.model.NickNameValidationState
-import com.polzzak_android.presentation.feature.auth.signup.model.ProfileImageUiModel
+import com.polzzak_android.presentation.feature.auth.signup.model.ProfileImageModel
 import com.polzzak_android.presentation.feature.auth.signup.model.SignUpPage
-import com.polzzak_android.presentation.feature.auth.signup.model.SignUpResultUiModel
+import com.polzzak_android.presentation.feature.auth.signup.model.SignUpResultModel
 import com.polzzak_android.presentation.feature.auth.signup.model.SignUpTermsOfServiceModel
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -32,18 +32,18 @@ class SignUpViewModel @AssistedInject constructor(
     private val _pageLiveData = MutableLiveData<SignUpPage>()
     val pageLiveData: LiveData<SignUpPage> = _pageLiveData
 
-    private val _nickNameLiveData = MutableLiveData<NickNameUiModel>()
-    val nickNameLiveData: LiveData<NickNameUiModel> = _nickNameLiveData
+    private val _nickNameLiveData = MutableLiveData<NickNameModel>()
+    val nickNameLiveData: LiveData<NickNameModel> = _nickNameLiveData
 
-    private val _memberTypeLiveData = MutableLiveData<MemberTypeUiModel>()
-    val memberTypeLiveData: LiveData<MemberTypeUiModel> = _memberTypeLiveData
+    private val _memberTypeLiveData = MutableLiveData<MemberTypeModel>()
+    val memberTypeLiveData: LiveData<MemberTypeModel> = _memberTypeLiveData
 
-    private val _profileImageLiveData = MutableLiveData<ProfileImageUiModel>(ProfileImageUiModel())
-    val profileImageLiveData: LiveData<ProfileImageUiModel> = _profileImageLiveData
+    private val _profileImageLiveData = MutableLiveData<ProfileImageModel>(ProfileImageModel())
+    val profileImageLiveData: LiveData<ProfileImageModel> = _profileImageLiveData
 
     private val _signUpResultLiveData =
-        MutableLiveData<EventWrapper<ModelState<SignUpResultUiModel>>>()
-    val signUpResultLiveData: LiveData<EventWrapper<ModelState<SignUpResultUiModel>>> =
+        MutableLiveData<EventWrapper<ModelState<SignUpResultModel>>>()
+    val signUpResultLiveData: LiveData<EventWrapper<ModelState<SignUpResultModel>>> =
         _signUpResultLiveData
 
     private val _termsOfServiceLiveData = MutableLiveData<SignUpTermsOfServiceModel>()
@@ -106,34 +106,34 @@ class SignUpViewModel @AssistedInject constructor(
 
     fun selectTypeParent() {
         if (memberTypeLiveData.value?.isParent() == true) return
-        _memberTypeLiveData.value = MemberTypeUiModel(selectedType = MemberTypeUiModel.Type.PARENT)
+        _memberTypeLiveData.value = MemberTypeModel(selectedType = MemberTypeModel.Type.PARENT)
     }
 
     fun selectTypeKid() {
         if (memberTypeLiveData.value?.isKid() == true) return
         _memberTypeLiveData.value =
-            MemberTypeUiModel(
-                selectedType = MemberTypeUiModel.Type.KID,
+            MemberTypeModel(
+                selectedType = MemberTypeModel.Type.KID,
                 selectedTypeId = KID_TYPE_ID
             )
     }
 
     fun selectParentType(selectedTypeId: Int?) {
-        val memberTypeUiModel = memberTypeLiveData.value ?: MemberTypeUiModel()
-        _memberTypeLiveData.value = memberTypeUiModel.copy(selectedTypeId = selectedTypeId)
+        val memberTypeModel = memberTypeLiveData.value ?: MemberTypeModel()
+        _memberTypeLiveData.value = memberTypeModel.copy(selectedTypeId = selectedTypeId)
     }
 
     fun setNickNameValue(nickName: String) {
         checkNickNameValidationJob?.cancel()
-        val prevData = _nickNameLiveData.value ?: NickNameUiModel()
-        _nickNameLiveData.value = NickNameUiModel(
+        val prevData = _nickNameLiveData.value ?: NickNameModel()
+        _nickNameLiveData.value = NickNameModel(
             nickName = nickName,
             isEdited = prevData.isEdited || nickName.isNotEmpty()
         )
     }
 
     fun setProfileImagePath(path: String?) {
-        _profileImageLiveData.value = ProfileImageUiModel(path = path)
+        _profileImageLiveData.value = ProfileImageModel(path = path)
     }
 
     fun requestCheckNickNameValidation() {
@@ -184,9 +184,9 @@ class SignUpViewModel @AssistedInject constructor(
                     profileImagePath = profileImageLiveData.value?.path
                 ).onSuccess { signUpResponseData ->
                     signUpResponseData?.accessToken?.let {
-                        val signUpResultUiModel =
-                            SignUpResultUiModel(accessToken = it, memberTypeId = memberTypeId)
-                        setSignUpResultSuccess(data = signUpResultUiModel)
+                        val signUpResultModel =
+                            SignUpResultModel(accessToken = it, memberTypeId = memberTypeId)
+                        setSignUpResultSuccess(data = signUpResultModel)
                     } ?: run {
                         setSignUpResultError()
                     }
@@ -216,7 +216,7 @@ class SignUpViewModel @AssistedInject constructor(
         _signUpResultLiveData.value = EventWrapper(ModelState.Loading())
     }
 
-    private fun setSignUpResultSuccess(data: SignUpResultUiModel) {
+    private fun setSignUpResultSuccess(data: SignUpResultModel) {
         _signUpResultLiveData.value = EventWrapper(ModelState.Success(data = data))
 
     }

@@ -1,5 +1,5 @@
 package com.polzzak_android.presentation.feature.auth.signup.model
 
-data class ProfileImageUiModel(
+data class ProfileImageModel(
     val path: String? = null
 )

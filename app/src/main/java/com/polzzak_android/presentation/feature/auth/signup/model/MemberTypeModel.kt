@@ -1,6 +1,6 @@
 package com.polzzak_android.presentation.feature.auth.signup.model
 
-data class MemberTypeUiModel(
+data class MemberTypeModel(
     val selectedType: Type? = null,
     val selectedTypeId: Int? = null
 ) {

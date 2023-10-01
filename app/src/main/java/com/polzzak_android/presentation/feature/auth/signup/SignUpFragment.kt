@@ -33,7 +33,8 @@ import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.signup.adapter.ParentTypeRollableAdapter
-import com.polzzak_android.presentation.feature.auth.signup.model.NickNameUiModel
+import com.polzzak_android.presentation.feature.auth.signup.model.MemberTypeModel
+import com.polzzak_android.presentation.feature.auth.signup.model.NickNameModel
 import com.polzzak_android.presentation.feature.auth.signup.model.NickNameValidationState
 import com.polzzak_android.presentation.feature.auth.signup.model.SignUpPage
 import com.polzzak_android.presentation.feature.auth.signup.model.SignUpTermsOfServiceModel
@@ -226,7 +227,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 }
             })
             etInput.setOnFocusChangeListener { _, isFocused ->
-                val textUiModel = signUpViewModel.nickNameLiveData.value ?: NickNameUiModel()
+                val textUiModel = signUpViewModel.nickNameLiveData.value ?: NickNameModel()
                 etInput.isSelected = true
                 setNickNameResultTextView(isFocused = isFocused, uiModel = textUiModel)
             }
@@ -367,6 +368,9 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 clSelectParentCard.isSelected = (it.isParent())
                 clSelectKidCard.isSelected = (it.isKid())
             }
+            val profileDrawableRes =
+                if (it.isParent()) R.drawable.ic_sign_up_parent_select_image else R.drawable.ic_sign_up_kid_select_image
+            binding.inSelectProfileImage.ivImage.loadCircleImageDrawableRes(profileDrawableRes)
             refreshNextButton()
         }
 
@@ -407,11 +411,17 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
 
     private fun observeProfileImageLiveData() {
         signUpViewModel.profileImageLiveData.observe(viewLifecycleOwner) {
+            val imageRes = when (signUpViewModel.memberTypeLiveData.value?.selectedType) {
+                MemberTypeModel.Type.PARENT -> R.drawable.ic_sign_up_parent_select_image
+                MemberTypeModel.Type.KID -> R.drawable.ic_sign_up_kid_select_image
+                else -> null
+            }
             with(binding.inSelectProfileImage) {
                 it.path?.let { path ->
-                    ivImage.loadCircleImageUrl(imageUrl = path)
-                } ?: run {
-                    ivImage.loadCircleImageDrawableRes(drawableRes = R.drawable.ic_launcher_background)
+                    ivImage.loadCircleImageUrl(
+                        imageUrl = path,
+                        placeHolderRes = imageRes
+                    )
                 }
             }
         }
@@ -458,7 +468,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
         })
     }
 
-    private fun setNickNameResultTextView(isFocused: Boolean, uiModel: NickNameUiModel) {
+    private fun setNickNameResultTextView(isFocused: Boolean, uiModel: NickNameModel) {
         with(binding.inSetNickName) {
             tvCheckDuplicatedResult.text = createDuplicatedResultText(
                 isFocused = isFocused,
@@ -493,7 +503,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     private fun createDuplicatedResultText(
         isFocused: Boolean,
         isSelected: Boolean,
-        uiModel: NickNameUiModel
+        uiModel: NickNameModel
     ): String {
         return when {
             !isSelected -> ""
@@ -511,7 +521,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
     private fun createDuplicatedEditTextBackgroundResId(
         isFocused: Boolean,
         isSelected: Boolean,
-        uiModel: NickNameUiModel
+        uiModel: NickNameModel
     ): Int {
         return when {
             !isSelected -> R.drawable.shape_rectangle_white_stroke_gray_300_r8
