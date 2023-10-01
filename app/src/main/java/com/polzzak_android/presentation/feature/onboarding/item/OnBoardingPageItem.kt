@@ -20,6 +20,7 @@ class OnBoardingPageItem(
         with(binding) {
             tvTitle.text = binding.root.context.getString(model.titleStringRes)
             tvContent.text = binding.root.context.getString(model.contentStringRes)
+            ivIcon.setImageResource(model.imageDrawableRes)
         }
     }
 }
