@@ -241,4 +241,8 @@
         <item>\'선물 받기 완료\' 버튼을 눌러준 경우 10P</item>
         <item>회원가입 90P</item>
     </string-array>
+
+    <!-- Stamp main -->
+    <string name="stamp_main_no_link_protector">아이와 연동되면\n도장판을 만들 수 있어요!</string>
+    <string name="stamp_main_no_link_kid">보호자와 연동되면\n도장판을 받을 수 있어요!</string>
 </resources>

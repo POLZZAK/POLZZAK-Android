@@ -124,7 +124,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
                             android:gravity="center"
-                            android:text="아이와 연동되면\n도장판을 만들 수 있어요!"
+                            android:text="@{fragment.kid ? @string/stamp_main_no_link_kid : @string/stamp_main_no_link_protector}"
                             android:textColor="@color/gray_800"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"

@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.stamp.main.completed
 
+import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.core.text.toSpannable
@@ -38,15 +39,22 @@ class ProtectorCompletedFragment : BaseFragment<FragmentCompletedBinding>(),
     private val linkedUserViewModel: StampLinkedUserViewModel by activityViewModels()
     private val stampViewModel: StampViewModel by activityViewModels()
 
+    val isKid: Boolean by lazy {
+        arguments?.getBoolean(ARG_IS_KID) ?: false
+    }
+
     companion object {
+        private const val ARG_IS_KID = "isKid"
         private var instance: ProtectorCompletedFragment? = null
 
         @JvmStatic
-        fun getInstance(): ProtectorCompletedFragment {
+        fun getInstance(isKid: Boolean): ProtectorCompletedFragment {
             if (instance == null) {
                 synchronized(ProtectorCompletedFragment::class.java) {
                     if (instance == null) {
-                        instance = ProtectorCompletedFragment()
+                        instance = ProtectorCompletedFragment().apply {
+                            arguments = Bundle().apply { putBoolean(ARG_IS_KID, isKid) }
+                        }
                     }
                 }
             }
@@ -86,10 +94,16 @@ class ProtectorCompletedFragment : BaseFragment<FragmentCompletedBinding>(),
         val userList = linkedUserViewModel.getLinkedUserList()
 
         if (userList != null) {
+            val title = if (isKid) {
+                "누가 만들어준 도장판을 볼까요?"
+            } else {
+                "누구의 도장판을 볼까요?"
+            }
+
             CommonBottomSheetHelper.getInstance(
                 data = CommonBottomSheetModel(
                     type = BottomSheetType.SELECT_STAMP_BOARD,
-                    title = "누구의 도장판을 볼까요?".toSpannable(),
+                    title = title.toSpannable(),
                     contentList = listOf(SelectUserStampBoardModel(userId = 0, nickName = "전체", userType = null)) + userList.map { it.toSelectUserStampBoardModel() },
                     button = CommonButtonModel(
                         buttonCount = ButtonCount.ZERO
