@@ -45,6 +45,16 @@ interface StampBoardRepository {
         accessToken: String,
         stampBoardId: Int
     ): ApiResult<Unit>
+
+    /**
+     * 도장 생성(도장 찍어주기) - 보호자
+     */
+    suspend fun makeStamp(
+            accessToken: String,
+            missionRequestId: Int,
+            missionId: Int,
+            stampDesignId: Int
+    ): ApiResult<Unit>
 }
 
 class StampBoardRepositoryImpl @Inject constructor(
@@ -104,5 +114,11 @@ class StampBoardRepositoryImpl @Inject constructor(
         val auth = createHeaderAuthorization(accessToken = accessToken)
 
         stampBoardService.receiveCoupon(token = auth, stampBoardId = stampBoardId)
+    }
+
+    override suspend fun makeStamp(accessToken: String, missionRequestId: Int, missionId: Int, stampDesignId: Int): ApiResult<Unit> = requestCatching {
+        val auth = createHeaderAuthorization(accessToken = accessToken)
+
+        stampBoardService.makeStamp(token = auth, missionRequestId = missionRequestId, missionId = missionId, stampDesignId = stampDesignId)
     }
 }

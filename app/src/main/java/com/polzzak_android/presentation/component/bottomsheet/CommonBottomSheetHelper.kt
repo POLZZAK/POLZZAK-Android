@@ -22,10 +22,7 @@ import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserSt
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
-class CommonBottomSheetHelper(
-    private val data: CommonBottomSheetModel,
-    private val onClickListener: (() -> OnButtonClickListener)? = null,
-) : BottomSheetDialogFragment(), BottomSheetMissionListClickInteraction,
+class CommonBottomSheetHelper : BottomSheetDialogFragment(), BottomSheetMissionListClickInteraction,
     BottomSheetExampleMissionListClickInteraction, BottomSheetUserInfoListClickInteraction,
     BottomSheetUserInfoImageListClickInteraction {
 
@@ -37,12 +34,20 @@ class CommonBottomSheetHelper(
 
     private var returnValue: Any? = null
 
+    private lateinit var data: CommonBottomSheetModel
+    private var onClickListener: (() -> OnButtonClickListener)? = null
+
     companion object {
         fun getInstance(
             data: CommonBottomSheetModel,
             onClickListener: (() -> OnButtonClickListener)? = null
         ): CommonBottomSheetHelper {
-            return CommonBottomSheetHelper(data, onClickListener)
+            val instance = CommonBottomSheetHelper()
+            with(instance) {
+                this.data = data
+                this.onClickListener = onClickListener
+            }
+            return instance
         }
     }
 

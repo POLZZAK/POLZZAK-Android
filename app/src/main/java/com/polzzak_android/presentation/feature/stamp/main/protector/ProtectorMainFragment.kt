@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.feature.stamp.main.protector
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.polzzak_android.R
@@ -9,8 +10,11 @@ import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
+import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheet
+import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheetViewModel
 import com.polzzak_android.presentation.feature.stamp.main.completed.ProtectorCompletedFragment
 import com.polzzak_android.presentation.feature.stamp.main.progress.ProtectorProgressFragment
+import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
 class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_protector_main
@@ -46,6 +50,7 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), Tool
         tabListener()
 
         binding.fab.setOnClickListener {
+            // todo: 연결된 사용자 없는 경우 처리 필요
             findNavController().navigate(R.id.action_protectorMainFragment_to_makeStampFragment)
         }
     }

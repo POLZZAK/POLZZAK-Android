@@ -52,4 +52,15 @@ interface StampBoardService {
         @Header("Authorization") token: String,
         @Field("stampBoardId") stampBoardId: Int
     ): Response<EmptyDataResponse>
+
+    /**
+     * 도장 생성(도장 찍어주기) - 보호자
+     */
+    @POST("/api/v1/stamps/stamp-boards")
+    suspend fun makeStamp(
+            @Header("Authorization") token: String,
+            @Field("missionRequestId") missionRequestId: Int,
+            @Field("missionId") missionId: Int,
+            @Field("stampDesignId") stampDesignId: Int,
+    ): Response<EmptyDataResponse>
 }
