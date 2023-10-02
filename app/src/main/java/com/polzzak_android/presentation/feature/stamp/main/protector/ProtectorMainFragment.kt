@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.feature.stamp.main.protector
 
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.polzzak_android.R
@@ -9,6 +10,8 @@ import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
+import com.polzzak_android.presentation.feature.link.LinkViewModel
+import com.polzzak_android.presentation.feature.myPage.profile.ProfileViewModel
 import com.polzzak_android.presentation.feature.stamp.main.completed.ProtectorCompletedFragment
 import com.polzzak_android.presentation.feature.stamp.main.progress.ProtectorProgressFragment
 
@@ -19,6 +22,8 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), Tool
     private val protectorCompletedFragment = ProtectorCompletedFragment.getInstance()
 
     private lateinit var toolbarHelper: ToolbarHelper
+
+    private val linkedUserViewModel: StampLinkedUserViewModel by activityViewModels()
 
     override fun setToolbar() {
         super.setToolbar()
@@ -46,7 +51,10 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), Tool
         tabListener()
 
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_protectorMainFragment_to_makeStampFragment)
+            val hasLinkedUser = linkedUserViewModel.getLinkedUserList().isNullOrEmpty()
+            if (!hasLinkedUser) {
+                findNavController().navigate(R.id.action_protectorMainFragment_to_makeStampFragment)
+            }
         }
     }
 
