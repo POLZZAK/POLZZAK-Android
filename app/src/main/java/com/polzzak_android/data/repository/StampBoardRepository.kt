@@ -3,6 +3,7 @@ package com.polzzak_android.data.repository
 import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
 import com.polzzak_android.data.remote.model.request.StampRequest
+import com.polzzak_android.data.remote.model.request.UpdateStampBoardRequest
 import com.polzzak_android.data.remote.model.response.EmptyDataResponse
 import com.polzzak_android.data.remote.model.response.MainStampBoardListResponse
 import com.polzzak_android.data.remote.model.response.StampBoardDetailDto
@@ -22,6 +23,12 @@ interface StampBoardRepository {
         accessToken: String,
         newStampBoard: MakeStampBoardRequest
     ) : ApiResult<Nothing?>
+
+    suspend fun updateStampBoard(
+            accessToken: String,
+            stampBoardId: Int,
+            request: UpdateStampBoardRequest
+    ) : ApiResult<StampBoardDetailDto>
 
     /**
      * 도장판 상세 데이터 조회
@@ -81,6 +88,14 @@ class StampBoardRepositoryImpl @Inject constructor(
     ) : ApiResult<Nothing?> = requestCatching {
         val authorization = createHeaderAuthorization(accessToken = accessToken)
         stampBoardService.makeStampBoard(token = authorization, stampBoardRequest = newStampBoard)
+    }
+
+    /**
+     * 도장판 수정
+     */
+    override suspend fun updateStampBoard(accessToken: String, stampBoardId: Int, request: UpdateStampBoardRequest): ApiResult<StampBoardDetailDto> = requestCatching {
+        val authorization = createHeaderAuthorization(accessToken = accessToken)
+        stampBoardService.updateStampBoard(token = authorization, stampBoardId = stampBoardId, request = request)
     }
 
     override suspend fun getStampBoardDetailData(

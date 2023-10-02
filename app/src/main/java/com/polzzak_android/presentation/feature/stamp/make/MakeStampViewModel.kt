@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
+import com.polzzak_android.data.remote.model.request.UpdateStampBoardRequest
 import com.polzzak_android.data.remote.model.response.toStampBoardModel
 import com.polzzak_android.data.repository.StampBoardRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.feature.stamp.model.MakeStampCountModel
 import com.polzzak_android.presentation.feature.stamp.model.MakeStampMissionListModel
+import com.polzzak_android.presentation.feature.stamp.model.MakeStampMissionModel
 import com.polzzak_android.presentation.feature.stamp.model.MakeStampNameModel
 import com.polzzak_android.presentation.feature.stamp.model.MakeStampRewardModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -66,7 +68,7 @@ class MakeStampViewModel @Inject constructor(
     /**
      * 유효성 체크
      */
-    fun validateInput(token: String) {
+    fun validateInput(token: String, isModify: Boolean, stampBoardId: Int? = null) {
         val checkName = validateInput(MakeStampBardInputType.NAME)
         val checkReward = validateInput(MakeStampBardInputType.REWARD)
         val checkCount = validateInput(MakeStampBardInputType.COUNT)
@@ -80,6 +82,17 @@ class MakeStampViewModel @Inject constructor(
                 _stampBoardReward.value,
                 _missionList.value
             ) { id, name, count, reward, missionList ->
+                if (isModify) {
+                    updateStampBoard(
+                            token = token,
+                            stampBoardId = stampBoardId ?: -1,
+                            nameModel = name,
+                            countModel = count,
+                            rewardModel = reward,
+                            missionListModel = missionList
+                    )
+                    return@safeLet
+                }
                 makeStampBoard(
                     token = token,
                     id = id,
@@ -107,7 +120,7 @@ class MakeStampViewModel @Inject constructor(
             stampBoardName = nameModel.name,
             stampBoardCount = countModel.count,
             stampBoardReward = rewardModel.reward,
-            missionList = missionListModel.missionList
+            missionList = missionListModel.missionList.map { it.content }
         )
 
         viewModelScope.launch {
@@ -118,6 +131,36 @@ class MakeStampViewModel @Inject constructor(
             )
             response.onSuccess {
                 _makeStampBoardState.value = ModelState.Success("도장판 생성 성공")
+            }.onError { exception, nothing ->
+                _makeStampBoardState.value = ModelState.Error(exception)
+            }
+        }
+    }
+
+    private fun updateStampBoard(
+            token: String,
+            stampBoardId: Int,
+            nameModel: MakeStampNameModel,
+            countModel: MakeStampCountModel,
+            rewardModel: MakeStampRewardModel,
+            missionListModel: MakeStampMissionListModel
+    ) {
+        val request = UpdateStampBoardRequest(
+                goalStampCount = countModel.count,
+                missions = missionListModel.missionList.map { MakeStampMissionModel(it.id, it.content) },
+                name = nameModel.name,
+                reward = rewardModel.reward
+        )
+
+        viewModelScope.launch {
+            _makeStampBoardState.value = ModelState.Loading()
+            val response = repository.updateStampBoard(
+                    accessToken = token,
+                    stampBoardId = stampBoardId,
+                    request = request
+            )
+            response.onSuccess {
+                _makeStampBoardState.value = ModelState.Success("도장판 수정 성공")
             }.onError { exception, nothing ->
                 _makeStampBoardState.value = ModelState.Error(exception)
             }
@@ -163,7 +206,7 @@ class MakeStampViewModel @Inject constructor(
         val currentMissionList = _missionList.value
         val mutableMissionList = currentMissionList!!.missionList.toMutableList()
 
-        mutableMissionList.add("")
+        mutableMissionList.add(MakeStampMissionModel(null, ""))
 
         _missionList.value = currentMissionList.copy(
             missionList = mutableMissionList
@@ -171,7 +214,7 @@ class MakeStampViewModel @Inject constructor(
         _missionListSize.value = mutableMissionList.size
     }
 
-    fun updateMissionList(input: List<String>) {
+    fun updateMissionList(input: List<MakeStampMissionModel>) {
         val currentMissionList = _missionList.value
         _missionList.value = currentMissionList!!.copy(
             missionList = input
@@ -182,7 +225,11 @@ class MakeStampViewModel @Inject constructor(
         val currentMissionList = _missionList.value
         val mutableMissionList = currentMissionList!!.missionList.toMutableList()
 
-        mutableMissionList.remove(mission)
+        val removeMission = mutableMissionList.find {
+            it.content == mission
+        }
+
+        mutableMissionList.remove(removeMission)
 
         _missionList.value = currentMissionList.copy(
             missionList = mutableMissionList

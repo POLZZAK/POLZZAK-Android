@@ -1,5 +1,7 @@
 package com.polzzak_android.presentation.feature.stamp.make
 
+import com.polzzak_android.presentation.feature.stamp.model.MakeStampMissionModel
+
 object MakeStampValidator {
 
     fun checkName(name: String?): Pair<Boolean, String> {
@@ -39,7 +41,7 @@ object MakeStampValidator {
         val index: Int
     )
 
-    fun checkMission(missionList: List<String>?) : Pair<Boolean, ResultMissionValidate> {
+    fun checkMission(missionList: List<MakeStampMissionModel>?) : Pair<Boolean, ResultMissionValidate> {
         if (missionList == null) {
             return Pair(false, ResultMissionValidate("도장판 미션 리스트 비었음", 0))
         }
@@ -47,11 +49,11 @@ object MakeStampValidator {
         for (mission in missionList) {
             val index = missionList.indexOf(mission)
 
-            if (mission.length > 20) {
+            if (mission.content.length > 20) {
                 return Pair(false, ResultMissionValidate("20자까지만 쓸 수 있어요", index))
             }
 
-            if (mission == "") {
+            if (mission.content == "") {
                 return Pair(false, ResultMissionValidate("빈칸이 있어요!", index))
             }
 

@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.stamp.detail.protector
 
+import android.os.Bundle
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.text.toSpannable
@@ -31,6 +32,7 @@ import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
+import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheet
@@ -40,7 +42,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
-class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBinding>() {
+class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_kid_stamp_board_detail
 
 
@@ -57,7 +59,7 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
         super.setToolbar()
 
         toolbarHelper = ToolbarHelper(
-                data = ToolbarData(popStack = findNavController()),
+                data = ToolbarData(popStack = findNavController(), iconImageId = R.drawable.ic_pencil, iconInteraction = this),
                 toolbar = binding.toolbar
         ).apply {
             set()
@@ -305,5 +307,13 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
                 PolzzakSnackBar.errorOf(view = binding.root, exception = exception)
             }
         }
+    }
+
+    override fun onToolbarIconClicked() {
+        findNavController().navigate(resId = R.id.action_protectorStampBoardDetailFragment_to_makeStampFragment,
+                args = Bundle().apply {
+                    putInt("partnerId", SavedStateHandle().get<Int>("partnerId") ?: -1)
+                    putInt("boardId", viewModel.stampBoardId)
+                })
     }
 }
