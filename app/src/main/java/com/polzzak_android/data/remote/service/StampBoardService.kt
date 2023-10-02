@@ -3,6 +3,7 @@ package com.polzzak_android.data.remote.service
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
 import com.polzzak_android.data.remote.model.request.ReceiveCouponRequest
 import com.polzzak_android.data.remote.model.request.StampRequest
+import com.polzzak_android.data.remote.model.request.UpdateStampBoardRequest
 import com.polzzak_android.data.remote.model.response.EmptyDataResponse
 import com.polzzak_android.data.remote.model.response.MainStampBoardListResponse
 import com.polzzak_android.data.remote.model.response.MakeStampBoardResponse
@@ -13,6 +14,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -30,6 +32,14 @@ interface StampBoardService {
         @Header("Authorization") token: String,
         @Body stampBoardRequest: MakeStampBoardRequest
     ) : Response<MakeStampBoardResponse>
+
+    @PATCH("/api/v1/stamps/stamp-boards/{stampBoardId}")
+    suspend fun updateStampBoard(
+            @Header("Authorization") token: String,
+            @Path("stampBoardId") stampBoardId: Int,
+            @Body request: UpdateStampBoardRequest
+    ) : Response<StampBoardDetailResponse>
+
 
     @GET("/api/v1/stamps/stamp-boards/{stampBoardId}")
     suspend fun getStampBoardDetailData(
@@ -53,5 +63,16 @@ interface StampBoardService {
     suspend fun receiveCoupon(
         @Header("Authorization") token: String,
         @Body receiveCouponRequest: ReceiveCouponRequest
+    ): Response<EmptyDataResponse>
+
+    /**
+     * 도장 생성(도장 찍어주기) - 보호자
+     */
+    @POST("/api/v1/stamps/stamp-boards")
+    suspend fun makeStamp(
+            @Header("Authorization") token: String,
+            @Field("missionRequestId") missionRequestId: Int,
+            @Field("missionId") missionId: Int,
+            @Field("stampDesignId") stampDesignId: Int,
     ): Response<EmptyDataResponse>
 }

@@ -1,4 +1,4 @@
-package com.polzzak_android.presentation.component.bottomsheet.bindable
+package com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.bindable
 
 import android.view.View
 import com.polzzak_android.R
@@ -6,9 +6,9 @@ import com.polzzak_android.databinding.ItemMissionBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
-class MissionListItem(
+class StampBottomSheetMissionListItem(
     val model: MissionModel,
-    private val interaction: BottomSheetMissionListClickInteraction
+    private val interaction: StampBottomSheetMissionListClickInteraction
 ) :
     BindableItem<ItemMissionBinding>() {
     override val layoutRes = R.layout.item_mission
@@ -47,13 +47,13 @@ class MissionListItem(
     }
 
     override fun areItemsTheSame(other: BindableItem<*>): Boolean =
-        other is MissionListItem && other.model.id == this.model.id
+        other is StampBottomSheetMissionListItem && other.model.id == this.model.id
 
 
     override fun areContentsTheSame(other: BindableItem<*>): Boolean =
-        other is MissionListItem && other.model == this.model
+        other is StampBottomSheetMissionListItem && other.model == this.model
 }
 
-interface BottomSheetMissionListClickInteraction {
+interface StampBottomSheetMissionListClickInteraction {
     fun onMissionClick(model: MissionModel)
 }
