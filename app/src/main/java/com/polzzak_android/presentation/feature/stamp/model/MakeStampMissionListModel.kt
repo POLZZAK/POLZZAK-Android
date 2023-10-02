@@ -8,7 +8,7 @@ data class MakeStampMissionListModel(
 ) {
     companion object {
         val init = MakeStampMissionListModel(
-            missionList = listOf("test1", "test2"),
+            missionList = listOf("", ""),
             isValidate = true,
             errorMessage = null,
             errorPosition = null

@@ -95,6 +95,9 @@
         <action
             android:id="@+id/action_protectorMyPageFragment_to_protectorCSFragment"
             app:destination="@id/protectorCSFragment" />
+        <action
+            android:id="@+id/action_protectorMyPageFragment_to_protectorProfileModifyFragment"
+            app:destination="@id/protectorProfileModifyFragment" />
 
         <action
             android:id="@+id/action_protectorMyPageFragment_to_protectorRankingFragment"
@@ -156,6 +159,11 @@
         android:name="com.polzzak_android.presentation.feature.term.TermDetailFragment"
         android:label="TermDetailFragment"
         tools:layout="@layout/fragment_term_detail" />
+    <fragment
+        android:id="@+id/protectorProfileModifyFragment"
+        android:name="com.polzzak_android.presentation.feature.myPage.profile.ProfileModifyFragment"
+        android:label="fragment_protector_profile_modify"
+        tools:layout="@layout/fragment_profile_modify" />
 
     <fragment
         android:id="@+id/protectorRankingFragment"
