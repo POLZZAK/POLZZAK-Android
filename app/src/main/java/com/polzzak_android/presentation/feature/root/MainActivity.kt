@@ -1,10 +1,13 @@
 package com.polzzak_android.presentation.feature.root
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.polzzak_android.R
 import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.common.base.BaseActivity
@@ -25,6 +28,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.subjects.PublishSubject
+import timber.log.Timber
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 @AndroidEntryPoint
@@ -60,6 +65,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         }
         permissionManager.requestAllPermissions()
 
+        initFCMMessaging()
         // set navigation
         val navHostFragment =
             supportFragmentManager.findFragmentById(binding.fcvContainer.id) as NavHostFragment
@@ -68,6 +74,20 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
 
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    private fun initFCMMessaging() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Timber.w(task.exception, "Fetching FCM registration token failed")
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+            Log.d("TESTTEST",UUID.randomUUID().toString())
+            //TODO 서버 토큰 등록
+        })
     }
 
     private fun initLoginHelper() {

@@ -132,6 +132,9 @@ fabric.properties
 # keystore
 keystore.properties
 
+# Notificaiton
+google-services.json
+
 ### AndroidStudio Patch ###
 
 !/gradle/wrapper/gradle-wrapper.jar
