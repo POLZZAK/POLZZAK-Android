@@ -112,7 +112,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
-                        android:text="아이와 연동되면\n쿠폰함이 열려요!"
+                        android:text="@{fragment.kid ? @string/coupon_main_no_link_kid : @string/coupon_main_no_link_protector}"
                         android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
