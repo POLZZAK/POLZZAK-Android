@@ -19,6 +19,7 @@ import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
@@ -173,10 +174,8 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                 } else {
                     // 실패
                     exception.printStackTrace()
-
+                    // 스낵바가 바텀시트에 가려지는 현상 발생으로 바텀시트 다시 띄우지 않음
                     PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
-                    // TODO: 선택했던 미션 선택 처리 필요
-                    openStampRequestSheet()
                 }
             }
         )
@@ -196,7 +195,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                         textColor = R.color.primary_600
                     )
                     span(
-                        text = "쿠폰을 선물 받았어요!",
+                        text = "\n쿠폰을 선물 받았어요!",
                         style = R.style.subtitle_16_600
                     )
                 },
@@ -217,10 +216,11 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
             onClickListener = {
                 object : OnButtonClickListener {
                     override fun setBusinessLogic() {
+                        receiveCoupon()
                     }
 
                     override fun getReturnValue(value: Any) {
-                        receiveCoupon()
+
                     }
                 }
             }
@@ -258,15 +258,14 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                         }
                     )
 
-                    // TODO: 쿠폰 수령 후 데이터 새로 받아와서 쿠폰 받기 버튼 비활성화 되는지 테스트
                     viewModel.fetchStampBoardDetailData(
                         accessToken = getAccessTokenOrNull() ?: "",
                         stampBoardId = viewModel.stampBoardId
                     )
                 } else {
                     // 실패
+                    // 스낵바가 바텀시트에 가려지는 현상 발생으로 바텀시트 다시 띄우지 않음
                     PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
-                    openRewardSheet()
                 }
             }
         )
@@ -311,11 +310,24 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                             buttonCount = ButtonCount.ONE,
                             positiveButtonText = "되돌아가기"
                         )
-                    )
+                    ),
+                    onConfirmListener = {
+                        object : OnButtonClickListener {
+                            override fun setBusinessLogic() {
+                                findNavController().popBackStack()
+                            }
+
+                            override fun getReturnValue(value: Any) {
+                            }
+                        }
+                    }
                 ).show(childFragmentManager, null)
             }
+            is ApiException.AccessTokenExpired -> {
+                handleInvalidToken()
+            }
             else -> {
-                PolzzakSnackBar.errorOf(view = binding.root, exception = exception)
+                PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
             }
         }
     }

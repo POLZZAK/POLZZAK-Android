@@ -17,7 +17,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tabBackground="@drawable/selector_bg_link_management_tab"
             app:tabIndicatorHeight="0dp"
-            app:tabPadding="0dp" />
+            app:tabPadding="0dp"
+            app:tabRippleColor="@null" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvLinked"

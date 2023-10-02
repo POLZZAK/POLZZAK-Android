@@ -85,8 +85,9 @@ class LinkViewModel @AssistedInject constructor(
     fun requestSearchUserWithNickName(accessToken: String) {
         searchUserJob?.cancel()
         searchUserJob = viewModelScope.launch {
-            _searchUserLiveData.value = ModelState.Loading()
             val query = searchQueryLiveData.value ?: ""
+            if (query.isEmpty()) return@launch
+            _searchUserLiveData.value = ModelState.Loading()
             familyRepository.requestUserWithNickName(accessToken = accessToken, nickName = query)
                 .onSuccess { userInfoDto ->
                     val linkRequestUserModel =

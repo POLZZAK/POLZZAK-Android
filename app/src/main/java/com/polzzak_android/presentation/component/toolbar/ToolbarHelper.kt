@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.component.toolbar
 
 import android.view.View
+import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import com.polzzak_android.databinding.LayoutToolbarBinding
 
@@ -80,7 +81,11 @@ class ToolbarHelper(
     }
 
     fun updateImageIconColor(colorResource: Int) {
-        imageIconView.imageTintList = AppCompatResources.getColorStateList(imageIconView.context, colorResource)
+        imageIconView.imageTintList =
+            AppCompatResources.getColorStateList(imageIconView.context, colorResource)
+    }
 
+    fun updateImageIconImage(@DrawableRes imageResource: Int) {
+        imageIconView.setImageResource(imageResource)
     }
 }

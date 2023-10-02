@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemHasCouponBinding
 import com.polzzak_android.databinding.ItemHasNotCouponBinding
 import com.polzzak_android.presentation.feature.coupon.main.content.CouponContainerInteraction
@@ -65,7 +66,13 @@ class MainCouponAdapter(private var couponList: List<Coupon>, private val intera
 
         fun bind(item: Coupon) {
             with(binding) {
-                // TODO: 멤버 타입 라벨 표시
+                // 아이가 아니라면 보호자 타입 라벨 표시
+                if (item.partner.isKid.not()) {
+                    prefix.setText(R.string.coupon_main_from)
+                    memberType.text = item.partner.memberType
+                    memberType.visibility = View.VISIBLE
+                }
+
                 userNickName.text = item.partner.nickname
             }
         }
@@ -97,6 +104,13 @@ class MainCouponAdapter(private var couponList: List<Coupon>, private val intera
 
         fun bind(item: Coupon) {
             with(binding) {
+                // 아이가 아니라면 보호자 타입 라벨 표시
+                if (item.partner.isKid.not()) {
+                    prefix.setText(R.string.coupon_main_from)
+                    memberType.text = item.partner.memberType
+                    memberType.visibility = View.VISIBLE
+                }
+
                 userNickName.text = item.partner.nickname
                 interaction.setViewPager(couponPager, curPage, totalPage, item.couponList)
             }

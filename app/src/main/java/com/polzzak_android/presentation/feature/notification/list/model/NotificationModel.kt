@@ -1,75 +1,66 @@
 package com.polzzak_android.presentation.feature.notification.list.model
 
-import android.text.Spannable
-import androidx.annotation.StringRes
-import com.polzzak_android.R
+import com.polzzak_android.common.util.safeLet
+import com.polzzak_android.data.remote.model.response.NotificationDto
+import com.polzzak_android.presentation.common.util.toLocalDateTimeOrNull
+import com.polzzak_android.presentation.common.util.toNotificationDateString
 
-//TODO api response 확인 후 알림타입추가
-sealed interface NotificationModel {
-    val id: Int
-
-    @get:StringRes
-    val emojiStringRes: Int
-
-    @get:StringRes
-    val titleStringRes: Int
-    val date: String
-    val content: Spannable
-    val isButtonVisible: Boolean
-    val userInfo: NotificationUserModel?
-
+data class NotificationModel(
+    val id: Int,
+    val title: String,
+    val date: String,
+    val content: String,
+    val isButtonVisible: Boolean,
+    val user: NotificationUserModel?,
+    val statusType: NotificationStatusType,
+    val type: NotificationType,
+    val link: NotificationLinkType?
+) {
     data class NotificationUserModel(
-        val profileImageUrl: String,
+        val userId: Int,
+        val profileImageUrl: String?,
         val nickName: String
     )
+}
 
-    class RequestLink(
-        override val id: Int,
-        override val date: String,
-        override val content: Spannable,
-        nickName: String,
-        profileImageUrl: String,
-    ) : NotificationModel {
-        override val emojiStringRes: Int = R.string.notification_request_link_emoji
-        override val titleStringRes: Int = R.string.notification_request_link_title
-        override val isButtonVisible = true
-        override val userInfo =
-            NotificationUserModel(profileImageUrl = profileImageUrl, nickName = nickName)
-    }
+fun NotificationDto.toNotificationModel(): NotificationModel? {
+    return NotificationModel(
+        id = this.id ?: return null,
+        title = this.title.orEmpty(),
+        date = this.createdDate?.toLocalDateTimeOrNull()?.toNotificationDateString() ?: return null,
+        content = this.message.orEmpty(),
+        isButtonVisible = (this.type == "FAMILY_REQUEST"),
+        user = safeLet(this.sender?.id, this.sender?.nickName) { id, nickName ->
+            NotificationModel.NotificationUserModel(
+                userId = id,
+                profileImageUrl = this.sender?.profileUrl,
+                nickName = nickName
+            )
+        },
+        statusType = this.status.toNotificationStatusType(),
+        type = NotificationType.values()
+            .find { this.type?.compareTo(it.name, ignoreCase = true) == 0 } ?: return null,
+        link = this.link?.toNotificationLinkType()
+    )
+}
 
-    class CompleteLink(
-        override val id: Int,
-        override val date: String,
-        override val content: Spannable,
-        nickName: String,
-        profileImageUrl: String,
-    ) : NotificationModel {
-        override val emojiStringRes: Int = R.string.notification_complete_link_emoji
-        override val titleStringRes: Int = R.string.notification_complete_link_title
-        override val isButtonVisible = false
-        override val userInfo =
-            NotificationUserModel(profileImageUrl = profileImageUrl, nickName = nickName)
-    }
+private fun String?.toNotificationStatusType() = when (this) {
+    "READ" -> NotificationStatusType.READ
+    "UNREAD" -> NotificationStatusType.UNREAD
+    "REQUEST_FAMILY" -> NotificationStatusType.REQUEST_FAMILY
+    "REQUEST_FAMILY_ACCEPT" -> NotificationStatusType.REQUEST_FAMILY_ACCEPT
+    "REQUEST_FAMILY_REJECT" -> NotificationStatusType.REQUEST_FAMILY_REJECT
+    else -> NotificationStatusType.UNKNOWN
+}
 
-    class LevelUp(
-        override val id: Int,
-        override val date: String,
-        override val content: Spannable
-    ) : NotificationModel {
-        override val emojiStringRes: Int = R.string.notification_level_up_emoji
-        override val titleStringRes: Int = R.string.notification_level_up_title
-        override val isButtonVisible = false
-        override val userInfo = null
-    }
-
-    class LevelDown(
-        override val id: Int,
-        override val date: String,
-        override val content: Spannable
-    ) : NotificationModel {
-        override val emojiStringRes: Int = R.string.notification_level_down_emoji
-        override val titleStringRes: Int = R.string.notification_level_down_title
-        override val isButtonVisible = false
-        override val userInfo = null
+private fun String.toNotificationLinkType(): NotificationLinkType? {
+    val destination = this.substringBefore('/')
+    val id = this.substringAfter('/').toIntOrNull()
+    return when (destination) {
+        "home" -> NotificationLinkType.Home
+        "my-page" -> NotificationLinkType.My
+        "stamp-board" -> NotificationLinkType.StampDetail(id = id ?: return null)
+        "coupon" -> NotificationLinkType.CouponDetail(id = id ?: return null)
+        else -> null
     }
 }

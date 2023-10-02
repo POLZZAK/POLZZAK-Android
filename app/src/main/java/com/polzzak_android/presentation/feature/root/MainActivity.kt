@@ -7,12 +7,19 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.polzzak_android.R
 import com.polzzak_android.databinding.ActivityMainBinding
+import com.polzzak_android.presentation.common.base.BaseActivity
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.util.PermissionManager
+import com.polzzak_android.presentation.common.util.SpannableBuilder
+import com.polzzak_android.presentation.component.BackButtonPressedSnackBar
+import com.polzzak_android.presentation.component.dialog.CommonDialogContent
+import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
+import com.polzzak_android.presentation.component.dialog.CommonDialogModel
+import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.feature.auth.login.sociallogin.GoogleLoginHelper
 import com.polzzak_android.presentation.feature.auth.login.sociallogin.KakaoLoginHelper
 import com.polzzak_android.presentation.feature.auth.login.sociallogin.SocialLoginManager
-import com.polzzak_android.presentation.common.base.BaseActivity
-import com.polzzak_android.presentation.common.util.PermissionManager
-import com.polzzak_android.presentation.component.BackButtonPressedSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -42,6 +49,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        savedInstanceState?.let {
+            val savedToken = it.getString(SAVE_INSTANCE_ACCESS_TOKEN_KEY)
+            if (getAccessToken().isNullOrEmpty()) mainViewModel.accessToken = savedToken
+        }
         permissionManager.requestAllPermissions()
         initLoginHelper()
         // set navigation
@@ -71,6 +82,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         clearBackPressedEvent()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(SAVE_INSTANCE_ACCESS_TOKEN_KEY, getAccessToken())
+    }
 
     private fun clearBackPressedEvent() {
         compositeDisposable.clear()
@@ -109,7 +124,27 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         setBackPressedEvent()
     }
 
+    fun logout() {
+        if (navController.popBackStack(R.id.loginFragment, false)) mainViewModel.logout()
+    }
+
+    fun handleInvalidToken() {
+        val dialogTitleSpannable = SpannableBuilder.build(context = this) {
+            span(text = getString(R.string.common_expire_access_token))
+        }
+        val dialogModel = CommonDialogModel(
+            type = DialogStyleType.ALERT,
+            content = CommonDialogContent(title = dialogTitleSpannable),
+            button = CommonButtonModel(buttonCount = ButtonCount.ONE)
+        )
+        CommonDialogHelper.getInstance(
+            content = dialogModel
+        ).show(supportFragmentManager, null)
+        logout()
+    }
+
     companion object {
         private const val BACK_BTN_DEBOUNCE_TIMER = 3000
+        private const val SAVE_INSTANCE_ACCESS_TOKEN_KEY = "save_instance_access_token_key"
     }
 }

@@ -29,23 +29,37 @@
                 style="@style/subtitle.16.700"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="To"
+                android:text="@string/coupon_main_to"
                 android:textColor="@color/primary"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            <TextView
+                android:id="@+id/memberType"
+                style="@style/MemberType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@id/prefix"
+                app:layout_constraintTop_toTopOf="@id/userNickName"
+                app:layout_constraintEnd_toStartOf="@id/userNickName"
+                app:layout_constraintBottom_toBottomOf="@id/userNickName"
+                android:visibility="gone"
+                tools:text="엄마"/>
 
             <TextView
                 android:id="@+id/userNickName"
                 style="@style/subtitle.20.600"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="8dp"
                 android:textColor="@color/gray_800"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/prefix"
+                android:ellipsize="end"
+                android:maxLines="1"
+                app:layout_constraintStart_toEndOf="@id/memberType"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_goneMarginStart="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
                 tools:text="쿼카" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

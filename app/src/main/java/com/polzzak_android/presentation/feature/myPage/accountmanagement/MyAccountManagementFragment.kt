@@ -1,13 +1,14 @@
 package com.polzzak_android.presentation.feature.myPage.accountmanagement
 
 import android.os.Bundle
-import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentMyAccountManagementBinding
+import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.util.SpannableBuilder
+import com.polzzak_android.presentation.common.util.logout
 import com.polzzak_android.presentation.component.dialog.CommonDialogContent
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel
@@ -15,13 +16,9 @@ import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
-import com.polzzak_android.presentation.feature.myPage.accountmanagement.base.BaseMyAccountFragment
-import com.polzzak_android.presentation.feature.root.MainViewModel
 
-class MyAccountManagementFragment : BaseMyAccountFragment<FragmentMyAccountManagementBinding>() {
+class MyAccountManagementFragment : BaseFragment<FragmentMyAccountManagementBinding>() {
     override val layoutResId: Int = R.layout.fragment_my_account_management
-
-    private val mainViewModel by activityViewModels<MainViewModel>()
 
     override fun initView() {
         super.initView()
@@ -47,10 +44,7 @@ class MyAccountManagementFragment : BaseMyAccountFragment<FragmentMyAccountManag
                 onConfirmListener = {
                     object : OnButtonClickListener {
                         override fun setBusinessLogic() {
-                            findRootNavigationOwner()?.let {
-                                mainViewModel.logout()
-                                it.backToTheLoginFragment()
-                            }
+                            logout()
                         }
 
                         override fun getReturnValue(value: Any) {

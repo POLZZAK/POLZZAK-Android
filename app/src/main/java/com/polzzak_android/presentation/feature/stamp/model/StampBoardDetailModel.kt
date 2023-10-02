@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.feature.stamp.model
 
 import com.polzzak_android.data.remote.model.response.StampBoardDetailDto
+import com.polzzak_android.presentation.common.util.dateBetween
 import com.polzzak_android.presentation.common.util.toLocalDateOrNull
 import java.time.Duration
 import java.time.LocalDate
@@ -22,10 +23,10 @@ fun StampBoardDetailDto.toModel(): StampBoardDetailModel = StampBoardDetailModel
     stampBoardId = this.stampBoardId,
     stampBoardStatus = StampBoardStatus.getStatus(this.status) ?: StampBoardStatus.PROGRESS,
     boardTitle = this.name,
-    dateCount = Duration.between(
-        this.createdDate.toLocalDateOrNull()?.atStartOfDay(),
-        this.completedDate.toLocalDateOrNull()?.atStartOfDay() ?: LocalDate.now().atStartOfDay()
-    ).toDays().toInt(),
+    dateCount = dateBetween(
+        date1 = this.createdDate.toLocalDateOrNull() ?: LocalDate.now(),
+        date2 = this.completedDate.toLocalDateOrNull() ?: LocalDate.now()
+    ),
     totalStampCount = this.goalStampCount,
     stampList = this.stamps.map { it.toModel() },
     missionList = this.missions.map { it.toModel() },

@@ -2,25 +2,34 @@ package com.polzzak_android.presentation.common.util
 
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
-import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 
-@BindingAdapter("imageUrl")
-fun ImageView.loadImageUrl(imageUrl: String?) {
-    Glide.with(this.context).load(imageUrl).into(this)
+fun ImageView.loadImageUrl(imageUrl: String?, @DrawableRes placeHolderRes: Int? = null) {
+    Glide.with(this.context).load(imageUrl).run {
+        placeHolderRes?.let { placeholder(placeHolderRes) } ?: this
+    }.into(this)
 }
 
-@BindingAdapter("imageDrawableRes")
-fun ImageView.loadImageDrawableRes(@DrawableRes drawableRes: Int) {
-    Glide.with(this.context).load(drawableRes).into(this)
+fun ImageView.loadImageDrawableRes(
+    @DrawableRes drawableRes: Int,
+    @DrawableRes placeHolderRes: Int? = null
+) {
+    Glide.with(this.context).load(drawableRes).run {
+        placeHolderRes?.let { placeholder(placeHolderRes) } ?: this
+    }.into(this)
 }
 
-@BindingAdapter("imageUrlCircleCrop")
-fun ImageView.loadCircleImageUrl(imageUrl: String?) {
-    Glide.with(this.context).load(imageUrl).circleCrop().into(this)
+fun ImageView.loadCircleImageUrl(imageUrl: String?, @DrawableRes placeHolderRes: Int? = null) {
+    Glide.with(this.context).load(imageUrl).circleCrop().run {
+        placeHolderRes?.let { placeholder(placeHolderRes) } ?: this
+    }.into(this)
 }
 
-@BindingAdapter("imageDrawableResCircleCrop")
-fun ImageView.loadCircleImageDrawableRes(@DrawableRes drawableRes: Int) {
-    Glide.with(this.context).load(drawableRes).circleCrop().into(this)
+fun ImageView.loadCircleImageDrawableRes(
+    @DrawableRes drawableRes: Int,
+    @DrawableRes placeHolderRes: Int? = null
+) {
+    Glide.with(this.context).load(drawableRes).circleCrop().run {
+        placeHolderRes?.let { placeholder(placeHolderRes) } ?: this
+    }.into(this)
 }

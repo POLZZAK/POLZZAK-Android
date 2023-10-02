@@ -1,12 +1,12 @@
 package com.polzzak_android.presentation.feature.myPage.kid
 
+import android.graphics.Paint
 import android.os.Bundle
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.polzzak_android.R
-import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.databinding.FragmentKidMyPageBinding
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
@@ -16,6 +16,7 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
+import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
@@ -25,7 +26,9 @@ import com.polzzak_android.presentation.feature.myPage.model.LevelModel
 import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
 import com.polzzak_android.presentation.feature.term.TermDetailFragment
 import com.polzzak_android.presentation.feature.term.model.TermType
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_kid_my_page
 
@@ -53,6 +56,7 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
         binding.fragment = this
         setUpPointView()
         profileViewModel.getUserProfile(accessToken = getAccessTokenOrNull() ?: "")
+        setTermsLinkUnderLine()
     }
 
     private fun setUpPointView() {
@@ -69,6 +73,15 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
         with(binding.pointRule) {
             text = "포인트 규칙"
             icon.setImageResource(R.drawable.ic_point_rule)
+        }
+    }
+
+    private fun setTermsLinkUnderLine(){
+        binding.usingTerms.run{
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        }
+        binding.privacyPolicy.run{
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
         }
     }
 
@@ -131,15 +144,15 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickRanking() {
-        // todo: 폴짝 랭킹 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_kidRankingFragment)
     }
 
     fun onClickPointHistory() {
-        // todo: 적립 내역 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_pointHistoryFragment)
     }
 
     fun onClickPointRule() {
-        // todo: 포인트 규칙 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_pointRuleFragment)
     }
 
     fun onClickCustomerService() {

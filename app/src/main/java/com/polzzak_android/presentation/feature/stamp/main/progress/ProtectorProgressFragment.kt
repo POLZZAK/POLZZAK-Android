@@ -42,15 +42,22 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
     private val linkedUserViewModel: StampLinkedUserViewModel by activityViewModels()
     private val stampViewModel: StampViewModel by activityViewModels()
 
+    val isKid: Boolean by lazy {
+        arguments?.getBoolean(ARG_IS_KID) ?: false
+    }
+
     companion object {
+        private const val ARG_IS_KID = "isKid"
         private var instance: ProtectorProgressFragment? = null
 
         @JvmStatic
-        fun getInstance(): ProtectorProgressFragment {
+        fun getInstance(isKid: Boolean): ProtectorProgressFragment {
             if (instance == null) {
                 synchronized(ProtectorProgressFragment::class.java) {
                     if (instance == null) {
-                        instance = ProtectorProgressFragment()
+                        instance = ProtectorProgressFragment().apply {
+                            arguments = Bundle().apply { putBoolean(ARG_IS_KID, isKid) }
+                        }
                     }
                 }
             }
@@ -90,10 +97,16 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
         val userList = linkedUserViewModel.getLinkedUserList()
 
         if (userList != null) {
+            val title = if (isKid) {
+                "누가 만들어준 도장판을 볼까요?"
+            } else {
+                "누구의 도장판을 볼까요?"
+            }
+
             CommonBottomSheetHelper.getInstance(
                 data = CommonBottomSheetModel(
                     type = BottomSheetType.SELECT_STAMP_BOARD,
-                    title = "누구의 도장판을 볼까요?".toSpannable(),
+                    title = title.toSpannable(),
                     contentList = listOf(SelectUserStampBoardModel(userId = 0, nickName = "전체", userType = null)) + userList.map { it.toSelectUserStampBoardModel() },
                     button = CommonButtonModel(
                         buttonCount = ButtonCount.ZERO

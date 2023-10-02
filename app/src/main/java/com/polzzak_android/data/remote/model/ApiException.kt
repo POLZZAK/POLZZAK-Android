@@ -1,6 +1,6 @@
 package com.polzzak_android.data.remote.model
 
-//TODO 네트워크, 서버 에러 처리 필요하면 추가
+//네트워크, 서버 에러 처리 필요하면 추가
 sealed class ApiException(override val message: String? = null) : Exception() {
     class BadRequest : ApiException(message = "Bad request / Request is invalid")
     class Unauthorized : ApiException(message = "Token is invalid / Unauthenticated Access")
@@ -19,6 +19,9 @@ sealed class ApiException(override val message: String? = null) : Exception() {
     class DeleteFileFail : ApiException(message = "ailed to delete file")
     class UnknownError : ApiException(message = "unknown error")
 }
+
+fun Exception.isAccessTokenException() =
+    this is ApiException.AccessTokenExpired || this is ApiException.AccessTokenInvalid
 
 
 

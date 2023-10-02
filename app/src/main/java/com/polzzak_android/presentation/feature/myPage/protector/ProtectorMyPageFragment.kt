@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.myPage.protector
 
+import android.graphics.Paint
 import android.os.Bundle
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
@@ -53,6 +54,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
         binding.fragment = this
         setUpPointView()
         profileViewModel.getUserProfile(accessToken = getAccessTokenOrNull() ?: "")
+        setTermsLinkUnderLine()
     }
 
     private fun setUpPointView() {
@@ -69,6 +71,15 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
         with(binding.pointRule) {
             text = "포인트 규칙"
             icon.setImageResource(R.drawable.ic_point_rule)
+        }
+    }
+
+    private fun setTermsLinkUnderLine() {
+        binding.usingTerms.run {
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        }
+        binding.privacyPolicy.run {
+            paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
         }
     }
 
@@ -131,15 +142,15 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     }
 
     fun onClickRanking() {
-        // todo: 폴짝 랭킹 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_protectorRankingFragment)
     }
 
     fun onClickPointHistory() {
-        // todo: 적립 내역 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_pointHistoryFragment2)
     }
 
     fun onClickPointRule() {
-        // todo: 포인트 규칙 클릭
+        findNavController().navigate(R.id.action_protectorMyPageFragment_to_pointRuleFragment2)
     }
 
     fun onClickCustomerService() {

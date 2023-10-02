@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.polzzak_android.R
@@ -102,6 +103,10 @@ class CommonDialogHelper(
 
             adapter.updateItem(item = items)
         }
+
+        if (content.type == DialogStyleType.CAPTURE) {
+            binding.ivCouponImage.setImageBitmap(content.content.captureBitmap)
+        }
     }
 
     private fun setCalendarDateListener() {
@@ -141,6 +146,10 @@ class CommonDialogHelper(
 
             if (content.type == DialogStyleType.CALENDAR) {
                 onConfirmListener?.invoke()?.getReturnValue(selectedDate)
+            }
+
+            if (content.type == DialogStyleType.CAPTURE) {
+                onConfirmListener?.invoke()?.getReturnValue(binding.dialogCaptureFrame.drawToBitmap())
             }
             dismiss()
         }

@@ -23,7 +23,6 @@
                 android:id="@+id/ivIcon"
                 android:layout_width="256dp"
                 android:layout_height="256dp"
-
                 app:layout_constraintBottom_toTopOf="@id/tvContent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -75,7 +74,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="아이 찾기" />
 
-            <!-- TODO string resource 적용 -->
             <TextView
                 android:id="@+id/tvBtnCancel"
                 style="@style/subtitle.16.600"
