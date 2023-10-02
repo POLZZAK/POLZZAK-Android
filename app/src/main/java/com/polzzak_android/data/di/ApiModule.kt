@@ -4,11 +4,12 @@ import android.content.Context
 import com.polzzak_android.BuildConfig
 import com.polzzak_android.data.remote.service.AuthService
 import com.polzzak_android.data.remote.service.CouponService
+import com.polzzak_android.data.remote.service.GoogleOAuthService
+import com.polzzak_android.data.remote.service.PointService
 import com.polzzak_android.data.remote.service.StampBoardService
 import com.polzzak_android.data.repository.CouponRepository
 import com.polzzak_android.data.repository.CouponRepositoryImpl
-import com.polzzak_android.data.remote.service.GoogleOAuthService
-import com.polzzak_android.data.remote.service.PointService
+import com.polzzak_android.data.repository.GUIDRepository
 import com.polzzak_android.data.repository.LastSocialLoginRepository
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.SignUpRepository
@@ -23,7 +24,6 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 import javax.inject.Named
 import javax.inject.Singleton
 
@@ -114,4 +114,9 @@ object ApiModule {
     @Provides
     fun providePointService(@Named("Polzzak") retrofit: Retrofit): PointService =
         retrofit.create(PointService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideGUIDRepository(@ApplicationContext context: Context): GUIDRepository =
+        GUIDRepository(context)
 }

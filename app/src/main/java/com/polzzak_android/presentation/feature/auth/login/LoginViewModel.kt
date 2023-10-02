@@ -4,9 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.data.remote.model.ApiException
+import com.polzzak_android.data.repository.GUIDRepository
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.MemberTypeRepository
 import com.polzzak_android.data.repository.UserRepository
@@ -21,13 +24,15 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val memberTypeRepository: MemberTypeRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val guidRepository: GUIDRepository
 ) : ViewModel() {
     private val _loginInfoLiveData = MutableLiveData<EventWrapper<ModelState<LoginInfoModel>>>()
     val loginInfoLiveData: LiveData<EventWrapper<ModelState<LoginInfoModel>>> = _loginInfoLiveData
@@ -59,7 +64,7 @@ class LoginViewModel @Inject constructor(
     private suspend fun requestLogin(accessToken: String, loginType: SocialLoginType) {
         loginRepository.requestLogin(accessToken = accessToken, loginType = loginType)
             .onSuccess {
-                requestUserInfo(accessToken = it?.accessToken ?: "", socialType = loginType)
+                requestLoginInfo(accessToken = it?.accessToken ?: "", socialType = loginType)
             }.onError { exception, loginResponseData ->
                 when (exception) {
                     is ApiException.RequiredRegister -> {
@@ -80,7 +85,7 @@ class LoginViewModel @Inject constructor(
             }
     }
 
-    private suspend fun requestUserInfo(accessToken: String, socialType: SocialLoginType) {
+    private suspend fun requestLoginInfo(accessToken: String, socialType: SocialLoginType) {
         setLoginResultLoading()
         userRepository.requestUser(accessToken = accessToken).onSuccess {
             val memberType = it?.memberType?.let { memberTypeResponseData ->
@@ -95,10 +100,27 @@ class LoginViewModel @Inject constructor(
                     memberType = memberType,
                     socialType = socialType
                 )
-            setLoginResultSuccess(data = loginInfoModel)
+            requestSendToken(loginInfoModel = loginInfoModel)
+//            setLoginResultSuccess(data = loginInfoModel)
         }.onError { exception, _ ->
             setLoginResultError(exception = exception)
         }
+    }
+
+    //TODO 푸시알림 토큰 등록
+    private suspend fun requestSendToken(loginInfoModel: LoginInfoModel) {
+        val guid = guidRepository.requestGUID()
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Timber.w(task.exception, "Fetching FCM registration token failed")
+                return@OnCompleteListener
+            }
+            // Get new FCM registration token
+            val token = task.result
+            Timber.d( "token : $token\nguid : $guid")
+            //TODO 서버 토큰 등록
+            setLoginResultSuccess(data = loginInfoModel)
+        })
     }
 
     private suspend fun requestParentTypes(userName: String, socialType: SocialLoginType) {
