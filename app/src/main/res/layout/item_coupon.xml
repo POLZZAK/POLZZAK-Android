@@ -1,85 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/shape_rectangle_white_r8"
-    android:paddingStart="16dp">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/coupon_d_day"
-        style="@style/caption.12.700"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shape_rectangle_primary_r4"
-        android:backgroundTint="@color/primary_150"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="4dp"
-        android:textColor="@color/primary"
-        app:layout_constraintBottom_toTopOf="@id/coupon_name"
-        app:layout_constraintEnd_toStartOf="@id/coupon_right"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="⏰ D-99" />
+    <data>
 
-    <TextView
-        android:id="@+id/coupon_name"
-        style="@style/subtitle.16.600"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:ellipsize="end"
-        android:maxLines="3"
-        android:textColor="@color/black"
-        app:layout_constraintBottom_toTopOf="@id/coupon_deadline"
-        app:layout_constraintEnd_toStartOf="@id/coupon_right"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/coupon_d_day"
-        tools:text="일이삼사오육칠팔구십일이삼사오육칠팔구십" />
+        <variable
+            name="isKid"
+            type="Boolean" />
+    </data>
 
-    <TextView
-        android:id="@+id/coupon_deadline"
-        style="@style/caption.12.500"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/coupon_right"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/coupon_name"
-        tools:text="2023.03.27까지 주기로 약속했어요" />
-
-    <!-- 우측 디자인 -->
-    <ImageView
-        android:id="@+id/coupon_right"
-        android:layout_width="100dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/shape_rectangle_primary_r8_right"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@drawable/shape_rectangle_white_r8"
+        android:paddingStart="16dp">
 
-    <ImageView
-        android:layout_width="35dp"
-        android:layout_height="40dp"
-        android:background="@drawable/shape_oval_primary_400"
-        android:backgroundTint="@color/primary"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/coupon_right"
-        app:layout_constraintStart_toStartOf="@id/coupon_right"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/coupon_d_day"
+            style="@style/caption.12.700"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/shape_rectangle_primary_r4"
+            android:backgroundTint="@color/primary_150"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:textColor="@color/primary"
+            app:layout_constraintBottom_toTopOf="@id/coupon_name"
+            app:layout_constraintEnd_toStartOf="@id/coupon_right"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="⏰ D-99" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="27dp"
-        android:src="@drawable/ic_barcode"
-        app:layout_constraintBottom_toBottomOf="@id/coupon_right"
-        app:layout_constraintEnd_toEndOf="@id/coupon_right"
-        app:layout_constraintStart_toStartOf="@id/coupon_right" />
+        <TextView
+            android:id="@+id/coupon_name"
+            style="@style/subtitle.16.600"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toTopOf="@id/coupon_deadline"
+            app:layout_constraintEnd_toStartOf="@id/coupon_right"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/coupon_d_day"
+            tools:text="일이삼사오육칠팔구십일이삼사오육칠팔구십" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/coupon_deadline"
+            style="@style/caption.12.500"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toTopOf="@id/coupon_btn_container"
+            app:layout_constraintEnd_toStartOf="@id/coupon_right"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/coupon_name"
+            tools:text="2023.03.27까지 주기로 약속했어요" />
+
+        <LinearLayout
+            android:id="@+id/coupon_btn_container"
+            setVisibility="@{isKid}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:orientation="horizontal"
+            android:paddingEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/coupon_right"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/coupon_deadline">
+
+            <TextView
+                android:id="@+id/coupon_gift_request"
+                style="@style/caption.12.500"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/shape_rectangle_primary_r8"
+                android:gravity="center"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="12dp"
+                android:text="선물 조르기"
+                android:textColor="@color/white" />
+
+            <Space
+                android:layout_width="6dp"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/coupon_gift_finish"
+                style="@style/caption.12.500"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/shape_rectangle_white_stroke_primary_r8"
+                android:gravity="center"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="12dp"
+                android:text="선물 받기 완료"
+                android:textColor="@color/primary_600" />
+
+        </LinearLayout>
+
+        <!-- 우측 디자인 -->
+        <ImageView
+            android:id="@+id/coupon_right"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape_rectangle_primary_r8_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="40dp"
+            android:background="@drawable/shape_oval_primary_400"
+            android:backgroundTint="@color/primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/coupon_right"
+            app:layout_constraintStart_toStartOf="@id/coupon_right"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="27dp"
+            android:src="@drawable/ic_barcode"
+            app:layout_constraintBottom_toBottomOf="@id/coupon_right"
+            app:layout_constraintEnd_toEndOf="@id/coupon_right"
+            app:layout_constraintStart_toStartOf="@id/coupon_right" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -8,4 +8,8 @@ interface CouponContainerInteraction {
     fun setViewPager(view: ViewPager2, curInd: TextView, totalInd: TextView, stampList: List<CouponModel>)
 
     fun onCouponPagerClicked(couponModel: CouponModel)
+
+    fun onGiftRequestClicked(couponModel: CouponModel)
+
+    fun onGiftFinishClicked(couponModel: CouponModel)
 }

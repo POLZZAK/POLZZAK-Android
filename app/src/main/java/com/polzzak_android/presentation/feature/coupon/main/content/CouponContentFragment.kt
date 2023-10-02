@@ -3,7 +3,6 @@ package com.polzzak_android.presentation.feature.coupon.main.content
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -88,18 +87,15 @@ class CouponContentFragment : BaseFragment<FragmentCouponContentBinding>(), Coup
                         couponViewModel.requestCouponList(
                             token = getAccessTokenOrNull() ?: "",
                             couponState = this.state,
-                            memberId = null
+                            memberId = null,
+                            isKid = false
                         )
                     }
                 }
 
-                is ModelState.Error -> {
-                    // todo: 에러 페이지
-                }
+                is ModelState.Error -> {}
 
-                is ModelState.Loading -> {
-                    // todo: 스켈레톤
-                }
+                is ModelState.Loading -> {}
             }
         }
 
@@ -112,13 +108,9 @@ class CouponContentFragment : BaseFragment<FragmentCouponContentBinding>(), Coup
                     binding.couponListRc.adapter = rvAdapter
                 }
 
-                is ModelState.Error -> {
-                    // todo: 에러
-                }
+                is ModelState.Error -> {}
 
-                is ModelState.Loading -> {
-                    // todo: 로딩
-                }
+                is ModelState.Loading -> {}
             }
         }
     }
@@ -153,7 +145,8 @@ class CouponContentFragment : BaseFragment<FragmentCouponContentBinding>(), Coup
                             couponViewModel.requestCouponList(
                                 token = getAccessTokenOrNull() ?: "",
                                 couponState = state,
-                                memberId = selectedUserInfo.userId
+                                memberId = selectedUserInfo.userId,
+                                isKid = false
                             )
                         }
 
@@ -187,14 +180,19 @@ class CouponContentFragment : BaseFragment<FragmentCouponContentBinding>(), Coup
     }
 
     override fun onCouponPagerClicked(couponModel: CouponModel) {
-        // Todo: 임시
-        Toast.makeText(context, "${couponModel.name} 클릭", Toast.LENGTH_SHORT).show()
-
         // TODO: 부모 nav_graph.xml에도 같은 action 추가 필요
         findNavController().navigate(
             R.id.action_to_couponDetailFragment,
             Bundle().apply { putInt("couponId", couponModel.id) }
         )
+    }
+
+    override fun onGiftRequestClicked(couponModel: CouponModel) {
+        // todo: 선물 조르기
+    }
+
+    override fun onGiftFinishClicked(couponModel: CouponModel) {
+        // todo: 선물 받기 완료
     }
 
 }

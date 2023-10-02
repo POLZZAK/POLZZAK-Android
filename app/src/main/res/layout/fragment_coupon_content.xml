@@ -39,6 +39,7 @@
                     android:id="@+id/selectContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    setVisibility="@{hasLinkedUser}"
                     android:onClick="@{() -> fragment.clickUserFilter()}"
                     android:paddingHorizontal="15dp"
                     android:paddingVertical="20dp"
@@ -78,6 +79,7 @@
                     android:id="@+id/couponListRc"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    setVisibility="@{hasLinkedUser}"
                     app:layout_constraintTop_toBottomOf="@id/selectContainer"
                     tools:listitem="@layout/item_has_not_coupon" />
 
