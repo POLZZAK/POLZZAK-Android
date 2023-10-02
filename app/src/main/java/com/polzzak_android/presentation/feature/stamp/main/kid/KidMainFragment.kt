@@ -25,8 +25,8 @@ class KidMainFragment : BaseFragment<FragmentKidMainBinding>(), ToolbarIconInter
 
     private val stampMainViewModel by viewModels<StampMainViewModel>()
 
-    private val protectorProgressFragment = ProtectorProgressFragment.getInstance()
-    private val protectorCompletedFragment = ProtectorCompletedFragment.getInstance()
+    private val protectorProgressFragment = ProtectorProgressFragment.getInstance(isKid = true)
+    private val protectorCompletedFragment = ProtectorCompletedFragment.getInstance(isKid = true)
 
     private lateinit var toolbarHelper: ToolbarHelper
 

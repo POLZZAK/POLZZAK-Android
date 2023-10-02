@@ -19,6 +19,7 @@ import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
@@ -321,6 +322,9 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                         }
                     }
                 ).show(childFragmentManager, null)
+            }
+            is ApiException.AccessTokenExpired -> {
+                handleInvalidToken()
             }
             else -> {
                 PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()

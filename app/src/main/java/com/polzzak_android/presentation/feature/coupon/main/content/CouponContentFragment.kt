@@ -40,15 +40,21 @@ class CouponContentFragment : BaseFragment<FragmentCouponContentBinding>(), Coup
     private val couponViewModel: CouponViewModel by activityViewModels()
 
     private lateinit var state: String
+    val isKid: Boolean by lazy {
+        arguments?.getBoolean(ARG_IS_KID) ?: false
+    }
 
     companion object {
         private const val ARG_STATE = "state"
+        private const val ARG_IS_KID = "isKid"
 
         @JvmStatic
-        fun getInstance(state: String): CouponContentFragment {
+        fun getInstance(state: String, isKid: Boolean): CouponContentFragment {
             val fragment = CouponContentFragment()
-            val args = Bundle()
-            args.putString(ARG_STATE, state)
+            val args = Bundle().apply {
+                putString(ARG_STATE, state)
+                putBoolean(ARG_IS_KID, isKid)
+            }
             fragment.arguments = args
             return fragment
         }
@@ -121,10 +127,16 @@ class CouponContentFragment : BaseFragment<FragmentCouponContentBinding>(), Coup
         val userList = linkedUserViewModel.getLinkedUserList()
 
         if (userList != null) {
+            val title = if (isKid) {
+                "누가 선물해준 쿠폰을 볼까요?"
+            } else {
+                "누구에게 선물한 쿠폰을 볼까요?"
+            }
+
             CommonBottomSheetHelper.getInstance(
                 data = CommonBottomSheetModel(
                     type = BottomSheetType.SELECT_STAMP_BOARD,
-                    title = "누구에게 선물한 쿠폰을 볼까요?".toSpannable(),
+                    title = title.toSpannable(),
                     contentList = userList.map { it.toSelectUserStampBoardModel() },
                     button = CommonButtonModel(
                         buttonCount = ButtonCount.ZERO

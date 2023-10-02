@@ -24,8 +24,8 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), Tool
 
     private val stampMainViewModel by viewModels<StampMainViewModel>()
 
-    private val protectorProgressFragment = ProtectorProgressFragment.getInstance()
-    private val protectorCompletedFragment = ProtectorCompletedFragment.getInstance()
+    private val protectorProgressFragment = ProtectorProgressFragment.getInstance(isKid = false)
+    private val protectorCompletedFragment = ProtectorCompletedFragment.getInstance(isKid = false)
 
     private lateinit var toolbarHelper: ToolbarHelper
 
