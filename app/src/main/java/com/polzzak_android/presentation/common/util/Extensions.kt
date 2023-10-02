@@ -5,21 +5,30 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.Period
-import java.time.format.DateTimeFormatter
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 
 /**
- * "yyyy-MM-dd'T'HH:mm:ss" 형태의 스트링을 [LocalDate]로 변환
+ * 서버에서 보내주는 UTC 기준 시간 String을 디바이스 로컬 시간으로 변환한 [LocalDate]를 반환합니다.
  */
 fun String?.toLocalDateOrNull(): LocalDate? = kotlin.runCatching {
-    LocalDateTime.parse(this).toLocalDate()
+    LocalDateTime
+        .parse(this)
+        .atOffset(ZoneOffset.UTC)
+        .atZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDate()
 }.getOrNull()
 
 /**
- * "yyyy-MM-dd'T'HH:mm:ss" 형태의 스트링을 [LocalDateTime]로 변환
+ * 서버에서 보내주는 UTC 기준 시간 String을 디바이스 로컬 시간으로 변환한 [LocalDateTime]을 반환합니다.
  */
 fun String?.toLocalDateTimeOrNull(): LocalDateTime? = kotlin.runCatching {
-    LocalDateTime.parse(this)
+    LocalDateTime
+        .parse(this)
+        .atOffset(ZoneOffset.UTC)
+        .atZoneSameInstant(ZoneId.systemDefault())
+        .toLocalDateTime()
 }.getOrNull()
 
 fun Int.toPx(context: Context): Int {
@@ -47,11 +56,55 @@ fun LocalDateTime.getRemainingSeconds(): Int {
 fun LocalDate.toPublishedDateString(): String {
     val nowDate = LocalDate.now()
     val diff = Period.between(this, nowDate)
-    val getDateStr = { date: Int -> String.format("%02d", date) }
     return when {
-        this.isAfter(nowDate.minusMonths(3)) -> "${getDateStr(this.monthValue)}.${getDateStr(this.dayOfMonth)}"
+        this.isAfter(nowDate.minusMonths(3)) -> "${getTimeFormat(this.monthValue)}.${
+            getTimeFormat(
+                this.dayOfMonth
+            )
+        }"
+
         this.isBefore(nowDate.minusYears(1)) || this.isEqual(nowDate.minusYears(1)) -> "${diff.years}년 전"
         else -> "${diff.months}개월 전"
     }
 }
 
+/**
+ * 알림 날짜 표시 규칙
+ * 0초~59초 => 방금 전
+ * 1시간 이내는 ‘분’ 표시 => 1분 전 ~ 59분 전
+ * 하루 지나기 전까지는 ‘시간’ 표시 => 1시간 ~ 23시간 전
+ * 하루 지나고 3일까지는 ‘일’ 표시 => 1일 전 ~ 3일 전
+ * 3일 이후부터는 월.일 표시 => ex) 05.08
+ */
+fun LocalDateTime.toNotificationDateString(): String {
+    val nowDate = LocalDateTime.now()
+    val diff = Duration.between(this, nowDate)
+    return when {
+        this.isAfter(nowDate.minusMinutes(1)) -> "방금 전"
+        this.isAfter(nowDate.minusHours(1)) -> "${maxOf(1, diff.toMinutes())}분 전"
+        this.isAfter(nowDate.minusDays(1)) -> "${maxOf(1, diff.toHours())}시간 전"
+        this.isAfter(nowDate.minusDays(3)) -> "${maxOf(1, diff.toDays())}일 전"
+        else -> "${getTimeFormat(this.monthValue)}.${getTimeFormat(this.dayOfMonth)}"
+    }
+}
+
+private fun getTimeFormat(t: Int) = String.format("%02d", t)
+
+/**
+ * 파라미터로 받은 날짜와 며칠 차이나는지 계산합니다.
+ * 0일부터 시작하지 않고 1일부터 시작합니다.
+ *
+ * @return 전달받은 날짜가 대상 날짜보다 이전이면 -1을 반환합니다.
+ */
+fun dateBetween(date1: LocalDate, date2: LocalDate): Int {
+    if (date2.isBefore(date1)) {
+        return -1
+    }
+
+    return Duration.between(
+        date1.atStartOfDay(),
+        date2.atStartOfDay()
+    ).toDays()
+        .toInt()
+        .plus(1)
+}

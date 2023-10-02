@@ -5,15 +5,14 @@ import androidx.activity.OnBackPressedCallback
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.polzzak_android.R
-import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.databinding.FragmentKidHostBinding
+import com.polzzak_android.presentation.common.base.BaseFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class KidHostFragment : BaseFragment<FragmentKidHostBinding>(), RootNavigationOwner {
+class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
     override val layoutResId = R.layout.fragment_kid_host
 
     private lateinit var navController: NavController
@@ -48,9 +47,5 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>(), RootNavigationOw
                 }
             }
         }
-    }
-
-    override fun backToTheLoginFragment() {
-        findNavController().popBackStack(R.id.loginFragment, false)
     }
 }

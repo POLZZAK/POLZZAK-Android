@@ -17,8 +17,8 @@ class ProtectorCouponFragment : BaseFragment<FragmentProtectorCouponBinding>(),
     ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_protector_coupon
 
-    private val previousCouponFragment = CouponContentFragment.getInstance("issued")      // todo
-    private val receivedCouponFragment = CouponContentFragment.getInstance("rewarded")      // todo
+    private val previousCouponFragment = CouponContentFragment.getInstance("issued", isKid =  false)      // todo
+    private val receivedCouponFragment = CouponContentFragment.getInstance("rewarded", isKid =  false)      // todo
 
     private lateinit var toolbarHelper: ToolbarHelper
 

@@ -1,5 +1,8 @@
 package com.polzzak_android.presentation.feature.coupon.model
 
+import com.polzzak_android.data.remote.model.response.CouponDetailDto
+import com.polzzak_android.presentation.common.util.toLocalDateOrNull
+import com.polzzak_android.presentation.common.util.toLocalDateTimeOrNull
 import com.polzzak_android.presentation.coupon.model.CouponState
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -16,7 +19,22 @@ data class CouponDetailModel(
     val stampCount: Int,
     val startDate: LocalDate,
     val endDate: LocalDate,
+    val rewardDate: LocalDate?,
     val rewardRequestDate: LocalDateTime?
 )
 
-// TODO: Dto 변환 함수 작성
+fun CouponDetailDto.toModel(): CouponDetailModel = CouponDetailModel(
+    couponId = this.couponId,
+    state = CouponState.getStateOrNull(this.state) ?: CouponState.ISSUED,
+    rewardTitle = this.reward,
+    giverName = this.guardian.nickname,
+    giverProfileUrl = this.guardian.profileUrl,
+    receiverName = this.kid.nickname,
+    receiverProfileUrl = this.kid.profileUrl,
+    missions = this.missionContents,
+    stampCount = this.stampCount,
+    startDate = this.startDate.toLocalDateOrNull() ?: LocalDate.now(),
+    endDate =  this.endDate.toLocalDateOrNull() ?: LocalDate.now(),
+    rewardDate = this.rewardDate.toLocalDateOrNull(),
+    rewardRequestDate = this.rewardRequestDate.toLocalDateTimeOrNull()
+)

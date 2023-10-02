@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.polzzak_android.R
+import com.polzzak_android.data.remote.model.isAccessTokenException
 import com.polzzak_android.databinding.FragmentLinkManagementBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.item.FullLoadingItem
@@ -22,6 +23,7 @@ import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.common.util.hideKeyboard
 import com.polzzak_android.presentation.common.util.toPx
 import com.polzzak_android.presentation.component.PolzzakSnackBar
@@ -272,13 +274,25 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                                 R.string.link_management_empty_link,
                                 targetLinkTypeStringOrEmpty
                             )
-                            listOf(LinkManagementMainEmptyItem(content = content))
+                            val imageDrawableRes = when (linkMemberType) {
+                                LinkMemberType.KID -> R.drawable.ic_search_option_menu_kid
+                                LinkMemberType.PROTECTOR -> R.drawable.ic_search_option_menu_parent
+                            }
+                            listOf(
+                                LinkManagementMainEmptyItem(
+                                    imageDrawableRes = imageDrawableRes,
+                                    content = content
+                                )
+                            )
                         }
                     items.addAll(linkedUserItems)
                 }
 
                 is ModelState.Error -> {
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
             adapter.updateItem(item = items)
@@ -304,7 +318,12 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                             )
                         }.ifEmpty {
                             val content = getString(R.string.link_management_empty_received)
-                            listOf(LinkManagementMainEmptyItem(content = content))
+                            listOf(
+                                LinkManagementMainEmptyItem(
+                                    imageDrawableRes = R.drawable.ic_link_request_empty,
+                                    content = content
+                                )
+                            )
                         }
                     items.addAll(receivedRequestItems)
                     setTabUpdatedStatusVisibility(
@@ -315,7 +334,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
             adapter.updateItem(item = items)
@@ -341,7 +363,12 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                             )
                         }.ifEmpty {
                             val content = getString(R.string.link_management_empty_sent)
-                            listOf(LinkManagementMainEmptyItem(content = content))
+                            listOf(
+                                LinkManagementMainEmptyItem(
+                                    imageDrawableRes = R.drawable.ic_link_request_empty,
+                                    content = content
+                                )
+                            )
                         }
                     items.addAll(sentRequestItems)
                     setTabUpdatedStatusVisibility(
@@ -351,7 +378,10 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
             adapter.updateItem(item = items)
@@ -399,8 +429,11 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                 }
 
                 is ModelState.Error -> {
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
                     dismissDialog()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
         }
@@ -421,6 +454,7 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
             val adapter =
                 (binding.inRequest.rvSearchResult.adapter as? BindableItemAdapter) ?: return@observe
             val items = mutableListOf<BindableItem<*>>()
+            setSearchEditTextEnabled(isEnabled = it !is ModelState.Loading)
             when (it) {
                 is ModelState.Loading -> {
                     val nickName = it.data?.user?.nickName ?: ""
@@ -442,10 +476,22 @@ abstract class BaseLinkManagementFragment : BaseFragment<FragmentLinkManagementB
                         model = LinkRequestUserModel.Guide(targetLinkMemberType = targetLinkMemberType)
                     )
                     items.add(item)
-                    PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    when {
+                        it.exception.isAccessTokenException() -> handleInvalidToken()
+                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
+                    }
                 }
             }
             adapter.updateItem(items)
+        }
+    }
+
+    private fun setSearchEditTextEnabled(isEnabled: Boolean) {
+        with(binding) {
+            etSearch.isEnabled = isEnabled
+            tvBtnCancel.isEnabled = isEnabled
+            ivBtnClearText.isVisible =
+                isEnabled && linkViewModel.searchQueryLiveData.value.isNullOrEmpty().not()
         }
     }
 

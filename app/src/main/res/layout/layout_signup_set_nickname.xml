@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- TODO 디자인 가이드 적용 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -55,18 +54,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <!-- TODO clear 버튼 width만큼 paddingEnd 추가 -->
             <EditText
                 android:id="@+id/etInput"
                 style="@style/body.14.500"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:background="@drawable/bg_signup_set_nickname_input"
                 android:hint="@string/signup_set_nickname_input_hint"
                 android:inputType="text"
-                android:paddingHorizontal="16dp"
                 android:paddingVertical="15dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="40dp"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray_400"
                 app:layout_constraintEnd_toStartOf="@id/tvBtnCheckValidation"
@@ -89,7 +87,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:background="@drawable/bg_signup_set_nickname_btn_check_validation"
                 android:gravity="center"
                 android:paddingHorizontal="13dp"
                 android:paddingVertical="15dp"
@@ -126,7 +123,5 @@
                 app:layout_constraintTop_toTopOf="@id/tvCheckDuplicatedResult"
                 tools:text="1/10" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

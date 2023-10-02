@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.databinding.ItemCouponBinding
 import com.polzzak_android.presentation.feature.coupon.main.content.CouponContainerInteraction
 import com.polzzak_android.presentation.feature.coupon.model.CouponModel
+import java.text.SimpleDateFormat
 
 class MainCouponPagerAdapter(
     private var couponList: List<CouponModel>,
@@ -41,15 +42,36 @@ class MainCouponPagerAdapter(
         private val dDay = binding.couponDDay
         private val reward = binding.couponName
         private val deadline = binding.couponDeadline
+        private var isKid = binding.isKid
+        private val giftRequest = binding.couponGiftRequest
+        private val giftFinish = binding.couponGiftFinish
 
         fun bind(item: CouponModel) {
-            dDay.text = ""          // todo: 계산식 필요
+            isKid = item.isKid
+            dDay.text = item.dDay
             reward.text = item.name
-            deadline.text = item.deadLine   // todo: 변환 필요
+            deadline.text = deadlineFormat(item.deadLine)
 
             container.setOnClickListener {
                 interaction.onCouponPagerClicked(item)
             }
+
+            giftRequest.setOnClickListener {
+                interaction.onGiftRequestClicked(item)
+            }
+
+            giftFinish.setOnClickListener {
+                interaction.onGiftFinishClicked(item)
+            }
+        }
+
+        private fun deadlineFormat(deadline: String): String {
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS")
+            val targetDate = inputFormat.parse(deadline)
+
+            val outputFormat = SimpleDateFormat("yyyy.MM.dd까지 주기로 약속했어요")
+
+            return outputFormat.format(targetDate)
         }
     }
 

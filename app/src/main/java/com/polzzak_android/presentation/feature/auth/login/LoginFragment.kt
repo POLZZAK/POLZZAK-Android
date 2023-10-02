@@ -22,7 +22,7 @@ import com.polzzak_android.presentation.common.util.getSocialLoginManager
 import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.errorOf
-import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoUiModel
+import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoModel
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.signup.SignUpFragment
 import com.polzzak_android.presentation.feature.root.MainViewModel
@@ -124,8 +124,8 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
                 is ModelState.Loading -> binding.clLoading.isVisible = true
                 is ModelState.Success -> {
                     when (it.data) {
-                        is LoginInfoUiModel.SignUp -> signUp(model = it.data)
-                        is LoginInfoUiModel.Login -> login(model = it.data)
+                        is LoginInfoModel.SignUp -> signUp(model = it.data)
+                        is LoginInfoModel.Login -> login(model = it.data)
                     }
                     binding.clLoading.isVisible = false
 
@@ -145,7 +145,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         }
     }
 
-    private fun signUp(model: LoginInfoUiModel.SignUp) {
+    private fun signUp(model: LoginInfoModel.SignUp) {
         val signUpBundle = Bundle().apply {
             putString(SignUpFragment.ARGUMENT_USER_ID_KEY, model.userName)
             putParcelable(
@@ -164,7 +164,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
         )
     }
 
-    private fun login(model: LoginInfoUiModel.Login) {
+    private fun login(model: LoginInfoModel.Login) {
         mainViewModel.accessToken = model.accessToken
         lastSocialLoginViewModel.saveLastSocialLoginType(model.socialType)
         val navAction = when (model.memberType) {

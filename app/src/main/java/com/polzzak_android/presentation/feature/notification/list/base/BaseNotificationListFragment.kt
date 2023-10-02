@@ -1,13 +1,13 @@
 package com.polzzak_android.presentation.feature.notification.list.base
 
-import android.util.DisplayMetrics
 import androidx.annotation.IdRes
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.polzzak_android.R
+import com.polzzak_android.common.util.livedata.EventWrapperObserver
+import com.polzzak_android.data.remote.model.isAccessTokenException
 import com.polzzak_android.databinding.FragmentNotificationListBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.item.LoadMoreLoadingSpinnerItem
@@ -15,40 +15,38 @@ import com.polzzak_android.presentation.common.model.MemberType
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.common.util.toPx
-import com.polzzak_android.presentation.feature.notification.NotificationViewModel
+import com.polzzak_android.presentation.component.PolzzakSnackBar
+import com.polzzak_android.presentation.component.errorOf
+import com.polzzak_android.presentation.component.toolbar.ToolbarData
+import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
+import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.notification.list.NotificationItemDecoration
 import com.polzzak_android.presentation.feature.notification.list.NotificationListClickListener
+import com.polzzak_android.presentation.feature.notification.list.NotificationListViewModel
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationEmptyItem
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationItem
-import com.polzzak_android.presentation.feature.notification.list.item.NotificationRefreshItem
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationSkeletonLoadingItem
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
-import com.polzzak_android.presentation.feature.notification.list.model.NotificationRefreshStatusType
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
-//TODO 하단 네비게이션 바 만큼 marign 필요
 @AndroidEntryPoint
 abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationListBinding>(),
     NotificationListClickListener {
     override val layoutResId: Int = R.layout.fragment_notification_list
 
-    private val notificationViewModel by viewModels<NotificationViewModel>(ownerProducer = {
-        parentFragment ?: this@BaseNotificationListFragment
+    @Inject
+    lateinit var notificationListViewModelAssistedFactory: NotificationListViewModel.NotificationAssistedFactory
+    private val notificationListViewModel by viewModels<NotificationListViewModel>(factoryProducer = {
+        NotificationListViewModel.provideFactory(
+            notificationListViewModelAssistedFactory,
+            initAccessToken = getAccessTokenOrNull() ?: ""
+        )
     })
-
-    private val smoothScroller by lazy {
-        object : LinearSmoothScroller(context) {
-            override fun getVerticalSnapPreference(): Int {
-                return SNAP_TO_START
-            }
-
-            override fun calculateSpeedPerPixel(displayMetrics: DisplayMetrics?): Float {
-                return super.calculateSpeedPerPixel(displayMetrics) * 4f
-            }
-        }
-    }
 
     @get:IdRes
     abstract val actionToSettingFragment: Int
@@ -56,9 +54,34 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
 
     override fun initView() {
         super.initView()
+        initToolbar()
+        initSwipeRefreshLayout()
         initRecyclerView()
-        binding.ivBtnSetting.setOnClickListener {
-            findNavController().navigate(actionToSettingFragment)
+    }
+
+    private fun initToolbar() {
+        val toolbar = ToolbarHelper(
+            data = ToolbarData(
+                titleText = getString(R.string.common_notification),
+                iconImageId = R.drawable.ic_setting,
+                iconInteraction = object : ToolbarIconInteraction {
+                    override fun onToolbarIconClicked() {
+                        findNavController().navigate(actionToSettingFragment)
+                    }
+                }
+            ), toolbar = binding.inToolbar
+        ).apply { set() }
+        toolbar.hideBackButton()
+    }
+
+    private fun initSwipeRefreshLayout() {
+        with(binding.srlNotifications) {
+            setOnRefreshListener {
+                notificationListViewModel.refreshNotifications(
+                    accessToken = getAccessTokenOrNull() ?: ""
+                )
+            }
+            setColorSchemeResources(R.color.primary)
         }
     }
 
@@ -75,66 +98,38 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
             addItemDecoration(itemDecoration)
             adapter = BindableItemAdapter()
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    super.onScrolled(recyclerView, dx, dy)
-                    if (!recyclerView.canScrollVertically(1)) notificationViewModel.requestMoreNotifications()
-                }
-
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
-                    when (notificationViewModel.notificationLiveData.value?.data?.refreshStatusType) {
-                        NotificationRefreshStatusType.Normal -> onScrollStateChangedRefreshNormal(
-                            recyclerView = recyclerView,
-                            newState = newState
+                    if (newState == RecyclerView.SCROLL_STATE_DRAGGING && !recyclerView.canScrollVertically(
+                            1
                         )
-
-                        else -> {
-                            //do nothing
-                        }
-                    }
+                    ) notificationListViewModel.requestMoreNotifications(
+                        getAccessTokenOrNull() ?: ""
+                    )
                 }
             })
-        }
-    }
-
-    private fun onScrollStateChangedRefreshNormal(recyclerView: RecyclerView, newState: Int) {
-        val layoutManager = (recyclerView.layoutManager as? LinearLayoutManager) ?: return
-        val firstCompletelyVisibleItem = layoutManager.findFirstCompletelyVisibleItemPosition()
-        if (firstCompletelyVisibleItem == 0) {
-            notificationViewModel.refreshNotifications()
-            return
-        }
-        val firstVisibleItem =
-            layoutManager.findFirstVisibleItemPosition().takeIf { it >= 0 } ?: return
-        if (firstVisibleItem < 1 && newState != RecyclerView.SCROLL_STATE_DRAGGING) {
-            smoothScroller.targetPosition = 1
-            layoutManager.startSmoothScroll(smoothScroller)
         }
     }
 
     override fun initObserver() {
         super.initObserver()
         initNotificationObserver()
+        initErrorEventObserver()
     }
 
     private fun initNotificationObserver() {
-        notificationViewModel.notificationLiveData.observe(viewLifecycleOwner) {
-            val layoutManager =
-                (binding.rvNotifications.layoutManager as? LinearLayoutManager) ?: return@observe
+        notificationListViewModel.notificationLiveData.observe(viewLifecycleOwner) {
             val adapter =
                 (binding.rvNotifications.adapter as? BindableItemAdapter) ?: return@observe
-            val refreshStatusType =
-                it.data?.refreshStatusType ?: NotificationRefreshStatusType.Disable
-            val items =
-                mutableListOf<BindableItem<*>>(NotificationRefreshItem(statusType = refreshStatusType))
-            var updateCallback: (() -> Unit)? = null
+            val items = mutableListOf<BindableItem<*>>()
+            binding.srlNotifications.isEnabled = it.data?.isRefreshable ?: false
             when (it) {
                 is ModelState.Loading -> {
                     if (it.data?.items == null) {
                         items.addAll(createSkeletonLoadingItems())
                     } else {
                         items.addAll(createNotificationItems(data = it.data?.items))
-                        if (!notificationViewModel.isRefreshed) items.add(
+                        if (!notificationListViewModel.isRefreshed) items.add(
                             LoadMoreLoadingSpinnerItem(
                                 marginTopDp = 8
                             )
@@ -144,20 +139,28 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
 
                 is ModelState.Success -> {
                     items.addAll(createNotificationItems(data = it.data.items))
-                    if (notificationViewModel.isRefreshed) {
-                        updateCallback = {
-                            layoutManager.scrollToPositionWithOffset(1, 0)
-                        }
-                    }
+                    binding.srlNotifications.isRefreshing = false
                 }
 
                 is ModelState.Error -> {
-                    //TODO 에러처리
+                    items.addAll(createNotificationItems(data = it.data?.items))
+                    binding.srlNotifications.isRefreshing = false
                 }
             }
 
-            adapter.updateItem(item = items, commitCallback = updateCallback)
+            adapter.updateItem(item = items)
         }
+    }
+
+    private fun initErrorEventObserver() {
+        notificationListViewModel.errorEventLiveData.observe(
+            viewLifecycleOwner,
+            EventWrapperObserver {
+                when {
+                    it.isAccessTokenException() -> handleInvalidToken()
+                    else -> PolzzakSnackBar.errorOf(binding.root, it).show()
+                }
+            })
     }
 
     private fun createSkeletonLoadingItems() = List(LOADING_SKELETON_ITEM_COUNT) {
@@ -168,14 +171,31 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         return if (data.isNullOrEmpty()) listOf(NotificationEmptyItem()) else data.map {
             NotificationItem(
                 model = it,
-                itemStateController = notificationViewModel,
+                itemStateController = notificationListViewModel,
                 clickListener = this@BaseNotificationListFragment
             )
         }
     }
 
     override fun onClickDeleteNotification(id: Int) {
-        notificationViewModel.deleteNotification(id = id)
+        notificationListViewModel.deleteNotification(
+            accessToken = getAccessTokenOrNull() ?: "",
+            id = id
+        )
+    }
+
+    override fun onClickFamilyRequestAcceptClick(model: NotificationModel) {
+        notificationListViewModel.requestApproveLinkRequest(
+            accessToken = getAccessTokenOrNull() ?: "",
+            notificationModel = model
+        )
+    }
+
+    override fun onClickFamilyRequestRejectClick(model: NotificationModel) {
+        notificationListViewModel.requestRejectLinkRequest(
+            accessToken = getAccessTokenOrNull() ?: "",
+            notificationModel = model
+        )
     }
 
     companion object {

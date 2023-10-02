@@ -1,6 +1,7 @@
 package com.polzzak_android.data.remote.service
 
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
+import com.polzzak_android.data.remote.model.request.ReceiveCouponRequest
 import com.polzzak_android.data.remote.model.request.StampRequest
 import com.polzzak_android.data.remote.model.request.UpdateStampBoardRequest
 import com.polzzak_android.data.remote.model.response.EmptyDataResponse
@@ -10,6 +11,7 @@ import com.polzzak_android.data.remote.model.response.StampBoardDetailResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -60,7 +62,7 @@ interface StampBoardService {
     @POST("/api/v1/coupons")
     suspend fun receiveCoupon(
         @Header("Authorization") token: String,
-        @Field("stampBoardId") stampBoardId: Int
+        @Body receiveCouponRequest: ReceiveCouponRequest
     ): Response<EmptyDataResponse>
 
     /**

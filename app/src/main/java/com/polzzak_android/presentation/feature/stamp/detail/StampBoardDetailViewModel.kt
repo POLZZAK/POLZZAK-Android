@@ -110,6 +110,7 @@ class StampBoardDetailViewModel @Inject constructor(
                 onCompletion(null)
             }
             .onError { exception, _ ->
+                exception.printStackTrace()
                 onCompletion(exception)
             }
     }

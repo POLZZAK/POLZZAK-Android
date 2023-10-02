@@ -181,7 +181,7 @@ fun LazyListScope.expandMissionList(
                     SeeMore(
                         toggleText = "더보기" to "더보기",
                         expandedProvider = { expanded },
-                        modifier = Modifier.clickable(onClick = onExpandClick)
+                        onClick = onExpandClick
                     )
                 }
             }
@@ -433,7 +433,8 @@ fun ExpandToggleButton(
     Spacer(modifier = Modifier.height(16.dp))
     SeeMore(
         toggleText = "접기" to "펼치기",
-        expandedProvider = { expanded }
+        expandedProvider = { expanded },
+        onClick = onClick
     )
 }
 
@@ -441,11 +442,15 @@ fun ExpandToggleButton(
 fun SeeMore(
     toggleText: Pair<String, String>,
     expandedProvider: () -> Boolean,
-    modifier: Modifier = Modifier
+    onClick: (() -> Unit)? = null
 ) = Row(
     horizontalArrangement = Arrangement.Center,
     verticalAlignment = Alignment.CenterVertically,
-    modifier = modifier
+    modifier = Modifier.clickable(
+        interactionSource = remember { MutableInteractionSource() },
+        indication = null,
+        onClick = { onClick?.invoke() }
+    )
 ) {
     Text(
         text = if (expandedProvider()) toggleText.first else toggleText.second,

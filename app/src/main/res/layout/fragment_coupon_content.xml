@@ -39,6 +39,7 @@
                     android:id="@+id/selectContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    setVisibility="@{hasLinkedUser}"
                     android:onClick="@{() -> fragment.clickUserFilter()}"
                     android:paddingHorizontal="15dp"
                     android:paddingVertical="20dp"
@@ -78,6 +79,7 @@
                     android:id="@+id/couponListRc"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
+                    setVisibility="@{hasLinkedUser}"
                     app:layout_constraintTop_toBottomOf="@id/selectContainer"
                     tools:listitem="@layout/item_has_not_coupon" />
 
@@ -112,7 +114,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:gravity="center"
-                        android:text="아이와 연동되면\n쿠폰함이 열려요!"
+                        android:text="@{fragment.kid ? @string/coupon_main_no_link_kid : @string/coupon_main_no_link_protector}"
                         android:textColor="@color/black"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

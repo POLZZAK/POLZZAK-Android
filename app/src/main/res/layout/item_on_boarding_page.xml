@@ -2,23 +2,22 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- TODO 디자인 가이드(일러스트) 적용 -->
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/ivIcon"
             android:layout_width="256dp"
             android:layout_height="256dp"
             android:layout_marginTop="90dp"
-            android:background="@drawable/ic_launcher_background"
             app:layout_constraintBottom_toTopOf="@id/tvTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:background="@drawable/ic_onboarding_first" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -43,39 +42,10 @@
             android:layout_marginTop="16dp"
             android:layout_marginBottom="126dp"
             android:textColor="@color/gray_600"
-            app:layout_constraintBottom_toTopOf="@id/tvBtnStart"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
             tools:text="아이가 갖고 싶은 선물을 정하고\n함께 미션을 만들어보세요." />
-
-        <com.polzzak_android.presentation.component.CheckedProgressView
-            android:id="@+id/cpvProgress"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:checkedDrawable="@drawable/shape_rectangle_primary"
-            app:drawableHeight="4dp"
-            app:layout_constraintBottom_toBottomOf="@id/tvBtnStart"
-            app:layout_constraintEnd_toEndOf="@id/tvBtnStart"
-            app:layout_constraintStart_toStartOf="@id/tvBtnStart"
-            app:layout_constraintTop_toTopOf="@id/tvBtnStart"
-            app:uncheckedDrawable="@drawable/shape_rectangle_primary_150" />
-
-        <TextView
-            android:id="@+id/tvBtnStart"
-            style="@style/subtitle.16.600"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginBottom="36dp"
-            android:background="@drawable/selector_btn_rectangle_r8_enabled"
-            android:gravity="center"
-            android:paddingVertical="14dp"
-            android:text="@string/common_do_start"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:isVisible="false" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

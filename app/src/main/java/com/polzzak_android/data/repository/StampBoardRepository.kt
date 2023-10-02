@@ -2,6 +2,7 @@ package com.polzzak_android.data.repository
 
 import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
+import com.polzzak_android.data.remote.model.request.ReceiveCouponRequest
 import com.polzzak_android.data.remote.model.request.StampRequest
 import com.polzzak_android.data.remote.model.request.UpdateStampBoardRequest
 import com.polzzak_android.data.remote.model.response.EmptyDataResponse
@@ -127,8 +128,8 @@ class StampBoardRepositoryImpl @Inject constructor(
         stampBoardId: Int
     ): ApiResult<Unit> = requestCatching {
         val auth = createHeaderAuthorization(accessToken = accessToken)
-
-        stampBoardService.receiveCoupon(token = auth, stampBoardId = stampBoardId)
+        val request = ReceiveCouponRequest(stampBoardId = stampBoardId)
+        stampBoardService.receiveCoupon(token = auth, receiveCouponRequest = request)
     }
 
     override suspend fun makeStamp(accessToken: String, missionRequestId: Int, missionId: Int, stampDesignId: Int): ApiResult<Unit> = requestCatching {

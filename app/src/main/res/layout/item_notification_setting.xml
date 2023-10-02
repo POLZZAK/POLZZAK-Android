@@ -8,6 +8,15 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="16dp">
 
+        <View
+            android:id="@+id/vDivider"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/gray_200"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/tvTitle"
             style="@style/body.16.400"
@@ -17,7 +26,7 @@
             app:layout_constraintBottom_toBottomOf="@id/scSwitch"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/scSwitch"
-            tools:text="@string/notification_setting_link_title" />
+            tools:text="@string/notification_setting_family_request_title" />
 
         <TextView
             android:id="@+id/tvContent"
@@ -30,7 +39,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/tvTitle"
             app:layout_constraintTop_toBottomOf="@id/scSwitch"
-            tools:text="@string/notification_setting_link_content" />
+            tools:text="@string/notification_setting_family_request_content" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/scSwitch"
@@ -45,13 +54,5 @@
             app:layout_constraintTop_toTopOf="parent"
             app:track="@color/dimmed_00" />
 
-        <View
-            android:id="@+id/vDivider"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:background="@color/gray_200"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
