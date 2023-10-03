@@ -95,7 +95,7 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
 
                     with(binding) {
                         profileData = data
-                        profileLinkUserCount.text = getString(R.string.my_account_linked_kids_count, data.linkedUser)
+                        profileLinkUserCount.text = getString(R.string.my_account_linked_protectors_count, data.linkedUser)
                         level = LevelModel(
                             previousLevel = if ((data.memberPoint.level - 1) < 0) "0" else (data.memberPoint.level - 1).toString(),
                             currentLevel = data.memberPoint.level.toString(),
