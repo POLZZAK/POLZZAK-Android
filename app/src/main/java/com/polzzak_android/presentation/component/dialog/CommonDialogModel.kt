@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.component.dialog
 
 import android.graphics.Bitmap
 import android.text.Spannable
+import androidx.annotation.DrawableRes
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import java.util.Calendar
@@ -78,7 +79,7 @@ data class CommonDialogContent(
 )
 
 data class CommonDialogMissionData(
-    val img: String,        // todo: 임시
+    @DrawableRes val img: Int,
     val missionTitle: String,
     val missionTime : String
 )

@@ -32,6 +32,7 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
+import com.polzzak_android.presentation.feature.stamp.model.StampIcon
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.format.DateTimeFormatter
@@ -88,14 +89,13 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
      * 도장 정보 표시하는 다이얼로그 표시.
      */
     private fun openStampInfoDialog(stamp: StampModel) {
-        // TODO: 도장 이미지 표시
         CommonDialogHelper.getInstance(
             content = CommonDialogModel(
                 type = DialogStyleType.MISSION,
                 content = CommonDialogContent(
                     title = "미션 완료".toSpannable(),
                     mission = CommonDialogMissionData(
-                        img = "",
+                        img = StampIcon.values()[stamp.stampDesignId].resId,
                         missionTitle = stamp.missionContent,
                         missionTime = stamp.createdDate.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분"))
                     )

@@ -107,6 +107,10 @@ class CommonDialogHelper(
         if (content.type == DialogStyleType.CAPTURE) {
             binding.ivCouponImage.setImageBitmap(content.content.captureBitmap)
         }
+
+        if (content.type == DialogStyleType.MISSION) {
+            binding.dialogMission.dialogMissionImg.setImageResource(content.content.mission?.img!!)
+        }
     }
 
     private fun setCalendarDateListener() {
