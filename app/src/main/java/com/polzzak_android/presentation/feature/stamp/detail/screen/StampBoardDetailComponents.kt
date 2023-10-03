@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.feature.stamp.detail.screen
 
 import android.util.Log
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -51,6 +52,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -73,6 +75,7 @@ import com.polzzak_android.presentation.common.compose.Gray500
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
 import com.polzzak_android.presentation.common.compose.fixedSp
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
+import com.polzzak_android.presentation.feature.stamp.model.StampIcon
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 
 @Composable
@@ -473,13 +476,13 @@ fun CompletedStamp(
     stamp: StampModel,
     onClick: ((StampModel) -> Unit)? = null
 ) {
-    // TODO: 이미지 리소스 추가하기
-    Box(
+    val stampIcon = StampIcon.values()[stamp.stampDesignId]
+
+    Image(
+        painter = painterResource(id = stampIcon.resId),
+        contentDescription = stampIcon.name,
         modifier = Modifier
             .aspectRatio(1f)
-            .drawBehind {
-                drawCircle(color = Color.Yellow, alpha = 0.5f)
-            }
             .clickable(
                 enabled = (onClick != null),
                 onClick = { onClick?.invoke(stamp) },
