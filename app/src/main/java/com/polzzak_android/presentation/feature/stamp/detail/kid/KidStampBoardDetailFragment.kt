@@ -159,7 +159,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
 
                 if (exception == null) {
                     // 성공
-                    openSuccessDialog(stampImageId = null) {
+                    openSuccessDialog(stampImageId = R.drawable.img_request_stamp_success) {
                         span(
                             text = "${viewModel.partnerType}에게\n",
                             style = R.style.subtitle_18_600,
@@ -243,7 +243,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                 if (exception == null) {
                     // 성공
                     openSuccessDialog(
-                        stampImageId = null,
+                        stampImageId = R.drawable.img_receive_coupon_success,
                         titleText = {
                             span(
                                 text = "${viewModel.stampBoardData.value.data?.rewardTitle}\n",
