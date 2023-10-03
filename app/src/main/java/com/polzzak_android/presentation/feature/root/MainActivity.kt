@@ -10,6 +10,7 @@ import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.common.base.BaseActivity
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.util.InAppUpdateChecker
 import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.component.BackButtonPressedSnackBar
@@ -46,9 +47,17 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
 
     val permissionManager = PermissionManager(this)
 
+    private val inAppUpdateChecker = InAppUpdateChecker(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        inAppUpdateChecker.checkUpdate {
+            startApp(savedInstanceState)
+        }
+    }
+
+    private fun startApp(savedInstanceState: Bundle?) {
         savedInstanceState?.let {
             val savedToken = it.getString(SAVE_INSTANCE_ACCESS_TOKEN_KEY)
             if (getAccessToken().isNullOrEmpty()) mainViewModel.accessToken = savedToken

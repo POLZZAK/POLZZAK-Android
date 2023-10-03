@@ -10,13 +10,18 @@ android {
     namespace 'com.polzzak_android'
     compileSdk 34
 
-    task prepareKotlinBuildScriptModel(){}
+    task prepareKotlinBuildScriptModel() {}
 
     defaultConfig {
         applicationId "com.polzzak_android"
         minSdk 26
         targetSdk 33
-        versionCode 1
+        /*
+            버전규칙(인앱 업데이트 때문에 반드시 지켜야 함)
+            //TODO 버전코드 예시임 확정 후 변경 필요
+            버전코드 형식 : A.B.C버전일 경우 ABBBCCC(자릿수 반드시 맞춰야 함)
+         */
+        versionCode 1000000
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -116,6 +121,10 @@ dependencies {
 
     //shimmer for skeleton
     implementation "com.facebook.shimmer:shimmer:0.5.0"
+
+    //In-app update
+    implementation 'com.google.android.play:app-update:2.1.0'
+    implementation 'com.google.android.play:app-update-ktx:2.1.0'
 }
 
 kapt {
