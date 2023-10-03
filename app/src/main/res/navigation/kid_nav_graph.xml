@@ -184,5 +184,3 @@
             android:name="com.polzzak_android.presentation.feature.myPage.point.rules.PointRuleFragment"
             android:label="PointRuleFragment" />
     </navigation>
-
-</navigation>

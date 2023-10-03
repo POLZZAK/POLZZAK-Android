@@ -94,7 +94,7 @@ class MakeStampMissionAdapter(
         }
     }
 
-    fun submitList(list: MutableList<MakeStampMissionModel>?) {
+    fun submitMissionList(list: MutableList<MakeStampMissionModel>?) {
         missionList = list
         notifyDataSetChanged()
     }

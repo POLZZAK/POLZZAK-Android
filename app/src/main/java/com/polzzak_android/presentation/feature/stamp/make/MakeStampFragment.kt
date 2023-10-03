@@ -4,7 +4,6 @@ import android.graphics.Rect
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -30,7 +29,6 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
-import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserMakeBoardModelModel
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
@@ -44,7 +42,6 @@ import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -289,7 +286,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
 
         // 미션 리스트
         makeStampViewModel.missionList.observe(viewLifecycleOwner) { data ->
-            stampMissionAdapter.submitList(data.missionList.toMutableList())
+            stampMissionAdapter.submitMissionList(data.missionList.toMutableList())
             stampMissionAdapter.validate(data)
         }
 
