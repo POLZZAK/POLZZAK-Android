@@ -37,6 +37,7 @@ import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDe
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheet
 import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheetViewModel
+import com.polzzak_android.presentation.feature.stamp.model.StampIcon
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.format.DateTimeFormatter
@@ -104,7 +105,7 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
                         content = CommonDialogContent(
                                 title = "미션 완료".toSpannable(),
                                 mission = CommonDialogMissionData(
-                                        img = "",
+                                        img = StampIcon.values()[stamp.stampDesignId].resId,
                                         missionTitle = stamp.missionContent,
                                         missionTime = stamp.createdDate.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분"))
                                 )

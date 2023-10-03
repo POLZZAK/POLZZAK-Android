@@ -32,6 +32,7 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
+import com.polzzak_android.presentation.feature.stamp.model.StampIcon
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.format.DateTimeFormatter
@@ -88,14 +89,13 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
      * 도장 정보 표시하는 다이얼로그 표시.
      */
     private fun openStampInfoDialog(stamp: StampModel) {
-        // TODO: 도장 이미지 표시
         CommonDialogHelper.getInstance(
             content = CommonDialogModel(
                 type = DialogStyleType.MISSION,
                 content = CommonDialogContent(
                     title = "미션 완료".toSpannable(),
                     mission = CommonDialogMissionData(
-                        img = "",
+                        img = StampIcon.values()[stamp.stampDesignId].resId,
                         missionTitle = stamp.missionContent,
                         missionTime = stamp.createdDate.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시 mm분"))
                     )
@@ -159,7 +159,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
 
                 if (exception == null) {
                     // 성공
-                    openSuccessDialog(stampImageId = null) {
+                    openSuccessDialog(stampImageId = R.drawable.img_request_stamp_success) {
                         span(
                             text = "${viewModel.partnerType}에게\n",
                             style = R.style.subtitle_18_600,
@@ -243,7 +243,7 @@ class KidStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBind
                 if (exception == null) {
                     // 성공
                     openSuccessDialog(
-                        stampImageId = null,
+                        stampImageId = R.drawable.img_receive_coupon_success,
                         titleText = {
                             span(
                                 text = "${viewModel.stampBoardData.value.data?.rewardTitle}\n",

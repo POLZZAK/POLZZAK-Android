@@ -1,6 +1,7 @@
 package com.polzzak_android.presentation.feature.stamp.model
 
 import com.polzzak_android.data.remote.model.response.StampDto
+import com.polzzak_android.presentation.common.util.toLocalDateTimeOrNull
 import java.time.LocalDateTime
 
 /**
@@ -17,5 +18,5 @@ fun StampDto.toModel(): StampModel = StampModel(
     id = this.id,
     stampDesignId = this.stampDesignId,
     missionContent = this.missionContent,
-    createdDate = LocalDateTime.parse(this.createdDate)
+    createdDate = this.createdDate.toLocalDateTimeOrNull() ?: LocalDateTime.now()
 )
