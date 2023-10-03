@@ -18,8 +18,12 @@ class InAppUpdateChecker(private val activity: AppCompatActivity) {
             }
         }
 
-    fun checkUpdate(onSuccess: () -> Unit) {
-        val appUpdateManager = AppUpdateManagerFactory.create(activity)
+    private val appUpdateManager = AppUpdateManagerFactory.create(activity)
+
+    fun checkUpdate(
+        onSuccess: () -> Unit,
+        onFailure: () -> Unit
+    ) {
         val appUpdateInfoTask = appUpdateManager.appUpdateInfo
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
@@ -40,6 +44,24 @@ class InAppUpdateChecker(private val activity: AppCompatActivity) {
             } else {
                 onSuccess.invoke()
             }
+        }
+        appUpdateInfoTask.addOnFailureListener {
+            onFailure.invoke()
+        }
+    }
+
+    fun checkNewestVersion(
+        onSuccess: (newestVersion: Int, version: Int) -> Unit,
+        onFailure: () -> Unit
+    ) {
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            val newestVersionCode = appUpdateInfo.availableVersionCode()
+            val versionCode = BuildConfig.VERSION_CODE
+            onSuccess(newestVersionCode, versionCode)
+        }
+        appUpdateInfoTask.addOnFailureListener {
+            onFailure.invoke()
         }
     }
 }

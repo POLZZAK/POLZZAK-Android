@@ -118,3 +118,8 @@ fun Fragment.logout() {
 fun Fragment.handleInvalidToken() {
     (activity as? MainActivity)?.handleInvalidToken()
 }
+
+fun Fragment.checkNewestVersion(
+    onSuccess: (newestVersion: Int, version: Int) -> Unit,
+    onFailure: () -> Unit
+) = (activity as? MainActivity)?.checkNewestVersion(onSuccess = onSuccess, onFailure = onFailure)

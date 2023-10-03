@@ -189,6 +189,8 @@
     <string name="my_account_management_delete_dialog_title">정말로 탈퇴하시겠어요?</string>
     <string name="my_account_management_delete_dialog_btn_negative">아니요</string>
     <string name="my_account_management_delete_dialog_btn_positive">네,탈퇴할래요</string>
+    <string name="my_version_need_update">업데이트가 필요해요</string>
+    <string name="my_version_newest">최신 버전이에요</string>
 
     <!-- Term -->
     <string name="terms_of_service_detail_service_title">이용약관</string>
