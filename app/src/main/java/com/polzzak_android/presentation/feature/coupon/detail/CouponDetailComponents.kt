@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalGlideComposeApi::class)
+
 package com.polzzak_android.presentation.feature.coupon.detail
 
 import androidx.annotation.IntRange
@@ -41,11 +43,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.compose.Blue200
 import com.polzzak_android.presentation.common.compose.Blue500
@@ -91,7 +96,7 @@ fun CountdownButton(
     val minute = String.format("%02d", ticks/60)
     val seconds = String.format("%02d", ticks%60)
 
-    Text(text = "$minute:$seconds")
+    Text(text = "$minute:$seconds", color = Color.White)
 }
 
 @Preview
@@ -360,10 +365,14 @@ private fun UserProfile(
     verticalAlignment = Alignment.CenterVertically,
     modifier = Modifier.fillMaxWidth()
 ) {
-    Box(
+    GlideImage(
+        model = profileUrl,
+        contentDescription = "user profile image",
+        contentScale = ContentScale.Crop,
         modifier = Modifier
             .size(44.dp)
-            .background(color = Blue200, shape = CircleShape)
+            .clip(CircleShape)
+
     )
     Spacer(modifier = Modifier.width(14.dp))
     Column {

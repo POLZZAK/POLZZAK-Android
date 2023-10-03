@@ -4,9 +4,10 @@ import android.graphics.Rect
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,16 +29,20 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
-import com.polzzak_android.presentation.component.bottomsheet.model.SelectUserMakeBoardModelModel
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
+import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.MissionInteraction
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.StampCountInteraction
+import com.polzzak_android.presentation.feature.stamp.model.MakeStampMissionModel
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountInteraction,
@@ -48,6 +53,7 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
     private lateinit var stampCountSelectHelper: StampCountSelectedHelper
     private lateinit var stampMissionAdapter: MakeStampMissionAdapter
 
+    private val stampBoardViewModel: StampBoardDetailViewModel by viewModels()
     private val makeStampViewModel: MakeStampViewModel by activityViewModels()
     private val linkedUserViewModel: StampLinkedUserViewModel by activityViewModels()
 
@@ -88,12 +94,37 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
                 override fun setBusinessLogic() {
                     makeStampViewModel.setStampBoardName(binding.stampBoardName.text.toString())
                     makeStampViewModel.setStampBoardReward(binding.stampBoardReward.text.toString())
-                    makeStampViewModel.validateInput(token = getAccessTokenOrNull() ?: "")
+                    makeStampViewModel.validateInput(token = getAccessTokenOrNull() ?: "", isModify = false)
                 }
 
                 override fun getReturnValue(value: Any) {}
             }
         }
+    )
+
+    private val requestUpdateStampDialog = CommonDialogHelper.getInstance(
+            content = CommonDialogModel(
+                    type = DialogStyleType.ALERT,
+                    content = CommonDialogContent(
+                            title = "도장판을 수정하시겠어요?".toSpannable(),
+                    ),
+                    button = CommonButtonModel(
+                            buttonCount = ButtonCount.TWO,
+                            negativeButtonText = "아니요",
+                            positiveButtonText = "네, 수정할게요"
+                    )
+            ),
+            onConfirmListener = {
+                object : OnButtonClickListener {
+                    override fun setBusinessLogic() {
+                        makeStampViewModel.setStampBoardName(binding.stampBoardName.text.toString())
+                        makeStampViewModel.setStampBoardReward(binding.stampBoardReward.text.toString())
+                        makeStampViewModel.validateInput(token = getAccessTokenOrNull() ?: "", isModify = true, stampBoardId = SavedStateHandle().get<Int>("boardId") ?: -1)
+                    }
+
+                    override fun getReturnValue(value: Any) {}
+                }
+            }
     )
 
     private val loadingStampDialog = CommonDialogHelper.getInstance(
@@ -108,6 +139,10 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         )
     )
 
+    private fun checkFromStampDetail(): Boolean {
+        return findNavController().previousBackStackEntry?.destination?.id == R.id.protectorStampBoardDetailFragment
+    }
+
     override fun initView() {
         super.initView()
         stampCountSelectHelper = StampCountSelectedHelper.getInstance()
@@ -118,6 +153,13 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         initData()
 
         linkedUserViewModel.requestLinkedUserList(accessToken = getAccessTokenOrNull() ?: "")
+
+        if (checkFromStampDetail()) {
+            stampBoardViewModel.fetchStampBoardDetailData(
+                    accessToken = getAccessTokenOrNull() ?: "",
+                    stampBoardId = SavedStateHandle().get<Int>("boardId") ?: -1
+            )
+        }
 
         binding.missionEnrollButton.setOnClickListener {
             makeStampViewModel.createMission()
@@ -194,9 +236,42 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         super.initObserver()
         observeValidateResult()
 
+        // 보드 내역
+        CoroutineScope(Dispatchers.Main).launch {
+            stampBoardViewModel.stampBoardData.collect { state ->
+                if (state is ModelState.Success) {
+                    val data = state.data
+                    with(makeStampViewModel) {
+                        setStampCount(data.totalStampCount)
+                        updateMissionList(data.missionList.map {
+                            MakeStampMissionModel(id = it.id, content = it.content)
+                        })
+                    }
+
+                    with(binding) {
+                        stampBoardName.setText(data.boardTitle)
+                        stampBoardReward.setText(data.rewardTitle)
+                    }
+                }
+            }
+        }
+
         // 연동된 사용자 있는지 확인
         linkedUserViewModel.linkedUserList.observe(viewLifecycleOwner) { state ->
             if (state is ModelState.Success) {
+                // 도장판 수정
+                if (checkFromStampDetail()) {
+                    val selectedUser = state.data.find {
+                        it.memberId == (SavedStateHandle().get<Int>("partnerId") ?: -1)
+                    }
+                    binding.selectedKidName.text = selectedUser?.nickName
+                    Glide.with(requireContext()).load(selectedUser?.profileUrl)
+                            .error(R.drawable.ic_launcher_background)
+                            .into(binding.selectedKidProfileImg)
+                    return@observe
+                }
+
+                // 도장판 생성
                 val hasLinkedUser = linkedUserViewModel.hasLinkedUser
                 val firstUser = state.data.first()
 
@@ -210,13 +285,13 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         }
 
         // 미션 리스트
-        makeStampViewModel.missionList.observe(this) { data ->
-            stampMissionAdapter.submitList(data.missionList.toMutableList())
+        makeStampViewModel.missionList.observe(viewLifecycleOwner) { data ->
+            stampMissionAdapter.submitMissionList(data.missionList.toMutableList())
             stampMissionAdapter.validate(data)
         }
 
         // 미션 리스트 카운트
-        makeStampViewModel.missionListSize.observe(this) { missionListSize ->
+        makeStampViewModel.missionListSize.observe(viewLifecycleOwner) { missionListSize ->
             stampMissionAdapter.setMissionListSize(missionListSize)
 
             if (missionListSize < 50) {
@@ -232,8 +307,8 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
             }
         }
 
-        // 미션 등록
-        makeStampViewModel.makeStampBoardState.observe(this) { modelState ->
+        // 도장판 생성 및 수정
+        makeStampViewModel.makeStampBoardState.observe(viewLifecycleOwner) { modelState ->
             when (modelState) {
                 is ModelState.Loading -> {
                     loadingStampDialog.show(childFragmentManager, null)
@@ -308,35 +383,37 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
     }
 
     fun clickKidSelector() {
-        CommonBottomSheetHelper.getInstance(
-            data = CommonBottomSheetModel(
-                type = BottomSheetType.PROFILE_IMAGE,
-                title = "도장판을 누구에게 만들어줄까요?".toSpannable(),
-                contentList = linkedUserViewModel.getLinkedUserList() ?: listOf(""),
-                button = CommonButtonModel(
-                    buttonCount = ButtonCount.ONE,
-                    positiveButtonText = "선택 완료"
-                )
-            ),
-            onClickListener = {
-                object : OnButtonClickListener {
-                    override fun setBusinessLogic() {}
+        if (!checkFromStampDetail()) {
+            CommonBottomSheetHelper.getInstance(
+                    data = CommonBottomSheetModel(
+                            type = BottomSheetType.PROFILE_IMAGE,
+                            title = "도장판을 누구에게 만들어줄까요?".toSpannable(),
+                            contentList = linkedUserViewModel.getLinkedUserList() ?: listOf(""),
+                            button = CommonButtonModel(
+                                    buttonCount = ButtonCount.ONE,
+                                    positiveButtonText = "선택 완료"
+                            )
+                    ),
+                    onClickListener = {
+                        object : OnButtonClickListener {
+                            override fun setBusinessLogic() {}
 
-                    override fun getReturnValue(value: Any) {
-                        val selectedKid = value as UserInfoDto
-                        with(binding) {
-                            binding.selectedKidName.text = selectedKid.nickName
-                            Glide.with(requireContext()).load(selectedKid.profileUrl)
-                                .error(R.drawable.ic_launcher_background)
-                                .into(binding.selectedKidProfileImg)
+                            override fun getReturnValue(value: Any) {
+                                val selectedKid = value as UserInfoDto
+                                with(binding) {
+                                    binding.selectedKidName.text = selectedKid.nickName
+                                    Glide.with(requireContext()).load(selectedKid.profileUrl)
+                                            .error(R.drawable.ic_launcher_background)
+                                            .into(binding.selectedKidProfileImg)
+                                }
+
+                                makeStampViewModel.setSelectedKidId(id = selectedKid.memberId)
+                            }
+
                         }
-
-                        makeStampViewModel.setSelectedKidId(id = selectedKid.memberId)
                     }
-
-                }
-            }
-        ).show(childFragmentManager, null)
+            ).show(childFragmentManager, null)
+        }
     }
 
     override fun onStampCountClicked(view: TextView, value: Int) {
@@ -351,11 +428,16 @@ class MakeStampFragment : BaseFragment<FragmentMakeStampBinding>(), StampCountIn
         makeStampViewModel.deleteMission(mission)
     }
 
-    override fun updateMissionList(missionList: List<String>) {
+    override fun updateMissionList(missionList: List<MakeStampMissionModel>) {
         makeStampViewModel.updateMissionList(missionList)
     }
 
     override fun onToolbarIconClicked() {
+        if (findNavController().previousBackStackEntry?.destination?.id == R.id.protectorStampBoardDetailFragment) {
+            // 도장판 수정
+            requestUpdateStampDialog.show(childFragmentManager, "Dialog")
+            return
+        }
         // 도장판 등록
         requestStampDialog.show(childFragmentManager, "Dialog")
     }

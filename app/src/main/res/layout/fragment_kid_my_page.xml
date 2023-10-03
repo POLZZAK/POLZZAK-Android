@@ -8,6 +8,14 @@
         <variable
             name="fragment"
             type="com.polzzak_android.presentation.feature.myPage.kid.KidMyPageFragment" />
+
+        <variable
+            name="profileData"
+            type="com.polzzak_android.data.remote.model.response.ProfileDto" />
+
+        <variable
+            name="level"
+            type="com.polzzak_android.presentation.feature.myPage.model.LevelModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -287,7 +295,7 @@
                         android:layout_height="60dp"
                         android:gravity="center_vertical"
                         android:onClick="@{() -> fragment.onClickCustomerService()}"
-                        android:text="고객센터"
+                        android:text="궁금해요"
                         android:textColor="@color/gray_800" />
 
                     <View

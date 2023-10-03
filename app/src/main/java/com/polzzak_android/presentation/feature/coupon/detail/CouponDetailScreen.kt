@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -119,7 +120,7 @@ fun CouponDetailScreen_Kid(
                                 colors = ButtonDefaults.polzzakButtonColors(backgroundColor = Blue600),
                                 modifier = Modifier.fillMaxWidth()
                             ) {
-                                Text(text = "선물 조르기")
+                                Text(text = "선물 조르기", color = Color.White)
                             }
 
                             if (countdownVisibility) {
@@ -140,7 +141,7 @@ fun CouponDetailScreen_Kid(
                             },
                             modifier = Modifier.weight(1f)
                         ) {
-                            Text(text = "선물 받기 완료")
+                            Text(text = "선물 받기 완료", color = Blue600)
                         }
                     }
                 )

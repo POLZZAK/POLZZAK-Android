@@ -4,9 +4,11 @@ import android.os.Bundle
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
 import com.polzzak_android.R
+import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.databinding.FragmentPointRankingBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.errorOf
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +45,13 @@ class KidRankingFragment : BaseFragment<FragmentPointRankingBinding>() {
     }
 
     private fun onError(exception: Exception) {
-        PolzzakSnackBar.errorOf(binding.root, exception).show()
+        when (exception) {
+            is ApiException.AccessTokenExpired -> {
+                handleInvalidToken()
+            }
+            else -> {
+                PolzzakSnackBar.errorOf(binding.root, exception).show()
+            }
+        }
     }
 }

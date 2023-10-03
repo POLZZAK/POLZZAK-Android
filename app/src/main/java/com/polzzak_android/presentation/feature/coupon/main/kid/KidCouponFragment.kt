@@ -15,8 +15,8 @@ import com.polzzak_android.presentation.feature.coupon.main.content.CouponConten
 class KidCouponFragment : BaseFragment<FragmentKidCouponBinding>(), ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_kid_coupon
 
-    private val previousCouponFragment = CouponContentFragment.getInstance("issued")      // todo
-    private val receivedCouponFragment = CouponContentFragment.getInstance("rewarded")      // todo
+    private val previousCouponFragment = CouponContentFragment.getInstance("issued", isKid =  true)      // todo
+    private val receivedCouponFragment = CouponContentFragment.getInstance("rewarded", isKid =  true)      // todo
 
     private lateinit var toolbarHelper: ToolbarHelper
 

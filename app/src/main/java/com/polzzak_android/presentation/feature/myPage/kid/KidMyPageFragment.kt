@@ -3,16 +3,30 @@ package com.polzzak_android.presentation.feature.myPage.kid
 import android.graphics.Paint
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
+import androidx.core.text.toSpannable
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.BuildConfig
+import com.bumptech.glide.Glide
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentKidMyPageBinding
+import com.polzzak_android.presentation.common.model.ButtonCount
+import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.model.ModelState
+import com.polzzak_android.presentation.common.util.SpannableBuilder
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
+import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
+import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.util.checkNewestVersion
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
+import com.polzzak_android.presentation.feature.myPage.profile.ProfileViewModel
 import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment.Companion.ARGUMENT_NICKNAME_KEY
+import com.polzzak_android.presentation.feature.myPage.model.LevelModel
+import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
 import com.polzzak_android.presentation.feature.term.TermDetailFragment
 import com.polzzak_android.presentation.feature.term.model.TermType
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +37,10 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     override val layoutResId: Int = R.layout.fragment_kid_my_page
 
     private lateinit var toolbarHelper: ToolbarHelper
+
+
+    private val profileViewModel: ProfileViewModel by activityViewModels()
+    private val linkedUserViewModel: StampLinkedUserViewModel by activityViewModels()
 
     override fun setToolbar() {
         super.setToolbar()
@@ -41,6 +59,7 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
         super.initView()
         binding.fragment = this
         setUpPointView()
+        profileViewModel.getUserProfile(accessToken = getAccessTokenOrNull() ?: "")
         setTermsLinkUnderLine()
         setVersionInfo()
     }
@@ -90,10 +109,60 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
 
     override fun initObserver() {
         super.initObserver()
+        // 사용자 프로필
+        profileViewModel.userProfile.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                is ModelState.Success -> {
+                    val data = state.data
+
+                    with(binding) {
+                        profileData = data
+                        profileLinkUserCount.text = getString(R.string.my_account_linked_kids_count, data.linkedUser)
+                        level = LevelModel(
+                            previousLevel = if ((data.memberPoint.level - 1) < 0) "0" else (data.memberPoint.level - 1).toString(),
+                            currentLevel = data.memberPoint.level.toString(),
+                            nextLevel = (data.memberPoint.level + 1).toString()
+                        )
+                        Glide.with(requireContext()).load(data.profileUrl)
+                            .error(R.drawable.ic_launcher_background)
+                            .into(this.profileImage)
+                        pointTitle.text = SpannableBuilder.build(pointNowHas.context) {
+                            span(text = "다음 계단까지\n", textColor = R.color.gray_800, style = R.style.subtitle_16_600)
+                            span(text = (100 - (data.memberPoint.point % 100)).toString() + "P ", textColor = R.color.blue_500, style = R.style.subtitle_16_600)
+                            span(text = "남았어요!", textColor = R.color.gray_800, style = R.style.subtitle_16_600)
+                        }
+                        pointNowHas.text = SpannableBuilder.build(pointNowHas.context) {
+                            span(text = "보유한 포인트 ", textColor = R.color.gray_600, style = R.style.body_13_500)
+                            span(text = data.memberPoint.point.toString() + "P", textColor = R.color.blue_500, style = R.style.body_13_500)
+                        }
+                    }
+                }
+                is ModelState.Error -> {
+
+                }
+                is ModelState.Loading -> {}
+            }
+        }
     }
 
     fun onClickLinkUser() {
-        // todo: 연동된 사용자 클릭
+        val bottomSheet = CommonBottomSheetHelper.getInstance(
+            data = CommonBottomSheetModel(
+                type = BottomSheetType.PROFILE_IMAGE,
+                title = "나와 연동된 보호자".toSpannable(),
+                subTitle = SpannableBuilder.build(binding.profileLinkUserCount.context) {
+                    span(text = "메인홈 > 연동관리", textColor = R.color.blue_500, style = R.style.body_13_500)
+                    span(text = "에서 정보 수정이 가능해요", textColor = R.color.gray_500, style = R.style.body_13_500)
+                },
+                contentList = linkedUserViewModel.getLinkedUserList() ?: listOf(""),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.ONE,
+                    positiveButtonText = "닫기"
+                )
+            )
+        )
+
+        bottomSheet.show(childFragmentManager, null)
     }
 
     fun onClickRanking() {
@@ -109,7 +178,7 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickCustomerService() {
-        // todo: 고객센터 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_kidCSFragment)
     }
 
     fun onClickNotice() {
@@ -117,9 +186,8 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     fun onClickManageAccount() {
-        //TODO 닉네임 추가
         val bundle = Bundle().apply {
-            putString(ARGUMENT_NICKNAME_KEY, "nickname")
+            putString(ARGUMENT_NICKNAME_KEY, profileViewModel.getUserNickname())
         }
         findNavController().navigate(
             R.id.action_kidMyPageFragment_to_myAccountManagementFragment,
@@ -142,6 +210,6 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
     }
 
     override fun onToolbarIconClicked() {
-        // todo: 툴바 세팅 아이콘 클릭
+        findNavController().navigate(R.id.action_kidMyPageFragment_to_profileModifyFragment)
     }
 }

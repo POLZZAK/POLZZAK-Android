@@ -31,7 +31,7 @@ class UserInfoImageListItem(
                 itemProfileNickname.setTextColor(root.context.getColor(R.color.primary))
                 itemProfileCheck.visibility = View.VISIBLE
             } else {
-                itemProfileNickname.setTextColor(root.context.getColor(R.color.black))
+                itemProfileNickname.setTextColor(root.context.getColor(R.color.gray_800))
                 itemProfileCheck.visibility = View.GONE
             }
 
@@ -43,7 +43,7 @@ class UserInfoImageListItem(
                     binding.itemProfileNickname.setTextColor(it.context.getColor(R.color.primary))
                     itemProfileCheck.visibility = View.VISIBLE
                 } else {
-                    binding.itemProfileNickname.setTextColor(it.context.getColor(R.color.black))
+                    binding.itemProfileNickname.setTextColor(it.context.getColor(R.color.gray_800))
                     itemProfileCheck.visibility = View.GONE
                 }
 

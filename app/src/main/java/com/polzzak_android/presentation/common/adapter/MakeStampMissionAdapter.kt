@@ -12,6 +12,7 @@ import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemStampMissionBinding
 import com.polzzak_android.presentation.feature.stamp.make.intreraction.MissionInteraction
 import com.polzzak_android.presentation.feature.stamp.model.MakeStampMissionListModel
+import com.polzzak_android.presentation.feature.stamp.model.MakeStampMissionModel
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
 class MakeStampMissionAdapter(
@@ -19,7 +20,7 @@ class MakeStampMissionAdapter(
 ) :
     ListAdapter<String, MakeStampMissionAdapter.ViewHolder>(DiffCallback) {
 
-    private var missionList: MutableList<String>? = null
+    private var missionList: MutableList<MakeStampMissionModel>? = null
     private var missionListSize: Int = 0
     private var errorMessage: String? = null
     private var errorPosition: Int? = null
@@ -57,7 +58,7 @@ class MakeStampMissionAdapter(
                      */
                     if (adapterPosition != RecyclerView.NO_POSITION && s != null) {
                         val updatedMissionList = missionList?.toMutableList() ?: mutableListOf()
-                        updatedMissionList[adapterPosition] = s.toString()
+                        updatedMissionList[adapterPosition] = MakeStampMissionModel(id = updatedMissionList[adapterPosition].id, content = s.toString())
 
                         missionList = updatedMissionList
                         interaction.updateMissionList(updatedMissionList)
@@ -93,8 +94,7 @@ class MakeStampMissionAdapter(
         }
     }
 
-    override fun submitList(list: MutableList<String>?) {
-        super.submitList(list)
+    fun submitMissionList(list: MutableList<MakeStampMissionModel>?) {
         missionList = list
         notifyDataSetChanged()
     }
@@ -105,7 +105,7 @@ class MakeStampMissionAdapter(
     }
 
     fun addMission(list: MutableList<MissionModel>) {
-        missionList?.addAll(list.map { data -> data.content })
+        missionList?.addAll(list.map { data -> MakeStampMissionModel(data.id, data.content) })
         notifyDataSetChanged()
     }
 

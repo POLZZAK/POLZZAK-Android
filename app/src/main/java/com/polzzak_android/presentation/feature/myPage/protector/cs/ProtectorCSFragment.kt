@@ -89,7 +89,7 @@ class ProtectorCSFragment : BaseFragment<FragmentProtectorCSBinding>() {
             if (isExpanded) {
                 with(binding) {
                     faqContent.visibility = View.VISIBLE
-                    faqTitle.setTextColor(binding.root.context.getColor(R.color.black))
+                    faqTitle.setTextColor(binding.root.context.getColor(R.color.gray_800))
                     faqArrow.setImageResource(R.drawable.ic_arrow_up)
                 }
             } else {

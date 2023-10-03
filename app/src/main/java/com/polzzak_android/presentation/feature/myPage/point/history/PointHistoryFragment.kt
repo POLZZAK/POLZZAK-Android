@@ -5,9 +5,11 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
+import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.databinding.FragmentPointHistoryBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
@@ -61,6 +63,13 @@ class PointHistoryFragment : BaseFragment<FragmentPointHistoryBinding>() {
     }
 
     private fun onError(exception: Exception) {
-        PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
+        when (exception) {
+            is ApiException.AccessTokenExpired -> {
+                handleInvalidToken()
+            }
+            else -> {
+                PolzzakSnackBar.errorOf(binding.root, exception).show()
+            }
+        }
     }
 }

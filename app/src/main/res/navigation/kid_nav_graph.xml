@@ -100,6 +100,12 @@
             <action
                 android:id="@+id/action_kidMyPageFragment_to_termDetailFragment"
                 app:destination="@id/termDetailFragment" />
+            <action
+                android:id="@+id/action_kidMyPageFragment_to_kidCSFragment"
+                app:destination="@id/kidCSFragment" />
+            <action
+                android:id="@+id/action_kidMyPageFragment_to_profileModifyFragment"
+                app:destination="@id/profileModifyFragment" />
 
             <action
                 android:id="@+id/action_kidMyPageFragment_to_kidRankingFragment"
@@ -118,6 +124,11 @@
                         android:defaultValue="true"/>
             </action>
         </fragment>
+
+        <fragment
+            android:id="@+id/kidCSFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.kid.cs.KidCSFragment"
+            android:label="KidCSFragment"/>
 
         <fragment
             android:id="@+id/myNoticeFragment"
@@ -154,6 +165,11 @@
             android:label="TermDetailFragment" />
 
         <fragment
+            android:id="@+id/profileModifyFragment"
+            android:name="com.polzzak_android.presentation.feature.myPage.profile.ProfileModifyFragment"/>
+    </navigation>
+
+        <fragment
             android:id="@+id/kidRankingFragment"
             android:name="com.polzzak_android.presentation.feature.myPage.point.ranking.kid.KidRankingFragment"
             android:label="KidRankingFragment" />
@@ -168,5 +184,3 @@
             android:name="com.polzzak_android.presentation.feature.myPage.point.rules.PointRuleFragment"
             android:label="PointRuleFragment" />
     </navigation>
-
-</navigation>

@@ -3,6 +3,7 @@ package com.polzzak_android.presentation.feature.stamp.main.protector
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
@@ -13,9 +14,9 @@ import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
-import com.polzzak_android.presentation.feature.stamp.main.StampMainViewModel
 import com.polzzak_android.presentation.feature.stamp.main.completed.ProtectorCompletedFragment
 import com.polzzak_android.presentation.feature.stamp.main.progress.ProtectorProgressFragment
+import com.polzzak_android.presentation.feature.stamp.main.StampMainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,11 +25,13 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), Tool
 
     private val stampMainViewModel by viewModels<StampMainViewModel>()
 
-    private val protectorProgressFragment = ProtectorProgressFragment.getInstance()
-    private val protectorCompletedFragment = ProtectorCompletedFragment.getInstance()
+    private val protectorProgressFragment = ProtectorProgressFragment.getInstance(isKid = false)
+    private val protectorCompletedFragment = ProtectorCompletedFragment.getInstance(isKid = false)
 
     private lateinit var toolbarHelper: ToolbarHelper
 
+    private val linkedUserViewModel: StampLinkedUserViewModel by activityViewModels()
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         stampMainViewModel.requestHasNewRequest(accessToken = getAccessTokenOrNull() ?: "")
@@ -60,7 +63,10 @@ class ProtectorMainFragment : BaseFragment<FragmentProtectorMainBinding>(), Tool
         tabListener()
 
         binding.fab.setOnClickListener {
-            findNavController().navigate(R.id.action_protectorMainFragment_to_makeStampFragment)
+            val hasLinkedUser = linkedUserViewModel.getLinkedUserList().isNullOrEmpty()
+            if (!hasLinkedUser) {
+                findNavController().navigate(R.id.action_protectorMainFragment_to_makeStampFragment)
+            }
         }
     }
 

@@ -25,7 +25,7 @@ class MissionListItem(
                 itemExMissionText.setTextColor(root.context.getColor(R.color.primary))
                 itemExMissionCheck.visibility = View.VISIBLE
             } else {
-                itemExMissionText.setTextColor(root.context.getColor(R.color.black))
+                itemExMissionText.setTextColor(root.context.getColor(R.color.gray_800))
                 itemExMissionCheck.visibility = View.GONE
             }
 
@@ -37,7 +37,7 @@ class MissionListItem(
                     binding.itemExMissionText.setTextColor(it.context.getColor(R.color.primary))
                     itemExMissionCheck.visibility = View.VISIBLE
                 } else {
-                    binding.itemExMissionText.setTextColor(it.context.getColor(R.color.black))
+                    binding.itemExMissionText.setTextColor(it.context.getColor(R.color.gray_800))
                     itemExMissionCheck.visibility = View.GONE
                 }
 

@@ -14,6 +14,7 @@ data class CouponPartner(
 )
 
 data class CouponModel(
+    val isKid: Boolean,         // 사용자
     val id: Int,                // 쿠폰 id
     val name: String,           // 쿠폰 이름(보상)
     val dDay: String,           // 쿠폰 보상 약속 기간까지 남은 일수
