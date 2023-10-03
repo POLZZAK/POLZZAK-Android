@@ -1,9 +1,13 @@
 package com.polzzak_android.data.remote.model.response
 
+import com.polzzak_android.presentation.common.util.dateBetween
+import com.polzzak_android.presentation.common.util.toLocalDateOrNull
 import com.polzzak_android.presentation.feature.coupon.model.Coupon
 import com.polzzak_android.presentation.feature.coupon.model.CouponModel
 import com.polzzak_android.presentation.feature.coupon.model.CouponPartner
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.LocalDate
 import java.util.Calendar
 
 data class CouponListResponse(
@@ -58,12 +62,13 @@ fun CouponDto.toCouponModel(isKid: Boolean) = CouponModel(
 )
 
 fun getRemainDay(rewardDay: String): String {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS")
-    val targetDate = dateFormat.parse(rewardDay)
+    val targetDate = rewardDay.toLocalDateOrNull() ?: LocalDate.now()
 
-    val today = Calendar.getInstance().time
-
-    val differenceInMillis = targetDate.time - today.time
-
-    return (differenceInMillis / (1000 * 60 * 60 * 24)).toString()
+    return Duration
+        .between(
+            LocalDate.now().atStartOfDay(),
+            targetDate.atStartOfDay()
+        )
+        .toDays()
+        .toString()
 }
