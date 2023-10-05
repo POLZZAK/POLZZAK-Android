@@ -31,8 +31,10 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailScreen_Protector
 import com.polzzak_android.presentation.feature.coupon.detail.CouponDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class ProtectorCouponDetailFragment : BaseFragment<FragmentCouponDetailBinding>(),
     ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_coupon_detail

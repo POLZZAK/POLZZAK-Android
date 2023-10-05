@@ -43,20 +43,23 @@
             android:id="@+id/kidCouponFragment"
             android:name="com.polzzak_android.presentation.feature.coupon.main.kid.KidCouponFragment"
             android:label="KidCouponFragment" >
-            <action
-                android:id="@+id/action_to_couponDetailFragment"
-                app:destination="@id/kidCouponDetailFragment">
-                <argument
-                    android:name="couponId"
-                    app:argType="integer"
-                    android:defaultValue="-1"/>
-            </action>
         </fragment>
-        <fragment
-            android:id="@+id/kidCouponDetailFragment"
-            android:name="com.polzzak_android.presentation.feature.coupon.detail.kid.KidCouponDetailFragment"
-            android:label="KidCouponDetailFragment" />
+
     </navigation>
+
+    <fragment
+        android:id="@+id/kidCouponDetailFragment"
+        android:name="com.polzzak_android.presentation.feature.coupon.detail.kid.KidCouponDetailFragment"
+        android:label="KidCouponDetailFragment" />
+
+    <action
+        android:id="@+id/action_to_couponDetailFragment"
+        app:destination="@id/kidCouponDetailFragment">
+        <argument
+            android:name="couponId"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+    </action>
 
     <!-- 알림 -->
     <navigation
