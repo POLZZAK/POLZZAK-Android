@@ -71,20 +71,21 @@
         android:name="com.polzzak_android.presentation.feature.coupon.main.protector.ProtectorCouponFragment"
         android:label="ProtectorCouponFragment"
         tools:layout="@layout/fragment_protector_coupon" >
-        <action
-            android:id="@+id/action_to_couponDetailFragment"
-            app:destination="@id/protectorCouponDetailFragment">
-            <argument
-                android:name="couponId"
-                app:argType="integer"
-                android:defaultValue="-1"/>
-        </action>
     </fragment>
 
     <fragment
         android:id="@+id/protectorCouponDetailFragment"
         android:name="com.polzzak_android.presentation.feature.coupon.detail.protector.ProtectorCouponDetailFragment"
         android:label="ProtectorCouponDetailFragment" />
+
+    <action
+        android:id="@+id/action_to_couponDetailFragment"
+        app:destination="@id/protectorCouponDetailFragment">
+        <argument
+            android:name="couponId"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+    </action>
 
     <!-- 알림 -->
     <fragment

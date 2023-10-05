@@ -7,7 +7,6 @@ import com.polzzak_android.R
 import com.polzzak_android.presentation.common.model.MemberType
 import com.polzzak_android.presentation.feature.notification.list.base.BaseNotificationListFragment
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationLinkType
-import timber.log.Timber
 
 class KidNotificationListFragment : BaseNotificationListFragment() {
     override val actionToSettingFragment: Int =
@@ -20,8 +19,8 @@ class KidNotificationListFragment : BaseNotificationListFragment() {
                 is NotificationLinkType.My -> bottomNav?.selectedItemId = R.id.kid_myPage_nav_graph
                 is NotificationLinkType.Home -> bottomNav?.selectedItemId = R.id.kid_main_nav_graph
                 is NotificationLinkType.CouponDetail -> {
-                    //TODO bundle, action
-                    Timber.d("move to coupon detail ${type.id}")
+                    val bundle = Bundle().apply { putInt("couponId", type.id) }
+                    findNavController().navigate(R.id.action_to_couponDetailFragment, bundle)
                 }
 
                 is NotificationLinkType.StampDetail -> {
