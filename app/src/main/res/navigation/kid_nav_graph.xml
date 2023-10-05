@@ -167,7 +167,6 @@
         <fragment
             android:id="@+id/profileModifyFragment"
             android:name="com.polzzak_android.presentation.feature.myPage.profile.ProfileModifyFragment"/>
-    </navigation>
 
         <fragment
             android:id="@+id/kidRankingFragment"
@@ -184,3 +183,5 @@
             android:name="com.polzzak_android.presentation.feature.myPage.point.rules.PointRuleFragment"
             android:label="PointRuleFragment" />
     </navigation>
+
+</navigation>
