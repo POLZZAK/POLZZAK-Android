@@ -163,8 +163,10 @@
     <string name="notification_setting_created_stamp_board_content">새로운 도장판이 만들어졌다는 알림을 받을래요</string>
     <string name="notification_setting_issued_coupon_title">쿠폰 발급 알림</string>
     <string name="notification_setting_issued_coupon_content">보호자가 선물 쿠폰을 발급해줬다는 알림을 받을래요</string>
-    <string name="notification_setting_rewarded_title">선물 전달 확인 알림</string>
-    <string name="notification_setting_rewarded_content">선물 전달이 완료되었는지 확인하는 알림을 받을래요</string>
+    <string name="notification_setting_rewarded_title">선물 수령 알림</string>
+    <string name="notification_setting_rewarded_content">아이가 선물을 받았다고 보내는 감사 인사를 받을래요</string>
+    <string name="notification_setting_rewarded_request_title">선물 전달 확인 알림</string>
+    <string name="notification_setting_rewarded_request_content">선물 전달이 완료되었는지 확인하는 알림을 받을래요</string>
 
     <!-- permission -->
     <string name="permission_manager_dialog_btn_positive_text">설정하기</string>
