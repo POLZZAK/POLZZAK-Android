@@ -118,3 +118,5 @@ fun Fragment.logout() {
 fun Fragment.handleInvalidToken() {
     (activity as? MainActivity)?.handleInvalidToken()
 }
+
+fun Fragment.getInAppUpdateCheckerOrNull() = (activity as? MainActivity)?.inAppUpdateChecker
