@@ -31,7 +31,6 @@ android {
         targetSdk 33
         /*
             버전규칙(인앱 업데이트 때문에 반드시 지켜야 함)
-            //TODO 버전코드 예시임 확정 후 변경 필요
             버전코드 형식 : A.B.C버전일 경우 ABBBCCC(자릿수 반드시 맞춰야 함)
          */
         versionCode 1000000

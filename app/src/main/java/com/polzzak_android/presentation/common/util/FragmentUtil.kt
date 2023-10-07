@@ -119,7 +119,4 @@ fun Fragment.handleInvalidToken() {
     (activity as? MainActivity)?.handleInvalidToken()
 }
 
-fun Fragment.checkNewestVersion(
-    onSuccess: (newestVersion: Int, version: Int) -> Unit,
-    onFailure: () -> Unit
-) = (activity as? MainActivity)?.checkNewestVersion(onSuccess = onSuccess, onFailure = onFailure)
+fun Fragment.getInAppUpdateCheckerOrNull() = (activity as? MainActivity)?.inAppUpdateChecker

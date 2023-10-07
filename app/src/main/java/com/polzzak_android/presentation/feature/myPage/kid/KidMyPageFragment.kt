@@ -2,30 +2,30 @@ package com.polzzak_android.presentation.feature.myPage.kid
 
 import android.graphics.Paint
 import android.os.Bundle
-import androidx.lifecycle.lifecycleScope
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.polzzak_android.BuildConfig
 import com.bumptech.glide.Glide
+import com.polzzak_android.BuildConfig
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentKidMyPageBinding
+import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.getInAppUpdateCheckerOrNull
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
-import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.presentation.common.util.checkNewestVersion
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
-import com.polzzak_android.presentation.feature.myPage.profile.ProfileViewModel
 import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment.Companion.ARGUMENT_NICKNAME_KEY
 import com.polzzak_android.presentation.feature.myPage.model.LevelModel
+import com.polzzak_android.presentation.feature.myPage.profile.ProfileViewModel
 import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
 import com.polzzak_android.presentation.feature.term.TermDetailFragment
 import com.polzzak_android.presentation.feature.term.model.TermType
@@ -94,14 +94,13 @@ class KidMyPageFragment : BaseFragment<FragmentKidMyPageBinding>(), ToolbarIconI
         with(binding) {
             version.text = BuildConfig.VERSION_NAME
             viewLifecycleOwner.lifecycleScope.launch {
-                checkNewestVersion(
+                getInAppUpdateCheckerOrNull()?.checkNewestVersion(
                     onSuccess = { newestVersion, version ->
                         versionCheck.text =
                             getString(if (newestVersion == version) R.string.my_version_newest else R.string.my_version_need_update)
                     },
                     onFailure = {
-                        versionCheck.text = "버전 확인 불가"
-                        //TODO 버전 확인 불가능할 경우
+                        versionCheck.text = ""
                     })
             }
         }

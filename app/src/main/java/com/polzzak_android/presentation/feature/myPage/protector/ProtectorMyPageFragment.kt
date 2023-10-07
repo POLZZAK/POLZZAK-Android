@@ -16,16 +16,16 @@ import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.getInAppUpdateCheckerOrNull
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
-import com.polzzak_android.presentation.common.util.checkNewestVersion
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
-import com.polzzak_android.presentation.feature.myPage.profile.ProfileViewModel
 import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment
 import com.polzzak_android.presentation.feature.myPage.model.LevelModel
+import com.polzzak_android.presentation.feature.myPage.profile.ProfileViewModel
 import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
 import com.polzzak_android.presentation.feature.term.TermDetailFragment
 import com.polzzak_android.presentation.feature.term.model.TermType
@@ -92,14 +92,13 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
         with(binding) {
             version.text = BuildConfig.VERSION_NAME
             viewLifecycleOwner.lifecycleScope.launch {
-                checkNewestVersion(
+                getInAppUpdateCheckerOrNull()?.checkNewestVersion(
                     onSuccess = { newestVersion, version ->
                         versionCheck.text =
                             getString(if (newestVersion == version) R.string.my_version_newest else R.string.my_version_need_update)
                     },
                     onFailure = {
-                        versionCheck.text = "버전 확인 불가"
-                        //TODO 버전 확인 불가능할 경우
+                        versionCheck.text = ""
                     })
             }
         }

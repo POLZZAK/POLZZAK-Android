@@ -47,22 +47,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
 
     val permissionManager = PermissionManager(this)
 
-    private var inAppUpdateChecker: InAppUpdateChecker? = null
+    var inAppUpdateChecker: InAppUpdateChecker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         inAppUpdateChecker = InAppUpdateChecker(this)
         initLoginHelper()
-        inAppUpdateChecker?.checkUpdate(
-            onSuccess = { startApp(savedInstanceState = savedInstanceState) },
-            onFailure = {
-                //TODO 업데이트 체크 실패 시 대응 현재 임시로 진행되게 함
-                startApp(savedInstanceState)
-            })
-    }
-
-    private fun startApp(savedInstanceState: Bundle?) {
         savedInstanceState?.let {
             val savedToken = it.getString(SAVE_INSTANCE_ACCESS_TOKEN_KEY)
             if (getAccessToken().isNullOrEmpty()) mainViewModel.accessToken = savedToken
@@ -155,13 +146,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
             content = dialogModel
         ).show(supportFragmentManager, null)
         logout()
-    }
-
-    fun checkNewestVersion(
-        onSuccess: (newestVersion: Int, version: Int) -> Unit,
-        onFailure: () -> Unit
-    ) {
-        inAppUpdateChecker?.checkNewestVersion(onSuccess = onSuccess, onFailure = onFailure)
     }
 
     companion object {
