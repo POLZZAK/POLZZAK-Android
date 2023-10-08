@@ -60,7 +60,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         }
         permissionManager.requestAllPermissions()
 
-        initFCMMessaging()
         // set navigation
         val navHostFragment =
             supportFragmentManager.findFragmentById(binding.fcvContainer.id) as NavHostFragment
