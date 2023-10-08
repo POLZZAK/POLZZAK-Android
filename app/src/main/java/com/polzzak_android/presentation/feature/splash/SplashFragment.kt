@@ -10,6 +10,7 @@ import android.view.View
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.polzzak_android.BuildConfig
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentSplashBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -44,16 +45,21 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getInAppUpdateCheckerOrNull()?.checkUpdate(
-            onSuccess = ::startSplash,
-            onNetworkError = ::onCheckInAppUpdateNetworkError
-        )
-        registerNetworkCallback(networkCallback)
+        //debug모드 버전체크 하지 않음
+        if (BuildConfig.DEBUG) {
+            startSplash()
+        } else {
+            getInAppUpdateCheckerOrNull()?.checkUpdate(
+                onSuccess = ::startSplash,
+                onNetworkError = ::onCheckInAppUpdateNetworkError
+            )
+            registerNetworkCallback(networkCallback)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        unregisterNetworkCallback(networkCallback)
+        if (!BuildConfig.DEBUG) unregisterNetworkCallback(networkCallback)
     }
 
     private fun registerNetworkCallback(networkCallback: NetworkCallback) {
