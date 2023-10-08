@@ -30,6 +30,10 @@
     <string name="common_expire_access_token">로그아웃 되었어요.\n다시 로그인 해주세요!</string>
     <string name="common_need_to_update">최신 버전으로 업데이트가 필요해요!</string>
 
+    <!-- Splash -->
+    <string name="splash_text1">참 잘했어요 도장 쾅</string>
+    <string name="splash_text2">폴짝!</string>
+
     <!-- Login -->
     <string name="login_title">참 잘 했어요 도장 쾅!</string>
     <string name="login_content">미션을 수행하고 칭찬 도장을 모으며\n폴짝 성장해요</string>
