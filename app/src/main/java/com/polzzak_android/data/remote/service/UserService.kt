@@ -1,11 +1,11 @@
 package com.polzzak_android.data.remote.service
 
 import com.polzzak_android.data.remote.model.response.EmptyDataResponse
-import com.polzzak_android.data.remote.model.response.ProfileDto
 import com.polzzak_android.data.remote.model.response.ProfileResponse
 import com.polzzak_android.data.remote.model.response.UserResponse
 import okhttp3.MultipartBody
 import retrofit2.Response
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -42,5 +42,10 @@ interface UserService {
         @Header("Authorization") authorization: String,
         @Header("Content-Type") contentType: String,
         @Path("nickname") nickname: String
+    ): Response<EmptyDataResponse>
+
+    @DELETE("/api/v1/users")
+    suspend fun deleteUser(
+        @Header("Authorization") authorization: String,
     ): Response<EmptyDataResponse>
 }
