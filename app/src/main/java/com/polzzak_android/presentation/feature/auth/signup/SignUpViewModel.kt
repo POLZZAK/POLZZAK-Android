@@ -5,15 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.data.repository.GUIDRepository
+import com.polzzak_android.data.repository.PushMessageRepository
 import com.polzzak_android.data.repository.SignUpRepository
 import com.polzzak_android.presentation.common.model.ModelState
-import com.polzzak_android.presentation.feature.auth.login.model.LoginInfoModel
 import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail.Companion.KID_TYPE_ID
 import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.signup.model.MemberTypeModel
@@ -28,11 +26,11 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class SignUpViewModel @AssistedInject constructor(
     private val signUpRepository: SignUpRepository,
     private val guidRepository: GUIDRepository,
+    private val pushMessageRepository: PushMessageRepository,
     @Assisted private val userName: String?, @Assisted private val userType: SocialLoginType?
 ) : ViewModel() {
     private val _pageLiveData = MutableLiveData<SignUpPage>()
@@ -192,7 +190,7 @@ class SignUpViewModel @AssistedInject constructor(
                     signUpResponseData?.accessToken?.let {
                         val signUpResultModel =
                             SignUpResultModel(accessToken = it, memberTypeId = memberTypeId)
-                        setSignUpResultSuccess(data = signUpResultModel)
+                        requestSendToken(signUpResultModel = signUpResultModel)
                     } ?: run {
                         setSignUpResultError()
                     }
@@ -203,19 +201,25 @@ class SignUpViewModel @AssistedInject constructor(
         }
     }
 
-    //TODO 푸시알림 토큰 등록 + 아래함수 호출 필요
-    private suspend fun requestSendToken(loginInfoModel: LoginInfoModel) {
-        val guid = guidRepository.requestGUID()
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Timber.w(task.exception, "Fetching FCM registration token failed")
-                return@OnCompleteListener
+    private suspend fun requestSendToken(
+        signUpResultModel: SignUpResultModel
+    ) {
+        pushMessageRepository.requestPushToken().onSuccess {
+            it ?: run {
+                setSignUpResultError(exception = ApiException.FirebaseTokenFailed())
+                return@onSuccess
             }
-            // Get new FCM registration token
-            val token = task.result
-            Timber.d( "token : $token\nguid : $guid")
-            //TODO 서버 토큰 등록
-        })
+            pushMessageRepository.requestPostPushToken(
+                accessToken = signUpResultModel.accessToken,
+                token = it
+            ).onSuccess {
+                setSignUpResultSuccess(data = signUpResultModel)
+            }.onError { exception, _ ->
+                setSignUpResultError(exception = exception)
+            }
+        }.onError { exception, _ ->
+            setSignUpResultError(exception = exception)
+        }
     }
 
     fun checkTermsOfService(clickModel: SignUpTermsOfServiceModel.ClickModel) {

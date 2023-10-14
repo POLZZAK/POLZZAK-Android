@@ -4,14 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.data.repository.GUIDRepository
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.MemberTypeRepository
+import com.polzzak_android.data.repository.PushMessageRepository
 import com.polzzak_android.data.repository.UserRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.model.asMemberTypeOrNull
@@ -23,8 +22,8 @@ import com.polzzak_android.presentation.feature.auth.model.asSocialLoginTypeOrNu
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +31,8 @@ class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val memberTypeRepository: MemberTypeRepository,
     private val userRepository: UserRepository,
-    private val guidRepository: GUIDRepository
+    private val guidRepository: GUIDRepository,
+    private val pushMessageRepository: PushMessageRepository
 ) : ViewModel() {
     private val _loginInfoLiveData = MutableLiveData<EventWrapper<ModelState<LoginInfoModel>>>()
     val loginInfoLiveData: LiveData<EventWrapper<ModelState<LoginInfoModel>>> = _loginInfoLiveData
@@ -86,41 +86,46 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun requestLoginInfo(accessToken: String, socialType: SocialLoginType) {
-        setLoginResultLoading()
-        userRepository.requestUser(accessToken = accessToken).onSuccess {
-            val memberType = it?.memberType?.let { memberTypeResponseData ->
-                asMemberTypeOrNull(memberTypeResponseData)
-            } ?: run {
-                setLoginResultError()
-                return@onSuccess
+        coroutineScope {
+            setLoginResultLoading()
+            pushMessageRepository.requestPushToken().onSuccess {
+                it ?: run {
+                    setLoginResultError(exception = ApiException.FirebaseTokenFailed())
+                    return@onSuccess
+                }
+                val userInfoDeferred =
+                    async { userRepository.requestUser(accessToken = accessToken) }
+                val postTokenDeferred = async {
+                    pushMessageRepository.requestPostPushToken(
+                        accessToken = accessToken,
+                        token = it
+                    )
+                }
+                val errors = mutableListOf<Exception>()
+                val userInfoResult =
+                    userInfoDeferred.await().onError { exception, _ -> errors.add(exception) }
+                postTokenDeferred.await().onError { exception, _ -> errors.add(exception) }
+                errors.firstOrNull()
+                    ?.let { exception -> setLoginResultError(exception = exception) } ?: run {
+                    val memberType =
+                        userInfoResult.data?.memberType?.let { memberTypeResponseData ->
+                            asMemberTypeOrNull(memberTypeResponseData)
+                        } ?: run {
+                            setLoginResultError()
+                            return@onSuccess
+                        }
+                    val loginInfoModel =
+                        LoginInfoModel.Login(
+                            accessToken = accessToken,
+                            memberType = memberType,
+                            socialType = socialType
+                        )
+                    setLoginResultSuccess(data = loginInfoModel)
+                }
+            }.onError { exception, _ ->
+                setLoginResultError(exception = exception)
             }
-            val loginInfoModel =
-                LoginInfoModel.Login(
-                    accessToken = accessToken,
-                    memberType = memberType,
-                    socialType = socialType
-                )
-            requestSendToken(loginInfoModel = loginInfoModel)
-//            setLoginResultSuccess(data = loginInfoModel)
-        }.onError { exception, _ ->
-            setLoginResultError(exception = exception)
         }
-    }
-
-    //TODO 푸시알림 토큰 등록
-    private suspend fun requestSendToken(loginInfoModel: LoginInfoModel) {
-        val guid = guidRepository.requestGUID()
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Timber.w(task.exception, "Fetching FCM registration token failed")
-                return@OnCompleteListener
-            }
-            // Get new FCM registration token
-            val token = task.result
-            Timber.d( "token : $token\nguid : $guid")
-            //TODO 서버 토큰 등록
-            setLoginResultSuccess(data = loginInfoModel)
-        })
     }
 
     private suspend fun requestParentTypes(userName: String, socialType: SocialLoginType) {

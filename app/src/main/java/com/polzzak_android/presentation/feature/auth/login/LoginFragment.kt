@@ -28,7 +28,6 @@ import com.polzzak_android.presentation.feature.auth.signup.SignUpFragment
 import com.polzzak_android.presentation.feature.root.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-//TODO google login release keystore 추가(현재 debug keystore만 사용 중)
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     override val layoutResId = R.layout.fragment_login
