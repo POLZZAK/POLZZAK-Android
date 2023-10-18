@@ -6,15 +6,19 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/stampContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:background="@drawable/round_stroke_background"
             android:paddingHorizontal="20dp"
-            android:paddingVertical="24dp">
+            android:paddingVertical="24dp"
+            app:layout_constraintBottom_toBottomOf="@id/couponCompletedImg"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <!-- 도장판 헤더 -->
             <TextView
@@ -63,11 +67,16 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:alpha="0.8"
-            android:background="@drawable/shape_rectangle_gray_500_r8" />
+            android:background="@drawable/shape_rectangle_gray_500_r8"
+            app:layout_constraintBottom_toBottomOf="@id/stampContainer"
+            app:layout_constraintEnd_toEndOf="@id/stampContainer"
+            app:layout_constraintStart_toStartOf="@id/stampContainer"
+            app:layout_constraintTop_toTopOf="@id/stampContainer" />
 
         <ImageView
+            android:id="@+id/couponCompletedImg"
             android:layout_width="158dp"
             android:layout_height="158dp"
             android:layout_marginEnd="16dp"

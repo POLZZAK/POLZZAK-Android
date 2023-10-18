@@ -3,7 +3,9 @@ package com.polzzak_android.presentation.common.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.polzzak_android.R
 import com.polzzak_android.databinding.ItemCouponBinding
+import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.feature.coupon.main.content.CouponContainerInteraction
 import com.polzzak_android.presentation.feature.coupon.model.CouponModel
 import java.text.SimpleDateFormat
@@ -11,8 +13,7 @@ import java.text.SimpleDateFormat
 class MainCouponPagerAdapter(
     private var couponList: List<CouponModel>,
     private val interaction: CouponContainerInteraction
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -48,7 +49,7 @@ class MainCouponPagerAdapter(
 
         fun bind(item: CouponModel) {
             isKid = item.isKid
-            dDay.text = item.dDay
+            dDay.text = "⏰ D-" + item.dDay
             reward.text = item.name
             deadline.text = deadlineFormat(item.deadLine)
 
@@ -70,8 +71,22 @@ class MainCouponPagerAdapter(
             val targetDate = inputFormat.parse(deadline)
 
             val outputFormat = SimpleDateFormat("yyyy.MM.dd까지 주기로 약속했어요")
+            val outputSting = outputFormat.format(targetDate)
 
-            return outputFormat.format(targetDate)
+            val spannableString = SpannableBuilder.build(context = this.container.context) {
+                span(
+                    text = outputSting.toString().substring(0,10),
+                    textColor = R.color.primary,
+                    style = R.style.caption_12_500
+                )
+                span(
+                    text = outputSting.toString().substring(10),
+                    textColor = R.color.gray_800,
+                    style = R.style.caption_12_500
+                )
+            }
+
+            return spannableString.toString()
         }
     }
 

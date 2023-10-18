@@ -4,148 +4,148 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/stampContainer"
-            android:background="@drawable/round_stroke_background"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/stampContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/round_stroke_background"
+        android:padding="20dp">
+
+        <!-- 도장판 헤더 -->
+        <TextView
+            android:id="@+id/stampNickName"
+            style="@style/title.20.700"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray_700"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="혜인이의 도장판" />
+
+        <ImageButton
+            android:id="@+id/stampDetailBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            app:layout_constraintBottom_toBottomOf="@id/stampNickName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/stampNickName" />
+
+        <!-- 도장판 진척도 -->
+        <com.polzzak_android.presentation.component.SemiCircleProgressView
+            android:id="@+id/stampProgress"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_marginTop="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stampNickName" />
+
+        <!-- 도장판 진척율 -->
+        <LinearLayout
+            android:id="@+id/stampProgressContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="20dp">
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            app:layout_constraintBottom_toBottomOf="@id/stampProgress"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/stampProgress"
+            app:layout_constraintVertical_bias="0.3">
 
-            <!-- 도장판 헤더 -->
             <TextView
-                android:id="@+id/stampNickName"
-                style="@style/title.20.700"
+                android:id="@+id/stampCurCnt"
+                style="@style/title.24.600"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray_700"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="혜인이의 도장판" />
+                android:textColor="@color/primary"
+                tools:text="18" />
 
-            <ImageButton
-                android:id="@+id/stampDetailBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                app:layout_constraintBottom_toBottomOf="@id/stampNickName"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/stampNickName" />
-
-            <!-- 도장판 진척도 -->
-            <com.polzzak_android.presentation.component.SemiCircleProgressView
-                android:id="@+id/stampProgress"
-                android:layout_width="240dp"
-                android:layout_height="240dp"
-                android:layout_marginTop="30dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/stampNickName" />
-
-            <!-- 도장판 진척율 -->
-            <LinearLayout
-                android:id="@+id/stampProgressContainer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                app:layout_constraintBottom_toBottomOf="@id/stampProgress"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/stampProgress"
-                app:layout_constraintVertical_bias="0.3">
-
-                <TextView
-                    android:id="@+id/stampCurCnt"
-                    style="@style/title.24.600"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/primary"
-                    tools:text="18" />
-
-                <TextView
-                    style="@style/subtitle.16.600"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="/" />
-
-                <TextView
-                    android:id="@+id/stampTotalCnt"
-                    style="@style/subtitle.16.600"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="20" />
-
-            </LinearLayout>
-
-            <!-- 캐릭터 -->
-            <ImageView
-                android:id="@+id/stampCharImg"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:background="@drawable/ic_launcher_background"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/stampProgressContainer" />
-
-            <!-- 도장 요청 -->
-            <LinearLayout
-                android:id="@+id/stampReqContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/round_background"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/stampCharImg">
-
-                <TextView
-                    style="@style/caption.12.600"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="도장 요청 "
-                    android:textColor="@color/primary_600" />
-
-                <TextView
-                    android:id="@+id/stampReqTimes"
-                    style="@style/caption.12.700"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/primary_600"
-                    tools:text="N" />
-
-                <TextView
-                    style="@style/caption.12.600"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="개"
-                    android:textColor="@color/primary_600" />
-            </LinearLayout>
-
-            <!-- 하단 보상 -->
             <TextView
-                android:id="@+id/awardTitle"
+                style="@style/subtitle.16.600"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/" />
+
+            <TextView
+                android:id="@+id/stampTotalCnt"
+                style="@style/subtitle.16.600"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="20" />
+
+        </LinearLayout>
+
+        <!-- 캐릭터 -->
+        <ImageView
+            android:id="@+id/stampCharImg"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/img_pouding_request_stamp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stampProgressContainer" />
+
+        <!-- 도장 요청 -->
+        <LinearLayout
+            android:id="@+id/stampReqContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/round_background"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stampCharImg">
+
+            <TextView
                 style="@style/caption.12.600"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="46dp"
-                android:background="@drawable/round_semi_background"
-                android:backgroundTint="@color/primary_400"
-                android:text="보상"
-                android:textColor="@color/white"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/stampReqContainer" />
+                android:text="도장 요청 "
+                android:textColor="@color/primary_600" />
 
             <TextView
-                android:id="@+id/rawardContent"
-                style="@style/body.14.600"
+                android:id="@+id/stampReqTimes"
+                style="@style/caption.12.700"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:textColor="@color/gray_700"
-                app:layout_constraintBottom_toBottomOf="@id/awardTitle"
-                app:layout_constraintStart_toEndOf="@id/awardTitle"
-                app:layout_constraintTop_toTopOf="@id/awardTitle"
-                tools:text="아이유 2023 콘서트 티켓" />
+                android:textColor="@color/primary_600"
+                tools:text="N" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                style="@style/caption.12.600"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="개"
+                android:textColor="@color/primary_600" />
+        </LinearLayout>
+
+        <!-- 하단 보상 -->
+        <TextView
+            android:id="@+id/awardTitle"
+            style="@style/caption.12.600"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="46dp"
+            android:background="@drawable/round_semi_background"
+            android:backgroundTint="@color/primary_400"
+            android:text="보상"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stampReqContainer" />
+
+        <TextView
+            android:id="@+id/rawardContent"
+            style="@style/body.14.600"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/gray_700"
+            app:layout_constraintBottom_toBottomOf="@id/awardTitle"
+            app:layout_constraintStart_toEndOf="@id/awardTitle"
+            app:layout_constraintTop_toTopOf="@id/awardTitle"
+            tools:text="아이유 2023 콘서트 티켓" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

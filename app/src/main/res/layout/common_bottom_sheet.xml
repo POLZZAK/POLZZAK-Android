@@ -101,7 +101,6 @@
                     android:id="@+id/coupon_img"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_launcher_background"
                     app:layout_constraintBottom_toTopOf="@id/coupon_alert_text"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
