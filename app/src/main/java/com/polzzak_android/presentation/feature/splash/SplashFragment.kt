@@ -45,21 +45,21 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //debug모드 버전체크 하지 않음
-        if (BuildConfig.DEBUG) {
-            startSplash()
-        } else {
+        //release에서만 버전체크
+        if (BuildConfig.BUILD_TYPE == "release") {
             getInAppUpdateCheckerOrNull()?.checkUpdate(
                 onSuccess = ::startSplash,
                 onNetworkError = ::onCheckInAppUpdateNetworkError
             )
             registerNetworkCallback(networkCallback)
+        } else {
+            startSplash()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (!BuildConfig.DEBUG) unregisterNetworkCallback(networkCallback)
+        if (BuildConfig.BUILD_TYPE == "release") unregisterNetworkCallback(networkCallback)
     }
 
     private fun registerNetworkCallback(networkCallback: NetworkCallback) {
