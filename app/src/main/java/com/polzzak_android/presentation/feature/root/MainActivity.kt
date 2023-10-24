@@ -1,5 +1,6 @@
 package com.polzzak_android.presentation.feature.root
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -87,6 +88,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         clearBackPressedEvent()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        supportFragmentManager.setFragmentResult(NOTIFICATION_INTENT_REQUEST_KEY, Bundle())
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SAVE_INSTANCE_ACCESS_TOKEN_KEY, getAccessToken())
@@ -151,5 +157,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
     companion object {
         private const val BACK_BTN_DEBOUNCE_TIMER = 3000
         private const val SAVE_INSTANCE_ACCESS_TOKEN_KEY = "save_instance_access_token_key"
+        const val NOTIFICATION_INTENT_REQUEST_KEY = "notification_intent_request_key"
     }
 }
