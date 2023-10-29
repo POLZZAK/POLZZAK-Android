@@ -26,7 +26,7 @@ class PolzzakFirebaseMessagingService : FirebaseMessagingService() {
         if (!receiveMessage) return
         intent?.run {
             val keys = this.extras?.keySet()
-            keys?.forEach{key->
+            keys?.forEach { key ->
                 Timber.d("$key = ${this.getStringExtra(key)}")
             }
         }
@@ -62,10 +62,9 @@ class PolzzakFirebaseMessagingService : FirebaseMessagingService() {
             applicationContext,
             NOTIFICATION_CHANNEL_ID
         )
-        //TODO 아이콘 적용
         val notification =
             notificationBuilder.setContentTitle(title)
-                .setSmallIcon(R.drawable.ic_launcher_background).setContentText(content)
+                .setSmallIcon(R.drawable.ic_menu_notification).setContentText(content)
                 .setContentIntent(pendingIntent).setAutoCancel(true).build()
         if (ActivityCompat.checkSelfPermission(
                 this,
