@@ -449,7 +449,7 @@ class SignUpFragment : BaseFragment<FragmentSignupBinding>() {
                 }
 
                 is ModelState.Success -> {
-                    mainViewModel.accessToken = it.data.accessToken
+                    mainViewModel.login(accessToken = it.data.accessToken)
                     val action = when (it.data.memberTypeId) {
                         MemberTypeDetail.KID_TYPE_ID -> R.id.action_signUpFragment_to_kidOnBoardingFragment
                         else -> R.id.action_signUpFragment_to_protectorOnBoardingFragment

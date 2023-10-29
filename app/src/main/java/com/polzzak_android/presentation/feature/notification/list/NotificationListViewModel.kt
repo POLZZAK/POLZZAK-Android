@@ -45,7 +45,7 @@ class NotificationListViewModel @AssistedInject constructor(
         initNotifications()
     }
 
-    private fun initNotifications() {
+    fun initNotifications() {
         val priority = INIT_NOTIFICATIONS_PRIORITY
         if (requestNotificationJobData.getPriorityOrZero() < priority) requestNotificationJobData?.job?.cancel()
         else if (requestNotificationJobData?.job?.isCompleted == false) return
@@ -107,11 +107,10 @@ class NotificationListViewModel @AssistedInject constructor(
             startId = notificationLiveData.value?.data?.nextId.takeIf { !isRefreshed },
         ).onSuccess {
             notificationMutex.lock()
-
             val updatedNotifications =
                 prevData.copy(
-                    nextId = it?.startId,
-                    items = (prevData.items ?: emptyList()) + (it?.notificationDtoList
+                    nextId = it?.response?.startId,
+                    items = (prevData.items ?: emptyList()) + (it?.response?.notificationDtoList
                         ?: emptyList()).mapNotNull { notificationDto -> notificationDto.toNotificationModel() },
                     isRefreshable = true
                 )
@@ -144,15 +143,6 @@ class NotificationListViewModel @AssistedInject constructor(
                 _errorEventLiveData.value = EventWrapper(exception)
             }
         }
-    }
-
-    fun addNotification(model: NotificationModel) {
-        if (updateNotificationJobMap[model.id]?.isCompleted == false) return
-        updateNotificationJobMap[model.id] =
-            createJobWithUnlockOnCompleted(mutex = notificationMutex) {
-                //TODO 푸쉬알림으로 인한 알림 목록 추가
-
-            }
     }
 
     fun requestApproveLinkRequest(accessToken: String, notificationModel: NotificationModel) {

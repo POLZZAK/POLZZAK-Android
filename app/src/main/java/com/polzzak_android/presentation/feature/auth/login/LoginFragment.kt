@@ -164,7 +164,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
 
     private fun login(model: LoginInfoModel.Login) {
-        mainViewModel.accessToken = model.accessToken
+        mainViewModel.login(accessToken = model.accessToken)
         lastSocialLoginViewModel.saveLastSocialLoginType(model.socialType)
         val navAction = when (model.memberType) {
             is MemberType.Kid -> R.id.action_loginFragment_to_kidHostFragment

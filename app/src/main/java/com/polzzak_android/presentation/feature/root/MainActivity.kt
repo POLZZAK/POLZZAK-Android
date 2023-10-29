@@ -56,8 +56,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         inAppUpdateChecker = InAppUpdateChecker(this)
         initLoginHelper()
         savedInstanceState?.let {
-            val savedToken = it.getString(SAVE_INSTANCE_ACCESS_TOKEN_KEY)
-            if (getAccessToken().isNullOrEmpty()) mainViewModel.accessToken = savedToken
+            val savedToken = it.getString(SAVE_INSTANCE_ACCESS_TOKEN_KEY) ?: return@let
+            if (getAccessToken().isNullOrEmpty()) mainViewModel.login(savedToken)
         }
         permissionManager.requestAllPermissions()
 

@@ -52,6 +52,11 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
     abstract val actionToSettingFragment: Int
     abstract val memberType: MemberType
 
+    override fun onResume() {
+        super.onResume()
+        notificationListViewModel.initNotifications()
+    }
+
     override fun initView() {
         super.initView()
         initToolbar()

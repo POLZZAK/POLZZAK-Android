@@ -10,7 +10,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
-import com.google.firebase.messaging.RemoteMessage
 import com.polzzak_android.R
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.presentation.feature.root.MainActivity
@@ -23,17 +22,26 @@ class PolzzakFirebaseMessagingService : FirebaseMessagingService() {
         Timber.d("onNewToken : $token")
     }
 
-    //TODO 알림 데이터 적용
-    override fun onMessageReceived(message: RemoteMessage) {
-        super.onMessageReceived(message)
-        Timber.d("onMessageReceived : ${message.toString()}")
-        Timber.d("onMessageReceived\n data : ${message.data} notification : ${message.notification?.body} title : ${message.notification?.title} ${message.notification?.icon}")
-        safeLet(message.data["title"], message.data["body"]) { title, content ->
-            notify("t1", "t2")
+    override fun handleIntent(intent: Intent?) {
+        if (!receiveMessage) return
+        intent?.run {
+            val keys = this.extras?.keySet()
+            keys?.forEach{key->
+                Timber.d("$key = ${this.getStringExtra(key)}")
+            }
+        }
+
+        intent?.extras?.run {
+            safeLet(
+                getString(
+                    NOTIFICATION_TITLE_KEY
+                ), getString(NOTIFICATION_BODY_KEY)
+            ) { title, body ->
+                notify(title, body)
+            }
         }
     }
 
-    //TODO 알림 분기처리 구현, small icon 앱아이콘 적용, 로그인 정보 저장(access token 등)
     private fun notify(title: String, content: String) {
         val notificationManager = NotificationManagerCompat.from(applicationContext)
         val intent = Intent(applicationContext, MainActivity::class.java)
@@ -54,6 +62,7 @@ class PolzzakFirebaseMessagingService : FirebaseMessagingService() {
             applicationContext,
             NOTIFICATION_CHANNEL_ID
         )
+        //TODO 아이콘 적용
         val notification =
             notificationBuilder.setContentTitle(title)
                 .setSmallIcon(R.drawable.ic_launcher_background).setContentText(content)
@@ -71,5 +80,8 @@ class PolzzakFirebaseMessagingService : FirebaseMessagingService() {
         private const val NOTIFICATION_CHANNEL_ID = "push_notification_id"
         private const val NOTIFICATION_ID = 1
         private const val PENDING_INTENT_REQUEST_CODE = 1000
+        private const val NOTIFICATION_TITLE_KEY = "title"
+        private const val NOTIFICATION_BODY_KEY = "body"
+        var receiveMessage: Boolean = false
     }
 }
