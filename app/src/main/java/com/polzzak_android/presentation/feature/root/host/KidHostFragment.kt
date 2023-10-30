@@ -6,15 +6,17 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
 import androidx.core.view.children
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.polzzak_android.R
+import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentKidHostBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.presentation.feature.root.MainActivity
+import com.polzzak_android.presentation.feature.root.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,6 +26,8 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
     private lateinit var navController: NavController
 
     private val hostViewModel by viewModels<HostViewModel>()
+
+    private val mainViewModel by activityViewModels<MainViewModel>()
 
     // 시스템 back 버튼 동작 가로치개 위한 callback
     private val backPressedCallback = object : OnBackPressedCallback(true) {
@@ -41,7 +45,6 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
 
         setupNavigationView()
-        initFragmentResultListener()
     }
 
     private fun setupNavigationView() {
@@ -88,14 +91,12 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
                 }
             }
         }
-    }
 
-    private fun initFragmentResultListener() {
-        activity?.supportFragmentManager?.setFragmentResultListener(
-            MainActivity.NOTIFICATION_INTENT_REQUEST_KEY,
-            viewLifecycleOwner
-        ) { _, _ ->
-            binding.kidBtmNav.selectedItemId = R.id.kid_notification_nav_graph
-        }
+        mainViewModel.moveNotificationTabLiveEvent.observe(
+            viewLifecycleOwner,
+            EventWrapperObserver {
+                if (binding.kidBtmNav.selectedItemId == R.id.kid_notification_nav_graph) mainViewModel.refreshNotifications()
+                else binding.kidBtmNav.selectedItemId = R.id.kid_notification_nav_graph
+            })
     }
 }

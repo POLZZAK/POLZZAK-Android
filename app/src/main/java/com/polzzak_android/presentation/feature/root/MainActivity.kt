@@ -11,6 +11,7 @@ import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.common.base.BaseActivity
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.service.PolzzakFirebaseMessagingService
 import com.polzzak_android.presentation.common.util.InAppUpdateChecker
 import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.SpannableBuilder
@@ -90,7 +91,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        supportFragmentManager.setFragmentResult(NOTIFICATION_INTENT_REQUEST_KEY, Bundle())
+        when (intent?.extras?.getInt("requestCode")) {
+            PolzzakFirebaseMessagingService.PENDING_INTENT_REQUEST_CODE -> mainViewModel.clickNotificationMessage()
+            else -> {
+                //do nothing
+            }
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -157,6 +163,5 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
     companion object {
         private const val BACK_BTN_DEBOUNCE_TIMER = 3000
         private const val SAVE_INSTANCE_ACCESS_TOKEN_KEY = "save_instance_access_token_key"
-        const val NOTIFICATION_INTENT_REQUEST_KEY = "notification_intent_request_key"
     }
 }

@@ -41,10 +41,6 @@ class NotificationListViewModel @AssistedInject constructor(
     private val notificationHorizontalScrollPositionMap = HashMap<Int, Int>()
     private val notificationMutex = Mutex()
 
-    init {
-        initNotifications()
-    }
-
     fun initNotifications() {
         val priority = INIT_NOTIFICATIONS_PRIORITY
         if (requestNotificationJobData.getPriorityOrZero() < priority) requestNotificationJobData?.job?.cancel()

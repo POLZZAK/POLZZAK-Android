@@ -6,14 +6,16 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuItemCompat
 import androidx.core.view.children
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.polzzak_android.R
+import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentProtectorHostBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
-import com.polzzak_android.presentation.feature.root.MainActivity
+import com.polzzak_android.presentation.feature.root.MainViewModel
 
 class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
 
@@ -22,12 +24,13 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
 
     private val hostViewModel by viewModels<HostViewModel>()
 
+    private val mainViewModel by activityViewModels<MainViewModel>()
+
     override fun initView() {
         super.initView()
 
         setupNavigationView()
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
-        initFragmentResultListener()
     }
 
     override fun onResume() {
@@ -89,14 +92,12 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
                 }
             }
         }
-    }
 
-    private fun initFragmentResultListener() {
-        activity?.supportFragmentManager?.setFragmentResultListener(
-            MainActivity.NOTIFICATION_INTENT_REQUEST_KEY,
-            viewLifecycleOwner
-        ) { _, _ ->
-            binding.protectorBtmNav.selectedItemId = R.id.protectorNotificationFragment
-        }
+        mainViewModel.moveNotificationTabLiveEvent.observe(
+            viewLifecycleOwner,
+            EventWrapperObserver {
+                if (binding.protectorBtmNav.selectedItemId == R.id.protectorNotificationFragment) mainViewModel.refreshNotifications()
+                else binding.protectorBtmNav.selectedItemId = R.id.protectorNotificationFragment
+            })
     }
 }

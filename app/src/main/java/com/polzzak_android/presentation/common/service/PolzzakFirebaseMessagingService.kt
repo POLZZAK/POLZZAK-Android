@@ -44,7 +44,9 @@ class PolzzakFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun notify(title: String, content: String) {
         val notificationManager = NotificationManagerCompat.from(applicationContext)
-        val intent = Intent(applicationContext, MainActivity::class.java)
+        val intent = Intent(applicationContext, MainActivity::class.java).apply {
+            putExtra("requestCode", PENDING_INTENT_REQUEST_CODE)
+        }
         val pendingIntent = PendingIntent.getActivity(
             applicationContext,
             PENDING_INTENT_REQUEST_CODE,
@@ -78,9 +80,9 @@ class PolzzakFirebaseMessagingService : FirebaseMessagingService() {
         private const val NOTIFICATION_CHANNEL_NAME = "push alarm"
         private const val NOTIFICATION_CHANNEL_ID = "push_notification_id"
         private const val NOTIFICATION_ID = 1
-        private const val PENDING_INTENT_REQUEST_CODE = 1000
         private const val NOTIFICATION_TITLE_KEY = "title"
         private const val NOTIFICATION_BODY_KEY = "body"
+        const val PENDING_INTENT_REQUEST_CODE = 1000
         var receiveMessage: Boolean = false
     }
 }
