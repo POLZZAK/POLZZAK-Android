@@ -79,9 +79,9 @@ class PolzzakFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
         private const val NOTIFICATION_CHANNEL_NAME = "push alarm"
         private const val NOTIFICATION_CHANNEL_ID = "push_notification_id"
-        private const val NOTIFICATION_ID = 1
         private const val NOTIFICATION_TITLE_KEY = "title"
         private const val NOTIFICATION_BODY_KEY = "body"
+        const val NOTIFICATION_ID = 1
         const val PENDING_INTENT_REQUEST_CODE = 1000
         var receiveMessage: Boolean = false
     }
