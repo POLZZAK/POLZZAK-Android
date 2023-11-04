@@ -28,7 +28,6 @@ import com.polzzak_android.presentation.feature.auth.signup.SignUpFragment
 import com.polzzak_android.presentation.feature.root.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-//TODO google login release keystore 추가(현재 debug keystore만 사용 중)
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     override val layoutResId = R.layout.fragment_login
@@ -165,7 +164,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
 
     private fun login(model: LoginInfoModel.Login) {
-        mainViewModel.accessToken = model.accessToken
+        mainViewModel.login(accessToken = model.accessToken)
         lastSocialLoginViewModel.saveLastSocialLoginType(model.socialType)
         val navAction = when (model.memberType) {
             is MemberType.Kid -> R.id.action_loginFragment_to_kidHostFragment

@@ -1,5 +1,7 @@
 package com.polzzak_android.presentation.feature.root
 
+import android.app.NotificationManager
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -10,6 +12,8 @@ import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.common.base.BaseActivity
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.service.PolzzakFirebaseMessagingService
+import com.polzzak_android.presentation.common.service.PolzzakFirebaseMessagingService.Companion.NOTIFICATION_ID
 import com.polzzak_android.presentation.common.util.InAppUpdateChecker
 import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.SpannableBuilder
@@ -55,8 +59,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         inAppUpdateChecker = InAppUpdateChecker(this)
         initLoginHelper()
         savedInstanceState?.let {
-            val savedToken = it.getString(SAVE_INSTANCE_ACCESS_TOKEN_KEY)
-            if (getAccessToken().isNullOrEmpty()) mainViewModel.accessToken = savedToken
+            val savedToken = it.getString(SAVE_INSTANCE_ACCESS_TOKEN_KEY) ?: return@let
+            if (getAccessToken().isNullOrEmpty()) mainViewModel.login(savedToken)
         }
         permissionManager.requestAllPermissions()
 
@@ -87,6 +91,16 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
         clearBackPressedEvent()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        when (intent?.extras?.getInt("requestCode")) {
+            PolzzakFirebaseMessagingService.PENDING_INTENT_REQUEST_CODE -> mainViewModel.clickNotificationMessage()
+            else -> {
+                //do nothing
+            }
+        }
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SAVE_INSTANCE_ACCESS_TOKEN_KEY, getAccessToken())
@@ -113,6 +127,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
             }.timeInterval(TimeUnit.MILLISECONDS).skip(1).filter {
                 it.time() < BACK_BTN_DEBOUNCE_TIMER
             }.subscribe {
+                (getSystemService(NOTIFICATION_SERVICE) as? NotificationManager)?.cancel(
+                    NOTIFICATION_ID
+                )
                 finish()
             }
         )
@@ -130,7 +147,12 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
     }
 
     fun logout() {
-        if (navController.popBackStack(R.id.loginFragment, false)) mainViewModel.logout()
+        if (navController.popBackStack(R.id.loginFragment, false)) {
+            (getSystemService(NOTIFICATION_SERVICE) as? NotificationManager)?.let {
+                it.cancel(NOTIFICATION_ID)
+                mainViewModel.logout()
+            }
+        }
     }
 
     fun handleInvalidToken() {

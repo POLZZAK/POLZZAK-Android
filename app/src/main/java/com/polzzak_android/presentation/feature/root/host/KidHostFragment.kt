@@ -1,14 +1,22 @@
 package com.polzzak_android.presentation.feature.root.host
 
+import android.graphics.PorterDuff
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
+import androidx.core.view.MenuItemCompat
+import androidx.core.view.children
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.polzzak_android.R
+import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentKidHostBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.feature.root.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,11 +25,20 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
 
     private lateinit var navController: NavController
 
+    private val hostViewModel by viewModels<HostViewModel>()
+
+    private val mainViewModel by activityViewModels<MainViewModel>()
+
     // 시스템 back 버튼 동작 가로치개 위한 callback
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             navController.popBackStack()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        hostViewModel.requestHasNewNotification()
     }
 
     override fun initView() {
@@ -40,12 +57,46 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
                 destination.parent?.findStartDestination()?.id -> {
                     backPressedCallback.isEnabled = false
                     binding.kidBtmNav.visibility = View.VISIBLE
+
+                    if (destination.id != R.id.kidNotificationFragment && hostViewModel.isSelectedNotificationTab) {
+                        hostViewModel.requestHasNewNotification()
+                    }
+                    hostViewModel.isSelectedNotificationTab =
+                        (destination.id == R.id.kidNotificationFragment)
                 }
+
                 else -> {
                     backPressedCallback.isEnabled = true
                     binding.kidBtmNav.visibility = View.GONE
                 }
             }
         }
+    }
+
+    override fun initObserver() {
+        super.initObserver()
+        hostViewModel.hasNewNotificationLiveData.observe(viewLifecycleOwner) {
+            val context = requireContext()
+            val notificationMenuItem =
+                binding.kidBtmNav.menu.children.find { menuItem -> menuItem.itemId == R.id.kid_notification_nav_graph }
+            notificationMenuItem?.let { menuItem ->
+                if (it) {
+                    MenuItemCompat.setIconTintMode(menuItem, PorterDuff.Mode.DST)
+                    menuItem.icon =
+                        ContextCompat.getDrawable(context, R.drawable.selector_has_notification)
+                } else {
+                    MenuItemCompat.setIconTintMode(menuItem, null)
+                    menuItem.icon =
+                        ContextCompat.getDrawable(context, R.drawable.ic_menu_notification)
+                }
+            }
+        }
+
+        mainViewModel.moveNotificationTabLiveEvent.observe(
+            viewLifecycleOwner,
+            EventWrapperObserver {
+                if (binding.kidBtmNav.selectedItemId == R.id.kid_notification_nav_graph) mainViewModel.refreshNotifications()
+                else binding.kidBtmNav.selectedItemId = R.id.kid_notification_nav_graph
+            })
     }
 }

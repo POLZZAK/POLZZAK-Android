@@ -17,6 +17,7 @@ sealed class ApiException(override val message: String? = null) : Exception() {
     class FileUploadFail : ApiException(message = "Failed to upload file")
     class FindFileFail : ApiException(message = "Failed to locate file")
     class DeleteFileFail : ApiException(message = "ailed to delete file")
+    class FirebaseTokenFailed : ApiException(message = "Fetching FCM registration token failed")
     class UnknownError : ApiException(message = "unknown error")
 }
 

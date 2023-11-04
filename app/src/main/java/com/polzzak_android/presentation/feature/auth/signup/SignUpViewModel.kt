@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.data.remote.model.ApiException
+import com.polzzak_android.data.repository.GUIDRepository
+import com.polzzak_android.data.repository.PushMessageRepository
 import com.polzzak_android.data.repository.SignUpRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.feature.auth.model.MemberTypeDetail.Companion.KID_TYPE_ID
@@ -27,6 +29,8 @@ import kotlinx.coroutines.launch
 
 class SignUpViewModel @AssistedInject constructor(
     private val signUpRepository: SignUpRepository,
+    private val guidRepository: GUIDRepository,
+    private val pushMessageRepository: PushMessageRepository,
     @Assisted private val userName: String?, @Assisted private val userType: SocialLoginType?
 ) : ViewModel() {
     private val _pageLiveData = MutableLiveData<SignUpPage>()
@@ -186,7 +190,7 @@ class SignUpViewModel @AssistedInject constructor(
                     signUpResponseData?.accessToken?.let {
                         val signUpResultModel =
                             SignUpResultModel(accessToken = it, memberTypeId = memberTypeId)
-                        setSignUpResultSuccess(data = signUpResultModel)
+                        requestSendToken(signUpResultModel = signUpResultModel)
                     } ?: run {
                         setSignUpResultError()
                     }
@@ -194,6 +198,27 @@ class SignUpViewModel @AssistedInject constructor(
                     setSignUpResultError(exception = exception)
                 }
             }
+        }
+    }
+
+    private suspend fun requestSendToken(
+        signUpResultModel: SignUpResultModel
+    ) {
+        pushMessageRepository.requestPushToken().onSuccess {
+            it ?: run {
+                setSignUpResultError(exception = ApiException.FirebaseTokenFailed())
+                return@onSuccess
+            }
+            pushMessageRepository.requestPostPushToken(
+                accessToken = signUpResultModel.accessToken,
+                token = it
+            ).onSuccess {
+                setSignUpResultSuccess(data = signUpResultModel)
+            }.onError { exception, _ ->
+                setSignUpResultError(exception = exception)
+            }
+        }.onError { exception, _ ->
+            setSignUpResultError(exception = exception)
         }
     }
 

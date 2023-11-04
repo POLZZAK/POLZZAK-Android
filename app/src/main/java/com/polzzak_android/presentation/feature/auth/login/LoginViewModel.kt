@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.data.remote.model.ApiException
+import com.polzzak_android.data.repository.GUIDRepository
 import com.polzzak_android.data.repository.LoginRepository
 import com.polzzak_android.data.repository.MemberTypeRepository
+import com.polzzak_android.data.repository.PushMessageRepository
 import com.polzzak_android.data.repository.UserRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.model.asMemberTypeOrNull
@@ -20,6 +22,7 @@ import com.polzzak_android.presentation.feature.auth.model.asSocialLoginTypeOrNu
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,7 +30,9 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val memberTypeRepository: MemberTypeRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val guidRepository: GUIDRepository,
+    private val pushMessageRepository: PushMessageRepository
 ) : ViewModel() {
     private val _loginInfoLiveData = MutableLiveData<EventWrapper<ModelState<LoginInfoModel>>>()
     val loginInfoLiveData: LiveData<EventWrapper<ModelState<LoginInfoModel>>> = _loginInfoLiveData
@@ -59,7 +64,7 @@ class LoginViewModel @Inject constructor(
     private suspend fun requestLogin(accessToken: String, loginType: SocialLoginType) {
         loginRepository.requestLogin(accessToken = accessToken, loginType = loginType)
             .onSuccess {
-                requestUserInfo(accessToken = it?.accessToken ?: "", socialType = loginType)
+                requestLoginInfo(accessToken = it?.accessToken ?: "", socialType = loginType)
             }.onError { exception, loginResponseData ->
                 when (exception) {
                     is ApiException.RequiredRegister -> {
@@ -80,24 +85,46 @@ class LoginViewModel @Inject constructor(
             }
     }
 
-    private suspend fun requestUserInfo(accessToken: String, socialType: SocialLoginType) {
-        setLoginResultLoading()
-        userRepository.requestUser(accessToken = accessToken).onSuccess {
-            val memberType = it?.memberType?.let { memberTypeResponseData ->
-                asMemberTypeOrNull(memberTypeResponseData)
-            } ?: run {
-                setLoginResultError()
-                return@onSuccess
+    private suspend fun requestLoginInfo(accessToken: String, socialType: SocialLoginType) {
+        coroutineScope {
+            setLoginResultLoading()
+            pushMessageRepository.requestPushToken().onSuccess {
+                it ?: run {
+                    setLoginResultError(exception = ApiException.FirebaseTokenFailed())
+                    return@onSuccess
+                }
+                val userInfoDeferred =
+                    async { userRepository.requestUser(accessToken = accessToken) }
+                val postTokenDeferred = async {
+                    pushMessageRepository.requestPostPushToken(
+                        accessToken = accessToken,
+                        token = it
+                    )
+                }
+                val errors = mutableListOf<Exception>()
+                val userInfoResult =
+                    userInfoDeferred.await().onError { exception, _ -> errors.add(exception) }
+                postTokenDeferred.await().onError { exception, _ -> errors.add(exception) }
+                errors.firstOrNull()
+                    ?.let { exception -> setLoginResultError(exception = exception) } ?: run {
+                    val memberType =
+                        userInfoResult.data?.memberType?.let { memberTypeResponseData ->
+                            asMemberTypeOrNull(memberTypeResponseData)
+                        } ?: run {
+                            setLoginResultError()
+                            return@onSuccess
+                        }
+                    val loginInfoModel =
+                        LoginInfoModel.Login(
+                            accessToken = accessToken,
+                            memberType = memberType,
+                            socialType = socialType
+                        )
+                    setLoginResultSuccess(data = loginInfoModel)
+                }
+            }.onError { exception, _ ->
+                setLoginResultError(exception = exception)
             }
-            val loginInfoModel =
-                LoginInfoModel.Login(
-                    accessToken = accessToken,
-                    memberType = memberType,
-                    socialType = socialType
-                )
-            setLoginResultSuccess(data = loginInfoModel)
-        }.onError { exception, _ ->
-            setLoginResultError(exception = exception)
         }
     }
 

@@ -1,6 +1,8 @@
 package com.polzzak_android.presentation.feature.notification.list.base
 
+import android.os.Bundle
 import androidx.annotation.IdRes
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,6 +32,7 @@ import com.polzzak_android.presentation.feature.notification.list.item.Notificat
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationItem
 import com.polzzak_android.presentation.feature.notification.list.item.NotificationSkeletonLoadingItem
 import com.polzzak_android.presentation.feature.notification.list.model.NotificationModel
+import com.polzzak_android.presentation.feature.root.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -38,6 +41,8 @@ import javax.inject.Inject
 abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationListBinding>(),
     NotificationListClickListener {
     override val layoutResId: Int = R.layout.fragment_notification_list
+
+    private val mainViewModel by activityViewModels<MainViewModel>()
 
     @Inject
     lateinit var notificationListViewModelAssistedFactory: NotificationListViewModel.NotificationAssistedFactory
@@ -51,6 +56,11 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
     @get:IdRes
     abstract val actionToSettingFragment: Int
     abstract val memberType: MemberType
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        notificationListViewModel.initNotifications()
+    }
 
     override fun initView() {
         super.initView()
@@ -115,6 +125,7 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
         super.initObserver()
         initNotificationObserver()
         initErrorEventObserver()
+        initNotificationMessageObserver()
     }
 
     private fun initNotificationObserver() {
@@ -160,6 +171,14 @@ abstract class BaseNotificationListFragment : BaseFragment<FragmentNotificationL
                     it.isAccessTokenException() -> handleInvalidToken()
                     else -> PolzzakSnackBar.errorOf(binding.root, it).show()
                 }
+            })
+    }
+
+    private fun initNotificationMessageObserver() {
+        mainViewModel.refreshNotificationLiveEvent.observe(
+            viewLifecycleOwner,
+            EventWrapperObserver {
+                notificationListViewModel.initNotifications()
             })
     }
 
