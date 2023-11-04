@@ -10,10 +10,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.polzzak_android.R
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.databinding.FragmentCompletedBinding
-import com.polzzak_android.presentation.common.adapter.MainCouponAdapter
 import com.polzzak_android.presentation.common.adapter.MainStampCompletedAdapter
 import com.polzzak_android.presentation.common.adapter.MainStampCompletedPagerAdapter
-import com.polzzak_android.presentation.common.adapter.MainStampPagerAdapter
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
