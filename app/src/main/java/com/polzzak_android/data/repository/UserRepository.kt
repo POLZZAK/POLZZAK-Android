@@ -1,13 +1,11 @@
 package com.polzzak_android.data.repository
 
-import android.net.Uri
 import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.response.ProfileDto
 import com.polzzak_android.data.remote.model.response.UserInfoDto
 import com.polzzak_android.data.remote.service.UserService
 import com.polzzak_android.data.remote.util.createHeaderAuthorization
 import com.polzzak_android.data.remote.util.requestCatching
-import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -32,7 +30,11 @@ class UserRepository @Inject constructor(
             userService.requestProfile(authorization = authorization)
         }
 
-    suspend fun updateUserInfo(accessToken: String, profileInfo: ProfileDto, profileImagePath: String?): ApiResult<Unit> =
+    suspend fun updateUserInfo(
+        accessToken: String,
+        profileInfo: ProfileDto,
+        profileImagePath: String?
+    ): ApiResult<Unit> =
         requestCatching {
             val authorization = createHeaderAuthorization(accessToken = accessToken)
             val profilePart = createSignUpPart(profile = profileInfo)
@@ -42,8 +44,13 @@ class UserRepository @Inject constructor(
                 .apply {
                     profileImagePart?.let { addPart(it) }
                 }.build()
-            val contentType = "multipart/form-data; charset=utf-8; boundary=${multipartBody.boundary}"
-            userService.updateUserInfo(authorization = authorization, contentType = contentType, profile = multipartBody)
+            val contentType =
+                "multipart/form-data; charset=utf-8; boundary=${multipartBody.boundary}"
+            userService.updateUserInfo(
+                authorization = authorization,
+                contentType = contentType,
+                profile = multipartBody
+            )
         }
 
     private fun createSignUpPart(
@@ -73,6 +80,15 @@ class UserRepository @Inject constructor(
         requestCatching {
             val authorization = createHeaderAuthorization(accessToken = accessToken)
             val contentType = "application/json;charset=UTF-8"
-            userService.updateUserNickname(authorization = authorization, contentType = contentType, nickname = nickname)
+            userService.updateUserNickname(
+                authorization = authorization,
+                contentType = contentType,
+                nickname = nickname
+            )
         }
+
+    suspend fun deleteUser(accessToken: String): ApiResult<Unit?> = requestCatching {
+        val authorization = createHeaderAuthorization(accessToken = accessToken)
+        userService.deleteUser(authorization = authorization)
+    }
 }

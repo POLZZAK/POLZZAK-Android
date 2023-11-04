@@ -4,6 +4,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
+import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.data.remote.model.isAccessTokenException
 import com.polzzak_android.databinding.FragmentMyAccountDeleteBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -11,6 +12,7 @@ import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.SpannableBuilder
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.handleInvalidToken
 import com.polzzak_android.presentation.common.util.logout
 import com.polzzak_android.presentation.component.PolzzakSnackBar
@@ -23,8 +25,9 @@ import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment.Companion.ARGUMENT_NICKNAME_KEY
-import timber.log.Timber
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MyAccountDeleteFragment : BaseFragment<FragmentMyAccountDeleteBinding>() {
     override val layoutResId: Int = R.layout.fragment_my_account_delete
 
@@ -88,7 +91,7 @@ class MyAccountDeleteFragment : BaseFragment<FragmentMyAccountDeleteBinding>() {
                     onConfirmListener = {
                         object : OnButtonClickListener {
                             override fun setBusinessLogic() {
-                                myAccountDeleteViewModel.deleteAccount()
+                                myAccountDeleteViewModel.deleteAccount(getAccessTokenOrNull() ?: "")
                             }
 
                             override fun getReturnValue(value: Any) {
@@ -148,19 +151,23 @@ class MyAccountDeleteFragment : BaseFragment<FragmentMyAccountDeleteBinding>() {
 
                 is ModelState.Success -> {
                     dismissCurrentDialog()
-                    Timber.d("회원탈퇴")
                     logout()
                 }
 
                 is ModelState.Error -> {
                     dismissCurrentDialog()
-                    when {
-                        it.exception.isAccessTokenException() -> handleInvalidToken()
-                        else -> PolzzakSnackBar.errorOf(binding.root, it.exception).show()
-                    }
                 }
             }
         }
+
+        myAccountDeleteViewModel.errorEventLiveData.observe(
+            viewLifecycleOwner,
+            EventWrapperObserver {
+                when {
+                    it.isAccessTokenException() -> handleInvalidToken()
+                    else -> PolzzakSnackBar.errorOf(binding.root, it).show()
+                }
+            })
     }
 
     private fun showDialog(dialogFragment: DialogFragment) {

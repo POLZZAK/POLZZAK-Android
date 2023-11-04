@@ -21,7 +21,6 @@ import com.polzzak_android.presentation.feature.myPage.notice.item.MyNoticeItem
 import com.polzzak_android.presentation.feature.myPage.notice.model.MyNoticeModel
 import com.polzzak_android.presentation.feature.myPage.notice.model.MyNoticesModel
 
-//TODO 바텀네비 invisible
 class MyNoticeFragment : BaseFragment<FragmentMyNoticeBinding>(), MyNoticeClickListener {
     override val layoutResId: Int = R.layout.fragment_my_notice
 

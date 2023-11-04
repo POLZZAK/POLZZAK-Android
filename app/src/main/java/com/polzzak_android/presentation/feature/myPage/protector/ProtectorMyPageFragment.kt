@@ -4,8 +4,10 @@ import android.graphics.Paint
 import android.os.Bundle
 import androidx.core.text.toSpannable
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.polzzak_android.BuildConfig
 import com.polzzak_android.R
 import com.polzzak_android.databinding.FragmentProtectorMyPageBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
@@ -14,18 +16,20 @@ import com.polzzak_android.presentation.common.model.CommonButtonModel
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
+import com.polzzak_android.presentation.common.util.getInAppUpdateCheckerOrNull
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
-import com.polzzak_android.presentation.feature.myPage.profile.ProfileViewModel
 import com.polzzak_android.presentation.feature.myPage.accountmanagement.MyAccountManagementFragment
 import com.polzzak_android.presentation.feature.myPage.model.LevelModel
+import com.polzzak_android.presentation.feature.myPage.profile.ProfileViewModel
 import com.polzzak_android.presentation.feature.stamp.main.protector.StampLinkedUserViewModel
 import com.polzzak_android.presentation.feature.term.TermDetailFragment
 import com.polzzak_android.presentation.feature.term.model.TermType
+import kotlinx.coroutines.launch
 
 class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
     ToolbarIconInteraction {
@@ -55,6 +59,7 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
         setUpPointView()
         profileViewModel.getUserProfile(accessToken = getAccessTokenOrNull() ?: "")
         setTermsLinkUnderLine()
+        setVersionInfo()
     }
 
     private fun setUpPointView() {
@@ -80,6 +85,22 @@ class ProtectorMyPageFragment : BaseFragment<FragmentProtectorMyPageBinding>(),
         }
         binding.privacyPolicy.run {
             paintFlags = paintFlags or Paint.UNDERLINE_TEXT_FLAG
+        }
+    }
+
+    private fun setVersionInfo() {
+        with(binding) {
+            version.text = BuildConfig.VERSION_NAME
+            viewLifecycleOwner.lifecycleScope.launch {
+                getInAppUpdateCheckerOrNull()?.checkNewestVersion(
+                    onSuccess = { newestVersion, version ->
+                        versionCheck.text =
+                            getString(if (newestVersion == version) R.string.my_version_newest else R.string.my_version_need_update)
+                    },
+                    onFailure = {
+                        versionCheck.text = ""
+                    })
+            }
         }
     }
 

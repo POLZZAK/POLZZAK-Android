@@ -28,6 +28,11 @@
     <string name="common_notification">알림</string>
     <string name="common_notice">공지사항</string>
     <string name="common_expire_access_token">로그아웃 되었어요.\n다시 로그인 해주세요!</string>
+    <string name="common_need_to_update">최신 버전으로 업데이트가 필요해요!</string>
+
+    <!-- Splash -->
+    <string name="splash_text1">참 잘했어요 도장 쾅</string>
+    <string name="splash_text2">폴짝!</string>
 
     <!-- Login -->
     <string name="login_title">참 잘 했어요 도장 쾅!</string>
@@ -163,8 +168,10 @@
     <string name="notification_setting_created_stamp_board_content">새로운 도장판이 만들어졌다는 알림을 받을래요</string>
     <string name="notification_setting_issued_coupon_title">쿠폰 발급 알림</string>
     <string name="notification_setting_issued_coupon_content">보호자가 선물 쿠폰을 발급해줬다는 알림을 받을래요</string>
-    <string name="notification_setting_rewarded_title">선물 전달 확인 알림</string>
-    <string name="notification_setting_rewarded_content">선물 전달이 완료되었는지 확인하는 알림을 받을래요</string>
+    <string name="notification_setting_rewarded_title">선물 수령 알림</string>
+    <string name="notification_setting_rewarded_content">아이가 선물을 받았다고 보내는 감사 인사를 받을래요</string>
+    <string name="notification_setting_rewarded_request_title">선물 전달 확인 알림</string>
+    <string name="notification_setting_rewarded_request_content">선물 전달이 완료되었는지 확인하는 알림을 받을래요</string>
 
     <!-- permission -->
     <string name="permission_manager_dialog_btn_positive_text">설정하기</string>
@@ -175,6 +182,7 @@
     <!-- MyPage -->
     <string name="my_notice_empty">업데이트된 소식이 없어요</string>
     <string name="my_account_linked_kids_count">연동된 아이 %d명</string>
+    <string name="my_account_linked_protectors_count">연동된 보호자 %d명</string>
     <string name="my_account_management">계정관리</string>
     <string name="my_account_management_logout">로그아웃</string>
     <string name="my_account_management_delete_account">회원탈퇴</string>
@@ -190,6 +198,8 @@
     <string name="my_account_management_delete_dialog_title">정말로 탈퇴하시겠어요?</string>
     <string name="my_account_management_delete_dialog_btn_negative">아니요</string>
     <string name="my_account_management_delete_dialog_btn_positive">네,탈퇴할래요</string>
+    <string name="my_version_need_update">업데이트가 필요해요</string>
+    <string name="my_version_newest">최신 버전이에요</string>
 
     <!-- Term -->
     <string name="terms_of_service_detail_service_title">이용약관</string>

@@ -9,6 +9,8 @@ import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.feature.coupon.main.content.CouponContainerInteraction
 import com.polzzak_android.presentation.feature.coupon.model.CouponModel
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class MainCouponPagerAdapter(
     private var couponList: List<CouponModel>,
@@ -46,6 +48,8 @@ class MainCouponPagerAdapter(
         private var isKid = binding.isKid
         private val giftRequest = binding.couponGiftRequest
         private val giftFinish = binding.couponGiftFinish
+
+        private val deadlineTextFormat = DateTimeFormatter.ofPattern("yyyy.MM.dd까지 주기로 약속했어요")
 
         fun bind(item: CouponModel) {
             isKid = item.isKid

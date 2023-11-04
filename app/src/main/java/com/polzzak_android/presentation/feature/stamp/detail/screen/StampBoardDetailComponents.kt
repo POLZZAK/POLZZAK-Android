@@ -2,6 +2,7 @@ package com.polzzak_android.presentation.feature.stamp.detail.screen
 
 import android.util.Log
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -51,6 +52,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -58,6 +60,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.polzzak_android.R
 import com.polzzak_android.presentation.common.compose.Blue100
 import com.polzzak_android.presentation.component.PolzzakButton
 import com.polzzak_android.presentation.common.compose.Blue150
@@ -73,6 +76,7 @@ import com.polzzak_android.presentation.common.compose.Gray500
 import com.polzzak_android.presentation.common.compose.PolzzakTheme
 import com.polzzak_android.presentation.common.compose.fixedSp
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
+import com.polzzak_android.presentation.feature.stamp.model.StampIcon
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 
 @Composable
@@ -194,7 +198,7 @@ fun LazyListScope.expandMissionList(
     ) { mission ->
         Surface(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = mission.content,
+                text = mission.content.trim(),
                 style = PolzzakTheme.typography.medium14,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -254,12 +258,17 @@ fun RewardInfoSheet(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // TODO: 실제 이미지로 변경하기
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(80.dp)
                     .background(color = Blue200, shape = CircleShape)
-            )
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_reward_coupon),
+                    contentDescription = "reward coupon image"
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -473,13 +482,13 @@ fun CompletedStamp(
     stamp: StampModel,
     onClick: ((StampModel) -> Unit)? = null
 ) {
-    // TODO: 이미지 리소스 추가하기
-    Box(
+    val stampIcon = StampIcon.values()[stamp.stampDesignId]
+
+    Image(
+        painter = painterResource(id = stampIcon.resId),
+        contentDescription = stampIcon.name,
         modifier = Modifier
             .aspectRatio(1f)
-            .drawBehind {
-                drawCircle(color = Color.Yellow, alpha = 0.5f)
-            }
             .clickable(
                 enabled = (onClick != null),
                 onClick = { onClick?.invoke(stamp) },

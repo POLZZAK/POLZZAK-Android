@@ -10,6 +10,7 @@ import com.polzzak_android.databinding.ActivityMainBinding
 import com.polzzak_android.presentation.common.base.BaseActivity
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
+import com.polzzak_android.presentation.common.util.InAppUpdateChecker
 import com.polzzak_android.presentation.common.util.PermissionManager
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.component.BackButtonPressedSnackBar
@@ -46,15 +47,19 @@ class MainActivity : BaseActivity<ActivityMainBinding>(), SocialLoginManager {
 
     val permissionManager = PermissionManager(this)
 
+    var inAppUpdateChecker: InAppUpdateChecker? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        inAppUpdateChecker = InAppUpdateChecker(this)
+        initLoginHelper()
         savedInstanceState?.let {
             val savedToken = it.getString(SAVE_INSTANCE_ACCESS_TOKEN_KEY)
             if (getAccessToken().isNullOrEmpty()) mainViewModel.accessToken = savedToken
         }
         permissionManager.requestAllPermissions()
-        initLoginHelper()
+
         // set navigation
         val navHostFragment =
             supportFragmentManager.findFragmentById(binding.fcvContainer.id) as NavHostFragment
