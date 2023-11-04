@@ -16,6 +16,7 @@ import com.polzzak_android.R
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentKidHostBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.feature.root.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,6 +37,12 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
         }
     }
 
+    private val finishCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            shotBackPressed()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         hostViewModel.requestHasNewNotification()
@@ -43,7 +50,7 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
 
     override fun initView() {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
-
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, finishCallback)
         setupNavigationView()
     }
 
@@ -56,6 +63,7 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
             when (destination.id) {
                 destination.parent?.findStartDestination()?.id -> {
                     backPressedCallback.isEnabled = false
+                    finishCallback.isEnabled = true
                     binding.kidBtmNav.visibility = View.VISIBLE
 
                     if (destination.id != R.id.kidNotificationFragment && hostViewModel.isSelectedNotificationTab) {
@@ -66,6 +74,7 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
                 }
 
                 else -> {
+                    finishCallback.isEnabled = false
                     backPressedCallback.isEnabled = true
                     binding.kidBtmNav.visibility = View.GONE
                 }
