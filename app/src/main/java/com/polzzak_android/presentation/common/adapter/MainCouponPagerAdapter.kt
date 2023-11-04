@@ -71,7 +71,7 @@ class MainCouponPagerAdapter(
         }
 
         private fun deadlineFormat(deadline: String): String {
-            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS")
+            val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
             val targetDate = inputFormat.parse(deadline)
 
             val outputFormat = SimpleDateFormat("yyyy.MM.dd까지 주기로 약속했어요")
@@ -79,7 +79,7 @@ class MainCouponPagerAdapter(
 
             val spannableString = SpannableBuilder.build(context = this.container.context) {
                 span(
-                    text = outputSting.toString().substring(0,10),
+                    text = outputSting.toString().substring(0, 10),
                     textColor = R.color.primary,
                     style = R.style.caption_12_500
                 )

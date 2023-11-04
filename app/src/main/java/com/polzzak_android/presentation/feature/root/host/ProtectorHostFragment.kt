@@ -15,6 +15,7 @@ import com.polzzak_android.R
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentProtectorHostBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.feature.root.MainViewModel
 
 class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
@@ -31,6 +32,7 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
 
         setupNavigationView()
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, finishCallback)
     }
 
     override fun onResume() {
@@ -53,6 +55,8 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
             when (destination.id) {
                 R.id.protectorMainFragment, R.id.protectorCouponFragment, R.id.protectorNotificationFragment, R.id.protectorMyPageFragment -> {
                     btmNav.visibility = View.VISIBLE
+                    backPressedCallback.isEnabled = false
+                    finishCallback.isEnabled = true
 
                     if (destination.id != R.id.protectorNotificationFragment && hostViewModel.isSelectedNotificationTab) {
                         hostViewModel.requestHasNewNotification()
@@ -62,6 +66,8 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
                 }
 
                 else -> {
+                    backPressedCallback.isEnabled = true
+                    finishCallback.isEnabled = false
                     btmNav.visibility = View.GONE
                 }
             }
@@ -71,6 +77,12 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
     private val backPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             protectorNavController.popBackStack()
+        }
+    }
+
+    private val finishCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            shotBackPressed()
         }
     }
 
