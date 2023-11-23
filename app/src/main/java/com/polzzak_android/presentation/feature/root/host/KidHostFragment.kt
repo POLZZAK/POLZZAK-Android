@@ -16,6 +16,7 @@ import com.polzzak_android.R
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentKidHostBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.feature.root.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,7 +46,7 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
 
     override fun onResume() {
         super.onResume()
-        hostViewModel.requestHasNewNotification()
+        hostViewModel.requestHasNewNotification(accessToken = getAccessTokenOrNull())
     }
 
     override fun initView() {
@@ -67,7 +68,9 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
                     binding.kidBtmNav.visibility = View.VISIBLE
 
                     if (destination.id != R.id.kidNotificationFragment && hostViewModel.isSelectedNotificationTab) {
-                        hostViewModel.requestHasNewNotification()
+                        hostViewModel.requestHasNewNotification(
+                            accessToken = getAccessTokenOrNull()
+                        )
                     }
                     hostViewModel.isSelectedNotificationTab =
                         (destination.id == R.id.kidNotificationFragment)
@@ -94,7 +97,7 @@ class KidHostFragment : BaseFragment<FragmentKidHostBinding>() {
                     menuItem.icon =
                         ContextCompat.getDrawable(context, R.drawable.selector_has_notification)
                 } else {
-                    MenuItemCompat.setIconTintMode(menuItem, null)
+                    MenuItemCompat.setIconTintMode(menuItem, PorterDuff.Mode.SRC_IN)
                     menuItem.icon =
                         ContextCompat.getDrawable(context, R.drawable.ic_menu_notification)
                 }

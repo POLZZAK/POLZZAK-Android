@@ -18,6 +18,7 @@ import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
 import com.polzzak_android.presentation.component.dialog.CommonDialogModel
 import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
+import timber.log.Timber
 import kotlin.system.exitProcess
 
 class InAppUpdateChecker(private val activity: AppCompatActivity) {
@@ -37,7 +38,7 @@ class InAppUpdateChecker(private val activity: AppCompatActivity) {
         }
 
     fun checkUpdate(
-        onSuccess: () -> Unit,
+        onComplete: () -> Unit,
         onNetworkError: () -> Unit,
     ) {
         val appUpdateInfoTask = appUpdateManager.appUpdateInfo
@@ -82,11 +83,15 @@ class InAppUpdateChecker(private val activity: AppCompatActivity) {
                         },
                     ).apply { isCancelable = false }.show(activity.supportFragmentManager, null)
                 } else {
-                    onSuccess.invoke()
+                    onComplete.invoke()
                 }
             } else {
-                onSuccess.invoke()
+                onComplete.invoke()
             }
+        }
+        appUpdateInfoTask.addOnFailureListener {
+            Timber.e("InAppUpdate Failure Exception : $it")
+            onComplete.invoke()
         }
     }
 

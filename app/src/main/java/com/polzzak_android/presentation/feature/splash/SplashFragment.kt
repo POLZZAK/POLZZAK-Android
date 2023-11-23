@@ -33,7 +33,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
             if (isConnected) return
             isConnected = true
             getInAppUpdateCheckerOrNull()?.checkUpdate(
-                onSuccess = ::startSplash,
+                onComplete = ::startSplash,
                 onNetworkError = ::onCheckInAppUpdateNetworkError
             )
         }
@@ -48,7 +48,7 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
         //release에서만 버전체크
         if (BuildConfig.BUILD_TYPE == "release") {
             getInAppUpdateCheckerOrNull()?.checkUpdate(
-                onSuccess = ::startSplash,
+                onComplete = ::startSplash,
                 onNetworkError = ::onCheckInAppUpdateNetworkError
             )
             registerNetworkCallback(networkCallback)
