@@ -101,7 +101,7 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
                     menuItem.icon =
                         ContextCompat.getDrawable(context, R.drawable.selector_has_notification)
                 } else {
-                    MenuItemCompat.setIconTintMode(menuItem, null)
+                    MenuItemCompat.setIconTintMode(menuItem, PorterDuff.Mode.SRC_IN)
                     menuItem.icon =
                         ContextCompat.getDrawable(context, R.drawable.ic_menu_notification)
                 }
