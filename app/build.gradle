@@ -32,10 +32,10 @@ android {
         targetSdk 33
         /*
             버전규칙(인앱 업데이트 때문에 반드시 지켜야 함)
-            버전코드 형식 : A.B.C버전일 경우 ABBBCCC(자릿수 반드시 맞춰야 함)
+            버전코드 형식 : A.B.C버전일 경우 (A+10)BBBCCC(자릿수 반드시 맞춰야 함)
          */
-        versionCode 1000000
-        versionName "1.0"
+        versionCode 10000000
+        versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
