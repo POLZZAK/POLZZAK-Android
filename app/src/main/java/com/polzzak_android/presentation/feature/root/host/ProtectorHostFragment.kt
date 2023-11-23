@@ -15,9 +15,12 @@ import com.polzzak_android.R
 import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.databinding.FragmentProtectorHostBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.common.util.shotBackPressed
 import com.polzzak_android.presentation.feature.root.MainViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
 
     override val layoutResId = R.layout.fragment_protector_host
@@ -37,7 +40,7 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
 
     override fun onResume() {
         super.onResume()
-        hostViewModel.requestHasNewNotification()
+        hostViewModel.requestHasNewNotification(accessToken = getAccessTokenOrNull())
     }
 
     private fun setupNavigationView() {
@@ -59,7 +62,7 @@ class ProtectorHostFragment() : BaseFragment<FragmentProtectorHostBinding>() {
                     finishCallback.isEnabled = true
 
                     if (destination.id != R.id.protectorNotificationFragment && hostViewModel.isSelectedNotificationTab) {
-                        hostViewModel.requestHasNewNotification()
+                        hostViewModel.requestHasNewNotification(accessToken = getAccessTokenOrNull())
                     }
                     hostViewModel.isSelectedNotificationTab =
                         (destination.id == R.id.protectorNotificationFragment)
