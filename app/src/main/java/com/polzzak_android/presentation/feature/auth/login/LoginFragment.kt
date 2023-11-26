@@ -27,6 +27,7 @@ import com.polzzak_android.presentation.feature.auth.model.SocialLoginType
 import com.polzzak_android.presentation.feature.auth.signup.SignUpFragment
 import com.polzzak_android.presentation.feature.root.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class LoginFragment : BaseFragment<FragmentLoginBinding>() {
@@ -48,6 +49,7 @@ class LoginFragment : BaseFragment<FragmentLoginBinding>() {
     }
 
     private val loginFailedCallback: (Exception) -> Unit = {
+        Timber.e("$it")
         PolzzakSnackBar.errorOf(binding.root, it).show()
     }
 
