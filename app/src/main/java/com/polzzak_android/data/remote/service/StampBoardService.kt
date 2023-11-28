@@ -1,6 +1,7 @@
 package com.polzzak_android.data.remote.service
 
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
+import com.polzzak_android.data.remote.model.request.MakeStampRequest
 import com.polzzak_android.data.remote.model.request.ReceiveCouponRequest
 import com.polzzak_android.data.remote.model.request.StampRequest
 import com.polzzak_android.data.remote.model.request.UpdateStampBoardRequest
@@ -68,11 +69,25 @@ interface StampBoardService {
     /**
      * 도장 생성(도장 찍어주기) - 보호자
      */
+    @Deprecated(
+        message = "잘못된 end point",
+        replaceWith = ReplaceWith("makeStampNew(token, stampBoardId, request)")
+    )
     @POST("/api/v1/stamps/stamp-boards")
     suspend fun makeStamp(
             @Header("Authorization") token: String,
             @Field("missionRequestId") missionRequestId: Int,
             @Field("missionId") missionId: Int,
             @Field("stampDesignId") stampDesignId: Int,
+    ): Response<EmptyDataResponse>
+
+    /**
+     * 도장 생성(도장 찍어주기) - 보호자
+     */
+    @POST("/api/v1/stamps/stamp-boards/{stampBoardId}/stamp")
+    suspend fun makeStampNew(
+        @Header("Authorization") token: String,
+        @Path("stampBoardId") stampBoardId: Int,
+        @Body request: MakeStampRequest
     ): Response<EmptyDataResponse>
 }

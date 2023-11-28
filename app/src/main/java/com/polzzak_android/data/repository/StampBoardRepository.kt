@@ -2,6 +2,7 @@ package com.polzzak_android.data.repository
 
 import com.polzzak_android.data.remote.model.ApiResult
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
+import com.polzzak_android.data.remote.model.request.MakeStampRequest
 import com.polzzak_android.data.remote.model.request.ReceiveCouponRequest
 import com.polzzak_android.data.remote.model.request.StampRequest
 import com.polzzak_android.data.remote.model.request.UpdateStampBoardRequest
@@ -134,6 +135,19 @@ class StampBoardRepositoryImpl @Inject constructor(
 
     override suspend fun makeStamp(accessToken: String, missionRequestId: Int, missionId: Int, stampDesignId: Int): ApiResult<Unit> = requestCatching {
         val auth = createHeaderAuthorization(accessToken = accessToken)
+
+        // FIXME: 제대로 된 api 호출 코드 예시입니다.
+        /*
+        stampBoardService.makeStampNew(
+            token = auth,
+            stampBoardId = 61,
+            request = MakeStampRequest(
+                missionRequestId = missionRequestId,
+                missionId = missionId,
+                stampDesignId = stampDesignId
+            )
+        )
+        */
 
         stampBoardService.makeStamp(token = auth, missionRequestId = missionRequestId, missionId = missionId, stampDesignId = stampDesignId)
     }

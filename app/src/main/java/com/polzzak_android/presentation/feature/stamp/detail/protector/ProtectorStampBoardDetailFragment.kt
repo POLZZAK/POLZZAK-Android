@@ -40,6 +40,7 @@ import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBott
 import com.polzzak_android.presentation.feature.stamp.model.StampIcon
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
@@ -71,7 +72,7 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
     override fun initView() {
         super.initView()
 
-        bottomSheetViewModel.setPartnerId(id = SavedStateHandle().get<Int>("partnerId") ?: -1)
+        bottomSheetViewModel.setPartnerId(id = arguments?.getInt("partnerId") ?: -1)
 
         arguments?.putString("token", getAccessTokenOrNull())
 
