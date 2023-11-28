@@ -161,6 +161,8 @@ class ProtectorProgressFragment : BaseFragment<FragmentProgressBinding>(), MainP
                     rvAdapter.setStampList(data)
                     binding.stampListRc.adapter = rvAdapter
 
+                    // FIXME: 목록 총 개수가 1개면 무조건 특정 사용자가 필터링된 것이라고 간주하고 해당 닉네임 표시해버림
+                    //        연결된 사용자가 한명이면 "전체"를 표시할 수 없음
                     val selectedUser = if (data.size == 1) data.first().partner?.nickname else "전체"
                     binding.selectTxt.text = selectedUser
 

@@ -31,7 +31,7 @@ data class PartnerDto(
 )
 
 fun PartnerDto.toPartner() = PartnerModel(
-    isKid = this.memberType.detail == "KID",
+    isKid = this.memberType.detail == "아이",
     memberId = this.memberId,
     memberType = this.memberType.detail,
     nickname = this.nickname,
