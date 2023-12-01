@@ -51,43 +51,8 @@
                 app:layout_constraintStart_toEndOf="@id/userNickName"
                 app:layout_constraintBaseline_toBaselineOf="@id/userNickName"/>
 
-            <!-- viewpager indicator -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="@id/userNickName"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/userNickName">
-
-                <TextView
-                    android:id="@+id/curPage"
-                    style="@style/body.14.500"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/gray_700"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/totalPage"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="1" />
-
-                <TextView
-                    android:id="@+id/totalPage"
-                    style="@style/body.14.500"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="2dp"
-                    android:textColor="@color/gray_500"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/curPage"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:text="@string/viewpager_indicator" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
         <!-- 도장판 컴포넌트 Todo: viewPager로 변경 -->
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/stampPager"
@@ -98,6 +63,43 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/header_container"
             tools:listitem="@layout/item_stamp_progress" />
+
+        <!-- viewpager indicator -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stampPager"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/curPage"
+                style="@style/body.14.500"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray_700"
+                android:textAlignment="textEnd"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/totalPage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="1"/>
+
+            <TextView
+                android:id="@+id/totalPage"
+                style="@style/body.14.500"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="2dp"
+                android:textColor="@color/gray_500"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/curPage"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@string/viewpager_indicator" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
