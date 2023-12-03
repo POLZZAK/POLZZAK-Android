@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class MakeStampRequest(
     @SerializedName("missionRequestId")
-    val missionRequestId: Int,
+    val missionRequestId: Int? = null,
     @SerializedName("missionId")
     val missionId: Int,
     @SerializedName("stampDesignId")

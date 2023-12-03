@@ -6,7 +6,6 @@ import com.polzzak_android.data.remote.model.request.MakeStampRequest
 import com.polzzak_android.data.remote.model.request.ReceiveCouponRequest
 import com.polzzak_android.data.remote.model.request.StampRequest
 import com.polzzak_android.data.remote.model.request.UpdateStampBoardRequest
-import com.polzzak_android.data.remote.model.response.EmptyDataResponse
 import com.polzzak_android.data.remote.model.response.MainStampBoardListResponse
 import com.polzzak_android.data.remote.model.response.StampBoardDetailDto
 import com.polzzak_android.data.remote.service.StampBoardService
@@ -59,10 +58,10 @@ interface StampBoardRepository {
      * 도장 생성(도장 찍어주기) - 보호자
      */
     suspend fun makeStamp(
-            accessToken: String,
-            missionRequestId: Int,
-            missionId: Int,
-            stampDesignId: Int
+        accessToken: String,
+        stampBoardId: Int,
+        missionId: Int,
+        stampDesignId: Int
     ): ApiResult<Unit>
 }
 
@@ -133,22 +132,21 @@ class StampBoardRepositoryImpl @Inject constructor(
         stampBoardService.receiveCoupon(token = auth, receiveCouponRequest = request)
     }
 
-    override suspend fun makeStamp(accessToken: String, missionRequestId: Int, missionId: Int, stampDesignId: Int): ApiResult<Unit> = requestCatching {
+    override suspend fun makeStamp(
+        accessToken: String,
+        stampBoardId: Int,
+        missionId: Int,
+        stampDesignId: Int
+    ): ApiResult<Unit> = requestCatching {
         val auth = createHeaderAuthorization(accessToken = accessToken)
 
-        // FIXME: 제대로 된 api 호출 코드 예시입니다.
-        /*
-        stampBoardService.makeStampNew(
+        stampBoardService.makeStamp(
             token = auth,
-            stampBoardId = 61,
+            stampBoardId = stampBoardId,
             request = MakeStampRequest(
-                missionRequestId = missionRequestId,
                 missionId = missionId,
                 stampDesignId = stampDesignId
             )
         )
-        */
-
-        stampBoardService.makeStamp(token = auth, missionRequestId = missionRequestId, missionId = missionId, stampDesignId = stampDesignId)
     }
 }
