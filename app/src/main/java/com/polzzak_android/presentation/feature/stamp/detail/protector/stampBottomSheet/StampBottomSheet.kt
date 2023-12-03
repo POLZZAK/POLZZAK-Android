@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.polzzak_android.R
-import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.databinding.CommonBottomSheetStampBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
@@ -17,7 +16,8 @@ import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBott
 import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.bindable.StampBottomSheetStampListItem
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
-class StampBottomSheet : BottomSheetDialogFragment(), StampBottomSheetMissionListClickInteraction, BottomSheetStampListClickInteraction {
+class StampBottomSheet : BottomSheetDialogFragment(), StampBottomSheetMissionListClickInteraction,
+    BottomSheetStampListClickInteraction {
     private var _binding: CommonBottomSheetStampBinding? = null
     private val binding get() = _binding!!
 
@@ -102,15 +102,10 @@ class StampBottomSheet : BottomSheetDialogFragment(), StampBottomSheetMissionLis
                     with(binding.bottomSheetPositiveButton) {
                         text = "도장 찍기"
                         setOnClickListener {
-                            safeLet(
-                                getAccessTokenOrNull(),
-                                stampBoardId
-                            ) { accessToken, stampBoardId ->
-                                viewModel.makeStamp(
-                                    accessToken = accessToken,
-                                    stampBoardId = stampBoardId
-                                )
-                            }
+                            viewModel.makeStamp(
+                                getAccessTokenOrNull() ?: "",
+                                stampBoardId = stampBoardId ?: -1
+                            )
                         }
                     }
 
@@ -152,8 +147,8 @@ class StampBottomSheet : BottomSheetDialogFragment(), StampBottomSheetMissionLis
         missionItems.clear()
         missionItems.addAll(data.map { model ->
             StampBottomSheetMissionListItem(
-                    model = model,
-                    interaction = this
+                model = model,
+                interaction = this
             )
         })
         this.missionAdapter.updateItem(item = missionItems)
@@ -164,8 +159,8 @@ class StampBottomSheet : BottomSheetDialogFragment(), StampBottomSheetMissionLis
         val stampList = getCompleteStampList()
         stampItems.addAll(stampList.map {
             StampBottomSheetStampListItem(
-                    model = it,
-                    interaction = this
+                model = it,
+                interaction = this
             )
         })
         this.stampAdapter.updateItem(item = stampItems)
