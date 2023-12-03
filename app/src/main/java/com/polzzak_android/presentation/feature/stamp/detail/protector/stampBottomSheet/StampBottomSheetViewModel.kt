@@ -49,14 +49,18 @@ class StampBottomSheetViewModel @Inject constructor(
     /**
      * 도장 생성 (도장 찍어주기)
      */
-    fun makeStamp(accessToken: String) {
+    fun makeStamp(accessToken: String, stampBoardId: Int) {
         val missionId = _selectedMission.value?.id ?: 0
         val stampId = _selectedStamp.value?.id ?: 0
 
         viewModelScope.launch {
             _makeStampSuccess.value = ModelState.Loading()
-            val response = stampRepository.makeStamp(accessToken = accessToken,
-                    missionRequestId = _partnerId, missionId = missionId, stampDesignId = stampId)
+            val response = stampRepository.makeStamp(
+                accessToken = accessToken,
+                stampBoardId = stampBoardId,
+                missionId = missionId,
+                stampDesignId = stampId
+            )
 
             response.onSuccess {
                 _makeStampSuccess.value = ModelState.Success(true)

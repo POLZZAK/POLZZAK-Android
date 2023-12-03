@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.polzzak_android.R
+import com.polzzak_android.common.util.safeLet
 import com.polzzak_android.databinding.CommonBottomSheetStampBinding
 import com.polzzak_android.presentation.common.util.BindableItem
 import com.polzzak_android.presentation.common.util.BindableItemAdapter
@@ -27,25 +28,28 @@ class StampBottomSheet : BottomSheetDialogFragment(), StampBottomSheetMissionLis
 
     private lateinit var data: List<MissionModel>
     private lateinit var viewModel: StampBottomSheetViewModel
+    private var stampBoardId: Int? = null
 
     companion object {
         fun getInstance(
-                data: List<MissionModel>,
-                viewModel: StampBottomSheetViewModel
+            data: List<MissionModel>,
+            viewModel: StampBottomSheetViewModel,
+            stampBoardId: Int
         ): StampBottomSheet {
             val instance = StampBottomSheet()
             with(instance) {
                 this.data = data
                 this.viewModel = viewModel
+                this.stampBoardId = stampBoardId
             }
             return instance
         }
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View {
         _binding = CommonBottomSheetStampBinding.inflate(inflater, container, false)
         return binding.root
@@ -98,8 +102,15 @@ class StampBottomSheet : BottomSheetDialogFragment(), StampBottomSheetMissionLis
                     with(binding.bottomSheetPositiveButton) {
                         text = "도장 찍기"
                         setOnClickListener {
-                            // todo: api 호출
-                            viewModel.makeStamp(accessToken = getAccessTokenOrNull() ?: "")
+                            safeLet(
+                                getAccessTokenOrNull(),
+                                stampBoardId
+                            ) { accessToken, stampBoardId ->
+                                viewModel.makeStamp(
+                                    accessToken = accessToken,
+                                    stampBoardId = stampBoardId
+                                )
+                            }
                         }
                     }
 

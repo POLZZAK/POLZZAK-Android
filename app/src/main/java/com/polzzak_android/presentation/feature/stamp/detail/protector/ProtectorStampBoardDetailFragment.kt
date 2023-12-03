@@ -12,14 +12,9 @@ import com.polzzak_android.R
 import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.databinding.FragmentKidStampBoardDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
+import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
-import com.polzzak_android.presentation.component.dialog.CommonDialogContent
-import com.polzzak_android.presentation.component.dialog.CommonDialogMissionData
-import com.polzzak_android.presentation.component.dialog.CommonDialogModel
-import com.polzzak_android.presentation.component.dialog.DialogStyleType
-import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
-import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
@@ -27,20 +22,24 @@ import com.polzzak_android.presentation.component.PolzzakSnackBar
 import com.polzzak_android.presentation.component.bottomsheet.BottomSheetType
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetHelper
 import com.polzzak_android.presentation.component.bottomsheet.CommonBottomSheetModel
+import com.polzzak_android.presentation.component.dialog.CommonDialogContent
+import com.polzzak_android.presentation.component.dialog.CommonDialogHelper
+import com.polzzak_android.presentation.component.dialog.CommonDialogMissionData
+import com.polzzak_android.presentation.component.dialog.CommonDialogModel
+import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.FullLoadingDialog
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.errorOf
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
-import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheet
 import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheetViewModel
+import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
 import com.polzzak_android.presentation.feature.stamp.model.StampIcon
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
@@ -124,10 +123,10 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
      */
     private fun openStampRequestSheet() = viewModel.stampBoardData.value.data?.also {
         val missionList = it.missionList
-
         val bottomSheet = StampBottomSheet.getInstance(
-                data = missionList,
-                viewModel = bottomSheetViewModel
+            data = missionList,
+            viewModel = bottomSheetViewModel,
+            stampBoardId = it.stampBoardId
         )
 
         bottomSheet.show(childFragmentManager, null)
