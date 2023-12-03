@@ -1,8 +1,10 @@
 package com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.polzzak_android.common.util.livedata.EventWrapper
 import com.polzzak_android.data.repository.StampBoardRepository
 import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
@@ -12,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StampBottomSheetViewModel @Inject constructor(
-        private val stampRepository: StampBoardRepository
+    private val stampRepository: StampBoardRepository
 ) : ViewModel() {
 
     // 파트너 id
@@ -36,7 +38,8 @@ class StampBottomSheetViewModel @Inject constructor(
     }
 
     // 선택된 도장
-    private var _selectedStamp: MutableLiveData<CompleteStampModel> = MutableLiveData(getCompleteStampList().first())
+    private var _selectedStamp: MutableLiveData<CompleteStampModel> =
+        MutableLiveData(getCompleteStampList().first())
     val selectedStamp get() = _selectedStamp
     fun setSelectedStamp(stamp: CompleteStampModel) {
         _selectedStamp.value = stamp
@@ -45,6 +48,9 @@ class StampBottomSheetViewModel @Inject constructor(
     // 도장 찍어주기 성공 여부
     private val _makeStampSuccess: MutableLiveData<ModelState<Boolean?>> = MutableLiveData()
     val makeStampSuccess get() = _makeStampSuccess
+
+    private val _makeStampEvent = MutableLiveData<EventWrapper<ModelState<Boolean?>>>()
+    val makeStampEvent: LiveData<EventWrapper<ModelState<Boolean?>>> = _makeStampEvent
 
     /**
      * 도장 생성 (도장 찍어주기)
@@ -55,6 +61,7 @@ class StampBottomSheetViewModel @Inject constructor(
 
         viewModelScope.launch {
             _makeStampSuccess.value = ModelState.Loading()
+            _makeStampEvent.value = EventWrapper(ModelState.Loading())
             val response = stampRepository.makeStamp(
                 accessToken = accessToken,
                 stampBoardId = stampBoardId,
@@ -64,8 +71,10 @@ class StampBottomSheetViewModel @Inject constructor(
 
             response.onSuccess {
                 _makeStampSuccess.value = ModelState.Success(true)
+                _makeStampEvent.value = EventWrapper(ModelState.Success(true))
             }.onError { exception, unit ->
                 _makeStampSuccess.value = ModelState.Error(exception)
+                _makeStampEvent.value = EventWrapper(ModelState.Error(exception = exception))
             }
         }
     }
