@@ -16,12 +16,14 @@
     <string name="common_protector">보호자</string>
     <string name="common_polzzak">폴짝</string>
     <string name="common_next">다음</string>
+    <string name="common_prev">이전</string>
     <string name="common_do_start">시작하기</string>
     <string name="common_do_later">나중에 할게요</string>
     <string name="common_search_kid">아이 찾기</string>
     <string name="common_search_parent">보호자 찾기</string>
     <string name="common_cancel_request">요청 취소</string>
     <string name="common_cancel">취소</string>
+    <string name="common_close">닫기</string>
     <string name="common_request_link">연동 신청</string>
     <string name="common_accept">수락</string>
     <string name="common_reject">거절</string>

@@ -8,7 +8,7 @@ import com.polzzak_android.data.remote.model.response.MissionDto
 data class MissionModel(
     val id: Int,
     val content: String
-)
+) : MissionData
 
 fun MissionDto.toModel(): MissionModel = MissionModel(
     id = this.id,

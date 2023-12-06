@@ -25,6 +25,7 @@
     <color name="gray_200">#EEEEF4</color>
     <color name="gray_100">#F8F8FC</color>
 
+    <color name="error_500_16">#29FF6F50</color>
     <color name="error_500">#FF6F50</color>
     <color name="error_200">#FFDAD1</color>
     <color name="error_100">#FFEEEA</color>

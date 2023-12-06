@@ -7,7 +7,9 @@ import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import com.polzzak_android.presentation.feature.auth.login.sociallogin.SocialLoginManager
 import com.polzzak_android.presentation.feature.root.MainActivity
 import kotlinx.coroutines.Dispatchers
@@ -120,3 +122,9 @@ fun Fragment.handleInvalidToken() {
 }
 
 fun Fragment.getInAppUpdateCheckerOrNull() = (activity as? MainActivity)?.inAppUpdateChecker
+
+val Fragment.grandParentFragment
+    get() = requireParentFragment().requireParentFragment()
+
+fun Fragment.findNavHostFragment(@IdRes id: Int) =
+    childFragmentManager.findFragmentById(id) as NavHostFragment
