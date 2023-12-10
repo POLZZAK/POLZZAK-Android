@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomsheet_make_stamp_nav_graph"
+    app:startDestination="@id/choiceMissionSheet">
+
+    <fragment
+        android:id="@+id/choiceMissionSheet"
+        android:name="com.polzzak_android.presentation.component.newbottomsheet.makestamp.ChoiceMissionSheet"
+        android:label="ChoiceMissionSheet" >
+        <action
+            android:id="@+id/action_choiceMissionSheet_to_choiceStampSheet"
+            app:destination="@id/choiceStampSheet" />
+    </fragment>
+    <fragment
+        android:id="@+id/choiceStampSheet"
+        android:name="com.polzzak_android.presentation.component.newbottomsheet.makestamp.ChoiceStampSheet"
+        android:label="ChoiceStampSheet" />
+</navigation>

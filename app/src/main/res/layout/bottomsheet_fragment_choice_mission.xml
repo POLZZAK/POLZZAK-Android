@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="22dp"
+        android:paddingBottom="23dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            style="@style/subtitle.16.600"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/gray_800"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="도장 요청 선택"/>
+
+        <TextView
+            android:id="@+id/tv_page"
+            style="@style/body.13.500"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/gray_500"
+            android:text="1/2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_mission_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintHeight_max="500dp"
+            android:layout_marginTop="25dp"
+            android:paddingBottom="10dp"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="vertical"
+            android:overScrollMode="never"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_page"
+            app:layout_constraintEnd_toEndOf="parent" />
+        
+        <View
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:background="@drawable/white_gradient"
+            app:layout_constraintStart_toStartOf="@id/rv_mission_list"
+            app:layout_constraintEnd_toEndOf="@id/rv_mission_list"
+            app:layout_constraintBottom_toBottomOf="@id/rv_mission_list"/>
+
+        <Button
+            android:id="@+id/btn_close"
+            style="@style/subtitle.16.600.modal.btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp"
+            android:text="@string/common_close"
+            android:background="@drawable/btn_modal_negative"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rv_mission_list"
+            app:layout_constraintEnd_toStartOf="@id/btn_next"/>
+
+        <Button
+            android:id="@+id/btn_next"
+            style="@style/subtitle.16.600.modal.btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/common_next"
+            android:background="@drawable/selector_btn_rectangle_r8_enabled"
+            app:layout_constraintStart_toEndOf="@id/btn_close"
+            app:layout_constraintTop_toBottomOf="@id/rv_mission_list"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
