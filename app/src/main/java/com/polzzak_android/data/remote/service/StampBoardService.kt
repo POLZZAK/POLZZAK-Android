@@ -11,6 +11,7 @@ import com.polzzak_android.data.remote.model.response.MakeStampBoardResponse
 import com.polzzak_android.data.remote.model.response.StampBoardDetailResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -72,5 +73,11 @@ interface StampBoardService {
         @Header("Authorization") token: String,
         @Path("stampBoardId") stampBoardId: Int,
         @Body request: MakeStampRequest
+    ): Response<EmptyDataResponse>
+
+    @DELETE("/api/v1/stamps/mission-requests/{missionRequestId}")
+    suspend fun rejectMissionRequest(
+        @Header("Authorization") token: String,
+        @Path("missionRequestId") missionRequestId: Int
     ): Response<EmptyDataResponse>
 }

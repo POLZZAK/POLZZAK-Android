@@ -64,6 +64,14 @@ interface StampBoardRepository {
         missionId: Int?,
         missionRequestId: Int?,
     ): ApiResult<Unit>
+
+    /**
+     * 도장 요청 거절 - 보호자
+     */
+    suspend fun rejectMissionRequest(
+        accessToken: String,
+        missionRequestId: Int
+    ): ApiResult<Unit>
 }
 
 class StampBoardRepositoryImpl @Inject constructor(
@@ -150,6 +158,18 @@ class StampBoardRepositoryImpl @Inject constructor(
                 missionRequestId = missionRequestId,
                 stampDesignId = stampDesignId
             )
+        )
+    }
+
+    override suspend fun rejectMissionRequest(
+        accessToken: String,
+        missionRequestId: Int
+    ): ApiResult<Unit> = requestCatching {
+        val auth = createHeaderAuthorization(accessToken = accessToken)
+
+        stampBoardService.rejectMissionRequest(
+            token = auth,
+            missionRequestId = missionRequestId
         )
     }
 }
