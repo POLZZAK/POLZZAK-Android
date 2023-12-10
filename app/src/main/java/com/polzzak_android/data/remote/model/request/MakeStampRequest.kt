@@ -6,7 +6,7 @@ data class MakeStampRequest(
     @SerializedName("missionRequestId")
     val missionRequestId: Int? = null,
     @SerializedName("missionId")
-    val missionId: Int,
+    val missionId: Int? = null,
     @SerializedName("stampDesignId")
     val stampDesignId: Int
 )

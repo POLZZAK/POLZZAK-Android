@@ -120,8 +120,9 @@ class StampBoardDetailViewModel @Inject constructor(
      */
     fun makeStamp(
         token: String,
-        missionId: Int,
         stampDesignId: Int,
+        missionId: Int?,
+        missionRequestId: Int?,
         onStart: () -> Unit,
         onCompletion: (cause: Throwable?) -> Unit
     ) = viewModelScope.launch {
@@ -130,9 +131,10 @@ class StampBoardDetailViewModel @Inject constructor(
         stampRepository
             .makeStamp(
                 accessToken = token,
-                missionId = missionId,
                 stampBoardId = stampBoardId,
-                stampDesignId = stampDesignId
+                stampDesignId = stampDesignId,
+                missionId = missionId,
+                missionRequestId = missionRequestId
             )
             .onSuccess {
                 onCompletion(null)

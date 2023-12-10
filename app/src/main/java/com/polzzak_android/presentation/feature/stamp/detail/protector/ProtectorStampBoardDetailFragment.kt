@@ -37,6 +37,8 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheetViewModel
 import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
+import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Protector
+import com.polzzak_android.presentation.feature.stamp.model.MissionRequestModel
 import com.polzzak_android.presentation.feature.stamp.model.StampIcon
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +48,6 @@ import java.time.format.DateTimeFormatter
 class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBinding>(),
     ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_kid_stamp_board_detail
-
 
     private val viewModel: StampBoardDetailViewModel by viewModels()
 
@@ -85,11 +86,13 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
                 )
 
                 PolzzakAppTheme {
-                    StampBoardDetailScreen_Kid(
+                    StampBoardDetailScreen_Protector(
                         stampBoardData = viewModel.stampBoardData,
+                        onStampRequestClick = this@ProtectorStampBoardDetailFragment::openMakeRequestStampBottomSheet,
                         onStampClick = this@ProtectorStampBoardDetailFragment::openStampInfoDialog,
                         onEmptyStampClick = this@ProtectorStampBoardDetailFragment::openMakeStampBottomSheet,
-                        onRewardButtonClick = this@ProtectorStampBoardDetailFragment::openRewardSheet,
+                        onRewardButtonClick = { /*TODO*/ },
+                        onBoardDeleteClick = { /*TODO*/ },
                         onError = this@ProtectorStampBoardDetailFragment::handleErrorCase
                     )
                 }
@@ -122,22 +125,48 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
     }
 
     /**
+     * 미션 요청 있을 때의 도장 찍기 바텀시트 표시
+     */
+    private fun openMakeRequestStampBottomSheet(requestMissionList: List<MissionRequestModel>) {
+        MakeStampBottomSheet(
+            missionList = requestMissionList,
+            onMakeStampClick = { missionId, stampDesignId ->
+                makeStamp(
+                    missionId = null,
+                    missionRequestId = missionId,
+                    stampDesignId = stampDesignId
+                )
+            }
+        ).show(childFragmentManager, null)
+    }
+
+    /**
      * 미션 직접 선택하는 도장 찍기 바텀시트 표시
      */
     private fun openMakeStampBottomSheet() = viewModel.stampBoardData.value.data?.also{
         MakeStampBottomSheet(
             missionList = it.missionList,
-            onMakeStampClick = this::makeStamp
+            onMakeStampClick = { missionId, stampDesignId ->
+                makeStamp(
+                    missionId = missionId,
+                    missionRequestId = null,
+                    stampDesignId = stampDesignId
+                )
+            }
         ).show(childFragmentManager, null)
     }
 
     /**
      * 도장 찍기 Api 호출
+     *
+     * @param missionId 미션 직접 선택 시의 미션 id
+     * @param missionRequestId 요청된 미션 선택 시의 미션 id
      */
-    private fun makeStamp(missionId: Int, stampDesignId: Int) {
+    private fun makeStamp(missionId: Int?, missionRequestId: Int?, stampDesignId: Int) {
         viewModel.makeStamp(
             token = getAccessTokenOrNull() ?: "",
             missionId = missionId,
+            missionRequestId = missionRequestId,
             stampDesignId = stampDesignId,
             onStart = {
                 loadingDialog.message = "도장 찍는 중"

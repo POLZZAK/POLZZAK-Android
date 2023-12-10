@@ -60,8 +60,9 @@ interface StampBoardRepository {
     suspend fun makeStamp(
         accessToken: String,
         stampBoardId: Int,
-        missionId: Int,
-        stampDesignId: Int
+        stampDesignId: Int,
+        missionId: Int?,
+        missionRequestId: Int?,
     ): ApiResult<Unit>
 }
 
@@ -135,8 +136,9 @@ class StampBoardRepositoryImpl @Inject constructor(
     override suspend fun makeStamp(
         accessToken: String,
         stampBoardId: Int,
-        missionId: Int,
-        stampDesignId: Int
+        stampDesignId: Int,
+        missionId: Int?,
+        missionRequestId: Int?,
     ): ApiResult<Unit> = requestCatching {
         val auth = createHeaderAuthorization(accessToken = accessToken)
 
@@ -145,6 +147,7 @@ class StampBoardRepositoryImpl @Inject constructor(
             stampBoardId = stampBoardId,
             request = MakeStampRequest(
                 missionId = missionId,
+                missionRequestId = missionRequestId,
                 stampDesignId = stampDesignId
             )
         )
