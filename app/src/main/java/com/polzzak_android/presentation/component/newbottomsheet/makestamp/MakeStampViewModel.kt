@@ -17,11 +17,11 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-// TODO: 리스트를 하나로 받기
 class MakeStampViewModel @AssistedInject constructor(
     @Assisted val missionList: List<MissionData>
     /*@Assisted val missionList: List<MissionModel>,
@@ -32,13 +32,18 @@ class MakeStampViewModel @AssistedInject constructor(
         Timber.d(">> created")
     }
 
-    // TODO: 리스트 하나로 합치면 이거 어떻게 리턴?
     val isRequested: Boolean
         get() = missionList.firstOrNull() is MissionRequestModel
 
     // 미션 요청 아이디 =/= 미션 아이디
     // 구분하지 않고 저장 후 api 쏠때 구분
+    // TODO: stateFlow로 바꿔서 선택 해야만 다음 버튼 활성화 되도록 변경
     var selectedMissionId: Int = -1
+
+    // 선택한 도장 디자인 아이디
+    private val _selectedStampDesignId = MutableStateFlow(1)
+    val selectedStampDesignId
+        get() = _selectedStampDesignId.asStateFlow()
 
     private val _sheetEventFlow = MutableSharedFlow<SheetEvent>()
     val sheetEventFlow = _sheetEventFlow.asSharedFlow()
@@ -52,6 +57,10 @@ class MakeStampViewModel @AssistedInject constructor(
         missionRequestId: Int
     ) {
         TODO()
+    }
+
+    fun setStampDesignId(id: Int) {
+        _selectedStampDesignId.value = id
     }
 
     // ----------------------------------------------------------------------------
