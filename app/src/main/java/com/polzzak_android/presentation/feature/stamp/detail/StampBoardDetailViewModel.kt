@@ -114,4 +114,32 @@ class StampBoardDetailViewModel @Inject constructor(
                 onCompletion(exception)
             }
     }
+
+    /**
+     * 보호자 - 도장 생성
+     */
+    fun makeStamp(
+        token: String,
+        missionId: Int,
+        stampDesignId: Int,
+        onStart: () -> Unit,
+        onCompletion: (cause: Throwable?) -> Unit
+    ) = viewModelScope.launch {
+        onStart()
+
+        stampRepository
+            .makeStamp(
+                accessToken = token,
+                missionId = missionId,
+                stampBoardId = stampBoardId,
+                stampDesignId = stampDesignId
+            )
+            .onSuccess {
+                onCompletion(null)
+            }
+            .onError { exception, _ ->
+                exception.printStackTrace()
+                onCompletion(exception)
+            }
+    }
 }

@@ -39,7 +39,7 @@ class MakeStampViewModel @AssistedInject constructor(
     // 구분하지 않고 저장 후 api 쏠때 구분
     private val _selectedMissionId = MutableStateFlow(-1)
     val selectedMissionId
-        get() = _selectedMissionId.asSharedFlow()
+        get() = _selectedMissionId.asStateFlow()
 
     // 선택한 도장 디자인 아이디
     private val _selectedStampDesignId = MutableStateFlow(1)

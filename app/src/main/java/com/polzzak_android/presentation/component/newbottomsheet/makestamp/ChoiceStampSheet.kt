@@ -37,6 +37,10 @@ class ChoiceStampSheet : BaseSheetFragment<BottomsheetFragmentChoiceStampBinding
                 viewModel.emitSheetEvent(SheetEvent.PREV)
             }
 
+            btnMakeStamp.setOnClickListener {
+                viewModel.emitSheetEvent(SheetEvent.ACTION)
+            }
+
             rvStampList.adapter = adapter
             rvStampList.addItemDecoration(object : ItemDecoration() {
                 override fun getItemOffsets(

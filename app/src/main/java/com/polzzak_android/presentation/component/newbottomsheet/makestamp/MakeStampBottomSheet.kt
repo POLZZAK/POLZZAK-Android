@@ -15,7 +15,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MakeStampBottomSheet(
-    missionList: List<MissionData>
+    missionList: List<MissionData>,
+    private val onMakeStampClick: (missionId: Int, stampDesignId: Int) -> Unit
     /*missionList: List<MissionModel> = emptyList(),
     missionRequestList: List<MissionRequestModel> = emptyList()*/
 ) : BaseNavigationBottomSheet() {
@@ -39,6 +40,13 @@ class MakeStampBottomSheet(
                     SheetEvent.NEXT -> navController.navigate(R.id.action_choiceMissionSheet_to_choiceStampSheet)
                     SheetEvent.PREV -> navController.popBackStack()
                     SheetEvent.CLOSE -> dismiss()
+                    SheetEvent.ACTION -> {
+                        dismiss()
+                        onMakeStampClick(
+                            viewModel.selectedMissionId.value,
+                            viewModel.selectedStampDesignId.value
+                        )
+                    }
                 }
             }
         }
