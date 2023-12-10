@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -19,6 +20,8 @@ import com.polzzak_android.presentation.component.newbottomsheet.base.BaseSheetF
 import com.polzzak_android.presentation.component.newbottomsheet.base.SheetEvent
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.properties.Delegates
 
@@ -31,7 +34,7 @@ class ChoiceMissionSheet : BaseSheetFragment<BottomsheetFragmentChoiceMissionBin
 
     private val adapter: MissionListAdapter by lazy {
         MissionListAdapter (
-            onClick = { viewModel.selectedMissionId = it },
+            onClick = viewModel::setMissionId,
             onRejectClick = {
                 viewModel.rejectMissionRequest(
                     token = getAccessTokenOrNull() ?: "",
@@ -61,5 +64,14 @@ class ChoiceMissionSheet : BaseSheetFragment<BottomsheetFragmentChoiceMissionBin
         }
 
         adapter.submitList(viewModel.missionList)
+
+        observe()
+    }
+
+    private fun observe() = lifecycleScope.launch {
+        viewModel.selectedMissionId.collectLatest {
+            Timber.d(">> selectedMissionId = $it")
+            binding.btnNext.isEnabled = (it != -1)
+        }
     }
 }

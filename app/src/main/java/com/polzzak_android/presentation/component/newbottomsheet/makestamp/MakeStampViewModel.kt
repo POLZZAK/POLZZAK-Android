@@ -37,8 +37,9 @@ class MakeStampViewModel @AssistedInject constructor(
 
     // 미션 요청 아이디 =/= 미션 아이디
     // 구분하지 않고 저장 후 api 쏠때 구분
-    // TODO: stateFlow로 바꿔서 선택 해야만 다음 버튼 활성화 되도록 변경
-    var selectedMissionId: Int = -1
+    private val _selectedMissionId = MutableStateFlow(-1)
+    val selectedMissionId
+        get() = _selectedMissionId.asSharedFlow()
 
     // 선택한 도장 디자인 아이디
     private val _selectedStampDesignId = MutableStateFlow(1)
@@ -57,6 +58,10 @@ class MakeStampViewModel @AssistedInject constructor(
         missionRequestId: Int
     ) {
         TODO()
+    }
+
+    fun setMissionId(id: Int) {
+        _selectedMissionId.value = id
     }
 
     fun setStampDesignId(id: Int) {
