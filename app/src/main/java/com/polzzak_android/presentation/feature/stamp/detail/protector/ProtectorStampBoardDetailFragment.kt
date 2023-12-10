@@ -10,14 +10,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.fragment.findNavController
 import com.polzzak_android.R
-import com.polzzak_android.common.util.livedata.EventWrapperObserver
 import com.polzzak_android.data.remote.model.ApiException
 import com.polzzak_android.databinding.FragmentKidStampBoardDetailBinding
 import com.polzzak_android.presentation.common.base.BaseFragment
 import com.polzzak_android.presentation.common.compose.PolzzakAppTheme
 import com.polzzak_android.presentation.common.model.ButtonCount
 import com.polzzak_android.presentation.common.model.CommonButtonModel
-import com.polzzak_android.presentation.common.model.ModelState
 import com.polzzak_android.presentation.common.util.SpannableBuilder
 import com.polzzak_android.presentation.common.util.getAccessTokenOrNull
 import com.polzzak_android.presentation.component.PolzzakSnackBar
@@ -32,11 +30,11 @@ import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.FullLoadingDialog
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.errorOf
+import com.polzzak_android.presentation.component.newbottomsheet.makestamp.MakeStampBottomSheet
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
 import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
-import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheet
 import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheetViewModel
 import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
 import com.polzzak_android.presentation.feature.stamp.model.StampIcon
@@ -51,7 +49,6 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
 
 
     private val viewModel: StampBoardDetailViewModel by viewModels()
-    private val bottomSheetViewModel: StampBottomSheetViewModel by activityViewModels()
 
     private lateinit var toolbarHelper: ToolbarHelper
 
@@ -79,8 +76,6 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
     override fun initView() {
         super.initView()
 
-        bottomSheetViewModel.setPartnerId(id = arguments?.getInt("partnerId") ?: -1)
-
         arguments?.putString("token", getAccessTokenOrNull())
 
         binding.composeView.apply {
@@ -93,7 +88,7 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
                     StampBoardDetailScreen_Kid(
                         stampBoardData = viewModel.stampBoardData,
                         onStampClick = this@ProtectorStampBoardDetailFragment::openStampInfoDialog,
-                        onEmptyStampClick = this@ProtectorStampBoardDetailFragment::openStampRequestSheet,
+                        onEmptyStampClick = this@ProtectorStampBoardDetailFragment::openMakeStampBottomSheet,
                         onRewardButtonClick = this@ProtectorStampBoardDetailFragment::openRewardSheet,
                         onError = this@ProtectorStampBoardDetailFragment::handleErrorCase
                     )
@@ -127,77 +122,58 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
     }
 
     /**
-     * 도장 찍어주기 다이얼로그 표시.
+     * 미션 직접 선택하는 도장 찍기 바텀시트 표시
      */
-    private fun openStampRequestSheet() = viewModel.stampBoardData.value.data?.also {
-        val missionList = it.missionList
-        val bottomSheet = StampBottomSheet.getInstance(
-            data = missionList,
-            viewModel = bottomSheetViewModel,
-            stampBoardId = it.stampBoardId
-        )
-
-        bottomSheet.show(childFragmentManager, null)
+    private fun openMakeStampBottomSheet() = viewModel.stampBoardData.value.data?.also{
+        MakeStampBottomSheet(
+            missionList = it.missionList,
+            onMakeStampClick = this::makeStamp
+        ).show(childFragmentManager, null)
     }
 
-    override fun initObserver() {
-        super.initObserver()
-        bottomSheetViewModel.makeStampSuccess.observe(viewLifecycleOwner) { state ->
-            when (state) {
-                is ModelState.Success -> {
-                    dismissDialog()
-                }
-                is ModelState.Error -> {
-                    dismissDialog()
-                }
-                is ModelState.Loading -> {
-                    loadingDialog.message = "도장 찍는 중"
-                    showDialog(newDialog = loadingDialog)
+    /**
+     * 도장 찍기 Api 호출
+     */
+    private fun makeStamp(missionId: Int, stampDesignId: Int) {
+        viewModel.makeStamp(
+            token = getAccessTokenOrNull() ?: "",
+            missionId = missionId,
+            stampDesignId = stampDesignId,
+            onStart = {
+                loadingDialog.message = "도장 찍는 중"
+                showDialog(newDialog = loadingDialog)
+            },
+            onCompletion = {
+                dismissDialog()
+
+                if (it != null) {
+                    PolzzakSnackBar.errorOf(binding.root, it).show()
+                } else {
+                    val stampIcon = StampIcon.values()[stampDesignId]
+
+                    openSuccessDialog(
+                        stampImageId = stampIcon.resId,
+                        titleText = {
+                            span(
+                                text = "${stampIcon.title}\n",
+                                style = R.style.subtitle_18_600,
+                                textColor = R.color.primary_600
+                            )
+                            span(
+                                text = "도장이 찍혔어요!",
+                                style = R.style.subtitle_16_600,
+                                textColor = R.color.gray_800
+                            )
+                        }
+                    )
+
+                    viewModel.fetchStampBoardDetailData(
+                        accessToken = getAccessTokenOrNull() ?: "",
+                        stampBoardId = viewModel.stampBoardId
+                    )
                 }
             }
-        }
-        bottomSheetViewModel.makeStampEvent.observe(
-            viewLifecycleOwner,
-            EventWrapperObserver {
-                when (it) {
-                    is ModelState.Success -> {
-                        CommonDialogHelper.getInstance(
-                            content = CommonDialogModel(
-                                type = DialogStyleType.STAMP,
-                                content = CommonDialogContent(
-                                    title = (bottomSheetViewModel.selectedStamp.value?.name
-                                        ?: "").toSpannable(),
-                                    body = "도장이 찍혔어요!".toSpannable(),
-                                    stampImg = when (bottomSheetViewModel.selectedStamp.value?.id
-                                        ?: 0) {
-                                        1 -> R.drawable.ic_stamp_1
-                                        2 -> R.drawable.ic_stamp_2
-                                        3 -> R.drawable.ic_stamp_3
-                                        4 -> R.drawable.ic_stamp_4
-                                        5 -> R.drawable.ic_stamp_5
-                                        6 -> R.drawable.ic_stamp_6
-                                        7 -> R.drawable.ic_stamp_7
-                                        8 -> R.drawable.ic_stamp_8
-                                        9 -> R.drawable.ic_stamp_9
-                                        else -> R.drawable.ic_stamp_1
-                                    }
-                                ),
-                                button = CommonButtonModel(
-                                    buttonCount = ButtonCount.ONE,
-                                    positiveButtonText = "닫기"
-                                )
-                            )
-                        ).show(childFragmentManager, "Dialog")
-                    }
-                    is ModelState.Loading -> {
-                        //do nothing
-                    }
-                    is ModelState.Error -> {
-                        PolzzakSnackBar.errorOf(binding.root, exception = it.exception)
-                    }
-                }
-
-            })
+        )
     }
 
     /**

@@ -16,6 +16,10 @@ import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBott
 import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.bindable.StampBottomSheetStampListItem
 import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 
+/**
+ * [MakeStampBottomSheet]로 대체되었습니다.
+ */
+@Deprecated("더 이상 사용하지 않음")
 class StampBottomSheet : BottomSheetDialogFragment(), StampBottomSheetMissionListClickInteraction,
     BottomSheetStampListClickInteraction {
     private var _binding: CommonBottomSheetStampBinding? = null

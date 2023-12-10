@@ -12,6 +12,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * [MakeStampBottomSheet]로 대체되었습니다.
+ */
+@Deprecated("더 이상 사용하지 않음")
 @HiltViewModel
 class StampBottomSheetViewModel @Inject constructor(
     private val stampRepository: StampBoardRepository
