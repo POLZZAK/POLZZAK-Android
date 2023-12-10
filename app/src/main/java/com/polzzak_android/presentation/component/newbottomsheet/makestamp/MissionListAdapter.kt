@@ -17,7 +17,8 @@ import java.time.format.DateTimeFormatter
 import kotlin.properties.Delegates
 
 /**
- * 미션 직접 선택 리스트 어댑터
+ * 미션 선택 리스트 어댑터.
+ * 들어온 데이터 타입에 따라 알맞은 ViewHolder를 표시합니다.
  */
 class MissionListAdapter(
     private val onClick: (id: Int) -> Unit,
