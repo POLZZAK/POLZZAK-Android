@@ -19,8 +19,6 @@ import timber.log.Timber
 class MakeStampViewModel @AssistedInject constructor(
     @Assisted missionList: List<MissionData>,
     private val repository: StampBoardRepository
-    /*@Assisted val missionList: List<MissionModel>,
-    @Assisted val missionRequestList: List<MissionRequestModel>,*/
 ) : ViewModel() {
 
     init {
@@ -94,8 +92,6 @@ class MakeStampViewModel @AssistedInject constructor(
     interface AssistedFactory {
         fun create(
             missionList: List<MissionData>
-            /*missionList: List<MissionModel>,
-            missionRequestList: List<MissionRequestModel>*/
         ): MakeStampViewModel
     }
 
@@ -103,8 +99,6 @@ class MakeStampViewModel @AssistedInject constructor(
         fun provideFactory(
             assistedFactory: AssistedFactory,
             missionList: List<MissionData>
-            /*missionList: List<MissionModel>,
-            missionRequestList: List<MissionRequestModel>*/
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
