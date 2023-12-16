@@ -16,13 +16,15 @@ abstract class BaseNavigationBottomSheet : BaseBottomSheet() {
     protected abstract val navGraphId: Int
 
     protected val navController: NavController by lazy {
-        findNavHostFragment(binding.fragmentContainer.id).findNavController()
+        findNavHostFragment(baseBinding.fragmentContainer.id).findNavController()
     }
 
     protected abstract fun initialize()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        baseBinding.layoutFrame.visibility = View.GONE
 
         setupHostFragment()
         navController.setGraph(navGraphId)
@@ -33,7 +35,7 @@ abstract class BaseNavigationBottomSheet : BaseBottomSheet() {
     private fun setupHostFragment() {
         childFragmentManager
             .beginTransaction()
-            .add(binding.fragmentContainer.id, NavHostFragment())
+            .add(baseBinding.fragmentContainer.id, NavHostFragment())
             .commitNow()
     }
 }
