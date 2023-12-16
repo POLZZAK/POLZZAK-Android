@@ -167,4 +167,18 @@
         <item name="itemTextAppearanceInactive">@style/bottomNavText</item>
         <item name="itemBackground">@android:color/transparent</item>
     </style>
+
+    <!-- 캘린더 뷰 날짜 텍스트 스타일 -->
+    <style name="PolzzakDateTextAppearance">
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">13dp</item>
+        <item name="android:textColor">@color/selector_calendar_date_text</item>
+    </style>
+
+    <!-- 캘린더 뷰 요일 텍스트 스타일 -->
+    <style name="PolzzakWeekTextAppearance">
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">13dp</item>
+        <item name="android:textColor">@color/gray_500</item>
+    </style>
 </resources>

@@ -114,8 +114,11 @@ class CommonDialogHelper(
     }
 
     private fun setCalendarDateListener() {
-        binding.dialogCalendar.dialogCalendarView.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            selectedDate = selectedDate.copy(year = year, month = month, day = dayOfMonth)
+        binding.dialogCalendar.dialogCalendarView.apply {
+            minDate = System.currentTimeMillis()
+            setOnDateChangeListener { view, year, month, dayOfMonth ->
+                selectedDate = selectedDate.copy(year = year, month = month, day = dayOfMonth)
+            }
         }
     }
 

@@ -24,4 +24,9 @@
         <item name="android:navigationBarColor">@color/white</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
+    
+    <style name="Theme.CalendarView" parent="Widget.MaterialComponents.MaterialCalendar">
+        <item name="colorControlActivated">@color/primary</item>
+        <item name="android:textColorPrimary">@color/gray_800</item>
+    </style>
 </resources>
