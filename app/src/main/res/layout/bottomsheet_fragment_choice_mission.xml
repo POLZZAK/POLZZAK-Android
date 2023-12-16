@@ -38,7 +38,7 @@
             android:id="@+id/rv_mission_list"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintHeight_max="500dp"
+            app:layout_constraintHeight_max="400dp"
             android:layout_marginTop="25dp"
             android:paddingBottom="10dp"
             android:clipToPadding="false"
@@ -56,6 +56,22 @@
             app:layout_constraintStart_toStartOf="@id/rv_mission_list"
             app:layout_constraintEnd_toEndOf="@id/rv_mission_list"
             app:layout_constraintBottom_toBottomOf="@id/rv_mission_list"/>
+
+        <TextView
+            android:id="@+id/tv_emptyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="36dp"
+            android:text="도장 요청을 모두 처리했어요."
+            android:textSize="16sp"
+            android:textColor="#C5C6D0"
+            android:fontFamily="@font/pretendard_regular"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="@id/rv_mission_list"
+            app:layout_constraintTop_toTopOf="@id/rv_mission_list"
+            app:layout_constraintEnd_toEndOf="@id/rv_mission_list"
+            app:layout_constraintBottom_toBottomOf="@id/rv_mission_list"
+            tools:visibility="visible"/>
 
         <Button
             android:id="@+id/btn_close"

@@ -125,6 +125,7 @@ private fun StampBoardDetailScreen_Protector(
 
             StampBoardHeader(title = boardTitle, chipText = chipText)
 
+            // TODO: 자연스럽게 사라지게 만들려면 각 컴포저블들이 개별적으로 업데이트 되게 해야 함
             if (isStampRequested) {
                 Box(modifier = Modifier.padding(16.dp)) {
                     NoticeBar(

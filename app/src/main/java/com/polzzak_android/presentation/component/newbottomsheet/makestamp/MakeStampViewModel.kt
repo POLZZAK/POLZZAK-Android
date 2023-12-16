@@ -1,18 +1,13 @@
 package com.polzzak_android.presentation.component.newbottomsheet.makestamp
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.polzzak_android.data.repository.PointRepository
 import com.polzzak_android.data.repository.StampBoardRepository
-import com.polzzak_android.data.repository.UserRepository
 import com.polzzak_android.presentation.component.newbottomsheet.base.SheetEvent
 import com.polzzak_android.presentation.feature.stamp.model.MissionData
-import com.polzzak_android.presentation.feature.stamp.model.MissionModel
 import com.polzzak_android.presentation.feature.stamp.model.MissionRequestModel
 import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +15,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import javax.inject.Inject
 
 class MakeStampViewModel @AssistedInject constructor(
-    @Assisted val missionList: List<MissionData>
+    @Assisted missionList: List<MissionData>,
+    private val repository: StampBoardRepository
     /*@Assisted val missionList: List<MissionModel>,
     @Assisted val missionRequestList: List<MissionRequestModel>,*/
 ) : ViewModel() {
@@ -32,6 +27,11 @@ class MakeStampViewModel @AssistedInject constructor(
         Timber.d(">> created")
     }
 
+    private val _missionList = missionList.toMutableList()
+    val missionList: List<MissionData>
+        get() = _missionList
+
+    // 도장 요청 알림 바를 통해서 들어온건지 여부
     val isRequested: Boolean
         get() = missionList.firstOrNull() is MissionRequestModel
 
@@ -46,6 +46,7 @@ class MakeStampViewModel @AssistedInject constructor(
     val selectedStampDesignId
         get() = _selectedStampDesignId.asStateFlow()
 
+    // 바텀시트 이벤트
     private val _sheetEventFlow = MutableSharedFlow<SheetEvent>()
     val sheetEventFlow = _sheetEventFlow.asSharedFlow()
 
@@ -53,11 +54,29 @@ class MakeStampViewModel @AssistedInject constructor(
         _sheetEventFlow.emit(event)
     }
 
+    /**
+     * 도장 요청 거절하기
+     */
     fun rejectMissionRequest(
         token: String,
-        missionRequestId: Int
-    ) {
-        TODO()
+        missionRequestId: Int,
+        onComplete: (exception: Throwable?) -> Unit
+    ) = viewModelScope.launch {
+        repository
+            .rejectMissionRequest(
+                accessToken = token,
+                missionRequestId = missionRequestId
+            )
+            .onSuccess {
+                _missionList.removeIf {
+                    (it as MissionRequestModel).id == missionRequestId
+                }
+                onComplete(null)
+            }
+            .onError { exception, _ ->
+                exception.printStackTrace()
+                onComplete(exception)
+            }
     }
 
     fun setMissionId(id: Int) {

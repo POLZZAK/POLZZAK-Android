@@ -39,9 +39,9 @@ class MakeStampBottomSheet(
                 when (it) {
                     SheetEvent.NEXT -> navController.navigate(R.id.action_choiceMissionSheet_to_choiceStampSheet)
                     SheetEvent.PREV -> navController.popBackStack()
-                    SheetEvent.CLOSE -> dismiss()
+                    SheetEvent.CLOSE -> dialog?.dismiss()
                     SheetEvent.ACTION -> {
-                        dismiss()
+                        dialog?.dismiss()
                         onMakeStampClick(
                             viewModel.selectedMissionId.value,
                             viewModel.selectedStampDesignId.value

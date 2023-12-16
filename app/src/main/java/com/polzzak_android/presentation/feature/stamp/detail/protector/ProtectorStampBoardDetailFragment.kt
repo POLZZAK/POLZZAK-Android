@@ -42,6 +42,7 @@ import com.polzzak_android.presentation.feature.stamp.model.MissionRequestModel
 import com.polzzak_android.presentation.feature.stamp.model.StampIcon
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
@@ -104,7 +105,6 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
      * 도장 정보 표시하는 다이얼로그 표시.
      */
     private fun openStampInfoDialog(stamp: StampModel) {
-        // TODO: 도장 이미지 표시
         CommonDialogHelper.getInstance(
             content = CommonDialogModel(
                 type = DialogStyleType.MISSION,
@@ -128,7 +128,7 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
      * 미션 요청 있을 때의 도장 찍기 바텀시트 표시
      */
     private fun openMakeRequestStampBottomSheet(requestMissionList: List<MissionRequestModel>) {
-        MakeStampBottomSheet(
+        val bottomSheet = MakeStampBottomSheet(
             missionList = requestMissionList,
             onMakeStampClick = { missionId, stampDesignId ->
                 makeStamp(
@@ -137,7 +137,17 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
                     stampDesignId = stampDesignId
                 )
             }
-        ).show(childFragmentManager, null)
+        )
+        bottomSheet.show(childFragmentManager, null)
+
+        // dialog가 null이 아니게끔 한다
+        childFragmentManager.executePendingTransactions()
+        bottomSheet.dialog?.setOnDismissListener {
+            viewModel.fetchStampBoardDetailData(
+                accessToken = getAccessTokenOrNull() ?: "",
+                stampBoardId = viewModel.stampBoardId
+            )
+        }
     }
 
     /**
