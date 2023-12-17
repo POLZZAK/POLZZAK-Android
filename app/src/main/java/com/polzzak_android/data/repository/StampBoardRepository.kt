@@ -1,6 +1,7 @@
 package com.polzzak_android.data.repository
 
 import com.polzzak_android.data.remote.model.ApiResult
+import com.polzzak_android.data.remote.model.request.IssueCouponRequest
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
 import com.polzzak_android.data.remote.model.request.MakeStampRequest
 import com.polzzak_android.data.remote.model.request.ReceiveCouponRequest
@@ -11,6 +12,8 @@ import com.polzzak_android.data.remote.model.response.StampBoardDetailDto
 import com.polzzak_android.data.remote.service.StampBoardService
 import com.polzzak_android.data.remote.util.createHeaderAuthorization
 import com.polzzak_android.data.remote.util.requestCatching
+import java.time.LocalDate
+import java.time.ZoneOffset
 import javax.inject.Inject
 
 interface StampBoardRepository {
@@ -71,6 +74,12 @@ interface StampBoardRepository {
     suspend fun rejectMissionRequest(
         accessToken: String,
         missionRequestId: Int
+    ): ApiResult<Unit>
+
+    suspend fun issueCoupon(
+        accessToken: String,
+        stampBoardId: Int,
+        rewardDate: LocalDate
     ): ApiResult<Unit>
 }
 
@@ -170,6 +179,22 @@ class StampBoardRepositoryImpl @Inject constructor(
         stampBoardService.rejectMissionRequest(
             token = auth,
             missionRequestId = missionRequestId
+        )
+    }
+
+    override suspend fun issueCoupon(
+        accessToken: String,
+        stampBoardId: Int,
+        rewardDate: LocalDate
+    ): ApiResult<Unit> = requestCatching {
+        val auth = createHeaderAuthorization(accessToken = accessToken)
+
+        stampBoardService.issueCoupon(
+            token = auth,
+            stampBoardId = stampBoardId,
+            request = IssueCouponRequest(
+                rewardDate = rewardDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
+            )
         )
     }
 }

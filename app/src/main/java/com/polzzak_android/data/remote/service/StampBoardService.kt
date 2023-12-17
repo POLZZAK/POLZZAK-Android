@@ -1,5 +1,6 @@
 package com.polzzak_android.data.remote.service
 
+import com.polzzak_android.data.remote.model.request.IssueCouponRequest
 import com.polzzak_android.data.remote.model.request.MakeStampBoardRequest
 import com.polzzak_android.data.remote.model.request.MakeStampRequest
 import com.polzzak_android.data.remote.model.request.ReceiveCouponRequest
@@ -12,6 +13,7 @@ import com.polzzak_android.data.remote.model.response.StampBoardDetailResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
+import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
@@ -75,9 +77,22 @@ interface StampBoardService {
         @Body request: MakeStampRequest
     ): Response<EmptyDataResponse>
 
+    /**
+     * 도장 요청 거절 - 보호자
+     */
     @DELETE("/api/v1/stamps/mission-requests/{missionRequestId}")
     suspend fun rejectMissionRequest(
         @Header("Authorization") token: String,
         @Path("missionRequestId") missionRequestId: Int
+    ): Response<EmptyDataResponse>
+
+    /**
+     * 쿠폰 발급 - 보호자
+     */
+    @POST("/api/v1/stamps/stamp-boards/{stampBoardId}/issue-coupon")
+    suspend fun issueCoupon(
+        @Header("Authorization") token: String,
+        @Path("stampBoardId") stampBoardId: Int,
+        @Body request: IssueCouponRequest
     ): Response<EmptyDataResponse>
 }

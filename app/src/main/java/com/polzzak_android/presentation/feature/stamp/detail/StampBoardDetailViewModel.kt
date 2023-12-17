@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
@@ -135,6 +136,29 @@ class StampBoardDetailViewModel @Inject constructor(
                 stampDesignId = stampDesignId,
                 missionId = missionId,
                 missionRequestId = missionRequestId
+            )
+            .onSuccess {
+                onCompletion(null)
+            }
+            .onError { exception, _ ->
+                exception.printStackTrace()
+                onCompletion(exception)
+            }
+    }
+
+    fun issueCoupon(
+        token: String,
+        selectedDate: LocalDate,
+        onStart: () -> Unit,
+        onCompletion: (cause: Throwable?) -> Unit
+    ) = viewModelScope.launch {
+        onStart()
+
+        stampRepository
+            .issueCoupon(
+                accessToken =  token,
+                stampBoardId = stampBoardId,
+                rewardDate = selectedDate
             )
             .onSuccess {
                 onCompletion(null)

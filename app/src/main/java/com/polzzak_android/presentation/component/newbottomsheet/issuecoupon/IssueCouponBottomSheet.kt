@@ -30,6 +30,11 @@ class IssueCouponBottomSheet(
 
             tvSelectedDate.setOnClickListener { openCalendar() }
             ivCalendar.setOnClickListener { openCalendar() }
+
+            btnIssueCoupon.setOnClickListener {
+                dismiss()
+                selectedDate?.also { onIssueCouponClick(it) }
+            }
         }
 
     }
@@ -57,9 +62,9 @@ class IssueCouponBottomSheet(
                     override fun getReturnValue(value: Any) {
                         binding.tvSelectedDate.text = (value as SelectedDateModel).let {
                             // 선택한 날짜 저장
-                            selectedDate = LocalDate.of(it.year, it.month, it.day)
+                            selectedDate = LocalDate.of(it.year, it.month + 1, it.day)
                             // 선택한 날짜를 TextView에 표시
-                            "${it.year}.${it.month}.${it.day}"
+                            "${it.year}.${it.month + 1}.${it.day}"
                         }
 
                         binding.btnIssueCoupon.isEnabled = (selectedDate != null)
