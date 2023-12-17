@@ -30,6 +30,7 @@ import com.polzzak_android.presentation.component.dialog.DialogStyleType
 import com.polzzak_android.presentation.component.dialog.FullLoadingDialog
 import com.polzzak_android.presentation.component.dialog.OnButtonClickListener
 import com.polzzak_android.presentation.component.errorOf
+import com.polzzak_android.presentation.component.newbottomsheet.issuecoupon.IssueCouponBottomSheet
 import com.polzzak_android.presentation.component.newbottomsheet.makestamp.MakeStampBottomSheet
 import com.polzzak_android.presentation.component.toolbar.ToolbarData
 import com.polzzak_android.presentation.component.toolbar.ToolbarHelper
@@ -37,16 +38,19 @@ import com.polzzak_android.presentation.component.toolbar.ToolbarIconInteraction
 import com.polzzak_android.presentation.feature.stamp.detail.StampBoardDetailViewModel
 import com.polzzak_android.presentation.feature.stamp.detail.protector.stampBottomSheet.StampBottomSheetViewModel
 import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Kid
+import com.polzzak_android.presentation.feature.stamp.detail.screen.StampBoardDetailScreen_Protector
+import com.polzzak_android.presentation.feature.stamp.model.MissionRequestModel
 import com.polzzak_android.presentation.feature.stamp.model.StampIcon
 import com.polzzak_android.presentation.feature.stamp.model.StampModel
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @AndroidEntryPoint
 class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDetailBinding>(),
     ToolbarIconInteraction {
     override val layoutResId: Int = R.layout.fragment_kid_stamp_board_detail
-
 
     private val viewModel: StampBoardDetailViewModel by viewModels()
 
@@ -85,11 +89,13 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
                 )
 
                 PolzzakAppTheme {
-                    StampBoardDetailScreen_Kid(
+                    StampBoardDetailScreen_Protector(
                         stampBoardData = viewModel.stampBoardData,
+                        onStampRequestClick = this@ProtectorStampBoardDetailFragment::openMakeRequestStampBottomSheet,
                         onStampClick = this@ProtectorStampBoardDetailFragment::openStampInfoDialog,
                         onEmptyStampClick = this@ProtectorStampBoardDetailFragment::openMakeStampBottomSheet,
-                        onRewardButtonClick = this@ProtectorStampBoardDetailFragment::openRewardSheet,
+                        onRewardButtonClick = this@ProtectorStampBoardDetailFragment::openCouponSheet,
+                        onBoardDeleteClick = this@ProtectorStampBoardDetailFragment::openDeleteDialog,
                         onError = this@ProtectorStampBoardDetailFragment::handleErrorCase
                     )
                 }
@@ -101,7 +107,6 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
      * 도장 정보 표시하는 다이얼로그 표시.
      */
     private fun openStampInfoDialog(stamp: StampModel) {
-        // TODO: 도장 이미지 표시
         CommonDialogHelper.getInstance(
             content = CommonDialogModel(
                 type = DialogStyleType.MISSION,
@@ -122,22 +127,58 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
     }
 
     /**
+     * 미션 요청 있을 때의 도장 찍기 바텀시트 표시
+     */
+    private fun openMakeRequestStampBottomSheet(requestMissionList: List<MissionRequestModel>) {
+        val bottomSheet = MakeStampBottomSheet(
+            missionList = requestMissionList,
+            onMakeStampClick = { missionId, stampDesignId ->
+                makeStamp(
+                    missionId = null,
+                    missionRequestId = missionId,
+                    stampDesignId = stampDesignId
+                )
+            }
+        )
+        bottomSheet.show(childFragmentManager, null)
+
+        // dialog가 null이 아니게끔 한다
+        childFragmentManager.executePendingTransactions()
+        bottomSheet.dialog?.setOnDismissListener {
+            viewModel.fetchStampBoardDetailData(
+                accessToken = getAccessTokenOrNull() ?: "",
+                stampBoardId = viewModel.stampBoardId
+            )
+        }
+    }
+
+    /**
      * 미션 직접 선택하는 도장 찍기 바텀시트 표시
      */
     private fun openMakeStampBottomSheet() = viewModel.stampBoardData.value.data?.also{
         MakeStampBottomSheet(
             missionList = it.missionList,
-            onMakeStampClick = this::makeStamp
+            onMakeStampClick = { missionId, stampDesignId ->
+                makeStamp(
+                    missionId = missionId,
+                    missionRequestId = null,
+                    stampDesignId = stampDesignId
+                )
+            }
         ).show(childFragmentManager, null)
     }
 
     /**
      * 도장 찍기 Api 호출
+     *
+     * @param missionId 미션 직접 선택 시의 미션 id
+     * @param missionRequestId 요청된 미션 선택 시의 미션 id
      */
-    private fun makeStamp(missionId: Int, stampDesignId: Int) {
+    private fun makeStamp(missionId: Int?, missionRequestId: Int?, stampDesignId: Int) {
         viewModel.makeStamp(
             token = getAccessTokenOrNull() ?: "",
             missionId = missionId,
+            missionRequestId = missionRequestId,
             stampDesignId = stampDesignId,
             onStart = {
                 loadingDialog.message = "도장 찍는 중"
@@ -177,68 +218,34 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
     }
 
     /**
-     * 보상(쿠폰) 받는 BottomSheet 표시
+     * 쿠폰 발급 바텀시트 표시
      */
-    private fun openRewardSheet() {
-        CommonBottomSheetHelper.getInstance(
-            data = CommonBottomSheetModel(
-                type = BottomSheetType.COUPON,
-                title = SpannableBuilder.build(requireContext()) {
-                    span(
-                        text = viewModel.stampBoardData.value.data?.rewardTitle ?: "",
-                        style = R.style.subtitle_18_600,
-                        textColor = R.color.primary_600
-                    )
-                    span(
-                        text = "쿠폰을 선물 받았어요!",
-                        style = R.style.subtitle_16_600
-                    )
-                },
-                contentList = listOf(
-                    viewModel
-                        .stampBoardData
-                        .value
-                        .data
-                        ?.rewardDate
-                        ?.format(
-                            DateTimeFormatter.ofPattern("yyyy.MM.dd")
-                        )
-                ),
-                button = CommonButtonModel(
-                    buttonCount = ButtonCount.ONE,
-                    positiveButtonText = "쿠폰 받기"
-                )
-            ),
-            onClickListener = {
-                object : OnButtonClickListener {
-                    override fun setBusinessLogic() {
-                    }
-
-                    override fun getReturnValue(value: Any) {
-                        receiveCoupon()
-                    }
-                }
-            }
+    private fun openCouponSheet() {
+        IssueCouponBottomSheet(
+            title = viewModel.stampBoardData.value.data?.rewardTitle ?: "",
+            onIssueCouponClick = this::issueCoupon
         ).show(childFragmentManager, null)
     }
 
     /**
-     * 쿠폰 받기 API 호출
+     * 쿠폰 발급 API 호출
      */
-    private fun receiveCoupon() {
-        viewModel.receiveCoupon(
-            accessToken = getAccessTokenOrNull() ?: "",
+    private fun issueCoupon(selectedDate: LocalDate) {
+        viewModel.issueCoupon(
+            token = getAccessTokenOrNull() ?: "",
+            selectedDate = selectedDate,
             onStart = {
-                loadingDialog.message = "쿠폰 받는 중"
-                loadingDialog.show(childFragmentManager, null)
+                loadingDialog.message = "쿠폰 발급 중"
+                showDialog(newDialog = loadingDialog)
             },
-            onCompletion = { exception ->
-                loadingDialog.dismiss()
+            onCompletion = {
+                dismissDialog()
 
-                if (exception == null) {
-                    // 성공
+                if (it != null) {
+                    PolzzakSnackBar.errorOf(binding.root, it).show()
+                } else {
                     openSuccessDialog(
-                        stampImageId = null,
+                        stampImageId = R.drawable.img_receive_coupon_success,
                         titleText = {
                             span(
                                 text = "${viewModel.stampBoardData.value.data?.rewardTitle}\n",
@@ -246,22 +253,73 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
                                 textColor = R.color.primary_600
                             )
                             span(
-                                text = "쿠폰 받기 완료!",
+                                text = "쿠폰 발급 완료!",
                                 style = R.style.subtitle_16_600,
                                 textColor = R.color.gray_800
                             )
                         }
                     )
 
-                    // TODO: 쿠폰 수령 후 데이터 새로 받아와서 쿠폰 받기 버튼 비활성화 되는지 테스트
                     viewModel.fetchStampBoardDetailData(
                         accessToken = getAccessTokenOrNull() ?: "",
                         stampBoardId = viewModel.stampBoardId
                     )
+                }
+            }
+        )
+    }
+
+    /**
+     * 도장판 삭제 다이얼로그 표시
+     */
+    private fun openDeleteDialog() {
+        CommonDialogHelper.getInstance(
+            content = CommonDialogModel(
+                type = DialogStyleType.ALERT,
+                content = CommonDialogContent(
+                    title = SpannableBuilder.build(context = requireContext()) {
+                        span(
+                            text = "도장판을 정말 삭제하시겠어요?\n",
+                            style = R.style.subtitle_18_600,
+                            textColor = R.color.gray_800
+                        )
+                        span(
+                            text = "(20P 차감돼요)",
+                            style = R.style.subtitle_16_400,
+                            textColor = R.color.gray_500
+                        )
+                    }
+                ),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.TWO,
+                    negativeButtonText = "취소",
+                    positiveButtonText = "네, 삭제할래요"
+                )
+            ),
+            onConfirmListener = {
+                object : OnButtonClickListener {
+                    override fun setBusinessLogic() {
+                        deleteStampBoard()
+                    }
+
+                    override fun getReturnValue(value: Any) {
+                    }
+                }
+            }
+        ).show(childFragmentManager, null)
+    }
+
+    /**
+     * 도장판 삭제 Api 호출
+     */
+    private fun deleteStampBoard() {
+        viewModel.deleteStampBoard(
+            token = getAccessTokenOrNull() ?: "",
+            onCompletion = {
+                if (it != null) {
+                    PolzzakSnackBar.errorOf(binding.root, it).show()
                 } else {
-                    // 실패
-                    PolzzakSnackBar.errorOf(view = binding.root, exception = exception).show()
-                    openRewardSheet()
+                    findNavController().popBackStack()
                 }
             }
         )
@@ -306,7 +364,17 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
                             buttonCount = ButtonCount.ONE,
                             positiveButtonText = "되돌아가기"
                         )
-                    )
+                    ),
+                    onConfirmListener = {
+                        object : OnButtonClickListener {
+                            override fun setBusinessLogic() {
+                                findNavController().popBackStack()
+                            }
+
+                            override fun getReturnValue(value: Any) {
+                            }
+                        }
+                    }
                 ).show(childFragmentManager, null)
             }
             else -> {

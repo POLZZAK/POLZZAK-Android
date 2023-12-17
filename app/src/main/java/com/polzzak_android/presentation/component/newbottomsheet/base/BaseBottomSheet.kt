@@ -19,7 +19,7 @@ import com.polzzak_android.databinding.BottomsheetBaseBinding
 abstract class BaseBottomSheet : BottomSheetDialogFragment() {
 
     private var _binding: BottomsheetBaseBinding? = null
-    protected val binding
+    protected val baseBinding
         get() = _binding!!
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -49,7 +49,7 @@ abstract class BaseBottomSheet : BottomSheetDialogFragment() {
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
         _binding = DataBindingUtil.inflate(inflater, R.layout.bottomsheet_base, container, false)
-        return binding.root
+        return baseBinding.root
     }
 
     override fun onDestroy() {

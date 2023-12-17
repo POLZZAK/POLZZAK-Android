@@ -70,7 +70,8 @@ class StampBottomSheetViewModel @Inject constructor(
                 accessToken = accessToken,
                 stampBoardId = stampBoardId,
                 missionId = missionId,
-                stampDesignId = stampId
+                stampDesignId = stampId,
+                missionRequestId = null
             )
 
             response.onSuccess {

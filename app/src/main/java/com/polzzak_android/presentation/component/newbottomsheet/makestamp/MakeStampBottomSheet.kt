@@ -17,8 +17,6 @@ import javax.inject.Inject
 class MakeStampBottomSheet(
     missionList: List<MissionData>,
     private val onMakeStampClick: (missionId: Int, stampDesignId: Int) -> Unit
-    /*missionList: List<MissionModel> = emptyList(),
-    missionRequestList: List<MissionRequestModel> = emptyList()*/
 ) : BaseNavigationBottomSheet() {
     override val navGraphId: Int
         get() = R.navigation.bottomsheet_make_stamp_nav_graph
@@ -39,9 +37,9 @@ class MakeStampBottomSheet(
                 when (it) {
                     SheetEvent.NEXT -> navController.navigate(R.id.action_choiceMissionSheet_to_choiceStampSheet)
                     SheetEvent.PREV -> navController.popBackStack()
-                    SheetEvent.CLOSE -> dismiss()
+                    SheetEvent.CLOSE -> dialog?.dismiss()
                     SheetEvent.ACTION -> {
-                        dismiss()
+                        dialog?.dismiss()
                         onMakeStampClick(
                             viewModel.selectedMissionId.value,
                             viewModel.selectedStampDesignId.value
