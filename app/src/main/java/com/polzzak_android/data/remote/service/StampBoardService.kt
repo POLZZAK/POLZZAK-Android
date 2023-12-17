@@ -95,4 +95,13 @@ interface StampBoardService {
         @Path("stampBoardId") stampBoardId: Int,
         @Body request: IssueCouponRequest
     ): Response<EmptyDataResponse>
+
+    /**
+     * 도장판 삭제 - 보호자
+     */
+    @DELETE("/api/v1/stamps/stamp-boards/{stampBoardId}")
+    suspend fun deleteStampBoard(
+        @Header("Authorization") token: String,
+        @Path("stampBoardId") stampBoardId: Int
+    ): Response<EmptyDataResponse>
 }

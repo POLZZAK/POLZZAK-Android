@@ -95,7 +95,7 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
                         onStampClick = this@ProtectorStampBoardDetailFragment::openStampInfoDialog,
                         onEmptyStampClick = this@ProtectorStampBoardDetailFragment::openMakeStampBottomSheet,
                         onRewardButtonClick = this@ProtectorStampBoardDetailFragment::openCouponSheet,
-                        onBoardDeleteClick = { /*TODO*/ },
+                        onBoardDeleteClick = this@ProtectorStampBoardDetailFragment::openDeleteDialog,
                         onError = this@ProtectorStampBoardDetailFragment::handleErrorCase
                     )
                 }
@@ -270,6 +270,62 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
     }
 
     /**
+     * 도장판 삭제 다이얼로그 표시
+     */
+    private fun openDeleteDialog() {
+        CommonDialogHelper.getInstance(
+            content = CommonDialogModel(
+                type = DialogStyleType.ALERT,
+                content = CommonDialogContent(
+                    title = SpannableBuilder.build(context = requireContext()) {
+                        span(
+                            text = "도장판을 정말 삭제하시겠어요?\n",
+                            style = R.style.subtitle_18_600,
+                            textColor = R.color.gray_800
+                        )
+                        span(
+                            text = "(20P 차감돼요)",
+                            style = R.style.subtitle_16_400,
+                            textColor = R.color.gray_500
+                        )
+                    }
+                ),
+                button = CommonButtonModel(
+                    buttonCount = ButtonCount.TWO,
+                    negativeButtonText = "취소",
+                    positiveButtonText = "네, 삭제할래요"
+                )
+            ),
+            onConfirmListener = {
+                object : OnButtonClickListener {
+                    override fun setBusinessLogic() {
+                        deleteStampBoard()
+                    }
+
+                    override fun getReturnValue(value: Any) {
+                    }
+                }
+            }
+        ).show(childFragmentManager, null)
+    }
+
+    /**
+     * 도장판 삭제 Api 호출
+     */
+    private fun deleteStampBoard() {
+        viewModel.deleteStampBoard(
+            token = getAccessTokenOrNull() ?: "",
+            onCompletion = {
+                if (it != null) {
+                    PolzzakSnackBar.errorOf(binding.root, it).show()
+                } else {
+                    findNavController().popBackStack()
+                }
+            }
+        )
+    }
+
+    /**
      * 요청 성공 다이얼로그 표시
      */
     private fun openSuccessDialog(
@@ -308,7 +364,17 @@ class ProtectorStampBoardDetailFragment : BaseFragment<FragmentKidStampBoardDeta
                             buttonCount = ButtonCount.ONE,
                             positiveButtonText = "되돌아가기"
                         )
-                    )
+                    ),
+                    onConfirmListener = {
+                        object : OnButtonClickListener {
+                            override fun setBusinessLogic() {
+                                findNavController().popBackStack()
+                            }
+
+                            override fun getReturnValue(value: Any) {
+                            }
+                        }
+                    }
                 ).show(childFragmentManager, null)
             }
             else -> {

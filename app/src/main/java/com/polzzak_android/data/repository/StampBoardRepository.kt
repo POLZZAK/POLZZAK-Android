@@ -76,10 +76,21 @@ interface StampBoardRepository {
         missionRequestId: Int
     ): ApiResult<Unit>
 
+    /**
+     * 쿠폰 발급 - 보호자
+     */
     suspend fun issueCoupon(
         accessToken: String,
         stampBoardId: Int,
         rewardDate: LocalDate
+    ): ApiResult<Unit>
+
+    /**
+     * 도장판 삭제 - 보호자
+     */
+    suspend fun deleteStampBoard(
+        accessToken: String,
+        stampBoardId: Int
     ): ApiResult<Unit>
 }
 
@@ -195,6 +206,18 @@ class StampBoardRepositoryImpl @Inject constructor(
             request = IssueCouponRequest(
                 rewardDate = rewardDate.atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli()
             )
+        )
+    }
+
+    override suspend fun deleteStampBoard(
+        accessToken: String,
+        stampBoardId: Int
+    ): ApiResult<Unit> = requestCatching {
+        val auth = createHeaderAuthorization(accessToken = accessToken)
+
+        stampBoardService.deleteStampBoard(
+            token = auth,
+            stampBoardId = stampBoardId
         )
     }
 }

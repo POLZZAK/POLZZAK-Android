@@ -146,6 +146,9 @@ class StampBoardDetailViewModel @Inject constructor(
             }
     }
 
+    /**
+     * 쿠폰 발급 - 보호자
+     */
     fun issueCoupon(
         token: String,
         selectedDate: LocalDate,
@@ -165,6 +168,23 @@ class StampBoardDetailViewModel @Inject constructor(
             }
             .onError { exception, _ ->
                 exception.printStackTrace()
+                onCompletion(exception)
+            }
+    }
+
+    fun deleteStampBoard(
+        token: String,
+        onCompletion: (cause: Throwable?) -> Unit
+    ) = viewModelScope.launch {
+        stampRepository
+            .deleteStampBoard(
+                accessToken = token,
+                stampBoardId = stampBoardId
+            )
+            .onSuccess {
+                onCompletion(null)
+            }
+            .onError { exception, _ ->
                 onCompletion(exception)
             }
     }
